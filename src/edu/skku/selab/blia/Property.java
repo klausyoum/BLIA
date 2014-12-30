@@ -6,122 +6,102 @@
 package edu.skku.selab.blia;
 
 
-public class Property
-{
-    public int getBugTermCount()
-    {
-        return bugTermCount;
-    }
+public class Property {
+	public final String bugFilePath;
+	public final String sourceCodeDir;
+	private final String workDir;
+	private int fileCount;
+	private int wordCount;
+	private int bugReportCount;
+	private int bugTermCount;
+	private final float alpha;
+	private final float beta;
+	private final String outputFile;
+	private final String separator = System.getProperty("file.separator");
+	private final String lineSeparator = System.getProperty("line.separator");
+	private static Property p = null;
 
-    public void setBugTermCount(int bugTermCount)
-    {
-        this.bugTermCount = bugTermCount;
-    }
+	public int getBugTermCount() {
+		return bugTermCount;
+	}
 
-    public int getBugReportCount()
-    {
-        return bugReportCount;
-    }
+	public void setBugTermCount(int bugTermCount) {
+		this.bugTermCount = bugTermCount;
+	}
 
-    public void setBugReportCount(int bugReportCount)
-    {
-        this.bugReportCount = bugReportCount;
-    }
+	public int getBugReportCount() {
+		return bugReportCount;
+	}
 
-    public int getFileCount()
-    {
-        return fileCount;
-    }
+	public void setBugReportCount(int bugReportCount) {
+		this.bugReportCount = bugReportCount;
+	}
 
-    public void setFileCount(int fileCount)
-    {
-        this.fileCount = fileCount;
-    }
+	public int getFileCount() {
+		return fileCount;
+	}
 
-    public int getWordCount()
-    {
-        return wordCount;
-    }
+	public void setFileCount(int fileCount) {
+		this.fileCount = fileCount;
+	}
 
-    public void setWordCount(int wordCount)
-    {
-        this.wordCount = wordCount;
-    }
+	public int getWordCount() {
+		return wordCount;
+	}
 
-    public String getLineSeparator()
-    {
-        return lineSeparator;
-    }
+	public void setWordCount(int wordCount) {
+		this.wordCount = wordCount;
+	}
 
-    public String getWorkDir()
-    {
-        return workDir;
-    }
+	public String getLineSeparator() {
+		return lineSeparator;
+	}
 
-    public static void createInstance(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile)
-    {
-        if(null == p) {
-            p = new Property(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
-        }
-    }
+	public String getWorkDir() {
+		return workDir;
+	}
 
-    public static Property getInstance()
-    {
-        return p;
-    }
+	public static void createInstance(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+		if (null == p) {
+			p = new Property(bugFilePath, sourceCodeDir, workDir, alpha, beta,
+					outputFile);
+		}
+	}
 
-    private Property(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile)
-    {
-        this.bugFilePath = bugFilePath;
-        this.sourceCodeDir = sourceCodeDir;
-        this.workDir = workDir;
-        this.alpha = alpha;
-        this.beta = beta;
-        this.outputFile = outputFile;
-    }
+	public static Property getInstance() {
+		return p;
+	}
+	
+	private Property(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+		this.bugFilePath = bugFilePath;
+		this.sourceCodeDir = sourceCodeDir;
+		this.workDir = workDir;
+		this.alpha = alpha;
+		this.beta = beta;
+		this.outputFile = outputFile;
+	}
+	
+	public float getAlpha() {
+		return alpha;
+	}
 
-    public float getAlpha()
-    {
-        return alpha;
-    }
-    
-    public float getBeta()
-    {
-        return beta;
-    }    
+	public float getBeta() {
+		return beta;
+	}
 
-    public String getOutputFile()
-    {
-        return outputFile;
-    }
+	public String getOutputFile() {
+		return outputFile;
+	}
 
-    public String getBugFilePath()
-    {
-        return bugFilePath;
-    }
+	public String getBugFilePath() {
+		return bugFilePath;
+	}
 
-    public String getSourceCodeDir()
-    {
-        return sourceCodeDir;
-    }
+	public String getSourceCodeDir() {
+		return sourceCodeDir;
+	}
 
-    public String getSeparator()
-    {
-        return separator;
-    }
-
-    public final String bugFilePath;
-    public final String sourceCodeDir;
-    private final String workDir;
-    private int fileCount;
-    private int wordCount;
-    private int bugReportCount;
-    private int bugTermCount;
-    private final float alpha;
-    private final float beta;
-    private final String outputFile;
-    private final String separator = System.getProperty("file.separator");
-    private final String lineSeparator = System.getProperty("line.separator");
-    private static Property p = null;
-
+	public String getSeparator() {
+		return separator;
+	}
 }

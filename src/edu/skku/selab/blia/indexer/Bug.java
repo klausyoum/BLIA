@@ -22,6 +22,15 @@ public class Bug {
     private String description;
     private TreeSet<String> fixedFiles;
     
+    public Bug() {
+    	this.ID = "";
+    	this.openDate = "";
+    	this.fixDate = "";
+    	this.summary = "";
+    	this.description = "";
+    	this.fixedFiles = new TreeSet<String>();
+    }
+    
     public Bug(String ID, String openDate, String fixDate, String summary, String description, TreeSet<String> fixedFiles) {
     	this.ID = ID;
     	this.openDate = openDate;
@@ -76,5 +85,9 @@ public class Bug {
 	
 	public void setFixedFiles(TreeSet<String> fixedFiles) {
 		this.fixedFiles = fixedFiles;
+	}    
+
+	public void addFixedFile(String fixedFile) {
+		this.fixedFiles.add(fixedFile);
 	}    
 }
