@@ -7,12 +7,10 @@
  */
 package edu.skku.selab.blia.indexer;
 
-import java.io.IOException;
-
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public interface ICorpusCreator {
+public interface IVectorCreator {
 	abstract void create() throws Exception;
 }
