@@ -31,14 +31,27 @@ public class BugCorpusCreatorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
-		String sourceCodeDir = "..\\swt-3.1\\src";
-		String workDir = ".\\tmp";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		String outputFile = "..\\test_output.txt";
+		String osName = System.getProperty("os.name");
 		
-		Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
+		if (osName.equals("Mac OS X")) {
+			String bugFilePath = "./test_data/SWTBugRepository.xml";
+			String sourceCodeDir = "../swt-3.1/src";
+			String workDir = "./tmp";
+			float alpha = 0.2f;
+			float beta = 0.5f;
+			String outputFile = "./tmp/test_output.txt";
+			
+			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
+		} else {
+			String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
+			String sourceCodeDir = "..\\swt-3.1\\src";
+			String workDir = ".\\tmp";
+			float alpha = 0.2f;
+			float beta = 0.5f;
+			String outputFile = ".\\tmp\\test_output.txt";
+			
+			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
+		}
 	}
 
 	/**

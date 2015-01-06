@@ -11,9 +11,9 @@ package edu.skku.selab.blia.anlaysis;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SimilarityAnalyzer implements IAnalyzer {
-	
-	public void analyze() {
-		
-	}
+public class Rank {
+    public int loc;
+    public int id;
+    public float rank;
+    public float defectPredictionValue;
 }

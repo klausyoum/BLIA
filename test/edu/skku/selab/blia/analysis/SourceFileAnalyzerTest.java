@@ -5,7 +5,7 @@
  * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
  * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
  */
-package edu.skku.selab.blia.indexer;
+package edu.skku.selab.blia.analysis;
 
 import static org.junit.Assert.*;
 
@@ -16,12 +16,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.anlaysis.SourceFileAnalyzer;
+import edu.skku.selab.blia.indexer.SourceFileCorpusCreator;
+import edu.skku.selab.blia.indexer.SourceFileIndexer;
+import edu.skku.selab.blia.indexer.SourceFileVectorCreator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SourceFileVectorCreatorTest {
+public class SourceFileAnalyzerTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -73,7 +77,7 @@ public class SourceFileVectorCreatorTest {
 	}
 
 	@Test
-	public void verifySourceFileVectorCreator() throws Exception {
+	public void verifySourceFileAnalyzer() throws Exception {
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
 		
@@ -82,6 +86,9 @@ public class SourceFileVectorCreatorTest {
 		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create();
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyze();
 	}
 
 }

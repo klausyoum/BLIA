@@ -13,7 +13,7 @@ package edu.skku.selab.blia.anlaysis;
  */
 public class ScmRepoAnalyzer implements IAnalyzer {
 	
-	public void analyze() {
+	public void analyze() throws Exception {
 		
 	}
 }

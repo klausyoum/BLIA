@@ -5,7 +5,7 @@
  * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
  * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
  */
-package edu.skku.selab.blia.indexer;
+package edu.skku.selab.blia.analysis;
 
 import static org.junit.Assert.*;
 
@@ -16,12 +16,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.anlaysis.BugRepoAnalyzer;
+import edu.skku.selab.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blia.indexer.BugVectorCreator;
+import edu.skku.selab.blia.indexer.SourceFileCorpusCreator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SourceFileVectorCreatorTest {
+public class BugRepoAnalyzerTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -48,7 +52,7 @@ public class SourceFileVectorCreatorTest {
 			String outputFile = ".\\tmp\\test_output.txt";
 			
 			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
-		}
+		}		
 	}
 
 	/**
@@ -73,15 +77,19 @@ public class SourceFileVectorCreatorTest {
 	}
 
 	@Test
-	public void verifySourceFileVectorCreator() throws Exception {
+	public void verifyBugRepoAnalyzer() throws Exception {
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		bugCorpusCreator.create();
+		
+		BugVectorCreator bugVectorCreator = new BugVectorCreator();
+		bugVectorCreator.create();
+		
+		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex();
-		
-		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
-		sourceFileVectorCreator.create();
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+		bugRepoAnalyzer.analyze();
 	}
 
 }

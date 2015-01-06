@@ -9,7 +9,7 @@ package edu.skku.selab.blia;
 
 import java.io.File;
 
-import edu.skku.selab.blia.anlaysis.IntegratedAnalyzer;
+import edu.skku.selab.blia.anlaysis.BugLocator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -20,7 +20,7 @@ public class BLIA {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		if (0 == args.length) {
 			showUsage();
 		} else {
@@ -29,7 +29,7 @@ public class BLIA {
 				// test code to check validity of arguments
 				// printProperty();
 
-				IntegratedAnalyzer integratedAnalyzer = new IntegratedAnalyzer();
+				BugLocator integratedAnalyzer = new BugLocator();
 				integratedAnalyzer.analyze();
 			}
 		}

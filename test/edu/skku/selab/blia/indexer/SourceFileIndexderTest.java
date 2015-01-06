@@ -21,7 +21,7 @@ import edu.skku.selab.blia.Property;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SourceFileVectorCreatorTest {
+public class SourceFileIndexderTest {
 
 	/**
 	 * @throws java.lang.Exception
@@ -73,15 +73,15 @@ public class SourceFileVectorCreatorTest {
 	}
 
 	@Test
-	public void verifySourceFileVectorCreator() throws Exception {
+	public void verifySourceFileIndexer() throws Exception {
+		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
 		
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex();
 		
-		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
-		sourceFileVectorCreator.create();
+		sourceFileIndexer.computeLengthScore();
 	}
 
 }

@@ -12,5 +12,5 @@ package edu.skku.selab.blia.anlaysis;
  *
  */
 public interface IAnalyzer {
-	public abstract void analyze();
+	public abstract void analyze() throws Exception;
 }
