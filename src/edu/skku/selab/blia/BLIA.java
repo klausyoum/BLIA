@@ -29,8 +29,8 @@ public class BLIA {
 				// test code to check validity of arguments
 				// printProperty();
 
-				BugLocator integratedAnalyzer = new BugLocator();
-				integratedAnalyzer.analyze();
+				BugLocator bugLocator = new BugLocator();
+				bugLocator.analyze();
 			}
 		}
 	}
