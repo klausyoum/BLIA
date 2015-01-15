@@ -7,6 +7,8 @@
  */
 package edu.skku.selab.blia.indexer;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TreeSet;
 
 /**
@@ -16,25 +18,40 @@ import java.util.TreeSet;
 public class Bug {
 
     private String ID;
-	private String openDate;
-    private String fixDate;
+    private String productName;
+	private String openDateString;
+    private String fixedDateString;
+    private Date fixedDate;
     private String summary;
     private String description;
     private TreeSet<String> fixedFiles;
+    private String corpuses;
+    private String stackTraces;
     
     public Bug() {
     	this.ID = "";
-    	this.openDate = "";
-    	this.fixDate = "";
+    	this.openDateString = "";
+    	this.fixedDateString = "";
     	this.summary = "";
     	this.description = "";
     	this.fixedFiles = new TreeSet<String>();
     }
     
-    public Bug(String ID, String openDate, String fixDate, String summary, String description, TreeSet<String> fixedFiles) {
+    public Bug(String ID, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
     	this.ID = ID;
-    	this.openDate = openDate;
-    	this.fixDate = fixDate;
+    	this.productName = "";
+    	this.openDateString = openDateString;
+    	this.fixedDateString = fixedDateString;
+    	this.summary = summary;
+    	this.description = description;
+    	this.fixedFiles = fixedFiles;
+    }
+    
+    public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
+    	this.ID = ID;
+    	this.productName = productName;
+    	this.openDateString = openDateString;
+    	this.fixedDateString = fixedDateString;
     	this.summary = summary;
     	this.description = description;
     	this.fixedFiles = fixedFiles;
@@ -48,20 +65,29 @@ public class Bug {
 		this.ID = ID;
 	}
 	
-	public String getOpenDate() {
-		return openDate;
+	public String getOpenDateString() {
+		return openDateString;
 	}
 	
-	public void setOpenDate(String openDate) {
-		this.openDate = openDate;
+	public void setOpenDateString(String openDateString) {
+		this.openDateString = openDateString;
 	}
 	
-	public String getFixDate() {
-		return fixDate;
+	public String getFixedDateString() {
+		return fixedDateString;
 	}
 	
-	public void setFixDate(String fixDate) {
-		this.fixDate = fixDate;
+	public void setFixedDateString(String fixDateString) {
+		this.fixedDateString = fixDateString;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		try {
+			this.fixedDate = simpleDateFormat.parse(fixDateString);			
+		} catch (Exception e) {
+			this.fixedDate = null;
+			e.printStackTrace();
+		}
+
 	}
 	public String getSummary() {
 		return summary;
@@ -89,5 +115,62 @@ public class Bug {
 
 	public void addFixedFile(String fixedFile) {
 		this.fixedFiles.add(fixedFile);
+	}
+
+	/**
+	 * @return the corpuses
+	 */
+	public String getCorpuses() {
+		return corpuses;
+	}
+
+	/**
+	 * @param corpuses the corpuses to set
+	 */
+	public void setCorpuses(String corpuses) {
+		this.corpuses = corpuses;
+	}
+
+	/**
+	 * @return the stackTraces
+	 */
+	public String getStackTraces() {
+		return stackTraces;
+	}
+
+	/**
+	 * @param stackTraces the stackTraces to set
+	 */
+	public void setStackTraces(String stackTraces) {
+		this.stackTraces = stackTraces;
+	}
+
+	/**
+	 * @return the productName
+	 */
+	public String getProductName() {
+		return productName;
+	}
+
+	/**
+	 * @param productName the productName to set
+	 */
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	/**
+	 * @param fixedDate the fixedDate to set
+	 */
+	public void setFixedDate(Date fixedDate) {
+		this.fixedDate = fixedDate;
+		this.fixedDateString = this.fixedDate.toString();
+	}
+
+	/**
+	 * @return the fixedDate
+	 */
+	public Date getFixedDate() {
+		return fixedDate;
 	}    
 }

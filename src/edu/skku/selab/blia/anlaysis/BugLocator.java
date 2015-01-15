@@ -93,7 +93,7 @@ public class BugLocator implements IAnalyzer {
 				if (!fileIdTable.isEmpty() && fileIdTable.containsKey(Integer.valueOf(rank.id))) {
 					writer.write((new StringBuilder()).append(vsmId).append(",")
 							.append((String) fileIdTable.get(Integer.valueOf(rank.id))).append(",")
-							.append(i).append(",")
+//							.append(i).append(",")
 							.append(rank.rank).append(lineSparator).toString());
 					writer.flush();
 				}

@@ -75,7 +75,7 @@ public class BugCorpusCreator implements ICorpusCreator {
 		for (Iterator<Bug> iterator1 = list.iterator(); iterator1.hasNext();) {
 			bug = (Bug) iterator1.next();
 			sortedBugIdWriter.write((new StringBuilder(String.valueOf(bug.getID())))
-					.append("\t").append(bug.getFixDate())
+					.append("\t").append(bug.getFixedDateString())
 					.append(property.getLineSeparator())
 					.toString());
 			sortedBugIdWriter.flush();
@@ -133,12 +133,12 @@ public class BugCorpusCreator implements ICorpusCreator {
 					Node bugNode = bugRepository.item(i);
 					if (bugNode.getNodeType() == 1) {
 						String bugId = bugNode.getAttributes().getNamedItem("id").getNodeValue();
-						String openDate = bugNode.getAttributes().getNamedItem("opendate").getNodeValue();
-						String fixDate = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
+						String openDateString = bugNode.getAttributes().getNamedItem("opendate").getNodeValue();
+						String fixDateString = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
 						Bug bug = new Bug();
 						bug.setID(bugId);
-						bug.setOpenDate(openDate);
-						bug.setFixDate(fixDate);
+						bug.setOpenDateString(openDateString);
+						bug.setFixedDateString(fixDateString);
 						for (Node node = bugNode.getFirstChild(); node != null; node = node.getNextSibling()) {
 							if (node.getNodeType() == 1) {
 								if (node.getNodeName().equals("buginformation")) {

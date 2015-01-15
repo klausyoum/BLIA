@@ -107,5 +107,4 @@ public class BugLocatorTest {
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
 	}
-
 }

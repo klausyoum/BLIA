@@ -59,8 +59,8 @@ public class BugTest {
 		Bug bug = new Bug(ID, openDate, fixDate, summary, description, fixedFiles);
 		
 		assertEquals("ID is NOT equal.", ID, bug.getID());
-		assertEquals("openDate is NOT equal.", openDate, bug.getOpenDate());
-		assertEquals("fixDate is NOT equal.", fixDate, bug.getFixDate());
+		assertEquals("openDate is NOT equal.", openDate, bug.getOpenDateString());
+		assertEquals("fixDate is NOT equal.", fixDate, bug.getFixedDateString());
 		assertEquals("summary is NOT equal.", summary, bug.getSummary());
 		assertEquals("description is NOT equal.", description, bug.getDescription());
 		assertEquals("fixedFiles is NOT equal.", fixedFiles, bug.getFixedFiles());
