@@ -82,6 +82,8 @@ public class BugLocatorTest {
 
 	@Test
 	public void verifyBugLocator() throws Exception {
+		long startTime = System.currentTimeMillis();
+
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
 		
@@ -91,13 +93,14 @@ public class BugLocatorTest {
 		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create();
+
+		// Create SordtedID.txt
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		bugCorpusCreator.create();
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		sourceFileAnalyzer.analyze();
 
-		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
-		bugCorpusCreator.create();
-		
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
 		
@@ -106,5 +109,8 @@ public class BugLocatorTest {
 		
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 }
