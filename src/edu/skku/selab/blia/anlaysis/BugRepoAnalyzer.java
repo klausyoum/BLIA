@@ -11,11 +11,21 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.dao.BugDAO;
+import edu.skku.selab.blia.db.dao.IntegratedAnalysisDAO;
+import edu.skku.selab.blia.db.AnalysisValue;
+import edu.skku.selab.blia.db.SimilarBugInfo;
+import edu.skku.selab.blia.indexer.Bug;
+import edu.skku.selab.blia.indexer.SourceFile;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -101,6 +111,118 @@ public class BugRepoAnalyzer implements IAnalyzer {
 		writer.close();
 	}
 	
+	/**
+	 * Analyze similarity between a bug report and its previous bug reports. Then write similarity scores to SimiScore.txt
+	 * ex.) Bug ID; Target bug ID#1:Similarity score	Target big ID#2:Similarity score 
+	 * 
+	 * (non-Javadoc)
+	 * @see edu.skku.selab.blia.anlaysis.IAnalyzer#analyze()
+	 */
+//	@Override
+	public void analyzeWithDB() throws Exception {
+		computeSimilarityWithDB();
+
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		BugDAO bugDAO = new BugDAO();
+		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		
+		
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug bug = bugs.get(i);
+			String bugID = bug.getID();
+			HashMap<Integer, Double> similarScores = new HashMap<Integer, Double>(); 
+			HashSet<SimilarBugInfo> similarBugInfos = bugDAO.getSimilarBugInfos(bugID);
+			if (null != similarBugInfos) {
+				Iterator<SimilarBugInfo> similarBugInfosIter = similarBugInfos.iterator();
+				while (similarBugInfosIter.hasNext()) {
+					SimilarBugInfo similarBugInfo = similarBugInfosIter.next();
+					
+					HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(similarBugInfo.getSimilarBugID());
+					if (null != fixedFiles) {
+						int fixedFilesCount = fixedFiles.size();
+						double singleValue = similarBugInfo.getSimilarityScore() / fixedFilesCount;
+						Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
+						while (fixedFilesIter.hasNext()) {
+							SourceFile fixedFile = fixedFilesIter.next();
+							
+							int sourceFileVersionID = fixedFile.getSourceFileVersionID();
+							if (null != similarScores.get(sourceFileVersionID)) {
+								double similarScore = similarScores.get(sourceFileVersionID).doubleValue() + singleValue;
+								similarScores.remove(sourceFileVersionID);
+								similarScores.put(sourceFileVersionID, Double.valueOf(similarScore));
+							} else {
+								similarScores.put(sourceFileVersionID, Double.valueOf(singleValue));
+							}
+						}				
+					}
+				}
+				
+				Iterator<Integer> similarScoresIter = similarScores.keySet().iterator();
+				while (similarScoresIter.hasNext()) {
+					int sourceFileVersionID = similarScoresIter.next();
+					double similarScore = similarScores.get(sourceFileVersionID).doubleValue();
+					
+					if (similarScore != 0.0) {
+						integratedAnalysisDAO.updateSimilarScore(bugID, sourceFileVersionID, similarScore);
+					}
+				}
+			}
+		}
+
+//		BufferedReader reader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("BugSimilarity.txt").toString()));
+//		String line = null;
+////		Hashtable fixedTable = getFixedTable();
+//		Hashtable idTable = getFileIdTable();
+//		FileWriter writer = new FileWriter((new StringBuilder(String.valueOf(workDir))).append("SimiScore.txt").toString());
+//		while ((line = reader.readLine()) != null) {
+//			float similarValues[] = new float[fileCount];
+//			String idStr = line.substring(0, line.indexOf(";"));
+//			String vectorStr = line.substring(line.indexOf(";") + 1).trim();
+//			Integer id = Integer.valueOf(Integer.parseInt(idStr));
+//			String values[] = vectorStr.split(" ");
+//			String as[];
+//			int k = (as = values).length;
+//			for (int j = 0; j < k; j++) {
+//				String value = as[j];
+//				String singleValues[] = value.split(":");
+//				if (singleValues.length == 2) {
+//					Integer simBugId = Integer.valueOf(Integer.parseInt(singleValues[0]));
+//					float sim = Float.parseFloat(singleValues[1]);
+//					TreeSet fileSet = (TreeSet) fixedTable.get(simBugId);
+//					if (fileSet == null) {
+//						System.out.println(simBugId);
+//					}
+//					Iterator fileSetIt = fileSet.iterator();
+//					int size = fileSet.size();
+//					float singleValue = sim / (float) size;
+//					while (fileSetIt.hasNext()) {
+//						String name = (String) fileSetIt.next();
+//						Integer fileId = (Integer) idTable.get(name);
+//						if (null == fileId) {
+//							System.err.println(name);
+//						}
+//						similarValues[fileId.intValue()] += singleValue;
+//					}
+//				}
+//			}
+//
+//			String output = (new StringBuilder()).append(id).append(";").toString();
+//			for (int i = 0; i < fileCount; i++) {
+//				if (similarValues[i] != 0.0F) {
+//					output = (new StringBuilder(String.valueOf(output))).append(i).append(":").append(similarValues[i]).append(" ").toString();
+//				}
+//			}
+//
+//			writer.write((new StringBuilder(String.valueOf(output.trim())))
+//					.append(Property.getInstance().getLineSeparator())
+//					.toString());
+//			writer.flush();
+//		}
+//		writer.close();
+	}
+	
 	
 	public void computeSimilarity() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("SortedId.txt").toString()));
@@ -136,6 +258,30 @@ public class BugRepoAnalyzer implements IAnalyzer {
         writer.close();		
 	}
 	
+	
+	public void computeSimilarityWithDB() throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		BugDAO bugDAO = new BugDAO();
+		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		
+		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectorWithDB();
+		
+        for(int i = 0; i < bugs.size(); i++) {
+        	String firstBugID = bugs.get(i).getID();
+        	ArrayList<AnalysisValue> firstBugVector = bugVectors.get(firstBugID);
+        	
+            for(int j = 0; j < i; j++) {
+            	String secondBugID = bugs.get(j).getID();
+            	ArrayList<AnalysisValue> secondBugVector = bugVectors.get(secondBugID);
+            	
+            	double similarityScore = getCosineValue(firstBugVector, secondBugVector);
+            	
+            	bugDAO.insertSimilarBugInfo(firstBugID, secondBugID, similarityScore);
+            }
+        }
+	}
+	
 	/**
 	 * Get cosine value from two vectors
 	 * 
@@ -157,6 +303,66 @@ public class BugRepoAnalyzer implements IAnalyzer {
 	}
 	
 	/**
+	 * Get cosine value from two vectors
+	 * 
+	 * @param firstVector
+	 * @param secondVector
+	 * @return
+	 */
+	private double getCosineValue(ArrayList<AnalysisValue> firstBugVector, ArrayList<AnalysisValue> secondBugVector) throws Exception {
+		double len1 = 0.0;
+		double len2 = 0.0;
+		double vector1 = 0.0;
+		double vector2 = 0.0;
+		double product = 0.0;
+		
+		BugDAO bugDAO = new BugDAO();
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		
+		TreeSet<Integer> corpusIDSet = new TreeSet<Integer>();
+		int corpusID = -1;
+		for (int i = 0; i < firstBugVector.size(); i++) {
+			corpusID = firstBugVector.get(i).getCorpusID();
+			corpusIDSet.add(corpusID);
+		}
+		
+		for (int i = 0; i < secondBugVector.size(); i++) {
+			corpusID = secondBugVector.get(i).getCorpusID();
+			corpusIDSet.add(corpusID);
+		}
+		
+		double firstBugVectorValue[] = new double[corpusIDSet.size()];
+		double secondBugVectorValue[] = new double[corpusIDSet.size()];
+
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		Iterator<Integer> corpusIDSetIter = corpusIDSet.iterator();
+		while (corpusIDSetIter.hasNext()) {
+			corpusID = corpusIDSetIter.next();
+			if (j < firstBugVector.size() && corpusID == firstBugVector.get(j).getCorpusID()) {
+				firstBugVectorValue[i] = firstBugVector.get(j).getVector();
+				j++;
+			}
+			
+			if (k < secondBugVector.size() && corpusID == secondBugVector.get(k).getCorpusID()) {
+				secondBugVectorValue[i] = secondBugVector.get(k).getVector();
+				k++;
+			}
+			i++;
+		}
+		
+		for (i = 0; i < corpusIDSet.size(); i++) {
+			len1 += firstBugVectorValue[i] * firstBugVectorValue[i];
+			len2 += secondBugVectorValue[i] * secondBugVectorValue[i];
+			product += firstBugVectorValue[i] * secondBugVectorValue[i];
+		}
+				
+		return ((double) product / (Math.sqrt(len1) * Math.sqrt(len2)));
+	}
+	
+	/**
 	 * Get bug vector value 
 	 * 
 	 * @return <bug ID, vector> 
@@ -174,6 +380,28 @@ public class BugRepoAnalyzer implements IAnalyzer {
 		}
 
 		return vectors;
+	}
+	
+	/**
+	 * Get bug vector value 
+	 * 
+	 * @return <bug ID, <Corpus ID, AnalysisValue>> 
+	 * @throws IOException
+	 */
+	public HashMap<String, ArrayList<AnalysisValue>> getVectorWithDB() throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();
+		
+		BugDAO bugDAO = new BugDAO();
+		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		
+		for (int i = 0; i < bugs.size(); i++) {
+			String bugID = bugs.get(i).getID();
+			bugVectors.put(bugID, bugDAO.getBugAnalysisValues(bugID));			
+		}
+		
+		return bugVectors;
 	}
 
 	/**

@@ -128,17 +128,17 @@ public class BugVectorCreator implements IVectorCreator {
 		
 		// read "BugVector.txt" then insert vector value to DB
 		String workDir = (new StringBuilder(String.valueOf(property.getWorkDir()))).append(property.getSeparator()).toString();
-		reader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("CodeVector.txt").toString()));
+		reader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("BugVector.txt").toString()));
 		while ((line = reader.readLine()) != null) {
 			String values[] = line.split(";");
-			String bugID = values[0].split(".")[0];
+			String bugID = values[0].split("\\.")[0];
 			
 			if (values.length != 1) {
-				HashMap<Integer, Double> corpusVectors = getVector(values[1]);
+				HashMap<Integer, Double> corpusVectors = getVector(values[1].trim());
 				Iterator<Integer> corpusVectorsIter = corpusVectors.keySet().iterator();
 				
 				while (corpusVectorsIter.hasNext()) {
-					int bugCorpusID =  corpusVectors.get(corpusVectorsIter.next()).intValue();
+					int bugCorpusID =  corpusVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
 					analysisValue.setName(bugID);
 					analysisValue.setCorpusID(bugCorpusID);

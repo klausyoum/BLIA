@@ -51,7 +51,25 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		return returnValue;
 	}
-
+	
+	public int updateSimilarScore(String bugID, int sourceFileVersionID, double similarScore) {
+		String sql = "UPDATE INT_ANALYSIS SET SIMI_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, similarScore);
+			ps.setString(2, bugID);
+			ps.setInt(3, sourceFileVersionID);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}	
+	
 	public int deleteAllIntegratedAnalysisInfos() {
 		String sql = "DELETE FROM INT_ANALYSIS";
 		int returnValue = INVALID;

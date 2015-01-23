@@ -9,6 +9,7 @@ package edu.skku.selab.blia.analysis;
 
 import static org.junit.Assert.*;
 
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,9 +18,13 @@ import org.junit.Test;
 
 import edu.skku.selab.blia.Property;
 import edu.skku.selab.blia.anlaysis.BugRepoAnalyzer;
+import edu.skku.selab.blia.anlaysis.SourceFileAnalyzer;
 import edu.skku.selab.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blia.indexer.SourceFileCorpusCreator;
+import edu.skku.selab.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blia.indexer.SourceFileIndexer;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -76,7 +81,7 @@ public class BugRepoAnalyzerTest {
 	}
 
 	@Test
-	public void verifyBugRepoAnalyzer() throws Exception {
+	public void verifyAnalyze() throws Exception {
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		bugCorpusCreator.create();
 		
@@ -90,5 +95,32 @@ public class BugRepoAnalyzerTest {
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
 	}
+	
+	@Test
+	public void verifyAnalyzeWithDB() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		// Following function is needed to set file count for Property.getFileCount() and fixed files information at BugRepoAnalyzer
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.createWithDB(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndexWithDB(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createWithDB(version);
+		
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		bugCorpusCreator.createWithDB();
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyzeWithDB(version);
 
+		
+		BugVectorCreator bugVectorCreator = new BugVectorCreator();
+		bugVectorCreator.createWithDB();
+		
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+//		bugRepoAnalyzer.computeSimilarityWithDB();
+		bugRepoAnalyzer.analyzeWithDB();
+	}
 }

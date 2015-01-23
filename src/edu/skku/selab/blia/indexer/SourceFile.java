@@ -17,6 +17,7 @@ public class SourceFile {
 	private String version;
 	private String corpusSet;
 	private double lenghthScore;
+	private int sourceFileVersionID;
 
 	/**
 	 * 
@@ -97,6 +98,20 @@ public class SourceFile {
 	 */
 	public void setLenghthScore(double lenghthScore) {
 		this.lenghthScore = lenghthScore;
+	}
+
+	/**
+	 * @return the sourceFileVersionID
+	 */
+	public int getSourceFileVersionID() {
+		return sourceFileVersionID;
+	}
+
+	/**
+	 * @param sourceFileVersionID the sourceFileVersionID to set
+	 */
+	public void setSourceFileVersionID(int sourceFileVersionID) {
+		this.sourceFileVersionID = sourceFileVersionID;
 	}
 
 }

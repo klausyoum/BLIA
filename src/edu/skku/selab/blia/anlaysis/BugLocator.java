@@ -103,6 +103,65 @@ public class BugLocator implements IAnalyzer {
 		writer.close();
 	}
 	
+    /**
+     * Localize bug location with bug report and other information 
+     * 
+     * @throws Exception
+     */
+	// TODD: Start from HERE~!
+	public void analyzeWithDB() throws Exception {
+		BufferedReader VSMReader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("VSMScore.txt").toString()));
+		BufferedReader GraphReader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("SimiScore.txt").toString()));
+		int count = 0;
+		FileWriter writer = new FileWriter(outputFile);
+		while (count < bugCount) {
+			count++;
+			String vsmLine = VSMReader.readLine();
+			String vsmIdStr = vsmLine.substring(0, vsmLine.indexOf(";"));
+			Integer vsmId = Integer.valueOf(Integer.parseInt(vsmIdStr));
+			String vsmVectorStr = vsmLine.substring(vsmLine.indexOf(";") + 1);
+			float vsmVector[] = getVector(vsmVectorStr);
+			for (Iterator iterator = lenTable.keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				Integer id = (Integer) idTable.get(key);
+				Double score = (Double) lenTable.get(key);
+				vsmVector[id.intValue()] = vsmVector[id.intValue()] * score.floatValue();
+			}
+
+			vsmVector = normalize(vsmVector);
+			String graphLine = GraphReader.readLine();
+			String graphIdStr = graphLine.substring(0, graphLine.indexOf(";"));
+			Integer graphId = Integer.valueOf(Integer.parseInt(graphIdStr));
+			String graphVectorStr = graphLine.substring(graphLine.indexOf(";") + 1);
+			float graphVector[] = getVector(graphVectorStr);
+			graphVector = normalize(graphVector);
+			float finalR[] = combine(vsmVector, graphVector, alpha);
+			Rank sort[] = sort(finalR);
+			TreeSet fileSet = (TreeSet) fixTable.get(vsmId);
+			Iterator fileIt = fileSet.iterator();
+			Hashtable fileIdTable = new Hashtable();
+			String fileName;
+			Integer fileId;
+			for (; fileIt.hasNext(); fileIdTable.put(fileId, fileName)) {
+				fileName = (String) fileIt.next();
+				fileId = (Integer) idTable.get(fileName);
+			}
+
+			for (int i = 0; i < sort.length; i++) {
+				Rank rank = sort[i];
+				if (!fileIdTable.isEmpty() && fileIdTable.containsKey(Integer.valueOf(rank.id))) {
+					writer.write((new StringBuilder()).append(vsmId).append(",")
+							.append((String) fileIdTable.get(Integer.valueOf(rank.id))).append(",")
+//							.append(i).append(",")
+							.append(rank.rank).append(lineSparator).toString());
+					writer.flush();
+				}
+			}
+
+		}
+		writer.close();
+	}
+	
 	/**
 	 * Get file ID from ClassName.txt
 	 * 

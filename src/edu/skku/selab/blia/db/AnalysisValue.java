@@ -32,7 +32,7 @@ public class AnalysisValue {
 		productName = "";
 		corpus = "";
 		sourceFileVersionID = INIT_VALUE;
-		corpusID = INIT_VALUE;
+		setCorpusID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
@@ -45,6 +45,7 @@ public class AnalysisValue {
 		version = "";
 		setProductName(productName);
 		setCorpus(corpus);
+		setCorpusID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
@@ -54,8 +55,10 @@ public class AnalysisValue {
 	
 	public AnalysisValue(String name, String productName, String corpus, int termCount, int invDocCount, double tf, double idf, double vector) {
 		setName(name);
+		version = "";
 		setProductName(productName);
 		setCorpus(corpus);
+		setCorpusID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
