@@ -13,9 +13,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -29,25 +31,24 @@ public class SourceFileVectorCreatorTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		String osName = System.getProperty("os.name");
-		
+		String productName = "swt-3.1";
+		float alpha = 0.2f;
+		float beta = 0.5f;
+
 		if (osName.equals("Mac OS X")) {
 			String bugFilePath = "./test_data/SWTBugRepository.xml";
 			String sourceCodeDir = "../swt-3.1/src";
 			String workDir = "./tmp";
-			float alpha = 0.2f;
-			float beta = 0.5f;
 			String outputFile = "./tmp/test_output.txt";
 			
-			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
+			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
 		} else {
 			String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
 			String sourceCodeDir = "..\\swt-3.1\\src";
 			String workDir = ".\\tmp";
-			float alpha = 0.2f;
-			float beta = 0.5f;
 			String outputFile = ".\\tmp\\test_output.txt";
 			
-			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
+			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
 		}
 	}
 
@@ -72,8 +73,9 @@ public class SourceFileVectorCreatorTest {
 	public void tearDown() throws Exception {
 	}
 
+//	@Ignore
 	@Test
-	public void verifySourceFileVectorCreator() throws Exception {
+	public void verifyCreate() throws Exception {
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
 		
@@ -82,6 +84,19 @@ public class SourceFileVectorCreatorTest {
 		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create();
+	}
+	
+	@Test
+	public void verifyCreateWithDB() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.createWithDB(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndexWithDB(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createWithDB(version);
 	}
 
 }

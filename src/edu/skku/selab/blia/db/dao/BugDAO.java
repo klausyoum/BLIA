@@ -10,6 +10,9 @@ package edu.skku.selab.blia.db.dao;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.h2.api.ErrorCode;
+import org.h2.jdbc.JdbcSQLException;
+
 import edu.skku.selab.blia.db.AnalysisValue;
 import edu.skku.selab.blia.db.SimilarBugInfo;
 import edu.skku.selab.blia.indexer.Bug;
@@ -29,7 +32,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, STRACE_SET) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, TOT_CNT, STRACE_SET) VALUES (?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		// releaseDate format : "2004-10-18 17:40:00"
@@ -39,12 +42,18 @@ public class BugDAO extends BaseDAO {
 			ps.setString(2, bug.getProductName());
 			ps.setString(3, bug.getFixedDateString());
 			ps.setString(4, bug.getCorpuses());
-			ps.setString(5, bug.getStackTraces());
+			ps.setInt(5, bug.getTotalCorpusCount());
+			ps.setString(6, bug.getStackTraces());
 			
 			returnValue = ps.executeUpdate();
+		} catch (JdbcSQLException e) {
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		
 		return returnValue;
 	}
@@ -123,6 +132,12 @@ public class BugDAO extends BaseDAO {
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
+		} catch (JdbcSQLException e) {
+			e.printStackTrace();
+			
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -145,6 +160,34 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	/**
+	 * Get <Source file name, Corpus sets> with product name and version
+	 * 
+	 * @param productName	Product name
+	 * @return HashMap<String, String>	<Source file name, Corpus sets>
+	 */
+	public HashMap<String, String> getCorpusSets(String productName) {
+		HashMap<String, String> corpusSets = new HashMap<String, String>();
+		
+		String sql = "SELECT BUG_ID, COR_SET " +
+					"FROM BUG_INFO " +
+					"WHERE PROD_NAME = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				corpusSets.put(rs.getString("BUG_ID"), rs.getString("COR_SET"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return corpusSets;
+	}
+
+	
 	public HashMap<String, Integer> getCorpuses(String productName) {
 		HashMap<String, Integer> fileInfo = new HashMap<String, Integer>();
 		
@@ -164,7 +207,104 @@ public class BugDAO extends BaseDAO {
 		return fileInfo;
 	}
 	
-	public int getCorpusID(String corpus, String productName) {
+	public int getSfCorpusID(String corpus, String productName) {
+		int returnValue = INVALID;
+		String sql = "SELECT SF_COR_ID FROM SF_COR_INFO WHERE COR = ? AND PROD_NAME = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, corpus);
+			ps.setString(2, productName);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				returnValue = rs.getInt("SF_COR_ID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;	
+	}
+	
+	public int insertBugSfAnalysisValue(AnalysisValue analysisValue) {
+		int corpusID = getSfCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
+		
+		String sql = "INSERT INTO BUG_SF_ANALYSIS (BUG_ID, SF_COR_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, analysisValue.getName());
+			ps.setInt(2, corpusID);
+			ps.setInt(3, analysisValue.getTermCount());
+			ps.setInt(4, analysisValue.getInvDocCount());
+			ps.setDouble(5, analysisValue.getTf());
+			ps.setDouble(6, analysisValue.getIdf());
+			ps.setDouble(7, analysisValue.getVector());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int deleteAllBugSfAnalysisValues() {
+		String sql = "DELETE FROM BUG_SF_ANALYSIS";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public AnalysisValue getBugSfAnalysisValue(String bugID, String productName, String corpus) {
+		AnalysisValue returnValue = null;
+
+		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF, C.VEC "+
+				"FROM BUG_INFO A, SF_COR_INFO B, BUG_SF_ANALYSIS C " +
+				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND " +
+				"B.COR = ? AND " +
+				"B.PROD_NAME = ? AND B.SF_COR_ID = C.SF_COR_ID";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, bugID);
+			ps.setString(2, productName);
+			ps.setString(3, corpus);
+			ps.setString(4, productName);
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				returnValue = new AnalysisValue();
+				
+				returnValue.setName(bugID);
+				returnValue.setProductName(productName);
+				returnValue.setCorpus(corpus);
+				returnValue.setTermCount(rs.getInt("TERM_CNT"));
+				returnValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				returnValue.setTf(rs.getDouble("TF"));
+				returnValue.setIdf(rs.getDouble("IDF"));
+				returnValue.setVector(rs.getDouble("VEC"));				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int getBugCorpusID(String corpus, String productName) {
 		int returnValue = INVALID;
 		String sql = "SELECT BUG_COR_ID FROM BUG_COR_INFO WHERE COR = ? AND PROD_NAME = ?";
 		
@@ -184,7 +324,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertBugAnalysisValue(AnalysisValue analysisValue) {
-		int corpusID = getCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
+		int corpusID = getBugCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
 		
 		String sql = "INSERT INTO BUG_ANALYSIS (BUG_ID, BUG_COR_ID, VEC) " +
 				"VALUES (?, ?, ?)";
@@ -204,7 +344,7 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllAnalysisValues() {
+	public int deleteAllBugAnalysisValues() {
 		String sql = "DELETE FROM BUG_ANALYSIS";
 		int returnValue = INVALID;
 		
@@ -224,16 +364,14 @@ public class BugDAO extends BaseDAO {
 
 		String sql = "SELECT C.VEC "+
 				"FROM BUG_INFO A, BUG_COR_INFO B, BUG_ANALYSIS C " +
-				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND " +
-				"B.COR = ? AND " +
-				"B.PROD_NAME = ? AND B.BUG_COR_ID = C.BUG_COR_ID";
+				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND "+
+				"A.BUG_ID = C.BUG_ID AND B.COR = ? AND B.BUG_COR_ID = C.BUG_COR_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
 			ps.setString(3, corpus);
-			ps.setString(4, productName);
 			
 			rs = ps.executeQuery();
 			
@@ -430,5 +568,23 @@ public class BugDAO extends BaseDAO {
 		
 		return similarBugInfos;
 	}
-
+	
+	public int updateTotalCoupusCount(String productName, String bugID, int totalCorpusCount) {
+		String sql = "UPDATE BUG_INFO SET TOT_CNT = ? " +
+				"WHERE BUG_ID = ? AND PROD_NAME = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, totalCorpusCount);
+			ps.setString(2, bugID);
+			ps.setString(3, productName);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
 }

@@ -114,12 +114,33 @@ public class BugDAOTest {
 		System.out.printf("Corpus: %s, Corpus ID: %d\n", corpus1, corpuses.get(corpus1));
 		System.out.printf("Corpus: %s, Corpus ID: %d\n", corpus2, corpuses.get(corpus2));
 		
-		bugDAO.deleteAllAnalysisValues();
+		bugDAO.deleteAllBugSfAnalysisValues();
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		sourceFileDAO.deleteAllCorpuses();
+		sourceFileDAO.insertCorpus(corpus1, productName);
+		sourceFileDAO.insertCorpus(corpus2, productName);
+
+		int termCount = 10;
+		int idc = 32;
+		double tf = 0.53;
+		double idf = 0.259;
 		double vector = 0.4219;
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, corpus1, vector);
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, corpus1, termCount, idc, tf, idf, vector);
+		bugDAO.insertBugSfAnalysisValue(analysisValue);
+		
+		AnalysisValue returnValue = bugDAO.getBugSfAnalysisValue(bugID1, productName, corpus1);
+		System.out.printf("Bug ID: %s, Produce name: %s, Coupus: %s\n", 
+				returnValue.getName(), returnValue.getProductName(), returnValue.getCorpus());
+		System.out.printf("TermCount: %d, IDC: %d, TF: %f, IDF: %f\n", returnValue.getTermCount(),
+				returnValue.getInvDocCount(), returnValue.getTf(), returnValue.getIdf(), returnValue.getVector());
+		System.out.printf("Vector: %f\n", returnValue.getVector());
+		
+		
+		bugDAO.deleteAllBugAnalysisValues();
+		analysisValue = new AnalysisValue(bugID1, productName, corpus1, termCount, idc, tf, idf, vector);
 		bugDAO.insertBugAnalysisValue(analysisValue);
 		
-		AnalysisValue returnValue = bugDAO.getBugAnalysisValue(bugID1, productName, corpus1);
+		returnValue = bugDAO.getBugAnalysisValue(bugID1, productName, corpus1);
 		System.out.printf("Bug ID: %s, Produce name: %s, Coupus: %s\n", 
 				returnValue.getName(), returnValue.getProductName(), returnValue.getCorpus());
 		System.out.printf("Vector: %f\n", returnValue.getVector());
@@ -128,7 +149,6 @@ public class BugDAOTest {
 		bugDAO.deleteAllBugFixedInfo();
 		String fileName1 = "test_10.java";
 		String fileName2 = "test_11.java";
-		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		
 		sourceFileDAO.deleteAllSourceFiles();
 		assertEquals("Insertion failed!", 1, sourceFileDAO.insertSourceFile(fileName1, productName));
@@ -151,11 +171,12 @@ public class BugDAOTest {
 		System.out.println("Version: " + version1 + " Date: " + versions.get(version1).toString());
 		System.out.println("Version: " + version2 + " Date: " + versions.get(version2).toString());
 		
-		sourceFileDAO.deleteAllCorpusSets();
+		int totalCorpusCount1 = 5;
+		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, lengthScore1);
-		sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpusSet2, lengthScore2);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2);
 		
 		HashMap<String, String> corpusSets = sourceFileDAO.getCorpusSets(productName, version1);
 		System.out.printf("File name: %s, CoupusSet: %s\n", fileName1, corpusSets.get(fileName1));

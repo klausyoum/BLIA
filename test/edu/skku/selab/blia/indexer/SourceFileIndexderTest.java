@@ -13,9 +13,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.dao.*;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -29,25 +31,24 @@ public class SourceFileIndexderTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		String osName = System.getProperty("os.name");
+		String productName = "swt-3.1";
+		float alpha = 0.2f;
+		float beta = 0.5f;
 		
 		if (osName.equals("Mac OS X")) {
 			String bugFilePath = "./test_data/SWTBugRepository.xml";
 			String sourceCodeDir = "../swt-3.1/src";
 			String workDir = "./tmp";
-			float alpha = 0.2f;
-			float beta = 0.5f;
 			String outputFile = "./tmp/test_output.txt";
 			
-			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
+			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
 		} else {
 			String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
 			String sourceCodeDir = "..\\swt-3.1\\src";
 			String workDir = ".\\tmp";
-			float alpha = 0.2f;
-			float beta = 0.5f;
 			String outputFile = ".\\tmp\\test_output.txt";
 			
-			Property.createInstance(bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
+			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
 		}
 	}
 
@@ -72,8 +73,10 @@ public class SourceFileIndexderTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
-	public void verifySourceFileIndexer() throws Exception {
+
+//	@Test
+	@Ignore
+	public void verifyCreateIndex() throws Exception {
 		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create();
@@ -82,6 +85,20 @@ public class SourceFileIndexderTest {
 		sourceFileIndexer.createIndex();
 		
 		sourceFileIndexer.computeLengthScore();
+	}
+	
+	@Test
+	public void verifyCreateIndexWithDB() throws Exception {
+		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.createWithDB(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndexWithDB(version);
+		sourceFileIndexer.computeLengthScoreWithDB(version);
+		
+		BaseDAO.closeConnection();
 	}
 
 }

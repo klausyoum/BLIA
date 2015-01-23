@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.TreeSet;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
 import edu.skku.selab.blia.source.Corpus;
 import edu.skku.selab.blia.source.FileDetector;
 import edu.skku.selab.blia.source.FileParser;
@@ -72,7 +73,6 @@ public class SourceFileCorpusCreator implements ICorpusCreator {
 							.append(property.getLineSeparator())
 							.toString());
 				}
-				classNameWriter.flush();
 				corpusWriter.flush();
 				classNameWriter.flush();
 				nameSet.add(corpus.getJavaFileFullClassName());
@@ -88,11 +88,12 @@ public class SourceFileCorpusCreator implements ICorpusCreator {
 	public Corpus create(File file) {
 		FileParser parser = new FileParser(file);
 		String fileName = parser.getPackageName();
-		if (fileName.trim().equals(""))
+		if (fileName.trim().equals("")) {
 			fileName = file.getName();
-		else
+		} else {
 			fileName = (new StringBuilder(String.valueOf(fileName)))
 					.append(".").append(file.getName()).toString();
+		}
 		fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		String content[] = parser.getContent();
 		StringBuffer contentBuf = new StringBuffer();
@@ -126,5 +127,44 @@ public class SourceFileCorpusCreator implements ICorpusCreator {
 		corpus.setContent((new StringBuilder(String.valueOf(sourceCodeContent)))
 				.append(" ").append(names).toString());
 		return corpus;
-    }	
+    }
+	
+	////////////////////////////////////////////////////////////////////	
+	/* (non-Javadoc)
+	 * @see edu.skku.selab.blia.indexer.ICorpus#create()
+	 */
+	// @Override
+	public void createWithDB(String version) throws Exception {
+		Property property = Property.getInstance();
+		FileDetector detector = new FileDetector("java");
+		File files[] = detector.detect(property.getSourceCodeDir());
+		
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		String productName = property.getProductName();
+		int totalCoupusCount = SourceFileDAO.INIT_TOTAL_COUPUS_COUNT;
+		double lengthScore = SourceFileDAO.INIT_LENGTH_SCORE;
+
+		int count = 0;
+		TreeSet<String> nameSet = new TreeSet<String>();
+		File afile[];
+		int j = (afile = files).length;
+		for (int i = 0; i < j; i++) {
+			File file = afile[i];
+			Corpus corpus = create(file);
+			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
+				String fileName = corpus.getJavaFileFullClassName();
+				if (corpus.getJavaFileFullClassName().endsWith(".java")) {
+				} else {
+					fileName += ".java";
+				}
+				String corpusSet = corpus.getContent();
+				sourceFileDAO.insertSourceFile(fileName, productName);
+				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpusSet, totalCoupusCount, lengthScore);
+				nameSet.add(corpus.getJavaFileFullClassName());
+				count++;
+			}
+		}
+
+		property.setFileCount(count);
+	}
 }

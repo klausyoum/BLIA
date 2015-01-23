@@ -7,19 +7,20 @@ package edu.skku.selab.blia;
 
 
 public class Property {
-	public final String bugFilePath;
-	public final String sourceCodeDir;
-	private final String workDir;
+	public String bugFilePath;
+	public String sourceCodeDir;
+	private String workDir;
 	private int fileCount;
 	private int wordCount;
 	private int bugReportCount;
 	private int bugTermCount;
-	private final float alpha;
-	private final float beta;
-	private final String outputFile;
-	private final String separator = System.getProperty("file.separator");
-	private final String lineSeparator = System.getProperty("line.separator");
+	private float alpha;
+	private float beta;
+	private String outputFile;
+	private String separator = System.getProperty("file.separator");
+	private String lineSeparator = System.getProperty("line.separator");
 	private static Property p = null;
+	private String productName;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -61,10 +62,9 @@ public class Property {
 		return workDir;
 	}
 
-	public static void createInstance(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
 		if (null == p) {
-			p = new Property(bugFilePath, sourceCodeDir, workDir, alpha, beta,
-					outputFile);
+			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
 		}
 	}
 
@@ -72,7 +72,8 @@ public class Property {
 		return p;
 	}
 	
-	private Property(String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+		this.productName = productName;
 		this.bugFilePath = bugFilePath;
 		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;
@@ -103,5 +104,19 @@ public class Property {
 
 	public String getSeparator() {
 		return separator;
+	}
+
+	/**
+	 * @return the productName
+	 */
+	public String getProductName() {
+		return productName;
+	}
+
+	/**
+	 * @param productName the productName to set
+	 */
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 }

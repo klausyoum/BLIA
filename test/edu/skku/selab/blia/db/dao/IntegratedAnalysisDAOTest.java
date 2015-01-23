@@ -57,13 +57,14 @@ public class IntegratedAnalysisDAOTest {
 		System.out.println("Version: " + version1 + " Date: " + versions.get(version1).toString());
 		System.out.println("Version: " + version2 + " Date: " + versions.get(version2).toString());
 		
-		sourceFileDAO.deleteAllCorpusSets();
 		String corpusSet1 = "acc contain constant us defin access";
 		String corpusSet2 = "element listen event event result";
+		int totalCorpusCount1 = 5;
+		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, lengthScore1);
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, lengthScore2);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2);
 	}
 
 	/**
@@ -93,10 +94,8 @@ public class IntegratedAnalysisDAOTest {
 		
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
 		String bugID1 = "BLIA-101";
-		String bugID2 = "BLIA-102";
 		String productName = "BLIA";
 		String fileName1 = "test_10.java";
-		String fileName2 = "test_11.java";
 		double vsmScore = 0.321;
 		double similarityScore = 0.6281;
 		double bugLocatorScore = 0.5833;
@@ -126,6 +125,7 @@ public class IntegratedAnalysisDAOTest {
 		assertEquals("Bug ID is NOT same!", bugID1, returnValue.getBugID());
 		assertEquals("File Name is NOT same!", fileName1, returnValue.getFileName());
 		assertEquals("ProductName is NOT same!", productName, returnValue.getProductName());
+		
 		assertEquals("VSM Score is NOT same!", vsmScore, returnValue.getVsmScore(), delta);
 		assertEquals("similarityScore is NOT same!", similarityScore, returnValue.getSimilarityScore(), delta);
 		assertEquals("bugLocatorScore is NOT same!", bugLocatorScore, returnValue.getBugLocatorScore(), delta);

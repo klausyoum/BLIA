@@ -23,12 +23,17 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	}
 	
 	public int insertIntegratedAnalysisVaule(IntegratedAnalysisValue integratedAnalysisValue) {
-		String sql = "INSERT INTO INT_ANALYSIS (BUG_ID, SF_VER_ID, VSM_SCORE, SIMI_SCORE, BL_SCORE, STRACE_SCORE, BLIA_SCORE) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO INT_ANALYSIS (BUG_ID, SF_VER_ID, VSM_SCORE, SIMI_SCORE, BL_SCORE, STRACE_SCORE, BLIA_SCORE) "+
+				"VALUES (?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			SourceFileDAO sourceFileDAO = new SourceFileDAO();
-			int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(integratedAnalysisValue.getFileName(), integratedAnalysisValue.getProductName(), integratedAnalysisValue.getVersion());
+			int sourceFileVersionID = integratedAnalysisValue.getSourceFileVersionID();
+			
+			if (INVALID == sourceFileVersionID) {
+				sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(integratedAnalysisValue.getFileName(), integratedAnalysisValue.getProductName(), integratedAnalysisValue.getVersion());
+			}
 			
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, integratedAnalysisValue.getBugID());

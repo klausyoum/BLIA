@@ -28,13 +28,14 @@ public class BaseDAO {
 		openConnection();
 	}
 	
-	public void openConnection() throws Exception {
+	public static void openConnection() throws Exception {
 		if (null == conn) {
 			Class.forName("org.h2.Driver");
 			conn = DriverManager.getConnection("jdbc:h2:file:./db/blia", "sa", "");
 		}
 	}
-	public void closeConnection() throws Exception {
+	public static void closeConnection() throws Exception {
 		conn.close();
+		conn = null;
 	}
 }

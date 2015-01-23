@@ -38,6 +38,7 @@ public class BLIA {
 	private static void showUsage() {
 		String usage = "Usage:java -jar BLIA [-options]\r\n"
 				+ "where options must include:\r\n"
+				+ "-p\tindicates the product name\r\n"
 				+ "-u\tindicates the bug information files directory\r\n"
 				+ "-s\tindicates the source code directory\r\n"
 				+ "-a\tindicates the alpha value for combining source similarity score and bug report similarity score\r\n"
@@ -47,6 +48,7 @@ public class BLIA {
 	}
 
 	private static boolean parseArgs(String args[]) {
+		String productName = "";
 		String bugFileDir = "";
 		String sourceCodeDir = "";
 		String alphaStr = "";
@@ -56,7 +58,10 @@ public class BLIA {
 		String outputFile = "";
 
 		for (int i = 0; i < args.length - 1; i++)
-			if (args[i].equals("-u")) {
+			if (args[i].equals("-p")) {
+				i++; // to move next actual argument
+				productName = args[i];
+			} else if (args[i].equals("-u")) {
 				i++; // to move next actual argument
 				bugFileDir = args[i];
 			} else if (args[i].equals("-s")) {
@@ -123,16 +128,14 @@ public class BLIA {
 		} else {
 			File file = new File(System.getProperty("user.dir"));
 			if (file.getFreeSpace() / 1024L / 1024L / 1024L < 2L) {
-				System.out
-						.println("Not enough free disk space, please ensure your current disk space are bigger than 2G.");
+				System.out.println("Not enough free disk space, please ensure your current disk space are bigger than 2G.");
 				isValid = false;
 			} else {
 				File dir = new File("tmp");
 				if (!dir.exists()) {
 					dir.mkdir();
 				}
-				Property.createInstance(bugFileDir, sourceCodeDir,
-						dir.getAbsolutePath(), alpha, beta, outputFile);
+				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, outputFile);
 			}
 		}
 		return isValid;

@@ -12,38 +12,74 @@ package edu.skku.selab.blia.db;
  *
  */
 public class AnalysisValue {
-	private String name;
-	private String version;
-	private String productName;
-	private String corpus;
-	private int termCount;
-	private int invDocCount;
-	private double tf;
-	private double idf;
-	private double vector;
+	protected String name;
+	protected String version;
+	protected String productName;
+	protected String corpus;
+	protected int sourceFileVersionID;
+	protected int corpusID;
+	protected int termCount;
+	protected int invDocCount;
+	protected double tf;
+	protected double idf;
+	protected double vector;
+	
+	final private int INIT_VALUE = -1;
 
 	public AnalysisValue() {
 		name = "";
 		version = "";
 		productName = "";
 		corpus = "";
-		termCount = -1;
-		invDocCount = -1;
-		tf = -1.0F;
-		idf = -1.0F;
-		vector = -1.0F;
+		sourceFileVersionID = INIT_VALUE;
+		corpusID = INIT_VALUE;
+		termCount = INIT_VALUE;
+		invDocCount = INIT_VALUE;
+		tf = INIT_VALUE;
+		idf = INIT_VALUE;
+		vector = INIT_VALUE;
 	}
 	
 	public AnalysisValue(String name, String productName, String corpus, double vector) {
-		this.name = name;
-		this.productName = productName;
-		this.corpus = corpus;
-		termCount = -1;
-		invDocCount = -1;
-		tf = -1.0F;
-		idf = -1.0F;
+		setName(name);
+		version = "";
+		setProductName(productName);
+		setCorpus(corpus);
+		termCount = INIT_VALUE;
+		invDocCount = INIT_VALUE;
+		tf = INIT_VALUE;
+		idf = INIT_VALUE;
 		this.vector = vector;
+	}
+	
+	public AnalysisValue(String name, String productName, String corpus, int termCount, int invDocCount, double tf, double idf, double vector) {
+		setName(name);
+		setProductName(productName);
+		setCorpus(corpus);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(tf);
+		setIdf(idf);
+		setVector(vector);
 	}	
+	
+	/**
+	 * 
+	 */
+	public AnalysisValue(String name, String productName, String version, 
+			String corpus, int termCount, int invDocCount) {
+		setName(name);
+		setVersion(version);
+		setProductName(productName);
+		setCorpus(corpus);
+		setSourceFileVersionID(INIT_VALUE);
+		setCorpusID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(INIT_VALUE);
+		setIdf(INIT_VALUE);
+		setVector(INIT_VALUE);
+	}
 	
 	/**
 	 * 
@@ -54,6 +90,8 @@ public class AnalysisValue {
 		setVersion(version);
 		setProductName(productName);
 		setCorpus(corpus);
+		setSourceFileVersionID(INIT_VALUE);
+		setCorpusID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
@@ -187,4 +225,31 @@ public class AnalysisValue {
 		this.corpus = corpus;
 	}
 
+	/**
+	 * @return the sourceFileVersionID
+	 */
+	public int getSourceFileVersionID() {
+		return sourceFileVersionID;
+	}
+
+	/**
+	 * @param sourceFileVersionID the sourceFileVersionID to set
+	 */
+	public void setSourceFileVersionID(int sourceFileVersionID) {
+		this.sourceFileVersionID = sourceFileVersionID;
+	}
+
+	/**
+	 * @return the corpusID
+	 */
+	public int getCorpusID() {
+		return corpusID;
+	}
+
+	/**
+	 * @param corpusID the corpusID to set
+	 */
+	public void setCorpusID(int corpusID) {
+		this.corpusID = corpusID;
+	}
 }

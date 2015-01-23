@@ -26,6 +26,7 @@ public class Bug {
     private String description;
     private TreeSet<String> fixedFiles;
     private String corpuses;
+    private int	totalCorpusCount;
     private String stackTraces;
     
     public Bug() {
@@ -172,5 +173,19 @@ public class Bug {
 	 */
 	public Date getFixedDate() {
 		return fixedDate;
+	}
+
+	/**
+	 * @return the totalCorpusCount
+	 */
+	public int getTotalCorpusCount() {
+		return totalCorpusCount;
+	}
+
+	/**
+	 * @param totalCorpusCount the totalCorpusCount to set
+	 */
+	public void setTotalCorpusCount(int totalCorpusCount) {
+		this.totalCorpusCount = totalCorpusCount;
 	}    
 }

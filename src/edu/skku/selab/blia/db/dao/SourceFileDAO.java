@@ -9,6 +9,10 @@ package edu.skku.selab.blia.db.dao;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+
+import org.h2.api.ErrorCode;
+import org.h2.jdbc.JdbcSQLException;
 
 import edu.skku.selab.blia.db.AnalysisValue;
 
@@ -17,6 +21,10 @@ import edu.skku.selab.blia.db.AnalysisValue;
  *
  */
 public class SourceFileDAO extends BaseDAO {
+	final static public String DEFAULT_VERSION_STRING = "v1.0";
+	final static public double INIT_LENGTH_SCORE = 0.0;
+	final static public int INIT_TOTAL_COUPUS_COUNT = 0;
+	
 	
 	/**
 	 * @throws Exception
@@ -171,11 +179,34 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 	
-	
-	public int insertCorpusSet(String fileName, String prodName, String version, String corpusSet, double lengthScore) {
-		HashMap<String, Integer> fileInfo = getSourceFiles(prodName);
+	public HashSet<String> getSourceFileNames(String productName, String version) {
+		HashSet<String> sourceFileNames = null;
+		String sql = "SELECT A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
+				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
-		String sql = "INSERT INTO SF_VER_INFO (SF_ID, VER, COR_SET, LEN_SCORE) VALUES (?, ?, ?, ?)";
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == sourceFileNames) {
+					sourceFileNames = new HashSet<String>();
+				}
+				sourceFileNames.add(rs.getString("SF_NAME"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFileNames;	
+	}
+	
+	public int insertCorpusSet(String fileName, String productName, String version, String corpusSet, int totalCorpusCount, double lengthScore) {
+		HashMap<String, Integer> fileInfo = getSourceFiles(productName);
+		
+		String sql = "INSERT INTO SF_VER_INFO (SF_ID, VER, COR_SET, TOT_CNT, LEN_SCORE) VALUES (?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
@@ -183,7 +214,8 @@ public class SourceFileDAO extends BaseDAO {
 			ps.setInt(1, fileInfo.get(fileName));
 			ps.setString(2, version);
 			ps.setString(3, corpusSet);
-			ps.setDouble(4, lengthScore);
+			ps.setInt(4, totalCorpusCount);
+			ps.setDouble(5, lengthScore);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -208,6 +240,13 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 
+	/**
+	 * Get <Source file name, Corpus sets> with product name and version
+	 * 
+	 * @param productName	Product name
+	 * @param version		Version
+	 * @return HashMap<String, String>	<Source file name, Corpus sets>
+	 */
 	public HashMap<String, String> getCorpusSets(String productName, String version) {
 		HashMap<String, String> corpusSets = new HashMap<String, String>();
 		
@@ -229,6 +268,94 @@ public class SourceFileDAO extends BaseDAO {
 			e.printStackTrace();
 		}
 		return corpusSets;
+	}
+	
+	public HashMap<String, Integer> getSourceFileVersionIDs(String productName, String version) {
+		HashMap<String, Integer> sourceFileVersionIDs = new HashMap<String, Integer>();
+		
+		String sql = "SELECT A.SF_NAME, B.SF_VER_ID " +
+					"FROM SF_INFO A, SF_VER_INFO B " +
+					"WHERE A.SF_ID = B.SF_ID AND " +
+					"A.PROD_NAME = ? AND B.VER = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				sourceFileVersionIDs.put(rs.getString("SF_NAME"), rs.getInt("SF_VER_ID"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFileVersionIDs;
+	}
+	
+	public HashMap<String, Integer> getTotalCorpusLengths(String productName, String version) {
+		HashMap<String, Integer> totalCorpusLengths = new HashMap<String, Integer>();
+		
+		String sql = "SELECT A.SF_NAME, B.TOT_CNT " +
+					"FROM SF_INFO A, SF_VER_INFO B " +
+					"WHERE A.SF_ID = B.SF_ID AND " +
+					"A.PROD_NAME = ? AND B.VER = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				totalCorpusLengths.put(rs.getString("SF_NAME"), rs.getInt("TOT_CNT"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalCorpusLengths;
+	}
+	
+	public int updateLengthScore(String productName, String fileName, String version, double lengthScore) {
+		String sql = "UPDATE SF_VER_INFO SET LEN_SCORE = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE  A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"AND A.SF_NAME = ? AND B.VER = ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, lengthScore);
+			ps.setString(2, productName);
+			ps.setString(3, fileName);
+			ps.setString(4, version);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int updateTotalCoupusCount(String productName, String fileName, String version, int totalCorpusCount) {
+		String sql = "UPDATE SF_VER_INFO SET TOT_CNT = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"AND A.SF_NAME = ? AND B.VER = ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, totalCorpusCount);
+			ps.setString(2, productName);
+			ps.setString(3, fileName);
+			ps.setString(4, version);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
 	}
 	
 	public HashMap<String, Double> getLengthScores(String productName, String version) {
@@ -264,6 +391,12 @@ public class SourceFileDAO extends BaseDAO {
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
+		} catch (JdbcSQLException e) {
+			e.printStackTrace();
+			
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -352,6 +485,29 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public int updateSourceFileAnalysisValue(AnalysisValue analysisValue) {
+		String sql = "UPDATE SF_ANALYSIS SET TERM_CNT = ?, INV_DOC_CNT = ?, TF = ?, IDF = ?, VEC = ? " +
+				"WHERE SF_VER_ID = ? AND SF_COR_ID = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, analysisValue.getTermCount());
+			ps.setInt(2, analysisValue.getInvDocCount());
+			ps.setDouble(3, analysisValue.getTf());
+			ps.setDouble(4, analysisValue.getIdf());
+			ps.setDouble(5, analysisValue.getVector());
+			ps.setInt(6, analysisValue.getSourceFileVersionID());
+			ps.setInt(7, analysisValue.getCorpusID());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
 	public int deleteAllAnalysisValues() {
 		String sql = "DELETE FROM SF_ANALYSIS";
 		int returnValue = INVALID;
@@ -408,4 +564,89 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public HashMap<String, AnalysisValue> getSourceFileAnalysisValues(String productName, String fileName, String version) {
+		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
+
+		String sql = "SELECT C.COR, D.SF_VER_ID, D.SF_COR_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
+				"FROM SF_INFO A, SF_VER_INFO B, SF_COR_INFO C, SF_ANALYSIS D " +
+				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
+				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND " +
+				"C.PROD_NAME = ? AND C.SF_COR_ID = D.SF_COR_ID";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, fileName);
+			ps.setString(2, productName);
+			ps.setString(3, version);
+			ps.setString(4, productName);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == sourceFileAnalysisValues) {
+					sourceFileAnalysisValues = new HashMap<String, AnalysisValue>();
+				}
+				AnalysisValue analysisValue = new AnalysisValue();
+				
+				String corpus = rs.getString("COR");
+				analysisValue.setName(fileName);
+				analysisValue.setProductName(productName);
+				analysisValue.setVersion(version);
+				analysisValue.setCorpus(corpus);
+				analysisValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
+				analysisValue.setCorpusID(rs.getInt("SF_COR_ID"));
+				analysisValue.setTermCount(rs.getInt("TERM_CNT"));
+				analysisValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				analysisValue.setTf(rs.getDouble("TF"));
+				analysisValue.setIdf(rs.getDouble("IDF"));
+				analysisValue.setVector(rs.getDouble("VEC"));
+				
+				sourceFileAnalysisValues.put(corpus, analysisValue);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sourceFileAnalysisValues;
+	}
+	
+	public HashMap<String, AnalysisValue> getSourceFileAnalysisValues(int sourceFileVersionID) {
+		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
+
+		String sql = "SELECT C.COR, D.SF_VER_ID, D.SF_COR_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
+				"FROM SF_COR_INFO C, SF_ANALYSIS D " +
+				"WHERE D.SF_VER_ID = ? AND C.SF_COR_ID = D.SF_COR_ID";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, sourceFileVersionID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == sourceFileAnalysisValues) {
+					sourceFileAnalysisValues = new HashMap<String, AnalysisValue>();
+				}
+				AnalysisValue analysisValue = new AnalysisValue();
+				
+				String corpus = rs.getString("COR");
+				analysisValue.setCorpus(corpus);
+				analysisValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
+				analysisValue.setCorpusID(rs.getInt("SF_COR_ID"));
+				analysisValue.setTermCount(rs.getInt("TERM_CNT"));
+				analysisValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				analysisValue.setTf(rs.getDouble("TF"));
+				analysisValue.setIdf(rs.getDouble("IDF"));
+				analysisValue.setVector(rs.getDouble("VEC"));
+				
+				sourceFileAnalysisValues.put(corpus, analysisValue);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return sourceFileAnalysisValues;
+	}
 }

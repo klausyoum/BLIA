@@ -10,8 +10,13 @@ package edu.skku.selab.blia.indexer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.AnalysisValue;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -41,47 +46,104 @@ public class SourceFileVectorCreator implements IVectorCreator {
 		while ((line = reader.readLine()) != null) {
 			String values[] = line.split(";");
 			String name = values[0].substring(0, values[0].indexOf("\t"));
-			if (values.length == 1) {
-				System.out.println((new StringBuilder(String.valueOf(name))).append(";").toString());
-			} else {
-				Integer totalTermCount = Integer.valueOf(Integer.parseInt(values[0].substring(values[0].indexOf("\t") + 1)));
-				String termInfos[] = values[1].split("\t");
-				float vector[] = new float[codeTermCount];
-				String as[];
-				int k = (as = termInfos).length;
-				for (int j = 0; j < k; j++) {
-					String str = as[j];
-					String strs[] = str.split(":");
-					Integer termId = Integer.valueOf(Integer.parseInt(strs[0]));
-					Integer termCount = Integer.valueOf(Integer.parseInt(strs[1].substring(0, strs[1].indexOf(" "))));
-					Integer documentCount = Integer.valueOf(Integer.parseInt(strs[1].substring(strs[1].indexOf(" ") + 1)));
-					float tf = getTfValue(termCount.intValue(), totalTermCount.intValue());
-					float idf = getIdfValue(documentCount.intValue(), fileCount);
-					vector[termId.intValue()] = tf * idf;
-				}
-
-				double norm = 0.0D;
-				for (int i = 0; i < vector.length; i++) {
-					norm += vector[i] * vector[i];
-				}
-
-				norm = Math.sqrt(norm);
-				StringBuffer buf = new StringBuffer();
-				buf.append((new StringBuilder(String.valueOf(name))).append(";").toString());
-				for (int i = 0; i < vector.length; i++) {
-					if (vector[i] != 0.0F) {
-						vector[i] = vector[i] / (float) norm;
-						buf.append((new StringBuilder(String.valueOf(i))).append(":").append(vector[i]).append(" ").toString());
+			
+//			if (name.equalsIgnoreCase("org.eclipse.swt.internal.win32.NMCUSTOMDRAW.java")) {
+				if (values.length == 1) {
+					System.out.println((new StringBuilder(String.valueOf(name))).append(";").toString());
+				} else {
+					Integer totalTermCount = Integer.valueOf(Integer.parseInt(values[0].substring(values[0].indexOf("\t") + 1)));
+//					System.out.printf("totalTermCount: %d\n", totalTermCount);
+					String termInfos[] = values[1].split("\t");
+					float vector[] = new float[codeTermCount];
+					String as[];
+					int k = (as = termInfos).length;
+					for (int j = 0; j < k; j++) {
+						String str = as[j];
+						String strs[] = str.split(":");
+						Integer termId = Integer.valueOf(Integer.parseInt(strs[0]));
+						Integer termCount = Integer.valueOf(Integer.parseInt(strs[1].substring(0, strs[1].indexOf(" "))));
+						Integer documentCount = Integer.valueOf(Integer.parseInt(strs[1].substring(strs[1].indexOf(" ") + 1)));
+						float tf = getTfValue(termCount.intValue(), totalTermCount.intValue());
+						float idf = getIdfValue(documentCount.intValue(), fileCount);
+						vector[termId.intValue()] = tf * idf;
+//						System.out.printf("termId: %d, termCount: %d, documentCount: %d, tf: %f, idf: %f, vector: %f\n",
+//								termId, termCount, documentCount, tf, idf, vector[termId.intValue()]);
 					}
-				}
 
-				writer.write((new StringBuilder(String.valueOf(buf.toString()))).append(lineSparator).toString());
-				writer.flush();
-			}
+					double norm = 0.0D;
+					for (int i = 0; i < vector.length; i++) {
+						norm += vector[i] * vector[i];
+					}
+
+//					System.out.printf(">>>> norm: %f\n", norm);
+					norm = Math.sqrt(norm);
+					StringBuffer buf = new StringBuffer();
+					buf.append((new StringBuilder(String.valueOf(name))).append(";").toString());
+					for (int i = 0; i < vector.length; i++) {
+						if (vector[i] != 0.0F) {
+							vector[i] = vector[i] / (float) norm;
+							buf.append((new StringBuilder(String.valueOf(i))).append(":").append(vector[i]).append(" ").toString());
+						}
+					}
+
+					writer.write((new StringBuilder(String.valueOf(buf.toString()))).append(lineSparator).toString());
+					writer.flush();
+				}
+//			}
+
 		}
 		writer.close();
 	}
 
+	/* (non-Javadoc)
+	 * @see edu.skku.selab.blia.indexer.IVectorCreator#create()
+	 */
+	public void createWithDB(String version) throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		HashMap<String, Integer> totalCorpusLengths = sourceFileDAO.getTotalCorpusLengths(productName, version);
+		
+		// Calculate vector
+		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
+
+		while (fileNameIter.hasNext()) {
+			String fileName = fileNameIter.next();
+			
+//			if (fileName.equalsIgnoreCase("org.eclipse.swt.internal.win32.NMCUSTOMDRAW.java")) {
+				Integer totalTermCount = totalCorpusLengths.get(fileName);
+				
+				HashMap<String, AnalysisValue> analysisVaules = sourceFileDAO.getSourceFileAnalysisValues(productName, fileName, version);
+
+				double norm = 0.0D;
+				Iterator<String> analysisVaulesIter = analysisVaules.keySet().iterator();
+				while (analysisVaulesIter.hasNext()) {
+					String corpus = analysisVaulesIter.next();
+					AnalysisValue analysisValue = analysisVaules.get(corpus);
+					double tf = getTfValue(analysisValue.getTermCount(),totalTermCount.intValue());
+					double idf = getIdfValue(analysisValue.getInvDocCount(), fileCount);
+					analysisValue.setVector(tf* idf);
+					
+//					System.out.printf("corpus: %s, termCount: %d, documentCount: %d, tf: %f, idf: %f, vector: %f\n",
+//							corpus, analysisValue.getTermCount(), analysisValue.getInvDocCount(), tf, idf, analysisValue.getVector());
+					norm += (analysisValue.getVector() * analysisValue.getVector());
+				}
+				
+//				System.out.printf(">>>> norm: %f\n", norm);
+
+				norm = Math.sqrt(norm);
+				analysisVaulesIter = analysisVaules.keySet().iterator();
+				while (analysisVaulesIter.hasNext()) {
+					String corpus = analysisVaulesIter.next();
+					AnalysisValue analysisValue = analysisVaules.get(corpus);
+					analysisValue.setVector(analysisValue.getVector() / norm);
+					
+					sourceFileDAO.updateSourceFileAnalysisValue(analysisValue);
+				}
+//			}
+		}
+	}
+	
 	private float getTfValue(int freq, int totalTermCount) {
 		return (float) Math.log(freq) + 1.0F;
 	}

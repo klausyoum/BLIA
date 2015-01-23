@@ -86,10 +86,12 @@ public class SourceFileDAOTest {
 		sourceFileDAO.deleteAllCorpusSets();
 		String corpusSet1 = "acc contain constant us defin access";
 		String corpusSet2 = "element listen event event result";
+		int totalCorpusCount1 = 5;
+		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, lengthScore1);
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, lengthScore2);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1);
+		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2);
 		
 		HashMap<String, String> corpusSets = sourceFileDAO.getCorpusSets(productName, version1);
 		System.out.printf("File name: %s, CoupusSet: %s\n", fileName1, corpusSets.get(fileName1));

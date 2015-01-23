@@ -15,6 +15,7 @@ public class IntegratedAnalysisValue {
 	private String bugID;
 	private String fileName;
 	private String version;
+	private int sourceFileVersionID;
 	private String productName;
 	private double vsmScore;
 	private double similarityScore;
@@ -29,7 +30,7 @@ public class IntegratedAnalysisValue {
 		bugID = "";
 		fileName = "";
 		version = "";
-		productName = "";
+		sourceFileVersionID = -1;
 		vsmScore = 0.0;
 		similarityScore = 0.0;
 		bugLocatorScore = 0.0;
@@ -63,20 +64,6 @@ public class IntegratedAnalysisValue {
 	 */
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	/**
-	 * @return the version
-	 */
-	public String getVersion() {
-		return version;
-	}
-
-	/**
-	 * @param version the version to set
-	 */
-	public void setVersion(String version) {
-		this.version = version;
 	}
 
 	/**
@@ -150,6 +137,20 @@ public class IntegratedAnalysisValue {
 	}
 
 	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
 	 * @return the productName
 	 */
 	public String getProductName() {
@@ -163,4 +164,17 @@ public class IntegratedAnalysisValue {
 		this.productName = productName;
 	}
 
+	/**
+	 * @return the sourceFileVersionID
+	 */
+	public int getSourceFileVersionID() {
+		return sourceFileVersionID;
+	}
+
+	/**
+	 * @param sourceFileVersionID the sourceFileVersionID to set
+	 */
+	public void setSourceFileVersionID(int sourceFileVersionID) {
+		this.sourceFileVersionID = sourceFileVersionID;
+	}
 }
