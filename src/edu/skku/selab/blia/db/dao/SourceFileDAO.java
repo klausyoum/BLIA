@@ -381,6 +381,27 @@ public class SourceFileDAO extends BaseDAO {
 		return lengthScores;
 	}
 	
+	public double getLengthScore(int sourceFileVersionID) {
+		double lengthScore = INIT_LENGTH_SCORE;
+
+		String sql = "SELECT LEN_SCORE " +
+					"FROM SF_VER_INFO " +
+					"WHERE SF_VER_ID = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, sourceFileVersionID);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				lengthScore = rs.getDouble("LEN_SCORE");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return lengthScore;
+	}
+	
 	public int insertCorpus(String corpus, String productName) {
 		String sql = "INSERT INTO SF_COR_INFO (COR, PROD_NAME) VALUES (?, ?)";
 		int returnValue = INVALID;

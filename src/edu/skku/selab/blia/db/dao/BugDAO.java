@@ -258,6 +258,25 @@ public class BugDAO extends BaseDAO {
 		return corpusCount;
 	}
 	
+	public int getBugCount(String productName) {
+		String sql = "SELECT COUNT(BUG_ID) FROM BUG_INFO WHERE PROD_NAME = ?";
+		
+		int bugCount = 0;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1,  productName);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				bugCount = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bugCount;
+	}
+	
 	public int getSfCorpusID(String corpus, String productName) {
 		int returnValue = INVALID;
 		String sql = "SELECT SF_COR_ID FROM SF_COR_INFO WHERE COR = ? AND PROD_NAME = ?";
@@ -488,7 +507,7 @@ public class BugDAO extends BaseDAO {
 			SourceFileDAO sourceFileDAO = new SourceFileDAO();
 			int fixedSourceFileID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
 			
-			// TODO: implement functionDAO.getFunctionVersionID()
+			// TODO: implement functionDAO.getFunctionVersionID() later
 			int fixedFunctionID = INVALID;
 
 			ps = conn.prepareStatement(sql);
@@ -533,7 +552,7 @@ public class BugDAO extends BaseDAO {
 		try {
 			int fixedSourceFileID = INVALID;
 					
-			// TODO: implement functionDAO.getFunctionVersionID()
+			// TODO: implement functionDAO.getFunctionVersionID() later
 			int fixedFunctionID = INVALID;
 
 			ps = conn.prepareStatement(sql);

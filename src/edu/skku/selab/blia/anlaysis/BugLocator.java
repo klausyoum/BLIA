@@ -11,11 +11,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeSet;
 
 import edu.skku.selab.blia.Property;
+import edu.skku.selab.blia.db.IntegratedAnalysisValue;
+import edu.skku.selab.blia.db.dao.BugDAO;
+import edu.skku.selab.blia.db.dao.IntegratedAnalysisDAO;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
+import edu.skku.selab.blia.indexer.Bug;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -108,58 +115,40 @@ public class BugLocator implements IAnalyzer {
      * 
      * @throws Exception
      */
-	// TODD: Start from HERE~!
 	public void analyzeWithDB() throws Exception {
-		BufferedReader VSMReader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("VSMScore.txt").toString()));
-		BufferedReader GraphReader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("SimiScore.txt").toString()));
-		int count = 0;
-		FileWriter writer = new FileWriter(outputFile);
-		while (count < bugCount) {
-			count++;
-			String vsmLine = VSMReader.readLine();
-			String vsmIdStr = vsmLine.substring(0, vsmLine.indexOf(";"));
-			Integer vsmId = Integer.valueOf(Integer.parseInt(vsmIdStr));
-			String vsmVectorStr = vsmLine.substring(vsmLine.indexOf(";") + 1);
-			float vsmVector[] = getVector(vsmVectorStr);
-			for (Iterator iterator = lenTable.keySet().iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
-				Integer id = (Integer) idTable.get(key);
-				Double score = (Double) lenTable.get(key);
-				vsmVector[id.intValue()] = vsmVector[id.intValue()] * score.floatValue();
+		String productName = Property.getInstance().getProductName();
+		BugDAO bugDAO = new BugDAO();
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		bugCount = bugDAO.getBugCount(productName);
+		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+		
+		ArrayList<Bug> bugs = bugDAO.getBugs(productName, false);
+		
+		for (int i = 0; i < bugs.size(); i++) {
+			String bugID = bugs.get(i).getID();
+			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getIntegratedAnalysisValues(bugID);
+			
+			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+			while (integratedAnalysisValuesIter.hasNext()) {
+				int sourceFileVersionID = integratedAnalysisValuesIter.next();
+				
+				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+				double vsmScore = integratedAnalysisValue.getVsmScore();
+				vsmScore *= sourceFileDAO.getLengthScore(sourceFileVersionID);
+				integratedAnalysisValue.setVsmScore(vsmScore);
 			}
-
-			vsmVector = normalize(vsmVector);
-			String graphLine = GraphReader.readLine();
-			String graphIdStr = graphLine.substring(0, graphLine.indexOf(";"));
-			Integer graphId = Integer.valueOf(Integer.parseInt(graphIdStr));
-			String graphVectorStr = graphLine.substring(graphLine.indexOf(";") + 1);
-			float graphVector[] = getVector(graphVectorStr);
-			graphVector = normalize(graphVector);
-			float finalR[] = combine(vsmVector, graphVector, alpha);
-			Rank sort[] = sort(finalR);
-			TreeSet fileSet = (TreeSet) fixTable.get(vsmId);
-			Iterator fileIt = fileSet.iterator();
-			Hashtable fileIdTable = new Hashtable();
-			String fileName;
-			Integer fileId;
-			for (; fileIt.hasNext(); fileIdTable.put(fileId, fileName)) {
-				fileName = (String) fileIt.next();
-				fileId = (Integer) idTable.get(fileName);
+			
+			normalize(integratedAnalysisValues);
+			combine(integratedAnalysisValues, alpha);
+			
+			integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+			while (integratedAnalysisValuesIter.hasNext()) {
+				int sourceFileVersionID = integratedAnalysisValuesIter.next();
+				
+				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+				integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
 			}
-
-			for (int i = 0; i < sort.length; i++) {
-				Rank rank = sort[i];
-				if (!fileIdTable.isEmpty() && fileIdTable.containsKey(Integer.valueOf(rank.id))) {
-					writer.write((new StringBuilder()).append(vsmId).append(",")
-							.append((String) fileIdTable.get(Integer.valueOf(rank.id))).append(",")
-//							.append(i).append(",")
-							.append(rank.rank).append(lineSparator).toString());
-					writer.flush();
-				}
-			}
-
 		}
-		writer.close();
 	}
 	
 	/**
@@ -280,6 +269,28 @@ public class BugLocator implements IAnalyzer {
 
 		return results;
 	}
+	
+	/**
+	 * Combine rVSMScore(vsmVector) and SimiScore(graphVector)
+	 * 
+	 * @param vsmVector
+	 * @param graphVector
+	 * @param f
+	 * @return
+	 */
+	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double weightFactor) {
+		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+		while (integratedAnalysisValuesIter.hasNext()) {
+			int sourceFileVersionID = integratedAnalysisValuesIter.next();
+			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+			
+			double vsmScore = integratedAnalysisValue.getVsmScore();
+			double similarityScore = integratedAnalysisValue.getSimilarityScore();
+			
+			double finalScore = vsmScore * (1 - weightFactor) + similarityScore * weightFactor;
+			integratedAnalysisValue.setBugLocatorScore(finalScore);
+		}
+	}
 
 	/**
 	 * Normalize values in array from max. to min of array
@@ -305,6 +316,51 @@ public class BugLocator implements IAnalyzer {
 		}
 
 		return array;
+	}
+	
+	/**
+	 * Normalize values in array from max. to min of array
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private void normalize(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues) {
+		double maxVsmScore = Double.MIN_VALUE;
+		double minVsmScore = Double.MAX_VALUE;;
+		double maxSimiScore = Double.MIN_VALUE;
+		double minSimiScore = Double.MAX_VALUE;;
+		
+		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+		while (integratedAnalysisValuesIter.hasNext()) {
+			int sourceFileVersionID = integratedAnalysisValuesIter.next();
+			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+			double vsmScore = integratedAnalysisValue.getVsmScore();
+			double simiScore = integratedAnalysisValue.getSimilarityScore();
+			if (maxVsmScore < vsmScore) {
+				maxVsmScore = vsmScore;
+			}
+			if (minVsmScore > vsmScore) {
+				minVsmScore = vsmScore;
+			}
+			if (maxSimiScore < simiScore) {
+				maxSimiScore = simiScore;
+			}
+			if (minSimiScore > simiScore) {
+				minSimiScore = simiScore;
+			}		
+		}
+		
+		double spanVsmScore = maxVsmScore - minVsmScore;
+		double spanSimiScore = maxSimiScore - minSimiScore;
+		integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+		while (integratedAnalysisValuesIter.hasNext()) {
+			int sourceFileVersionID = integratedAnalysisValuesIter.next();
+			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+			double vsmScore = (integratedAnalysisValue.getVsmScore() - minVsmScore) / spanVsmScore;
+			double simiScore = (integratedAnalysisValue.getSimilarityScore() - minSimiScore) / spanSimiScore;
+			integratedAnalysisValue.setVsmScore(vsmScore);
+			integratedAnalysisValue.setSimilarityScore(simiScore);
+		}
 	}
 
 	/**

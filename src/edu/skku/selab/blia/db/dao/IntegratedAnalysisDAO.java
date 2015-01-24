@@ -7,6 +7,8 @@
  */
 package edu.skku.selab.blia.db.dao;
 
+import java.util.HashMap;
+
 import edu.skku.selab.blia.db.IntegratedAnalysisValue;
 
 /**
@@ -68,7 +70,27 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		return returnValue;
-	}	
+	}
+	
+	public int updateBugLocatorScore(IntegratedAnalysisValue integratedAnalysisValue) {
+		String sql = "UPDATE INT_ANALYSIS SET VSM_SCORE = ?, SIMI_SCORE = ?, BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, integratedAnalysisValue.getVsmScore());
+			ps.setDouble(2, integratedAnalysisValue.getSimilarityScore());
+			ps.setDouble(3, integratedAnalysisValue.getBugLocatorScore());
+			ps.setString(4, integratedAnalysisValue.getBugID());
+			ps.setInt(5, integratedAnalysisValue.getSourceFileVersionID());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;		
+	}
 	
 	public int deleteAllIntegratedAnalysisInfos() {
 		String sql = "DELETE FROM INT_ANALYSIS";
@@ -85,10 +107,11 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public IntegratedAnalysisValue getIntegratedAnalysisValue(String bugID) {
-		IntegratedAnalysisValue returnValue = null;
+	public HashMap<Integer, IntegratedAnalysisValue> getIntegratedAnalysisValues(String bugID) {
+		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = null;
+		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
+		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
 		
@@ -98,24 +121,28 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			
-			if (rs.next()) {
-				returnValue = new IntegratedAnalysisValue();
+			while (rs.next()) {
+				if (null == integratedAnalysisValues) {
+					integratedAnalysisValues = new HashMap<Integer, IntegratedAnalysisValue>();
+				}
 				
-				returnValue.setBugID(bugID);
-				returnValue.setFileName(rs.getString("SF_NAME"));
-				returnValue.setProductName(rs.getString("PROD_NAME"));
-				returnValue.setVsmScore(rs.getDouble("VSM_SCORE"));
-				returnValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
-				returnValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
-				returnValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
-				returnValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
+				resultValue = new IntegratedAnalysisValue();
+				resultValue.setBugID(bugID);
+				resultValue.setFileName(rs.getString("SF_NAME"));
+				resultValue.setProductName(rs.getString("PROD_NAME"));
+				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
+				resultValue.setVsmScore(rs.getDouble("VSM_SCORE"));
+				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
+				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
+				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
+				
+				integratedAnalysisValues.put(resultValue.getSourceFileVersionID(), resultValue);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return returnValue;
+		return integratedAnalysisValues;
 	}
-
 }

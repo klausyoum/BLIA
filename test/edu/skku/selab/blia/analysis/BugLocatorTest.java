@@ -19,6 +19,7 @@ import edu.skku.selab.blia.Property;
 import edu.skku.selab.blia.anlaysis.BugLocator;
 import edu.skku.selab.blia.anlaysis.BugRepoAnalyzer;
 import edu.skku.selab.blia.anlaysis.SourceFileAnalyzer;
+import edu.skku.selab.blia.db.dao.SourceFileDAO;
 import edu.skku.selab.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blia.indexer.SourceFileCorpusCreator;
@@ -108,6 +109,41 @@ public class BugLocatorTest {
 		
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+	}
+	
+	@Test
+	public void verifyBugLocatorWithDB() throws Exception {
+		long startTime = System.currentTimeMillis();
+
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.createWithDB(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndexWithDB(version);
+		sourceFileIndexer.computeLengthScoreWithDB(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createWithDB(version);
+
+		// Create SordtedID.txt
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		bugCorpusCreator.createWithDB();
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyzeWithDB(version);
+
+		BugVectorCreator bugVectorCreator = new BugVectorCreator();
+		bugVectorCreator.createWithDB();
+		
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+		bugRepoAnalyzer.analyzeWithDB();
+		
+		BugLocator bugLocator = new BugLocator();
+		bugLocator.analyzeWithDB();
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
