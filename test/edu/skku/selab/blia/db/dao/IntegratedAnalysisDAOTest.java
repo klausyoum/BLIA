@@ -119,9 +119,9 @@ public class IntegratedAnalysisDAOTest {
 		integratedAnalysisValue.setStackTraceScore(stackTraceScore);
 		integratedAnalysisValue.setBliaScore(bliaScore);
 		
-		integratedAnalysisDAO.insertIntegratedAnalysisVaule(integratedAnalysisValue);
+		integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 		
-		HashMap<Integer, IntegratedAnalysisValue> returnValue = integratedAnalysisDAO.getIntegratedAnalysisValues(bugID1);
+		HashMap<Integer, IntegratedAnalysisValue> returnValue = integratedAnalysisDAO.getAnalysisValues(bugID1);
 //		assertEquals("Bug ID is NOT same!", bugID1, returnValue.getBugID());
 //		assertEquals("File Name is NOT same!", fileName1, returnValue.getFileName());
 //		assertEquals("ProductName is NOT same!", productName, returnValue.getProductName());

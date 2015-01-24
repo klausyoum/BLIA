@@ -83,7 +83,9 @@ public class CommitInfo {
 	 */
 	public void setCommitDate(Date commitDate) {
 		this.commitDate = commitDate;
-		this.commitDateString = this.commitDate.toString();
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		this.commitDateString = simpleDateFormat.format(commitDate);
 	}
 
 	/**

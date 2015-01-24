@@ -38,7 +38,7 @@ public class ExperimentResult {
 		productName = "";
 		algorithmName = "";
 		algorithmDescription = "";
-		experimentDate = new Date();
+		setExperimentDate(new Date());
 		experimentDateString = "";
 	}
 
@@ -166,7 +166,9 @@ public class ExperimentResult {
 	 */
 	public void setExperimentDate(Date experimentDate) {
 		this.experimentDate = experimentDate;
-		this.experimentDateString = experimentDate.toString();
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		this.experimentDateString = simpleDateFormat.format(experimentDate);
 	}
 
 	/**

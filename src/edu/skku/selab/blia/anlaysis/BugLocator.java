@@ -62,6 +62,8 @@ public class BugLocator implements IAnalyzer {
 		BufferedReader GraphReader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("SimiScore.txt").toString()));
 		int count = 0;
 		FileWriter writer = new FileWriter(outputFile);
+		
+		int top1 = 0;
 		while (count < bugCount) {
 			count++;
 			String vsmLine = VSMReader.readLine();
@@ -98,6 +100,9 @@ public class BugLocator implements IAnalyzer {
 			for (int i = 0; i < sort.length; i++) {
 				Rank rank = sort[i];
 				if (!fileIdTable.isEmpty() && fileIdTable.containsKey(Integer.valueOf(rank.id))) {
+					if (i == 0) {
+						top1++;
+					}
 					writer.write((new StringBuilder()).append(vsmId).append(",")
 							.append((String) fileIdTable.get(Integer.valueOf(rank.id))).append(",")
 //							.append(i).append(",")
@@ -105,8 +110,9 @@ public class BugLocator implements IAnalyzer {
 					writer.flush();
 				}
 			}
-
 		}
+		
+		System.out.printf("Top1: %d\n", top1);
 		writer.close();
 	}
 	
@@ -126,7 +132,7 @@ public class BugLocator implements IAnalyzer {
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
-			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getIntegratedAnalysisValues(bugID);
+			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
 			
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {

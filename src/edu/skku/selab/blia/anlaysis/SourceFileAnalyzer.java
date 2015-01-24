@@ -269,7 +269,7 @@ public class SourceFileAnalyzer implements IAnalyzer {
 				Iterator<IntegratedAnalysisValue> integratedAnalysisValuesIter = integratedAnalysisValues.iterator();
 				while (integratedAnalysisValuesIter.hasNext()) {
 					IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValuesIter.next();
-					integratedAnalysisDAO.insertIntegratedAnalysisVaule(integratedAnalysisValue);
+					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}	
 //			}
 		}
