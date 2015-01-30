@@ -164,6 +164,16 @@ public class BugDAO extends BaseDAO {
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
+			
+			sql = "SELECT BUG_COR_ID FROM BUG_COR_INFO WHERE COR = ? AND PROD_NAME = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, corpus);
+			ps.setString(2, productName);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				returnValue = rs.getInt("BUG_COR_ID");	
+			}
 		} catch (JdbcSQLException e) {
 			e.printStackTrace();
 			

@@ -31,7 +31,7 @@ public class DbUtil {
 		}
 	}
 	
-	private int createAllTables() throws Exception {
+	public int createAllTables() throws Exception {
 		String sql = "CREATE TABLE SF_INFO(SF_ID INT PRIMARY KEY AUTO_INCREMENT, SF_NAME VARCHAR(255), PROD_NAME VARCHAR(31)); " +
 				"CREATE UNIQUE INDEX IDX_SF_INFO_NAME ON SF_INFO(SF_NAME); " +
 				"CREATE INDEX IDX_SF_PROD_NAME ON SF_INFO(PROD_NAME); " +
@@ -102,7 +102,7 @@ public class DbUtil {
 		return returnValue;
 	}
 	
-	private int dropAllTables() throws Exception {
+	public int dropAllTables() throws Exception {
 		String sql = "DROP TABLE SF_INFO; " +
 				"DROP TABLE SF_VER_INFO; " +
 				"DROP TABLE SF_COR_INFO; " +
@@ -141,7 +141,7 @@ public class DbUtil {
 		return returnValue;		
 	}
 	
-	private void initializeDB() throws Exception {
+	public void initializeAllAnalysisData() throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		sourceFileDAO.deleteAllSourceFiles();
 		sourceFileDAO.deleteAllVersions();
@@ -153,6 +153,7 @@ public class DbUtil {
 		bugDAO.deleteAllBugs();
 		bugDAO.deleteAllCorpuses();
 		bugDAO.deleteAllBugSfAnalysisValues();
+		bugDAO.deleteAllBugAnalysisValues();
 		bugDAO.deleteAllBugFixedInfo();
 		bugDAO.deleteAllSimilarBugInfo();
 		
@@ -161,7 +162,9 @@ public class DbUtil {
 		
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
-		
+	}
+	
+	public void initializeExperimentResultData() throws Exception {
 		ExperimentResultDAO experimentDAO = new ExperimentResultDAO();
 		experimentDAO.deleteAllExperimentResults();
 	}
@@ -175,6 +178,7 @@ public class DbUtil {
 		dbUtil.dropAllTables();
 		dbUtil.createAllTables();
 //		dbUtil.initializeDB();
+//		dbUtil.initializeExperimentResultData();
 	}
 
 }

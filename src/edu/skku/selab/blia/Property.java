@@ -77,8 +77,8 @@ public class Property {
 		this.bugFilePath = bugFilePath;
 		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;
-		this.alpha = alpha;
-		this.beta = beta;
+		this.setAlpha(alpha);
+		this.setBeta(beta);
 		this.outputFile = outputFile;
 	}
 	
@@ -118,5 +118,19 @@ public class Property {
 	 */
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	/**
+	 * @param alpha the alpha to set
+	 */
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
+	/**
+	 * @param beta the beta to set
+	 */
+	public void setBeta(float beta) {
+		this.beta = beta;
 	}
 }

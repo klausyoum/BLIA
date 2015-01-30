@@ -111,11 +111,14 @@ public class BugVectorCreator implements IVectorCreator {
 		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		
+		HashMap<Integer, Integer> corpusIndexMap = new HashMap<Integer, Integer>(); 
 		BufferedReader reader = new BufferedReader(new FileReader(bugTermListFile));
 		String line = null;
+		int index = 0;
 		while ((line = reader.readLine()) != null) {
 			String corpus = line;
-			bugDAO.insertCorpus(corpus, productName);
+			int bugID = bugDAO.insertCorpus(corpus, productName);
+			corpusIndexMap.put(index++, bugID);
 		}
 
 		FileWriter outFile = new FileWriter((new StringBuilder(String.valueOf(HOME_FOLDER))).append("BugVector.txt").toString());
@@ -134,7 +137,7 @@ public class BugVectorCreator implements IVectorCreator {
 			String bugID = values[0].split("\\.")[0];
 			
 			if (values.length != 1) {
-				HashMap<Integer, Double> corpusVectors = getVector(values[1].trim());
+				HashMap<Integer, Double> corpusVectors = getVectors(values[1].trim(), corpusIndexMap);
 				Iterator<Integer> corpusVectorsIter = corpusVectors.keySet().iterator();
 				
 				while (corpusVectorsIter.hasNext()) {
@@ -154,14 +157,15 @@ public class BugVectorCreator implements IVectorCreator {
 	 * @param vecStr
 	 * @return <BugCorpusID, Vector>
 	 */
-	private HashMap<Integer, Double> getVector(String vecStr) {
+	private HashMap<Integer, Double> getVectors(String vecStr, HashMap<Integer, Integer> corpusIndexMap) {
 		String values[] = vecStr.split(" ");
 		String as[];
 		HashMap<Integer, Double> corpusVectors = new HashMap<Integer, Double>();
 		int j = (as = values).length;
 		for (int i = 0; i < j; i++) {
 			String str = as[i];
-			Integer bugCorpusID = Integer.valueOf(Integer.parseInt(str.substring(0,str.indexOf(":")))) + 1;
+			int index = Integer.valueOf(Integer.parseInt(str.substring(0,str.indexOf(":"))));
+			Integer bugCorpusID = corpusIndexMap.get(index);
 			Double vector = Double.parseDouble(str.substring(str.indexOf(":") + 1));
 			
 			corpusVectors.put(bugCorpusID, vector);
