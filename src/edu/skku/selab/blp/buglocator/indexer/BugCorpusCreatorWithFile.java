@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -171,6 +172,7 @@ public class BugCorpusCreatorWithFile implements ICorpusCreator {
 		ArrayList<Bug> list = new ArrayList<Bug>();
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		Property property = Property.getInstance();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
 			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
@@ -188,7 +190,7 @@ public class BugCorpusCreatorWithFile implements ICorpusCreator {
 						Bug bug = new Bug();
 						bug.setID(bugId);
 						bug.setOpenDateString(openDateString);
-						bug.setFixedDateString(fixDateString);
+						bug.setFixedDate(simpleDateFormat.parse(fixDateString));
 						for (Node node = bugNode.getFirstChild(); node != null; node = node.getNextSibling()) {
 							if (node.getNodeType() == 1) {
 								if (node.getNodeName().equals("buginformation")) {

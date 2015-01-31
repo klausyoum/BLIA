@@ -48,8 +48,8 @@ public class BugTest {
 	@Test
 	public void verifyConstructor() {
 		String ID = "29769";
-		String openDate = "2003-1-19 11:42:00";
-		String fixDate = "2003-1-24 21:17:00";
+		String openDate = "2003-01-19 11:42:00";
+		String fixDate = "2003-01-24 21:17:00";
 		String summary = "Ajde does not support new AspectJ 1.1 compiler options";
 		String description = "The org.aspectj.ajde.BuildOptionsAdapter interface does not yet support the new AspectJ 1.1 compiler options. These need to be added to the interface, any old or renamed options deprecated, and then the correct processing needs to happen within Ajde to pass these options to the compiler. This enhancement is needed by the various IDE projects for there AspectJ 1.1 support.";
 		String fixedFile1 = "org.aspectj/modules/ajde/testdata/examples/figures-coverage/figures/Figure.java";

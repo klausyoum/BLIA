@@ -32,6 +32,8 @@ public class ExperimentResultDAOTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
 	}
 
 	/**
@@ -39,6 +41,7 @@ public class ExperimentResultDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -56,7 +59,7 @@ public class ExperimentResultDAOTest {
 	}
 
 	@Test
-	public void verifyExperimentResultDAO() throws Exception {
+	public void verifyGetExperimentResult() throws Exception {
 		ExperimentResultDAO experimentResultDAO = new ExperimentResultDAO();
 		
 		experimentResultDAO.deleteAllExperimentResults();
@@ -95,8 +98,6 @@ public class ExperimentResultDAOTest {
 		assertEquals(algorithmName, returnValue.getAlgorithmName());
 		assertEquals(algorithmDescription, returnValue.getAlgorithmDescription());
 		assertEquals(experimentDate, returnValue.getExperimentDate());
-		
-		experimentResultDAO.closeConnection();
 	}
 
 }

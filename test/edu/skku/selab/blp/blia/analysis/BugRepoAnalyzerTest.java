@@ -23,6 +23,8 @@ import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
@@ -36,6 +38,9 @@ public class BugRepoAnalyzerTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+
 		String osName = System.getProperty("os.name");
 		String productName = "swt-3.1";
 		float alpha = 0.2f;
@@ -63,6 +68,7 @@ public class BugRepoAnalyzerTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**

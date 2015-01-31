@@ -9,7 +9,9 @@ package edu.skku.selab.blp.blia.indexer;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -93,6 +95,7 @@ public class BugCorpusCreator implements ICorpusCreator {
 		ArrayList<Bug> list = new ArrayList<Bug>();
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		Property property = Property.getInstance();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
 			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
@@ -110,7 +113,7 @@ public class BugCorpusCreator implements ICorpusCreator {
 						Bug bug = new Bug();
 						bug.setID(bugId);
 						bug.setOpenDateString(openDateString);
-						bug.setFixedDateString(fixDateString);
+						bug.setFixedDate(simpleDateFormat.parse(fixDateString));
 						for (Node node = bugNode.getFirstChild(); node != null; node = node.getNextSibling()) {
 							if (node.getNodeType() == 1) {
 								if (node.getNodeName().equals("buginformation")) {

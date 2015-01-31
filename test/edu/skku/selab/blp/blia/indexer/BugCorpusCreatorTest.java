@@ -9,7 +9,6 @@ package edu.skku.selab.blp.blia.indexer;
 
 import static org.junit.Assert.*;
 
-
 import java.io.IOException;
 
 import org.junit.After;
@@ -24,6 +23,8 @@ import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.buglocator.indexer.BugCorpusCreatorWithFile;
 import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
+import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
@@ -37,6 +38,9 @@ public class BugCorpusCreatorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+
 		String osName = System.getProperty("os.name");
 		String productName = "swt-3.1";
 		float alpha = 0.2f;
@@ -64,6 +68,7 @@ public class BugCorpusCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**

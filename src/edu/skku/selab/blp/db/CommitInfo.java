@@ -18,7 +18,6 @@ import java.util.HashSet;
 public class CommitInfo {
 	private String commitID;
 	private String productName;
-    private String commitDateString;
     private Date commitDate;
     private String description;
     private HashSet<String> commitFiles;
@@ -28,8 +27,7 @@ public class CommitInfo {
 	 */
 	public CommitInfo() {
 		commitID = "";
-		commitDateString = "";
-		commitDate = null;
+		commitDate = new Date(System.currentTimeMillis());
 		description = "";
 		commitFiles = new HashSet<String>();
 	}
@@ -52,15 +50,14 @@ public class CommitInfo {
 	 * @return the commitDateString
 	 */
 	public String getCommitDateString() {
-		return commitDateString;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return simpleDateFormat.format(commitDate);
 	}
 
 	/**
 	 * @param commitDateString the commitDateString to set
 	 */
-	public void setCommitDateString(String commitDateString) {
-		this.commitDateString = commitDateString;
-		
+	public void setCommitDate(String commitDateString) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
@@ -83,9 +80,6 @@ public class CommitInfo {
 	 */
 	public void setCommitDate(Date commitDate) {
 		this.commitDate = commitDate;
-		
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		this.commitDateString = simpleDateFormat.format(commitDate);
 	}
 
 	/**

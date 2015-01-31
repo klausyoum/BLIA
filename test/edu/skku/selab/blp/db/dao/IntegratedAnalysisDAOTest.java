@@ -33,31 +33,25 @@ public class IntegratedAnalysisDAOTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+
 		String fileName1 = "test_10.java";
 		String fileName2 = "test_11.java";
 		String productName = "BLIA";
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		
 		sourceFileDAO.deleteAllSourceFiles();
-		assertEquals("Insertion failed!", 1, sourceFileDAO.insertSourceFile(fileName1, productName));
-		assertEquals("Insertion failed!", 1, sourceFileDAO.insertSourceFile(fileName2, productName));
-		
-		HashMap<String, Integer> fileInfo = sourceFileDAO.getSourceFiles(productName);
-		
-		System.out.printf("File name: %s, file ID: %d\n", fileName1, fileInfo.get(fileName1));
-		System.out.printf("File name: %s, file ID: %d\n", fileName2, fileInfo.get(fileName2));
+		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1, productName));
+		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2, productName));
 		
 		sourceFileDAO.deleteAllVersions();
 		String version1 = "v0.1";
 		String releaseDate1 = "2004-10-18 17:40:00";
 		String version2 = "v0.2";
 		String releaseDate2 = "2014-02-12 07:12:00";
-		sourceFileDAO.insertVersion(version1, releaseDate1);
-		sourceFileDAO.insertVersion(version2, releaseDate2);
-		
-		HashMap<String, Date> versions = sourceFileDAO.getVersions();
-		System.out.println("Version: " + version1 + " Date: " + versions.get(version1).toString());
-		System.out.println("Version: " + version2 + " Date: " + versions.get(version2).toString());
+		assertNotEquals("Version insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version1, releaseDate1));
+		assertNotEquals("Version insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version2, releaseDate2));
 		
 		String corpusSet1 = "acc contain constant us defin access";
 		String corpusSet2 = "element listen event event result";
@@ -65,8 +59,10 @@ public class IntegratedAnalysisDAOTest {
 		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1);
-		sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2);
+		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1));
+		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2));
 	}
 
 	/**
@@ -74,6 +70,7 @@ public class IntegratedAnalysisDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -91,7 +88,7 @@ public class IntegratedAnalysisDAOTest {
 	}
 
 	@Test
-	public void verifyIntegratedAnalaysisDAO() throws Exception {
+	public void verifyGetAnalysisValues() throws Exception {
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
@@ -105,10 +102,6 @@ public class IntegratedAnalysisDAOTest {
 		double bliaScore = 0.7329;
 		final double delta = 0.00001;
 		String version1 = "v0.1";
-//		String releaseDate1 = "2004-10-18 17:40:00";
-//		String version2 = "v0.2";
-//		String releaseDate2 = "2014-02-12 07:12:00";
-
 
 		IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
 		integratedAnalysisValue.setBugID(bugID1);
@@ -121,20 +114,26 @@ public class IntegratedAnalysisDAOTest {
 		integratedAnalysisValue.setStackTraceScore(stackTraceScore);
 		integratedAnalysisValue.setBliaScore(bliaScore);
 		
-		integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+		assertNotEquals("AnalysisVaule insertion failed!", BaseDAO.INVALID,
+				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue));
 		
-		HashMap<Integer, IntegratedAnalysisValue> returnValue = integratedAnalysisDAO.getAnalysisValues(bugID1);
-//		assertEquals("Bug ID is NOT same!", bugID1, returnValue.getBugID());
-//		assertEquals("File Name is NOT same!", fileName1, returnValue.getFileName());
-//		assertEquals("ProductName is NOT same!", productName, returnValue.getProductName());
-//		
-//		assertEquals("VSM Score is NOT same!", vsmScore, returnValue.getVsmScore(), delta);
-//		assertEquals("similarityScore is NOT same!", similarityScore, returnValue.getSimilarityScore(), delta);
-//		assertEquals("bugLocatorScore is NOT same!", bugLocatorScore, returnValue.getBugLocatorScore(), delta);
-//		assertEquals("stackTraceScore is NOT same!", stackTraceScore, returnValue.getStackTraceScore(), delta);
-//		assertEquals("bliaScore is NOT same!", bliaScore, returnValue.getBliaScore(), delta);
-//		
-		integratedAnalysisDAO.closeConnection();
+		HashMap<Integer, IntegratedAnalysisValue> analysisValues = integratedAnalysisDAO.getAnalysisValues(bugID1);
+		assertEquals("analysisValues size is wrong.", 1, analysisValues.size());
+		
+		
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName1, productName, version1);
+		IntegratedAnalysisValue analysisValue = analysisValues.get(sourceFileVersionID); 
+		assertNotNull("analysisValue can't be found.", analysisValue);
+		assertEquals("Bug ID is NOT same!", bugID1, analysisValue.getBugID());
+		assertEquals("File Name is NOT same!", fileName1, analysisValue.getFileName());
+		assertEquals("ProductName is NOT same!", productName, analysisValue.getProductName());
+		
+		assertEquals("VSM Score is NOT same!", vsmScore, analysisValue.getVsmScore(), delta);
+		assertEquals("similarityScore is NOT same!", similarityScore, analysisValue.getSimilarityScore(), delta);
+		assertEquals("bugLocatorScore is NOT same!", bugLocatorScore, analysisValue.getBugLocatorScore(), delta);
+		assertEquals("stackTraceScore is NOT same!", stackTraceScore, analysisValue.getStackTraceScore(), delta);
+		assertEquals("bliaScore is NOT same!", bliaScore, analysisValue.getBliaScore(), delta);
 	}
 
 }

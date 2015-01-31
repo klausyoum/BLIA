@@ -23,6 +23,7 @@ import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.buglocator.analysis.BugLocator;
 import edu.skku.selab.blp.buglocator.analysis.BugLocatorWithFile;
 import edu.skku.selab.blp.buglocator.analysis.BugRepoAnalyzerWithFile;
 import edu.skku.selab.blp.buglocator.analysis.SourceFileAnalyzerWithFile;
@@ -71,7 +72,6 @@ public class EvaluatorTest {
 	}
 	
 	private static void setProperty(float alpha, float beta) {
-
 		String osName = System.getProperty("os.name");
 		String productName = "swt-3.1";
 		String bugFilePath = "";
@@ -123,11 +123,11 @@ public class EvaluatorTest {
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
 		
-		BugLocatorWithFile bugLocator = new BugLocatorWithFile();
+		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		System.out.printf("Elapsed time of BugLocator for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 
 	@Test
@@ -145,7 +145,7 @@ public class EvaluatorTest {
 		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator1.evaluate();
 
-		
+
 		dbUtil.initializeAllAnalysisData();
 		
 		alpha = 0.5f;
@@ -154,6 +154,7 @@ public class EvaluatorTest {
 		algorithmDescription = "[BugLocator] alpha: " + alpha;
 		Evaluator evaluator2 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator2.evaluate();
+		
 		
 		dbUtil.initializeAllAnalysisData();
 		

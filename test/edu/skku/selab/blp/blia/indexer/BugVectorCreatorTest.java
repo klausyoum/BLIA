@@ -18,6 +18,8 @@ import org.junit.Test;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
+import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.DbUtil;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -30,6 +32,9 @@ public class BugVectorCreatorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+
 		String osName = System.getProperty("os.name");
 		String productName = "swt-3.1";
 		float alpha = 0.2f;
@@ -57,6 +62,7 @@ public class BugVectorCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**

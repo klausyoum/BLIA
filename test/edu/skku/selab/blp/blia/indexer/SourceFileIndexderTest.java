@@ -33,6 +33,9 @@ public class SourceFileIndexderTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+
 		String osName = System.getProperty("os.name");
 		String productName = "swt-3.1";
 		float alpha = 0.2f;
@@ -60,6 +63,7 @@ public class SourceFileIndexderTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -86,8 +90,6 @@ public class SourceFileIndexderTest {
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex(version);
 		sourceFileIndexer.computeLengthScore(version);
-		
-		BaseDAO.closeConnection();
 	}
 
 }

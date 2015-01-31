@@ -114,7 +114,7 @@ public class BugLocatorWithFile {
 			}
 		}
 		
-		System.out.printf("Top1: %d\n", top1);
+//		System.out.printf("Top1: %d\n", top1);
 		writer.close();
 	}
 	

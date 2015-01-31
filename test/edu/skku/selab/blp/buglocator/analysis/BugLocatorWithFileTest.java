@@ -112,6 +112,6 @@ public class BugLocatorWithFileTest {
 		bugLocator.analyze();
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		System.out.printf("Elapsed time of BugLocatorWithFile: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 }

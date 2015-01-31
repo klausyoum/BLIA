@@ -20,7 +20,6 @@ public class Bug {
     private String ID;
     private String productName;
 	private String openDateString;
-    private String fixedDateString;
     private Date fixedDate;
     private String summary;
     private String description;
@@ -32,7 +31,7 @@ public class Bug {
     public Bug() {
     	this.ID = "";
     	this.openDateString = "";
-    	this.fixedDateString = "";
+    	this.fixedDate = new Date(System.currentTimeMillis());
     	this.summary = "";
     	this.description = "";
     	this.fixedFiles = new TreeSet<String>();
@@ -42,7 +41,7 @@ public class Bug {
     	this.ID = ID;
     	this.productName = "";
     	this.openDateString = openDateString;
-    	this.fixedDateString = fixedDateString;
+    	setFixedDate(fixedDateString);
     	this.summary = summary;
     	this.description = description;
     	this.fixedFiles = fixedFiles;
@@ -52,7 +51,7 @@ public class Bug {
     	this.ID = ID;
     	this.productName = productName;
     	this.openDateString = openDateString;
-    	this.fixedDateString = fixedDateString;
+    	setFixedDate(fixedDateString);
     	this.summary = summary;
     	this.description = description;
     	this.fixedFiles = fixedFiles;
@@ -75,11 +74,11 @@ public class Bug {
 	}
 	
 	public String getFixedDateString() {
-		return fixedDateString;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return simpleDateFormat.format(fixedDate);
 	}
 	
-	public void setFixedDateString(String fixDateString) {
-		this.fixedDateString = fixDateString;
+	public void setFixedDate(String fixDateString) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
@@ -165,7 +164,6 @@ public class Bug {
 	 */
 	public void setFixedDate(Date fixedDate) {
 		this.fixedDate = fixedDate;
-		this.fixedDateString = this.fixedDate.toString();
 	}
 
 	/**
