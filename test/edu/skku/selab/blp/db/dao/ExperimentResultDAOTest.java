@@ -61,8 +61,8 @@ public class ExperimentResultDAOTest {
 	@Test
 	public void verifyGetExperimentResult() throws Exception {
 		ExperimentResultDAO experimentResultDAO = new ExperimentResultDAO();
-		
 		experimentResultDAO.deleteAllExperimentResults();
+
 		int top1 = 1;
 		int top5 = 5;
 		int top10 = 10;
@@ -71,9 +71,7 @@ public class ExperimentResultDAOTest {
 		String productName = "BLIA";
 		String algorithmName = "BLIA";
 		String algorithmDescription = "Bug Localization with Integrated Analysis";
-		String experimentDateString = "2015-01-15 18:00:00";
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date experimentDate = simpleDateFormat.parse(experimentDateString);
+		Date experimentDate = new Date(System.currentTimeMillis());
 		final double delta = 0.00001;
 		
 		ExperimentResult experimentResult = new ExperimentResult();
@@ -85,7 +83,7 @@ public class ExperimentResultDAOTest {
 		experimentResult.setProductName(productName);
 		experimentResult.setAlgorithmName(algorithmName);
 		experimentResult.setAlgorithmDescription(algorithmDescription);
-		experimentResult.setExperimentDateString(experimentDateString);		
+		experimentResult.setExperimentDate(experimentDate);		
 		
 		experimentResultDAO.insertExperimentResult(experimentResult);
 		ExperimentResult returnValue = experimentResultDAO.getExperimentResult(productName, algorithmName);
@@ -97,7 +95,7 @@ public class ExperimentResultDAOTest {
 		assertEquals(productName, returnValue.getProductName());
 		assertEquals(algorithmName, returnValue.getAlgorithmName());
 		assertEquals(algorithmDescription, returnValue.getAlgorithmDescription());
-		assertEquals(experimentDate, returnValue.getExperimentDate());
+		assertTrue((experimentDate.getTime() / 1000) == (returnValue.getExperimentDate().getTime() / 1000));
 	}
 
 }

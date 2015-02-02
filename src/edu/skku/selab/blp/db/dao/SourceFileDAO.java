@@ -7,6 +7,7 @@
  */
 package edu.skku.selab.blp.db.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -496,6 +497,87 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		return returnValue;	
 	}
+	
+	public int insertImportedClasses(String fileName, String productName, String version, ArrayList<String> importedClasses) {
+		int sourceFileVersionID = this.getSourceFileVersionID(fileName, productName, version);
+		
+		String sql = "INSERT INTO SF_IMP_INFO (SF_VER_ID, IMP_CLASS) VALUES (?, ?)";
+		int returnValue = INVALID;
+		
+		for (int i = 0; i < importedClasses.size(); i++) {
+			try {
+				String importedClass = importedClasses.get(i);
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, sourceFileVersionID);
+				ps.setString(2, importedClass);
+				
+				returnValue = ps.executeUpdate();
+			} catch (JdbcSQLException e) {
+				e.printStackTrace();
+				
+				if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			if (INVALID == returnValue) {
+				break;
+			}
+		}
+		
+		return returnValue;
+	}
+	
+	public int deleteAllImportedClasses() {
+		String sql = "DELETE FROM SF_IMP_INFO";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public HashMap<String, ArrayList<String>> getImportedClasses(String productName, String version) {
+		HashMap<String, ArrayList<String>> importedClassesMap = new HashMap<String, ArrayList<String>>();
+		
+		String sql = "SELECT A.SF_NAME, C.IMP_CLASS " +
+					"FROM SF_INFO A, SF_VER_INFO B, SF_IMP_INFO C " +
+					"WHERE A.SF_ID = B.SF_ID AND " +
+					"B.SF_VER_ID = C.SF_VER_ID AND " +
+					"A.PROD_NAME = ? AND B.VER = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				String sourceFilename = rs.getString("SF_NAME");
+				if (importedClassesMap.containsKey(sourceFilename)) {
+					ArrayList<String> importedClasses = importedClassesMap.get(sourceFilename);
+					importedClasses.add(rs.getString("IMP_CLASS"));
+				} else {
+					ArrayList<String> importedClasses = new ArrayList<String>();
+					importedClasses.add(rs.getString("IMP_CLASS"));
+					
+					importedClassesMap.put(sourceFilename, importedClasses);	
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return importedClassesMap;
+	}
+
 	
 	public int insertSourceFileAnalysisValue(AnalysisValue analysisValue) {
 		

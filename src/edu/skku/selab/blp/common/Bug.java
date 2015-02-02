@@ -8,7 +8,9 @@
 package edu.skku.selab.blp.common;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 /**
@@ -26,7 +28,7 @@ public class Bug {
     private TreeSet<String> fixedFiles;
     private String corpuses;
     private int	totalCorpusCount;
-    private String stackTraces;
+    private ArrayList<String> stackTraceClasses;
     
     public Bug() {
     	this.ID = "";
@@ -35,6 +37,7 @@ public class Bug {
     	this.summary = "";
     	this.description = "";
     	this.fixedFiles = new TreeSet<String>();
+    	this.stackTraceClasses = new ArrayList<String>();
     }
     
     public Bug(String ID, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
@@ -45,6 +48,7 @@ public class Bug {
     	this.summary = summary;
     	this.description = description;
     	this.fixedFiles = fixedFiles;
+    	stackTraceClasses = new ArrayList<String>();;
     }
     
     public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
@@ -55,6 +59,7 @@ public class Bug {
     	this.summary = summary;
     	this.description = description;
     	this.fixedFiles = fixedFiles;
+    	this.stackTraceClasses = new ArrayList<String>();
     }
 
     public String getID() {
@@ -132,20 +137,6 @@ public class Bug {
 	}
 
 	/**
-	 * @return the stackTraces
-	 */
-	public String getStackTraces() {
-		return stackTraces;
-	}
-
-	/**
-	 * @param stackTraces the stackTraces to set
-	 */
-	public void setStackTraces(String stackTraces) {
-		this.stackTraces = stackTraces;
-	}
-
-	/**
 	 * @return the productName
 	 */
 	public String getProductName() {
@@ -185,5 +176,23 @@ public class Bug {
 	 */
 	public void setTotalCorpusCount(int totalCorpusCount) {
 		this.totalCorpusCount = totalCorpusCount;
-	}    
+	}
+
+	/**
+	 * @return the stackTraceClasses
+	 */
+	public ArrayList<String> getStackTraceClasses() {
+		return stackTraceClasses;
+	}
+
+	/**
+	 * @param stackTraceClasses the stackTraceClasses to set
+	 */
+	public void setStackTraceClasses(ArrayList<String> stackTraceClasses) {
+		this.stackTraceClasses = stackTraceClasses;
+	}
+	
+	public void addStackTraceClass(String stackTraceClass) {
+		stackTraceClasses.add(stackTraceClass);
+	}
 }

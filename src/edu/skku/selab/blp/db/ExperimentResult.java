@@ -24,7 +24,6 @@ public class ExperimentResult {
 	private String algorithmName;
 	private String algorithmDescription;
 	private Date experimentDate;
-	private String experimentDateString;
 
 	/**
 	 * 
@@ -38,8 +37,7 @@ public class ExperimentResult {
 		productName = "";
 		algorithmName = "";
 		algorithmDescription = "";
-		setExperimentDate(new Date());
-		experimentDateString = "";
+		setExperimentDate(new Date(System.currentTimeMillis()));
 	}
 
 	/**
@@ -166,24 +164,20 @@ public class ExperimentResult {
 	 */
 	public void setExperimentDate(Date experimentDate) {
 		this.experimentDate = experimentDate;
-		
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		this.experimentDateString = simpleDateFormat.format(experimentDate);
 	}
 
 	/**
 	 * @return the experimentDateString
 	 */
 	public String getExperimentDateString() {
-		return experimentDateString;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return simpleDateFormat.format(experimentDate);
 	}
 
 	/**
 	 * @param experimentDateString the experimentDateString to set
 	 */
-	public void setExperimentDateString(String experimentDateString) {
-		this.experimentDateString = experimentDateString;
-		
+	public void setExperimentDate(String experimentDateString) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {

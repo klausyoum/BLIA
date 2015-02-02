@@ -10,6 +10,7 @@ package edu.skku.selab.blp.db.dao;
 import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,10 +40,14 @@ public class BugDAOTest {
 	private String productName = "BLIA";
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";
+	private String fixedDateString3 = "2015-01-27 02:48:00";
 	private String corpusSet1 = "acc contain constant us defin access";
 	private String corpusSet2 = "element listen event event result";
-	private String stackTraces1 = "edu.skku.selab.blia.java; edu.skku.selab.blia.java; ";
-	private String stackTraces2 = "org.blia.java; org.blia.java; ";
+	private String corpusSet3 = "event blia result";
+	private String stackTrace1 = "edu.skku.selab.blia";
+	private String stackTrace2 = "edu.skku.selab.blp";
+	private String stackTrace3 = "org.blia";
+	private String stackTrace4 = "org.blp";
 	private String corpus1 = "acc";
 	private String corpus2 = "element";
 	
@@ -89,19 +94,33 @@ public class BugDAOTest {
 		Date fixedDate1 = simpleDateFormat.parse(fixedDateString1);
 		bug1.setFixedDate(fixedDate1);
 		bug1.setCorpuses(corpusSet1);
-		bug1.setStackTraces(stackTraces1);
+		ArrayList<String> stackTraces1 = new ArrayList<String>();
+		stackTraces1.add(stackTrace1);
+		stackTraces1.add(stackTrace2);
+		bug1.setStackTraceClasses(stackTraces1);
+		
 		Bug bug2 = new Bug();
 		bug2.setID(bugID2);
 		bug2.setProductName(productName);
 		bug2.setFixedDate(fixedDateString2);
 		bug2.setCorpuses(corpusSet2);
-		bug2.setStackTraces(stackTraces2);
+		ArrayList<String> stackTraces2 = new ArrayList<String>();
+		stackTraces2.add(stackTrace3);
+		stackTraces2.add(stackTrace4);
+		bug2.setStackTraceClasses(stackTraces2);
+		
+		Bug bug3 = new Bug();
+		bug3.setID(bugID3);
+		bug3.setProductName(productName);
+		bug3.setFixedDate(fixedDateString3);
+		bug3.setCorpuses(corpusSet3);
 		
 		BugDAO bugDAO = new BugDAO();
 		
 		bugDAO.deleteAllBugs();
 		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug1));
 		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug2));
+		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug3));
 	}
 
 	/**
@@ -122,20 +141,23 @@ public class BugDAOTest {
 		assertEquals("productName is wrong.", productName, foundBug1.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug1.getFixedDateString());
 		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug1.getCorpuses());
-		assertEquals("stackTraces1 is wrong.", stackTraces1, foundBug1.getStackTraces());
+		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug1.getStackTraceClasses().get(0));
+		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug1.getStackTraceClasses().get(1));
 
 		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
 		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
 		assertEquals("fixedDateString2 is wrong.", fixedDateString2, foundBug2.getFixedDateString());
 		assertEquals("corpusSet2 is wrong.", corpusSet2, foundBug2.getCorpuses());
-		assertEquals("stackTraces2 is wrong.", stackTraces2, foundBug2.getStackTraces());
-
+		assertEquals("stackTrace3 is wrong.", stackTrace3, foundBug2.getStackTraceClasses().get(0));
+		assertEquals("stackTrace4 is wrong.", stackTrace4, foundBug2.getStackTraceClasses().get(1));
+		
 		Bug foundBug = bugDAO.getBug(bugID1, productName);
 		assertEquals("bugID1 is wrong.", bugID1, foundBug.getID());
 		assertEquals("productName is wrong.", productName, foundBug.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug.getFixedDateString());
 		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug.getCorpuses());
-		assertEquals("stackTraces1 is wrong.", stackTraces1, foundBug.getStackTraces());
+		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug.getStackTraceClasses().get(0));
+		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
 	}
 
 	@Test
@@ -265,6 +287,23 @@ public class BugDAOTest {
 		} else {
 			fail("SimilarBugInfo is wrong.");
 		}
+	}
+	
+	@Test
+	public void verifyGetStackTraceClasses() throws Exception {
+		BugDAO bugDAO = new BugDAO();
+
+		bugDAO.deleteAllStackTraceClasses();
+		String className1 = "edu.skku.blp.blia.className1";
+		String className2 = "edu.skku.blp.blia.className2";
+		assertNotEquals("StackTraceClass insertion failed!", BaseDAO.INVALID, bugDAO.insertStackTraceClass(bugID3, className1));
+		assertNotEquals("StackTraceClass insertion failed!", BaseDAO.INVALID, bugDAO.insertStackTraceClass(bugID3, className2));
+		
+		ArrayList<String> stackTraceClasses = bugDAO.getStackTraceClasses(bugID3);
+		assertEquals("stackTraceClasses count is wrong.", 2, stackTraceClasses.size());
+		
+		assertEquals("className1 is wrong.", className1, stackTraceClasses.get(0));
+		assertEquals("className2 is wrong.", className2, stackTraceClasses.get(1));		
 	}
 
 }

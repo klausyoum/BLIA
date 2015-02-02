@@ -65,6 +65,7 @@ public class SourceFileCorpusCreator {
 		corpus.setJavaFileFullClassName(fileName);
 		corpus.setContent((new StringBuilder(String.valueOf(sourceCodeContent)))
 				.append(" ").append(names).toString());
+		corpus.setImportedClasses(parser.getImportedClasses());
 		return corpus;
     }
 	
@@ -98,6 +99,7 @@ public class SourceFileCorpusCreator {
 				String corpusSet = corpus.getContent();
 				sourceFileDAO.insertSourceFile(fileName, productName);
 				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpusSet, totalCoupusCount, lengthScore);
+				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());
 				count++;
 			}

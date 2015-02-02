@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -90,6 +92,29 @@ public class BugCorpusCreator implements ICorpusCreator {
 			}
 		}
 	}
+	
+    public ArrayList<String> extractClassName(String content) {
+    	
+        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_][a-zA-Z0-9_\\-]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|Native Method|native method|Unkonwn Source|unknown source)\\))";
+        
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(content);
+        ArrayList<String> stackTraceClasses = new ArrayList<String>();
+        while (m.find()) {
+        	String foundLine = m.group();
+        	String methodName = foundLine.split("\\(")[0];
+        	
+        	String fileName = "";
+        	if (methodName.contains("$")) {
+        		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
+        	} else {
+        		fileName = methodName.substring(0, methodName.lastIndexOf("."));	
+        	}
+        	
+        	stackTraceClasses.add(fileName);
+        }
+        return stackTraceClasses;
+    }
 
 	private ArrayList<Bug> parseXML() {
 		ArrayList<Bug> list = new ArrayList<Bug>();
@@ -127,6 +152,7 @@ public class BugCorpusCreator implements ICorpusCreator {
 										if (_n.getNodeName().equals("description")) {
 											String description = _n.getTextContent();
 											bug.setDescription(description);
+											bug.setStackTraceClasses(extractClassName(description));
 										}
 									}
 								}

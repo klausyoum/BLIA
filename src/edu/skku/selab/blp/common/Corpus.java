@@ -7,6 +7,8 @@
  */
 package edu.skku.selab.blp.common;
 
+import java.util.ArrayList;
+
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
@@ -15,6 +17,7 @@ public class Corpus {
 	private String javaFileFullClassName;
 	private String javaFilePath;
 	private String content;
+	private ArrayList<String> importedClasses;
 
 	public Corpus() {
 	}
@@ -41,5 +44,19 @@ public class Corpus {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	/**
+	 * @return the importedClasses
+	 */
+	public ArrayList<String> getImportedClasses() {
+		return importedClasses;
+	}
+
+	/**
+	 * @param importedClasses the importedClasses to set
+	 */
+	public void setImportedClasses(ArrayList<String> importedClasses) {
+		this.importedClasses = importedClasses;
 	}
 }

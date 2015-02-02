@@ -14,6 +14,8 @@ package edu.skku.selab.blp.blia.analysis;
  */
 public class StackTraceAnalyzer {
 	
+	
+	// TODO: Stacktrace와 import 파일의 정보를 분석하여, BoostScore 계산~!ㅊ
 	public void analyze() throws Exception {
 		
 	}

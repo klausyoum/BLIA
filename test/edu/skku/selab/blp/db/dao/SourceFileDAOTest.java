@@ -10,8 +10,10 @@ package edu.skku.selab.blp.db.dao;
 import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -36,6 +38,7 @@ public class SourceFileDAOTest {
 	private String releaseDate2 = "2014-02-12 07:12:00";
 	private String corpus1 = "acc";
 	private String corpus2 = "element";
+	private double delta = 0.00001;
 
 
 	/**
@@ -43,8 +46,6 @@ public class SourceFileDAOTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
 	}
 
 	/**
@@ -52,7 +53,6 @@ public class SourceFileDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -60,6 +60,10 @@ public class SourceFileDAOTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
+		
+		prepareTestingData();
 	}
 
 	/**
@@ -67,10 +71,10 @@ public class SourceFileDAOTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		BaseDAO.closeConnection();
 	}
-
-	@Test
-	public void verifyGetSourceFileAnalysisValue() throws Exception {
+	
+	private void prepareTestingData() throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		
 		sourceFileDAO.deleteAllSourceFiles();
@@ -95,26 +99,33 @@ public class SourceFileDAOTest {
 		sourceFileDAO.deleteAllCorpusSets();
 		String corpusSet1 = "acc contain constant us defin access";
 		String corpusSet2 = "element listen event event result";
+		String corpusSet3 = "blia constant defin";
 		int totalCorpusCount1 = 5;
 		int totalCorpusCount2 = 34;
+		int totalCorpusCount3 = 867;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		double delta = 0.00001;
+		double lengthScore3 = 0.738;
 		assertNotEquals("fileName1's corpusSet insertion failed!", BaseDAO.INVALID, 
 				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1));
 		assertNotEquals("fileName1's corpusSet insertion failed!", BaseDAO.INVALID,
 				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2));
+		assertNotEquals("fileName2's corpusSet insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpusSet3, totalCorpusCount3, lengthScore3));
 		
-		assertEquals("Source file count is WRONG!", 1, sourceFileDAO.getSourceFileCount(productName, version1));
+		
+		assertEquals("Source file count is WRONG!", 2, sourceFileDAO.getSourceFileCount(productName, version1));
 		assertEquals("Source file count is WRONG!", 1, sourceFileDAO.getSourceFileCount(productName, version2));
 		
 		HashMap<String, String> corpusSets = sourceFileDAO.getCorpusSets(productName, version1);
-		assertEquals("corpusSets size is wrong.", 1, corpusSets.size());
+		assertEquals("corpusSets size is wrong.", 2, corpusSets.size());
 		assertEquals("corpusSet1 is NOT same!", corpusSet1, corpusSets.get(fileName1));
+		assertEquals("corpusSet1 is NOT same!", corpusSet3, corpusSets.get(fileName2));
 		
 		HashMap<String, Double> lengthScores = sourceFileDAO.getLengthScores(productName, version1);
-		assertEquals("lengthScores size is wrong.", 1, lengthScores.size());
+		assertEquals("lengthScores size is wrong.", 2, lengthScores.size());
 		assertEquals("lengthScore1 is NOT same!", lengthScore1, lengthScores.get(fileName1), delta);
+		assertEquals("lengthScore1 is NOT same!", lengthScore3, lengthScores.get(fileName2), delta);
 
 		sourceFileDAO.deleteAllCorpuses();
 		assertNotEquals("corpus1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpus(corpus1, productName));
@@ -124,7 +135,12 @@ public class SourceFileDAOTest {
 		assertEquals("corpuses size is wrong.", 2, corpuses.size());
 		assertNotNull("corpus1 can't be found.", corpuses.get(corpus1));
 		assertNotNull("corpus2 can't be found.", corpuses.get(corpus2));
-	
+	}
+
+	@Test
+	public void verifyGetSourceFileAnalysisValue() throws Exception {
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		
 		sourceFileDAO.deleteAllAnalysisValues();
 		int termCount = 5;
 		int idvDocCount = 20;
@@ -145,6 +161,33 @@ public class SourceFileDAOTest {
 		assertEquals("tf is wrong.", tf, returnValue.getTf(), delta);
 		assertEquals("idf is wrong.", idf, returnValue.getIdf(), delta);
 		assertEquals("vector is wrong.", vector, returnValue.getVector(), delta);
+	}
+	
+	@Test
+	public void verifyGetImportedClasses() throws Exception {
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		
+		String importedClass1 = "edu.skku.blia.class1";
+		String importedClass2 = "edu.skku.blia.class2";
+		String importedClass3 = "edu.skku.blia.class2";
+		
+		sourceFileDAO.deleteAllImportedClasses();
+		ArrayList<String> importedClasses = new ArrayList<String>();
+		importedClasses.add(importedClass1);
+		importedClasses.add(importedClass2);
+		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(fileName1, productName, version1, importedClasses));
+		importedClasses = new ArrayList<String>();
+		importedClasses.add(importedClass3);
+		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(fileName2, productName, version1, importedClasses));
+		
+		HashMap<String, ArrayList<String>> importedClassesMap = sourceFileDAO.getImportedClasses(productName, version1);
+		assertEquals("importedClassesMap size is wrong.", 2, importedClassesMap.size());
+
+		importedClasses = importedClassesMap.get(fileName1);
+		assertTrue(importedClasses.contains(importedClass1) && importedClasses.contains(importedClass2));
+
+		importedClasses = importedClassesMap.get(fileName2);
+		assertTrue(importedClasses.contains(importedClass3));
 	}
 
 }

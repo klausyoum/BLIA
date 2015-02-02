@@ -8,6 +8,9 @@
 package edu.skku.selab.blp.common;
 
 import java.io.File;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -57,8 +60,7 @@ public class FileParser {
 		int j = (as = tokensInSourceCode).length;
 		for (int i = 0; i < j; i++) {
 			String token = as[i];
-			sourceCodeContentBuffer.append((new StringBuilder(String
-					.valueOf(token))).append(" ").toString());
+			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
 		}
 
 		String content = sourceCodeContentBuffer.toString().toLowerCase();
@@ -73,8 +75,7 @@ public class FileParser {
 
 	public String getPackageName() {
 		return compilationUnit.getPackage() != null ?
-				compilationUnit.getPackage().getName().getFullyQualifiedName() :
-					"";
+				compilationUnit.getPackage().getName().getFullyQualifiedName() : "";
 	}
 
 	private String getAllMethodName() {
@@ -136,13 +137,29 @@ public class FileParser {
 			}
 		});
 		
-		compilationUnit.accept(new ASTVisitor() {
-			public boolean visit(ImportDeclaration node) {
-				node.delete();
-				return super.visit(node);
-			}
-		});
+//		compilationUnit.accept(new ASTVisitor() {
+//			public boolean visit(ImportDeclaration node) {
+//				node.delete();
+//				return super.visit(node);
+//			}
+//		});
 		
 		return compilationUnit.toString();
 	}
+	
+    public ArrayList<String> getImportedClasses()
+    {
+    	final ArrayList<String> importedClasses = new ArrayList<String>();
+    	
+    	compilationUnit.accept(new ASTVisitor() {
+            public boolean visit(ImportDeclaration node)
+            {
+//            	System.out.printf("imported Node: %s\n", node.getName().toString());
+            	importedClasses.add(node.getName().toString());
+                return super.visit(node);
+            }
+    	});
+    	
+    	return importedClasses;
+    }
 }

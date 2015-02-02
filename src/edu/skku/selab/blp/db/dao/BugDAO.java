@@ -10,6 +10,7 @@ package edu.skku.selab.blp.db.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.h2.api.ErrorCode;
 import org.h2.jdbc.JdbcSQLException;
@@ -33,7 +34,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, TOT_CNT, STRACE_SET) VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, TOT_CNT) VALUES (?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		// releaseDate format : "2004-10-18 17:40:00"
@@ -44,9 +45,15 @@ public class BugDAO extends BaseDAO {
 			ps.setString(3, bug.getFixedDateString());
 			ps.setString(4, bug.getCorpuses());
 			ps.setInt(5, bug.getTotalCorpusCount());
-			ps.setString(6, bug.getStackTraces());
 			
 			returnValue = ps.executeUpdate();
+			
+			ArrayList<String> stackTraceClasses = bug.getStackTraceClasses();
+			if (null != stackTraceClasses) {
+				for (int i = 0; i < stackTraceClasses.size(); i++) {
+					insertStackTraceClass(bug.getID(), stackTraceClasses.get(i));				
+				}
+			}
 		} catch (JdbcSQLException e) {
 			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
 				e.printStackTrace();
@@ -77,20 +84,29 @@ public class BugDAO extends BaseDAO {
 	public HashMap<String, Bug> getBugs() {
 		HashMap<String, Bug> bugs = new HashMap<String, Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, STRACE_SET FROM BUG_INFO";
+		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET FROM BUG_INFO";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			
+			Bug bug = null;
+			String bugID = "";
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Bug bug = new Bug();
-				bug.setID(rs.getString("BUG_ID"));
+				bug = new Bug();
+				bugID = rs.getString("BUG_ID"); 
+				bug.setID(bugID);
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
-				bug.setStackTraces(rs.getString("STRACE_SET"));
-				bugs.put(rs.getString("BUG_ID"), bug);
+				bugs.put(bugID, bug);
+			}
+			
+			Iterator<String> bugsIter = bugs.keySet().iterator();
+			while (bugsIter.hasNext()) {
+				bugID = bugsIter.next();
+				bug = bugs.get(bugID);
+				bug.setStackTraceClasses(getStackTraceClasses(bugID));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,7 +118,7 @@ public class BugDAO extends BaseDAO {
 	public ArrayList<Bug> getBugs(String productName, boolean orderedByFixedDate) {
 		ArrayList<Bug> bugs = new ArrayList<Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, STRACE_SET FROM BUG_INFO " +
+		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET FROM BUG_INFO " +
 				"WHERE PROD_NAME = ? ";
 		
 		if (orderedByFixedDate) {
@@ -113,15 +129,22 @@ public class BugDAO extends BaseDAO {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, productName);
 			
+			Bug bug = null;
+			String bugID = "";
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Bug bug = new Bug();
-				bug.setID(rs.getString("BUG_ID"));
+				bug = new Bug();
+				bugID = rs.getString("BUG_ID"); 
+				bug.setID(bugID);
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
-				bug.setStackTraces(rs.getString("STRACE_SET"));
 				bugs.add(bug);
+			}
+			
+			for (int i = 0; i < bugs.size(); i++) {
+				bug = bugs.get(i);
+				bug.setStackTraceClasses(getStackTraceClasses(bug.getID()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,7 +153,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public Bug getBug(String bugID, String productName) {
-		String sql = "SELECT FIXED_DATE, COR_SET, STRACE_SET FROM BUG_INFO WHERE BUG_ID = ? AND PROD_NAME = ?";
+		String sql = "SELECT FIXED_DATE, COR_SET FROM BUG_INFO WHERE BUG_ID = ? AND PROD_NAME = ?";
 		Bug bug = null;
 		
 		try {
@@ -145,8 +168,9 @@ public class BugDAO extends BaseDAO {
 				bug.setProductName(productName);
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
-				bug.setStackTraces(rs.getString("STRACE_SET"));
 			}
+			
+			bug.setStackTraceClasses(getStackTraceClasses(bugID));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -304,6 +328,72 @@ public class BugDAO extends BaseDAO {
 			e.printStackTrace();
 		}
 		return returnValue;	
+	}
+	
+	public int insertStackTraceClass(String bugID, String className) {
+		String sql = "INSERT INTO BUG_STRACE_INFO (BUG_ID, STRACE_CLASS) VALUES (?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, bugID);
+			ps.setString(2, className);
+			
+			returnValue = ps.executeUpdate();
+		} catch (JdbcSQLException e) {
+			e.printStackTrace();
+			
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int deleteAllStackTraceClasses() {
+		String sql = "DELETE FROM BUG_STRACE_INFO";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+
+	public ArrayList<String> getStackTraceClasses(String bugID) {
+		ArrayList<String> stackTraceClasses = null;
+
+		String sql = "SELECT STRACE_CLASS "+
+				"FROM BUG_STRACE_INFO " +
+				"WHERE BUG_ID = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, bugID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == stackTraceClasses) {
+					stackTraceClasses = new ArrayList<String>();
+				}
+				
+				stackTraceClasses.add(rs.getString("STRACE_CLASS"));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return stackTraceClasses;
 	}
 	
 	public int insertBugSfAnalysisValue(AnalysisValue analysisValue) {
