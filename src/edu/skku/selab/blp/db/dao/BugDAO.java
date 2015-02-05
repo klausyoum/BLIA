@@ -403,7 +403,7 @@ public class BugDAO extends BaseDAO {
 	public int insertBugSfAnalysisValue(AnalysisValue analysisValue) {
 		int corpusID = getSfCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
 		
-		String sql = "INSERT INTO BUG_SF_ANALYSIS (BUG_ID, SF_COR_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
+		String sql = "INSERT INTO BUG_SF_VEC (BUG_ID, SF_COR_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
 				"VALUES (?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
@@ -426,7 +426,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int deleteAllBugSfAnalysisValues() {
-		String sql = "DELETE FROM BUG_SF_ANALYSIS";
+		String sql = "DELETE FROM BUG_SF_VEC";
 		int returnValue = INVALID;
 		
 		try {
@@ -444,7 +444,7 @@ public class BugDAO extends BaseDAO {
 		AnalysisValue returnValue = null;
 
 		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF, C.VEC "+
-				"FROM BUG_INFO A, SF_COR_INFO B, BUG_SF_ANALYSIS C " +
+				"FROM BUG_INFO A, SF_COR_INFO B, BUG_SF_VEC C " +
 				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND " +
 				"B.COR = ? AND " +
 				"B.PROD_NAME = ? AND B.SF_COR_ID = C.SF_COR_ID";
@@ -503,7 +503,7 @@ public class BugDAO extends BaseDAO {
 			corpusID = getBugCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
 		}
 		
-		String sql = "INSERT INTO BUG_ANALYSIS (BUG_ID, BUG_COR_ID, VEC) " +
+		String sql = "INSERT INTO BUG_VEC (BUG_ID, BUG_COR_ID, VEC) " +
 				"VALUES (?, ?, ?)";
 		int returnValue = INVALID;
 		
@@ -522,7 +522,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int deleteAllBugAnalysisValues() {
-		String sql = "DELETE FROM BUG_ANALYSIS";
+		String sql = "DELETE FROM BUG_VEC";
 		int returnValue = INVALID;
 		
 		try {
@@ -540,7 +540,7 @@ public class BugDAO extends BaseDAO {
 		AnalysisValue returnValue = null;
 
 		String sql = "SELECT C.VEC "+
-				"FROM BUG_INFO A, BUG_COR_INFO B, BUG_ANALYSIS C " +
+				"FROM BUG_INFO A, BUG_COR_INFO B, BUG_VEC C " +
 				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND "+
 				"A.BUG_ID = C.BUG_ID AND B.COR = ? AND B.BUG_COR_ID = C.BUG_COR_ID";
 		
@@ -573,7 +573,7 @@ public class BugDAO extends BaseDAO {
 		AnalysisValue returnValue = null;
 
 		String sql = "SELECT B.COR, C.BUG_COR_ID, C.VEC "+
-				"FROM BUG_COR_INFO B, BUG_ANALYSIS C " +
+				"FROM BUG_COR_INFO B, BUG_VEC C " +
 				"WHERE C.BUG_ID = ? AND B.BUG_COR_ID = C.BUG_COR_ID ORDER BY C.BUG_COR_ID";
 		
 		try {
@@ -751,7 +751,7 @@ public class BugDAO extends BaseDAO {
 //	}
 	
 	public int insertSimilarBugInfo(String bugID, String similarBugID, double similarityScore) {
-		String sql = "INSERT INTO SIMI_BUG_INFO (BUG_ID, SIMI_BUG_ID, SIMI_BUG_SCORE) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO SIMI_BUG_ANAYSIS (BUG_ID, SIMI_BUG_ID, SIMI_BUG_SCORE) VALUES (?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
@@ -769,7 +769,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int deleteAllSimilarBugInfo() {
-		String sql = "DELETE FROM SIMI_BUG_INFO";
+		String sql = "DELETE FROM SIMI_BUG_ANAYSIS";
 		int returnValue = INVALID;
 		
 		try {
@@ -786,7 +786,7 @@ public class BugDAO extends BaseDAO {
 	public HashSet<SimilarBugInfo> getSimilarBugInfos(String bugID) {
 		HashSet<SimilarBugInfo> similarBugInfos = null;
 
-		String sql = "SELECT SIMI_BUG_ID, SIMI_BUG_SCORE FROM SIMI_BUG_INFO " + 
+		String sql = "SELECT SIMI_BUG_ID, SIMI_BUG_SCORE FROM SIMI_BUG_ANAYSIS " + 
 				"WHERE BUG_ID = ?";
 		
 		try {

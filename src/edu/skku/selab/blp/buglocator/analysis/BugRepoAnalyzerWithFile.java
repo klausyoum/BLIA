@@ -78,9 +78,10 @@ public class BugRepoAnalyzerWithFile {
 						String name = (String) fileSetIt.next();
 						Integer fileId = (Integer) idTable.get(name);
 						if (null == fileId) {
-							System.err.println(name);
+							System.err.printf("WRONG fixed file name: %s\n", name);
+						} else {
+							similarValues[fileId.intValue()] += singleValue;
 						}
-						similarValues[fileId.intValue()] += singleValue;
 					}
 				}
 			}
@@ -226,7 +227,7 @@ public class BugRepoAnalyzerWithFile {
 	}
 
 	/**
-	 * [Duplicated] Get file ID table from ClassName.txt
+	 * Get file ID table from ClassName.txt
 	 * 
 	 * @return <fileName, ID>
 	 * @throws IOException

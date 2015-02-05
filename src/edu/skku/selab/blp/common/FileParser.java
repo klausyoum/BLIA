@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.common;
 
 import java.io.File;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.FieldDeclaration;
 
 import edu.skku.selab.blp.utils.Splitter;
 
@@ -83,10 +83,10 @@ public class FileParser {
 		for (int i = 0; i < compilationUnit.types().size(); i++) {
 			TypeDeclaration type = (TypeDeclaration) compilationUnit.types().get(i);
 			MethodDeclaration methodDecls[] = type.getMethods();
-			MethodDeclaration amethoddeclaration[];
-			int k = (amethoddeclaration = methodDecls).length;
+			MethodDeclaration methodDeclaration[];
+			int k = (methodDeclaration = methodDecls).length;
 			for (int j = 0; j < k; j++) {
-				MethodDeclaration methodDecl = amethoddeclaration[j];
+				MethodDeclaration methodDecl = methodDeclaration[j];
 				String methodName = methodDecl.getName().getFullyQualifiedName();
 				methodNameList.add(methodName);
 			}
@@ -102,7 +102,7 @@ public class FileParser {
 
 		return allMethodName.trim();
 	}
-
+	
 	private String getAllClassName() {
 		ArrayList<String> classNameList = new ArrayList<String>();
 		for (int i = 0; i < compilationUnit.types().size(); i++) {
@@ -137,12 +137,12 @@ public class FileParser {
 			}
 		});
 		
-//		compilationUnit.accept(new ASTVisitor() {
-//			public boolean visit(ImportDeclaration node) {
-//				node.delete();
-//				return super.visit(node);
-//			}
-//		});
+		compilationUnit.accept(new ASTVisitor() {
+			public boolean visit(ImportDeclaration node) {
+				node.delete();
+				return super.visit(node);
+			}
+		});
 		
 		return compilationUnit.toString();
 	}

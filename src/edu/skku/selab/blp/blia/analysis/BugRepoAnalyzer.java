@@ -96,7 +96,7 @@ public class BugRepoAnalyzer {
 		BugDAO bugDAO = new BugDAO();
 		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
 		
-		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectorWithDB();
+		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVector();
 		
         for(int i = 0; i < bugs.size(); i++) {
         	String firstBugID = bugs.get(i).getID();
@@ -173,7 +173,7 @@ public class BugRepoAnalyzer {
 	 * @return <bug ID, <Corpus ID, AnalysisValue>> 
 	 * @throws IOException
 	 */
-	public HashMap<String, ArrayList<AnalysisValue>> getVectorWithDB() throws Exception {
+	public HashMap<String, ArrayList<AnalysisValue>> getVector() throws Exception {
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
 		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();

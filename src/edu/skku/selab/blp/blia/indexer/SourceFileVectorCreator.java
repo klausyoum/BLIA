@@ -43,6 +43,11 @@ public class SourceFileVectorCreator {
 				Integer totalTermCount = totalCorpusLengths.get(fileName);
 				
 				HashMap<String, AnalysisValue> analysisVaules = sourceFileDAO.getSourceFileAnalysisValues(productName, fileName, version);
+				
+				if (analysisVaules == null) {
+					System.out.printf("Wrong file name: %s\n", fileName);
+					continue;
+				}
 
 				double norm = 0.0D;
 				Iterator<String> analysisVaulesIter = analysisVaules.keySet().iterator();

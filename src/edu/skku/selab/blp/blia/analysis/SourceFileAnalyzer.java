@@ -171,6 +171,11 @@ public class SourceFileAnalyzer {
 			double vsmScore = 0.0;
 			// corpus, analysisValue
 			HashMap<String, AnalysisValue> codeVectors = sourceFileDAO.getSourceFileAnalysisValues(sourceFileVersionID);
+			if (codeVectors == null) {
+//				System.err.printf("Wrong source file version ID: %d\n", sourceFileVersionID);
+				continue;
+			}
+			
 			Iterator<String> codeVectorsIter = codeVectors.keySet().iterator();
 			while (codeVectorsIter.hasNext()) {
 				String corpus = codeVectorsIter.next();

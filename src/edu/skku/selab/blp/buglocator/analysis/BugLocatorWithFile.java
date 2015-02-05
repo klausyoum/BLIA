@@ -94,9 +94,18 @@ public class BugLocatorWithFile {
 			Hashtable fileIdTable = new Hashtable();
 			String fileName;
 			Integer fileId;
-			for (; fileIt.hasNext(); fileIdTable.put(fileId, fileName)) {
+//			for (; fileIt.hasNext(); fileIdTable.put(fileId, fileName)) {
+//				fileName = (String) fileIt.next();
+//				fileId = (Integer) idTable.get(fileName);
+//			}
+			
+			while (fileIt.hasNext()) {
 				fileName = (String) fileIt.next();
 				fileId = (Integer) idTable.get(fileName);
+				
+				if (fileId != null) {
+					fileIdTable.put(fileId, fileName);
+				}
 			}
 
 			for (int i = 0; i < sort.length; i++) {
@@ -107,7 +116,7 @@ public class BugLocatorWithFile {
 					}
 					writer.write((new StringBuilder()).append(vsmId).append(",")
 							.append((String) fileIdTable.get(Integer.valueOf(rank.id))).append(",")
-//							.append(i).append(",")
+							.append(i).append(",")
 							.append(rank.rank).append(lineSparator).toString());
 					writer.flush();
 				}

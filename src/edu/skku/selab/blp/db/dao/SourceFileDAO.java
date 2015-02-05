@@ -640,7 +640,7 @@ public class SourceFileDAO extends BaseDAO {
 				analysisValue.getProductName(), analysisValue.getVersion());
 		int corpusID = getCorpusID(analysisValue.getCorpus(), analysisValue.getProductName());
 		
-		String sql = "INSERT INTO SF_ANALYSIS (SF_VER_ID, SF_COR_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
+		String sql = "INSERT INTO SF_VEC (SF_VER_ID, SF_COR_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
 				"VALUES (?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
@@ -663,7 +663,7 @@ public class SourceFileDAO extends BaseDAO {
 	}
 	
 	public int updateSourceFileAnalysisValue(AnalysisValue analysisValue) {
-		String sql = "UPDATE SF_ANALYSIS SET TERM_CNT = ?, INV_DOC_CNT = ?, TF = ?, IDF = ?, VEC = ? " +
+		String sql = "UPDATE SF_VEC SET TERM_CNT = ?, INV_DOC_CNT = ?, TF = ?, IDF = ?, VEC = ? " +
 				"WHERE SF_VER_ID = ? AND SF_COR_ID = ?";
 		int returnValue = INVALID;
 		
@@ -686,7 +686,7 @@ public class SourceFileDAO extends BaseDAO {
 	}
 	
 	public int deleteAllAnalysisValues() {
-		String sql = "DELETE FROM SF_ANALYSIS";
+		String sql = "DELETE FROM SF_VEC";
 		int returnValue = INVALID;
 		
 		try {
@@ -705,7 +705,7 @@ public class SourceFileDAO extends BaseDAO {
 		AnalysisValue returnValue = null;
 
 		String sql = "SELECT D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_INFO A, SF_VER_INFO B, SF_COR_INFO C, SF_ANALYSIS D " +
+				"FROM SF_INFO A, SF_VER_INFO B, SF_COR_INFO C, SF_VEC D " +
 				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
 				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND C.COR = ? AND " +
 				"C.PROD_NAME = ? AND C.SF_COR_ID = D.SF_COR_ID";
@@ -745,7 +745,7 @@ public class SourceFileDAO extends BaseDAO {
 		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
 
 		String sql = "SELECT C.COR, D.SF_VER_ID, D.SF_COR_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_INFO A, SF_VER_INFO B, SF_COR_INFO C, SF_ANALYSIS D " +
+				"FROM SF_INFO A, SF_VER_INFO B, SF_COR_INFO C, SF_VEC D " +
 				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
 				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND " +
 				"C.PROD_NAME = ? AND C.SF_COR_ID = D.SF_COR_ID";
@@ -792,7 +792,7 @@ public class SourceFileDAO extends BaseDAO {
 		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
 
 		String sql = "SELECT C.COR, D.SF_VER_ID, D.SF_COR_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_COR_INFO C, SF_ANALYSIS D " +
+				"FROM SF_COR_INFO C, SF_VEC D " +
 				"WHERE D.SF_VER_ID = ? AND C.SF_COR_ID = D.SF_COR_ID";
 		
 		try {

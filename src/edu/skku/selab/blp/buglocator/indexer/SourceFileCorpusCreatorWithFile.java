@@ -17,7 +17,6 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Corpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
-import edu.skku.selab.blp.indexer.ICorpusCreator;
 import edu.skku.selab.blp.utils.Stem;
 import edu.skku.selab.blp.utils.Stopword;
 
@@ -25,12 +24,11 @@ import edu.skku.selab.blp.utils.Stopword;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SourceFileCorpusCreatorWithFile implements ICorpusCreator {
+public class SourceFileCorpusCreatorWithFile {
 
 	/* (non-Javadoc)
 	 * @see edu.skku.selab.blia.indexer.ICorpus#create()
 	 */
-	@Override
 	public void create() throws IOException {
 		Property property = Property.getInstance();
 		FileDetector detector = new FileDetector("java");

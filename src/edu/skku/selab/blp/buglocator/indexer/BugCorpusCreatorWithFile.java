@@ -30,7 +30,6 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.indexer.ICorpusCreator;
 import edu.skku.selab.blp.utils.Splitter;
 import edu.skku.selab.blp.utils.Stem;
 import edu.skku.selab.blp.utils.Stopword;
@@ -41,7 +40,7 @@ import edu.skku.selab.blp.utils.Stopword;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class BugCorpusCreatorWithFile implements ICorpusCreator {
+public class BugCorpusCreatorWithFile {
 	
 	final private String SORTED_BUG_ID_FILE = "SortedId.txt";
 	final private String FIXED_SOURCE_FILE_LINK = "FixLink.txt";
@@ -49,7 +48,6 @@ public class BugCorpusCreatorWithFile implements ICorpusCreator {
 	/* (non-Javadoc)
 	 * @see edu.skku.selab.blia.indexer.ICorpus#create()
 	 */
-	@Override
 	public void create() throws IOException {
 		Property property = Property.getInstance();
 		String dirPath = (new StringBuilder(String.valueOf(property.getWorkDir())))
@@ -213,6 +211,20 @@ public class BugCorpusCreatorWithFile implements ICorpusCreator {
 										Node _n = _l.item(j);
 										if (_n.getNodeName().equals("file")) {
 											String fileName = _n.getTextContent();
+											
+											String checkingString = "org.aspectj/modules/"; 
+											if (fileName.contains(checkingString)) {
+												fileName = fileName.substring(checkingString.length(), fileName.length());
+												fileName = fileName.replace('/', '.');
+												
+												int index = fileName.lastIndexOf("org.");
+												if (index > 0) {
+													fileName = fileName.substring(index, fileName.length());
+												}
+												
+												System.err.printf("fixed file name: %s\n", fileName);
+											}
+
 											bug.addFixedFile(fileName);
 										}
 									}

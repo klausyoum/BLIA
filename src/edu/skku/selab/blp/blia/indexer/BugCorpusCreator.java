@@ -29,7 +29,6 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.indexer.ICorpusCreator;
 import edu.skku.selab.blp.utils.Splitter;
 import edu.skku.selab.blp.utils.Stem;
 import edu.skku.selab.blp.utils.Stopword;
@@ -40,16 +39,15 @@ import edu.skku.selab.blp.utils.Stopword;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class BugCorpusCreator implements ICorpusCreator {
+public class BugCorpusCreator {
 	
 	/* (non-Javadoc)
 	 * @see edu.skku.selab.blia.indexer.ICorpus#create()
 	 */
-	@Override
-	public void create() throws Exception {
+	public void create(boolean stackTraceAnalysis) throws Exception {
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
-		ArrayList<Bug> list = parseXML();
+		ArrayList<Bug> list = parseXML(stackTraceAnalysis);
 		property.setBugReportCount(list.size());
 
 		BugDAO bugDAO = new BugDAO();
@@ -95,7 +93,7 @@ public class BugCorpusCreator implements ICorpusCreator {
 	
     public ArrayList<String> extractClassName(String content) {
     	
-        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_][a-zA-Z0-9_\\-]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|Native Method|native method|Unkonwn Source|unknown source)\\))";
+        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_][a-zA-Z0-9_\\-$]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|Native Method|native method|Unkonwn Source|unknown source)\\))";
         
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(content);
@@ -108,6 +106,9 @@ public class BugCorpusCreator implements ICorpusCreator {
         	if (methodName.contains("$")) {
         		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
         	} else {
+        		if (-1 == methodName.lastIndexOf(".")) {
+        			System.out.printf("Wrong stack trace: %s\n", methodName);
+        		}
         		fileName = methodName.substring(0, methodName.lastIndexOf("."));	
         	}
         	
@@ -116,7 +117,7 @@ public class BugCorpusCreator implements ICorpusCreator {
         return stackTraceClasses;
     }
 
-	private ArrayList<Bug> parseXML() {
+	private ArrayList<Bug> parseXML(boolean stackTraceAnalysis) {
 		ArrayList<Bug> list = new ArrayList<Bug>();
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		Property property = Property.getInstance();
@@ -152,7 +153,10 @@ public class BugCorpusCreator implements ICorpusCreator {
 										if (_n.getNodeName().equals("description")) {
 											String description = _n.getTextContent();
 											bug.setDescription(description);
-											bug.setStackTraceClasses(extractClassName(description));
+											
+											if (stackTraceAnalysis) {
+												bug.setStackTraceClasses(extractClassName(description));
+											}
 										}
 									}
 								}
@@ -162,6 +166,19 @@ public class BugCorpusCreator implements ICorpusCreator {
 										Node _n = _l.item(j);
 										if (_n.getNodeName().equals("file")) {
 											String fileName = _n.getTextContent();
+											
+											String checkingString = "org.aspectj/modules/"; 
+											if (fileName.contains(checkingString)) {
+												fileName = fileName.substring(checkingString.length(), fileName.length());
+												fileName = fileName.replace('/', '.');
+												
+												int index = fileName.lastIndexOf("org.");
+												if (index > 0) {
+													fileName = fileName.substring(index, fileName.length());
+												}
+												
+												System.err.printf("fixed file name: %s\n", fileName);
+											}
 											bug.addFixedFile(fileName);
 										}
 									}
