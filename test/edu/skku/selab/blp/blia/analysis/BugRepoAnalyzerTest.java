@@ -103,7 +103,6 @@ public class BugRepoAnalyzerTest {
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		sourceFileAnalyzer.analyze(version);
-
 		
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();

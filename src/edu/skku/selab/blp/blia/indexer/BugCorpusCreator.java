@@ -169,6 +169,9 @@ public class BugCorpusCreator implements ICorpusCreator {
 							}
 						}
 						
+						// TODO: set version with default version because there is not affected version for the bug.
+						bug.setVersion(SourceFileDAO.DEFAULT_VERSION_STRING);
+						
 						list.add(bug);
 					}
 				}

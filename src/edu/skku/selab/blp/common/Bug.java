@@ -28,36 +28,30 @@ public class Bug {
     private TreeSet<String> fixedFiles;
     private String corpuses;
     private int	totalCorpusCount;
+    private String version;
     private ArrayList<String> stackTraceClasses;
     
     public Bug() {
     	this.ID = "";
+    	this.productName = "";
     	this.openDateString = "";
     	this.fixedDate = new Date(System.currentTimeMillis());
     	this.summary = "";
     	this.description = "";
+    	this.version = "";
     	this.fixedFiles = new TreeSet<String>();
     	this.stackTraceClasses = new ArrayList<String>();
+
     }
     
-    public Bug(String ID, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
-    	this.ID = ID;
-    	this.productName = "";
-    	this.openDateString = openDateString;
-    	setFixedDate(fixedDateString);
-    	this.summary = summary;
-    	this.description = description;
-    	this.fixedFiles = fixedFiles;
-    	stackTraceClasses = new ArrayList<String>();;
-    }
-    
-    public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, TreeSet<String> fixedFiles) {
+    public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, String version, TreeSet<String> fixedFiles) {
     	this.ID = ID;
     	this.productName = productName;
     	this.openDateString = openDateString;
     	setFixedDate(fixedDateString);
     	this.summary = summary;
     	this.description = description;
+    	this.version = version;
     	this.fixedFiles = fixedFiles;
     	this.stackTraceClasses = new ArrayList<String>();
     }
@@ -194,5 +188,19 @@ public class Bug {
 	
 	public void addStackTraceClass(String stackTraceClass) {
 		stackTraceClasses.add(stackTraceClass);
+	}
+
+	/**
+	 * @return the version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * @param version the version to set
+	 */
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

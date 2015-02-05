@@ -50,6 +50,7 @@ public class BugDAOTest {
 	private String stackTrace4 = "org.blp";
 	private String corpus1 = "acc";
 	private String corpus2 = "element";
+	private String version = "v1.0";
 	
 	private int termCount = 10;
 	private int idc = 32;
@@ -98,6 +99,7 @@ public class BugDAOTest {
 		stackTraces1.add(stackTrace1);
 		stackTraces1.add(stackTrace2);
 		bug1.setStackTraceClasses(stackTraces1);
+		bug1.setVersion(version);
 		
 		Bug bug2 = new Bug();
 		bug2.setID(bugID2);
@@ -108,12 +110,14 @@ public class BugDAOTest {
 		stackTraces2.add(stackTrace3);
 		stackTraces2.add(stackTrace4);
 		bug2.setStackTraceClasses(stackTraces2);
+		bug2.setVersion(version);
 		
 		Bug bug3 = new Bug();
 		bug3.setID(bugID3);
 		bug3.setProductName(productName);
 		bug3.setFixedDate(fixedDateString3);
 		bug3.setCorpuses(corpusSet3);
+		bug3.setVersion(version);
 		
 		BugDAO bugDAO = new BugDAO();
 		
@@ -143,6 +147,7 @@ public class BugDAOTest {
 		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug1.getCorpuses());
 		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug1.getStackTraceClasses().get(0));
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug1.getStackTraceClasses().get(1));
+		assertEquals("version is wrong.", version, foundBug1.getVersion());
 
 		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
 		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
@@ -150,6 +155,7 @@ public class BugDAOTest {
 		assertEquals("corpusSet2 is wrong.", corpusSet2, foundBug2.getCorpuses());
 		assertEquals("stackTrace3 is wrong.", stackTrace3, foundBug2.getStackTraceClasses().get(0));
 		assertEquals("stackTrace4 is wrong.", stackTrace4, foundBug2.getStackTraceClasses().get(1));
+		assertEquals("version is wrong.", version, foundBug2.getVersion());
 		
 		Bug foundBug = bugDAO.getBug(bugID1, productName);
 		assertEquals("bugID1 is wrong.", bugID1, foundBug.getID());
@@ -158,6 +164,8 @@ public class BugDAOTest {
 		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug.getCorpuses());
 		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug.getStackTraceClasses().get(0));
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
+		assertEquals("version is wrong.", version, foundBug.getVersion());
+		
 	}
 
 	@Test

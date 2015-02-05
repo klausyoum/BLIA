@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
+import edu.skku.selab.blp.blia.analysis.BLIA;
 import edu.skku.selab.blp.blia.analysis.BugRepoAnalyzer;
 import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
@@ -96,9 +97,7 @@ public class EvaluatorTest {
 		Property.getInstance().setBeta(beta);
 	}
 	
-	public void runBugLocator() throws Exception {
-		long startTime = System.currentTimeMillis();
-
+	public void prepareAnalysisData() throws Exception {
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
@@ -122,12 +121,30 @@ public class EvaluatorTest {
 		
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
+	}
+	
+	public void runBugLocator() throws Exception {
+		long startTime = System.currentTimeMillis();
+
+		prepareAnalysisData();
 		
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BugLocator for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+	}
+	
+	public void runBLIA() throws Exception {
+		long startTime = System.currentTimeMillis();
+
+		prepareAnalysisData();
+		
+		BLIA blia = new BLIA();
+		blia.analyze();
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 
 	@Test
@@ -146,24 +163,59 @@ public class EvaluatorTest {
 		evaluator1.evaluate();
 
 
+//		dbUtil.initializeAllAnalysisData();
+//		
+//		alpha = 0.5f;
+//		setProperty(alpha, beta);
+//		runBugLocator();
+//		algorithmDescription = "[BugLocator] alpha: " + alpha;
+//		Evaluator evaluator2 = new Evaluator(productName, algorithmName, algorithmDescription);
+//		evaluator2.evaluate();
+//		
+//		
+//		dbUtil.initializeAllAnalysisData();
+//		
+//		alpha = 0.7f;
+//		setProperty(alpha, beta);
+//		runBugLocator();
+//		algorithmDescription = "[BugLocator] alpha: " + alpha;
+//		Evaluator evaluator3 = new Evaluator(productName, algorithmName, algorithmDescription);
+//		evaluator3.evaluate();
+	}
+	
+	@Test
+	public void verifyBLIAEvaluate() throws Exception {
+		DbUtil dbUtil = new DbUtil();
 		dbUtil.initializeAllAnalysisData();
-		
-		alpha = 0.5f;
+
+		float alpha = 0.2f;
+		float beta = 0.5f;
 		setProperty(alpha, beta);
-		runBugLocator();
-		algorithmDescription = "[BugLocator] alpha: " + alpha;
-		Evaluator evaluator2 = new Evaluator(productName, algorithmName, algorithmDescription);
-		evaluator2.evaluate();
-		
-		
-		dbUtil.initializeAllAnalysisData();
-		
-		alpha = 0.7f;
-		setProperty(alpha, beta);
-		runBugLocator();
-		algorithmDescription = "[BugLocator] alpha: " + alpha;
-		Evaluator evaluator3 = new Evaluator(productName, algorithmName, algorithmDescription);
-		evaluator3.evaluate();
+		runBLIA();
+		String productName = "swt-3.1";
+		String algorithmName = Evaluator.ALG_BLIA;
+		String algorithmDescription = "[BLIA] alpha: " + alpha;
+		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
+		evaluator1.evaluate();
+
+//		dbUtil.initializeAllAnalysisData();
+//		
+//		alpha = 0.5f;
+//		setProperty(alpha, beta);
+//		runBugLocator();
+//		algorithmDescription = "[BugLocator] alpha: " + alpha;
+//		Evaluator evaluator2 = new Evaluator(productName, algorithmName, algorithmDescription);
+//		evaluator2.evaluate();
+//		
+//		
+//		dbUtil.initializeAllAnalysisData();
+//		
+//		alpha = 0.7f;
+//		setProperty(alpha, beta);
+//		runBugLocator();
+//		algorithmDescription = "[BugLocator] alpha: " + alpha;
+//		Evaluator evaluator3 = new Evaluator(productName, algorithmName, algorithmDescription);
+//		evaluator3.evaluate();
 	}
 
 }

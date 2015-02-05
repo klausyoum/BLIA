@@ -223,6 +223,33 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFileNames;	
 	}
 	
+	public HashSet<String> getClassNames(String productName, String version) {
+		HashSet<String> sourceFileNames = null;
+		String sql = "SELECT A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
+				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == sourceFileNames) {
+					sourceFileNames = new HashSet<String>();
+				}
+				
+				String fileName = rs.getString("SF_NAME");
+				String className = fileName.substring(0, fileName.lastIndexOf("."));
+				sourceFileNames.add(className);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFileNames;	
+	}
+	
 	public int insertCorpusSet(String fileName, String productName, String version, String corpusSet, int totalCorpusCount, double lengthScore) {
 		HashMap<String, Integer> fileInfo = getSourceFiles(productName);
 		
@@ -545,7 +572,7 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, ArrayList<String>> getImportedClasses(String productName, String version) {
+	public HashMap<String, ArrayList<String>> getAllImportedClasses(String productName, String version) {
 		HashMap<String, ArrayList<String>> importedClassesMap = new HashMap<String, ArrayList<String>>();
 		
 		String sql = "SELECT A.SF_NAME, C.IMP_CLASS " +
@@ -577,7 +604,35 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		return importedClassesMap;
 	}
-
+	
+	public ArrayList<String> getImportedClasses(String productName, String version, String fileName) {
+		ArrayList<String> importedClasses = null;
+		
+		String sql = "SELECT C.IMP_CLASS " +
+					"FROM SF_INFO A, SF_VER_INFO B, SF_IMP_INFO C " +
+					"WHERE A.SF_ID = B.SF_ID AND " +
+					"B.SF_VER_ID = C.SF_VER_ID AND " +
+					"A.PROD_NAME = ? AND B.VER = ? AND A.SF_NAME = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, version);
+			ps.setString(3, fileName);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				if (null == importedClasses) {
+					importedClasses = new ArrayList<String>();
+				}
+				
+				importedClasses.add(rs.getString("IMP_CLASS"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return importedClasses;
+	}
 	
 	public int insertSourceFileAnalysisValue(AnalysisValue analysisValue) {
 		

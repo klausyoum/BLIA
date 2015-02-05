@@ -34,7 +34,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, TOT_CNT) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, TOT_CNT, VER) VALUES (?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		// releaseDate format : "2004-10-18 17:40:00"
@@ -45,6 +45,7 @@ public class BugDAO extends BaseDAO {
 			ps.setString(3, bug.getFixedDateString());
 			ps.setString(4, bug.getCorpuses());
 			ps.setInt(5, bug.getTotalCorpusCount());
+			ps.setString(6, bug.getVersion());
 			
 			returnValue = ps.executeUpdate();
 			
@@ -84,7 +85,7 @@ public class BugDAO extends BaseDAO {
 	public HashMap<String, Bug> getBugs() {
 		HashMap<String, Bug> bugs = new HashMap<String, Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET FROM BUG_INFO";
+		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, VER FROM BUG_INFO";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -99,6 +100,7 @@ public class BugDAO extends BaseDAO {
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
+				bug.setVersion(rs.getString("VER"));
 				bugs.put(bugID, bug);
 			}
 			
@@ -118,7 +120,7 @@ public class BugDAO extends BaseDAO {
 	public ArrayList<Bug> getBugs(String productName, boolean orderedByFixedDate) {
 		ArrayList<Bug> bugs = new ArrayList<Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET FROM BUG_INFO " +
+		String sql = "SELECT BUG_ID, PROD_NAME, FIXED_DATE, COR_SET, VER FROM BUG_INFO " +
 				"WHERE PROD_NAME = ? ";
 		
 		if (orderedByFixedDate) {
@@ -139,6 +141,7 @@ public class BugDAO extends BaseDAO {
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
+				bug.setVersion(rs.getString("VER"));
 				bugs.add(bug);
 			}
 			
@@ -153,7 +156,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public Bug getBug(String bugID, String productName) {
-		String sql = "SELECT FIXED_DATE, COR_SET FROM BUG_INFO WHERE BUG_ID = ? AND PROD_NAME = ?";
+		String sql = "SELECT FIXED_DATE, COR_SET, VER FROM BUG_INFO WHERE BUG_ID = ? AND PROD_NAME = ?";
 		Bug bug = null;
 		
 		try {
@@ -168,6 +171,7 @@ public class BugDAO extends BaseDAO {
 				bug.setProductName(productName);
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				bug.setCorpuses(rs.getString("COR_SET"));
+				bug.setVersion(rs.getString("VER"));
 			}
 			
 			bug.setStackTraceClasses(getStackTraceClasses(bugID));

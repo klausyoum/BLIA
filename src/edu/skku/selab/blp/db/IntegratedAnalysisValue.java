@@ -125,14 +125,14 @@ public class IntegratedAnalysisValue {
 	/**
 	 * @return the bliaScore
 	 */
-	public double getBliaScore() {
+	public double getBLIAScore() {
 		return bliaScore;
 	}
 
 	/**
 	 * @param bliaScore the bliaScore to set
 	 */
-	public void setBliaScore(double bliaScore) {
+	public void setBLIAScore(double bliaScore) {
 		this.bliaScore = bliaScore;
 	}
 

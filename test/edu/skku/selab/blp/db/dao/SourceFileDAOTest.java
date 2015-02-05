@@ -180,7 +180,7 @@ public class SourceFileDAOTest {
 		importedClasses.add(importedClass3);
 		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(fileName2, productName, version1, importedClasses));
 		
-		HashMap<String, ArrayList<String>> importedClassesMap = sourceFileDAO.getImportedClasses(productName, version1);
+		HashMap<String, ArrayList<String>> importedClassesMap = sourceFileDAO.getAllImportedClasses(productName, version1);
 		assertEquals("importedClassesMap size is wrong.", 2, importedClassesMap.size());
 
 		importedClasses = importedClassesMap.get(fileName1);

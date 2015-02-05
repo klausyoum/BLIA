@@ -57,9 +57,7 @@ public class Evaluator {
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
 		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA)) {
-			
-			// TODO: implement integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
-//			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
+			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
 		}
 		
 		return rankedValues;
