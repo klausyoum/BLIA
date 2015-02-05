@@ -9,7 +9,6 @@ package edu.skku.selab.blp.buglocator.indexer;
 
 import static org.junit.Assert.*;
 
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,6 +17,7 @@ import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
+import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -30,26 +30,7 @@ public class SourceFileCorpusCreatorWithFileTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		String osName = System.getProperty("os.name");
-		String productName = "swt-3.1";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		
-		if (osName.equals("Mac OS X")) {
-			String bugFilePath = "./test_data/SWTBugRepository.xml";
-			String sourceCodeDir = "../swt-3.1/src";
-			String workDir = "./tmp";
-			String outputFile = "./tmp/test_output.txt";
-			
-			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
-		} else {
-			String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
-			String sourceCodeDir = "..\\swt-3.1\\src";
-			String workDir = ".\\tmp";
-			String outputFile = ".\\tmp\\test_output.txt";
-			
-			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
-		}
+		TestConfiguration.setProperty();
 	}
 
 	/**

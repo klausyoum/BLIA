@@ -61,7 +61,7 @@ public class SourceFileDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
+		dbUtil.initializeAllData();
 		
 		prepareTestingData();
 	}

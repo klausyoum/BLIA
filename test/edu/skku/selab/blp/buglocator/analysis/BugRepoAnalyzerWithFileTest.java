@@ -20,6 +20,7 @@ import edu.skku.selab.blp.buglocator.analysis.BugRepoAnalyzerWithFile;
 import edu.skku.selab.blp.buglocator.indexer.BugCorpusCreatorWithFile;
 import edu.skku.selab.blp.buglocator.indexer.BugVectorCreatorWithFile;
 import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
+import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -32,26 +33,7 @@ public class BugRepoAnalyzerWithFileTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		String osName = System.getProperty("os.name");
-		String productName = "swt-3.1";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		
-		if (osName.equals("Mac OS X")) {
-			String bugFilePath = "./test_data/SWTBugRepository.xml";
-			String sourceCodeDir = "../swt-3.1/src";
-			String workDir = "./tmp";
-			String outputFile = "./tmp/test_output.txt";
-			
-			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);		
-		} else {
-			String bugFilePath = ".\\test_data\\SWTBugRepository.xml";
-			String sourceCodeDir = "..\\swt-3.1\\src";
-			String workDir = ".\\tmp";
-			String outputFile = ".\\tmp\\test_output.txt";
-			
-			Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
-		}		
+		TestConfiguration.setProperty();
 	}
 
 	/**
@@ -84,10 +66,10 @@ public class BugRepoAnalyzerWithFileTest {
 		bugVectorCreator.create();
 		
 		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
-		SourceFileCorpusCreatorWithFile sourceFileCorpusCreator = new SourceFileCorpusCreatorWithFile();
-		sourceFileCorpusCreator.create();
+		SourceFileCorpusCreatorWithFile sourceFileCorpusCreatorWithFile = new SourceFileCorpusCreatorWithFile();
+		sourceFileCorpusCreatorWithFile.create();
 		
-		BugRepoAnalyzerWithFile bugRepoAnalyzer = new BugRepoAnalyzerWithFile();
-		bugRepoAnalyzer.analyze();
+		BugRepoAnalyzerWithFile bugRepoAnalyzerWithFile = new BugRepoAnalyzerWithFile();
+		bugRepoAnalyzerWithFile.analyze();
 	}
 }

@@ -5,7 +5,7 @@
  * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
  * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
  */
-package edu.skku.selab.blp.buglocator.indexer;
+package edu.skku.selab.blp.blia.analysis;
 
 import static org.junit.Assert.*;
 
@@ -13,25 +13,36 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
-import edu.skku.selab.blp.buglocator.indexer.SourceFileIndexerWithFile;
+import edu.skku.selab.blp.buglocator.analysis.BugLocator;
+import edu.skku.selab.blp.blia.analysis.BugRepoAnalyzer;
+import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
+import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
+import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
+import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.DbUtil;
+import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class SourceFileIndexderWithFileTest {
+public class BliaTest {
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllData();
+
 		TestConfiguration.setProperty();
 	}
 
@@ -40,6 +51,7 @@ public class SourceFileIndexderWithFileTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -56,16 +68,16 @@ public class SourceFileIndexderWithFileTest {
 	public void tearDown() throws Exception {
 	}
 
-
 	@Test
-	public void verifyCreateIndex() throws Exception {
-		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
-		SourceFileCorpusCreatorWithFile sourceFileCorpusCreator = new SourceFileCorpusCreatorWithFile();
-		sourceFileCorpusCreator.create();
+	public void verifyBLIA() throws Exception {
+		long startTime = System.currentTimeMillis();
+
+		BLIA blia = new BLIA();
+		blia.prepareIndexData();
+		blia.prepareAnalysisData();
+		blia.analyze();
 		
-		SourceFileIndexerWithFile sourceFileIndexer = new SourceFileIndexerWithFile();
-		sourceFileIndexer.createIndex();
-		
-		sourceFileIndexer.computeLengthScore();
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 }

@@ -36,6 +36,7 @@ import edu.skku.selab.blp.buglocator.indexer.SourceFileVectorCreatorWithFile;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.evaluation.Evaluator;
+import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -79,17 +80,17 @@ public class EvaluatorTest {
 		String sourceCodeDir = "";
 		String workDir = "";
 		String outputFile = "";
-		
+
 		if (osName.equals("Mac OS X")) {
-			bugFilePath = "./test_data/SWTBugRepository.xml";
-			sourceCodeDir = "../" + productName + "/src";
+			bugFilePath = "../Dataset/SWTBugRepository.xml";
+			sourceCodeDir = "../Dataset/swt-3.1/src";
 			workDir = "./tmp";
-			outputFile = "./tmp/test_output.txt";
+			outputFile = "../Results/Blia-swt-0.2.txt";
 		} else {
-			bugFilePath = ".\\test_data\\SWTBugRepository.xml";
-			sourceCodeDir = "..\\swt-3.1\\src";
+			bugFilePath = "..\\Dataset\\SWTBugRepository.xml";
+			sourceCodeDir = "..\\Dataset\\swt-3.1\\src";
 			workDir = ".\\tmp";
-			outputFile = ".\\tmp\\test_output.txt";
+			outputFile = "..\\Results\\Blia-swt-0.2.txt";
 		}
 		
 		Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
@@ -97,37 +98,9 @@ public class EvaluatorTest {
 		Property.getInstance().setBeta(beta);
 	}
 	
-	public void prepareAnalysisData() throws Exception {
-		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
-		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
-		sourceFileCorpusCreator.create(version);
-		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		sourceFileIndexer.computeLengthScore(version);
-		
-		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
-		sourceFileVectorCreator.create(version);
-
-		// Create SordtedID.txt
-		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
-		bugCorpusCreator.create();
-		
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
-
-		BugVectorCreator bugVectorCreator = new BugVectorCreator();
-		bugVectorCreator.create();
-		
-		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
-		bugRepoAnalyzer.analyze();
-	}
-	
 	public void runBugLocator() throws Exception {
 		long startTime = System.currentTimeMillis();
 
-		prepareAnalysisData();
-		
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
 		
@@ -135,26 +108,14 @@ public class EvaluatorTest {
 		System.out.printf("Elapsed time of BugLocator for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 	
-	public void runBLIA() throws Exception {
-		long startTime = System.currentTimeMillis();
-
-		prepareAnalysisData();
-		
-		BLIA blia = new BLIA();
-		blia.analyze();
-		
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
-	}
-
 	@Test
 	public void verifyBugLocatorEvaluate() throws Exception {
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
+		dbUtil.initializeAllData();
 
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		setProperty(alpha, beta);
+		TestConfiguration.setProperty(alpha, beta);
 		runBugLocator();
 		String productName = "swt-3.1";
 		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
@@ -185,13 +146,30 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyBLIAEvaluate() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
-
+		boolean isNeededToPrepare = false;
+		
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		setProperty(alpha, beta);
-		runBLIA();
+		TestConfiguration.setProperty(alpha, beta);
+		
+		long startTime = System.currentTimeMillis();
+
+		BLIA blia = new BLIA();
+
+		DbUtil dbUtil = new DbUtil();		
+		if (isNeededToPrepare) {
+			dbUtil.initializeAllData();
+			blia.prepareIndexData();
+		} else {
+			dbUtil.initializeAllAnalysisData();
+		}
+		
+		blia.prepareAnalysisData();
+		blia.analyze();
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		
 		String productName = "swt-3.1";
 		String algorithmName = Evaluator.ALG_BLIA;
 		String algorithmDescription = "[BLIA] alpha: " + alpha;

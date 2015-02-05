@@ -34,7 +34,7 @@ public class IntegratedAnalysisDAOTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
+		dbUtil.initializeAllData();
 
 		String fileName1 = "test_10.java";
 		String fileName2 = "test_11.java";
