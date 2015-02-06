@@ -24,7 +24,6 @@ import edu.skku.selab.blp.utils.Stopword;
  *
  */
 public class SourceFileCorpusCreator {
-
 	public Corpus create(File file) {
 		FileParser parser = new FileParser(file);
 		String fileName = parser.getPackageName();

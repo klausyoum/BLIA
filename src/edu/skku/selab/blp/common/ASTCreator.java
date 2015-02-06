@@ -8,9 +8,11 @@
 package edu.skku.selab.blp.common;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileReader;
 
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -45,9 +47,16 @@ public class ASTCreator {
 	}
 
 	public CompilationUnit getCompilationUnit() {
-		ASTParser parser = ASTParser.newParser(3);
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setSource(content.toCharArray());
 		CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 		return compilationUnit;
+	}
+
+	/**
+	 * @return the content
+	 */
+	public String getContent() {
+		return content;
 	}
 }
