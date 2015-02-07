@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blp.db.ExperimentResult;
@@ -58,7 +59,13 @@ public class ExperimentResultDAOTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+	/**
+	 * Ignored because all experimental results can be deleted. 
+	 * 
+	 * @throws Exception
+	 */
+	@Ignore
+//	@Test
 	public void verifyGetExperimentResult() throws Exception {
 		ExperimentResultDAO experimentResultDAO = new ExperimentResultDAO();
 		experimentResultDAO.deleteAllExperimentResults();
@@ -70,7 +77,7 @@ public class ExperimentResultDAOTest {
 		double MAP = 0.432;
 		String productName = "BLIA";
 		String algorithmName = "BLIA";
-		String algorithmDescription = "Bug Localization with Integrated Analysis";
+		String algorithmDescription = "[TEST] Bug Localization with Integrated Analysis";
 		Date experimentDate = new Date(System.currentTimeMillis());
 		final double delta = 0.00001;
 		

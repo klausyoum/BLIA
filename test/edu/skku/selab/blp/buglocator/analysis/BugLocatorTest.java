@@ -92,12 +92,12 @@ public class BugLocatorTest {
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyze(version);
+
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
 
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
-		
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
 		

@@ -237,7 +237,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BLIA_SCORE != 0" +
-				"ORDER BY A.BL_SCORE DESC ";
+				"ORDER BY A.BLIA_SCORE DESC ";
 		
 		if (limit != 0) {
 			sql += "LIMIT " + limit;

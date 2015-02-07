@@ -68,6 +68,9 @@ public class BLIA {
 		
 		double alpha = Property.getInstance().getAlpha();
 		
+		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
+		stackTraceAnalyzer.analyze();
+		
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);

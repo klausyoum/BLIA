@@ -43,7 +43,11 @@ public class BliaTest {
 		DbUtil dbUtil = new DbUtil();
 		dbUtil.initializeAllData();
 
-		TestConfiguration.setProperty();
+		String productName = "swt";
+		String algorithmName = "BLIA";
+		float alpha = 0.2f;
+		float beta = 0.5f;
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta);
 	}
 
 	/**
@@ -78,6 +82,6 @@ public class BliaTest {
 		blia.analyze();
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of BugLocator: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 }

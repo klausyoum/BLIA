@@ -73,34 +73,34 @@ public class EvaluatorTest {
 	public void tearDown() throws Exception {
 	}
 	
-	private static void setProperty(float alpha, float beta) {
-		String osName = System.getProperty("os.name");
-		String productName = "swt-3.1";
-		String bugFilePath = "";
-		String sourceCodeDir = "";
-		String workDir = "";
-		String outputFile = "";
-
-		if (osName.equals("Mac OS X")) {
-			bugFilePath = "../Dataset/SWTBugRepository.xml";
-			sourceCodeDir = "../Dataset/swt-3.1/src";
-			workDir = "./tmp";
-			outputFile = "../Results/Blia-swt-0.2.txt";
-		} else {
-			bugFilePath = "..\\Dataset\\SWTBugRepository.xml";
-			sourceCodeDir = "..\\Dataset\\swt-3.1\\src";
-			workDir = ".\\tmp";
-			outputFile = "..\\Results\\Blia-swt-0.2.txt";
-		}
-		
-		Property.createInstance(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
-		Property.getInstance().setAlpha(alpha);
-		Property.getInstance().setBeta(beta);
-	}
-	
 	public void runBugLocator() throws Exception {
 		long startTime = System.currentTimeMillis();
 
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndex(version);
+		sourceFileIndexer.computeLengthScore(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.create(version);
+
+		// Create SordtedID.txt
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		boolean stackTraceAnalysis = false;
+		bugCorpusCreator.create(stackTraceAnalysis);
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyze(version);
+
+		BugVectorCreator bugVectorCreator = new BugVectorCreator();
+		bugVectorCreator.create();
+
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+		bugRepoAnalyzer.analyze();
+		
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
 		
@@ -113,16 +113,17 @@ public class EvaluatorTest {
 		DbUtil dbUtil = new DbUtil();
 		dbUtil.initializeAllData();
 
+		String projectName = "swt";
+		String productName = TestConfiguration.getProductName(projectName);
+		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		TestConfiguration.setProperty(alpha, beta);
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta);
 		runBugLocator();
-		String productName = "swt-3.1";
-		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
+
 		String algorithmDescription = "[BugLocator] alpha: " + alpha;
 		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator1.evaluate();
-
 
 //		dbUtil.initializeAllAnalysisData();
 //		
@@ -146,11 +147,14 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyBLIAEvaluate() throws Exception {
-		boolean isNeededToPrepare = false;
-		
+		boolean isNeededToPrepare = true;
+
+		String projectName = "swt";
+		String productName = TestConfiguration.getProductName(projectName);
+		String algorithmName = Evaluator.ALG_BLIA;
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		TestConfiguration.setProperty(alpha, beta);
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta);
 		
 		long startTime = System.currentTimeMillis();
 
@@ -170,8 +174,6 @@ public class EvaluatorTest {
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 		
-		String productName = "swt-3.1";
-		String algorithmName = Evaluator.ALG_BLIA;
 		String algorithmDescription = "[BLIA] alpha: " + alpha;
 		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator1.evaluate();

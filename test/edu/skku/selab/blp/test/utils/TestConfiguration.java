@@ -34,7 +34,7 @@ public class TestConfiguration {
 	
 	public static void setProperty(String projectName, String algorithmName, float alpha, float beta) {
 		String osName = System.getProperty("os.name");
-		String productName = "swt-3.1";
+		String productName = getProductName(projectName);
 		String bugFilePath = "";
 		String bugFileName = getBugFileName(projectName);
 		String sourceCodeDirName = getSourceCodeDirName(projectName);
@@ -78,24 +78,32 @@ public class TestConfiguration {
 		return bugFileName;
 	}
 	
-	private static String getSourceCodeDirName(String projectName) {
-		String sourceCodeDirName = ""; 
+	public static String getProductName(String projectName) {
+		String productName = ""; 
 		if (projectName.equalsIgnoreCase("aspectj")) {
-			sourceCodeDirName = "aspectj";
+			productName = "aspectj";
 		} else if (projectName.equalsIgnoreCase("eclipse")) {
-			sourceCodeDirName = "eclipse-3.1";
+			productName = "eclipse-3.1";
 		} else if (projectName.equalsIgnoreCase("swt")) {
-			sourceCodeDirName = "swt-3.1";
-
+			productName = "swt-3.1";
+		} else if (projectName.equalsIgnoreCase("zxing")) {
+			productName = "ZXing-1.6";
+		}
+		
+		return productName;
+	}
+	
+	private static String getSourceCodeDirName(String projectName) {
+		String sourceCodeDirName = getProductName(projectName);
+		if (projectName.equalsIgnoreCase("swt")) {
 			String osName = System.getProperty("os.name");
 			if (osName.equals("Mac OS X")) {
 				sourceCodeDirName += "/src";
 			} else {
 				sourceCodeDirName += "\\src";
 			}
-		} else if (projectName.equalsIgnoreCase("zxing")) {
-			sourceCodeDirName = "ZXing-1.6";
 		}
+		
 		return sourceCodeDirName;
 	}
 }

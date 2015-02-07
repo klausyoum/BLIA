@@ -7,7 +7,9 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import edu.skku.selab.blp.Property;
+import edu.skku.selab.blp.buglocator.indexer.BugCorpusCreatorWithFile;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -49,6 +52,15 @@ public class BugCorpusCreator {
 		String productName = property.getProductName();
 		ArrayList<Bug> list = parseXML(stackTraceAnalysis);
 		property.setBugReportCount(list.size());
+		
+		// To write bug corpus to file for compatibility
+		String dirPath = (new StringBuilder(String.valueOf(property.getWorkDir())))
+				.append(property.getSeparator())
+				.append("BugCorpus")
+				.append(property.getSeparator()).toString();
+		File file = new File(dirPath);
+		if (!file.exists())
+			file.mkdir();
 
 		BugDAO bugDAO = new BugDAO();
 		Bug bug;
@@ -72,6 +84,14 @@ public class BugCorpusCreator {
 				}
 			}
 			bug.setCorpuses(corpuses.toString());
+			
+			// To write bug corpus to file for compatibility
+			FileWriter writer = new FileWriter((new StringBuilder(
+					String.valueOf(dirPath))).append(bug.getID())
+					.append(".txt").toString());
+			writer.write(corpuses.toString().trim());
+			writer.flush();
+			writer.close();
 
 			// DO NOT insert corpus here~!
 			// Creating BugCorpus willl be done at BugVectorCreator
@@ -107,9 +127,10 @@ public class BugCorpusCreator {
         		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
         	} else {
         		if (-1 == methodName.lastIndexOf(".")) {
-        			System.out.printf("Wrong stack trace: %s\n", methodName);
+        			System.err.printf(">>>> Wrong stack trace: %s\n", foundLine);
+        		} else {
+        			fileName = methodName.substring(0, methodName.lastIndexOf("."));
         		}
-        		fileName = methodName.substring(0, methodName.lastIndexOf("."));	
         	}
         	
         	stackTraceClasses.add(fileName);

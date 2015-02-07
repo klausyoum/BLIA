@@ -22,6 +22,7 @@ public class Bug {
     private String ID;
     private String productName;
 	private String openDateString;
+	private String fixedDateStringNotModified;
     private Date fixedDate;
     private String summary;
     private String description;
@@ -75,6 +76,14 @@ public class Bug {
 	public String getFixedDateString() {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return simpleDateFormat.format(fixedDate);
+	}
+	
+	public String getFixedDateStringNotModified() {
+		return fixedDateStringNotModified;
+	}
+	
+	public void setFixedDateStringNotModified(String fixedDateStringNotModified) {
+		this.fixedDateStringNotModified = fixedDateStringNotModified;
 	}
 	
 	public void setFixedDate(String fixDateString) {

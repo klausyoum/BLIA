@@ -37,8 +37,8 @@ public class StackTraceAnalyzerTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		DbUtil dbUtil = new DbUtil();
-//		dbUtil.initializeAllAnalysisData();
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.initializeAllAnalysisData();
 
 		TestConfiguration.setProperty();
 	}
@@ -67,29 +67,30 @@ public class StackTraceAnalyzerTest {
 
 	@Test
 	public void verifyAnalyze() throws Exception {
-//		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
-//		// Following function is needed to set file count for Property.getFileCount() and fixed files information at BugRepoAnalyzer
-//		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
-//		sourceFileCorpusCreator.create(version);
-//		
-//		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-//		sourceFileIndexer.createIndex(version);
-//		
-//		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
-//		sourceFileVectorCreator.create(version);
-//		
-//		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
-//		bugCorpusCreator.create();
-//		
-//		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-//		sourceFileAnalyzer.analyze(version);
-//		
-//		BugVectorCreator bugVectorCreator = new BugVectorCreator();
-//		bugVectorCreator.create();
-//		
-//		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
-////		bugRepoAnalyzer.computeSimilarity();
-//		bugRepoAnalyzer.analyze();
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		// Following function is needed to set file count for Property.getFileCount() and fixed files information at BugRepoAnalyzer
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndex(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.create(version);
+		
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		boolean stackTraceAnalysis = true;
+		bugCorpusCreator.create(stackTraceAnalysis);
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyze(version);
+		
+		BugVectorCreator bugVectorCreator = new BugVectorCreator();
+		bugVectorCreator.create();
+		
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+//		bugRepoAnalyzer.computeSimilarity();
+		bugRepoAnalyzer.analyze();
 		
 		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
 		stackTraceAnalyzer.analyze();

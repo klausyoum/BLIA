@@ -97,54 +97,7 @@ public class BugCorpusCreatorWithFile {
 		fixedSourceFileLinkWriter.close();
 	}
 	
-	public void createWithDB() throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-		ArrayList<Bug> list = parseXML();
-		property.setBugReportCount(list.size());
-
-		BugDAO bugDAO = new BugDAO();
-		Bug bug;
-		Iterator<Bug> bugIter = list.iterator();
-		
-		while (bugIter.hasNext()) {
-			bug = (Bug) bugIter.next();
-			bug.setProductName(productName);
-
-			String content = (new StringBuilder(String.valueOf(bug.getSummary())))
-					.append(" ").append(bug.getDescription()).toString();
-			String splitWords[] = Splitter.splitNatureLanguage(content);
-			StringBuffer corpuses = new StringBuffer();
-			String as[];
-			int j = (as = splitWords).length;
-			for (int i = 0; i < j; i++) {
-				String word = as[i];
-				word = Stem.stem(word.toLowerCase());
-				if (!Stopword.isEnglishStopword(word)) {
-					corpuses.append((new StringBuilder(String.valueOf(word))).append(" ").toString());
-				}
-			}
-			bug.setCorpuses(corpuses.toString());
-
-			// DO NOT insert corpus here~!
-			// Creating BugCorpus willl be done at BugVectorCreator
-//			String[] corpusArray = corpuses.toString().split(" ");
-//			for (int i = 0; i < corpusArray.length; i++) {
-//				bugDAO.insertCorpus(corpusArray[i], productName);
-//			}
-			
-			bugDAO.insertBug(bug);
-			
-			TreeSet<String> fixedFiles = bug.getFixedFiles();
-			Iterator<String> fixedFilesIter = fixedFiles.iterator();
-			while (fixedFilesIter.hasNext()) {
-				String fixedFileName = (String) fixedFilesIter.next();
-				bugDAO.insertBugFixedFileInfo(bug.getID(), fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING, productName);
-			}
-		}
-	}
-	
-	private void writeCorpus(Bug bug, String storeDir) throws IOException {
+	protected void writeCorpus(Bug bug, String storeDir) throws IOException {
 		String content = (new StringBuilder(String.valueOf(bug.getSummary())))
 				.append(" ").append(bug.getDescription()).toString();
 		String splitWords[] = Splitter.splitNatureLanguage(content);
