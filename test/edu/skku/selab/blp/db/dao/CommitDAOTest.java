@@ -80,19 +80,19 @@ public class CommitDAOTest {
 	public void verifyGetCommitInfo() throws Exception {
 		String commitID1 = "COMMIT-001";
 		String commitDateString1 = "2015-01-15 15:19:00";
-		String description1 = "[1] Commited by Klaus for BLIA testing";
+		String message1 = "[1] Commited by Klaus for BLIA testing";
 
 		String commitID2 = "COMMIT-002";
 		String commitDateString2 = "2015-01-31 15:19:00";
-		String description2 = "[2] Commited by Klaus for BLIA testing";
+		String message2 = "[2] Commited by Klaus for BLIA testing";
 		
 		CommitInfo commitInfo1 = new CommitInfo();
 		commitInfo1.setCommitID(commitID1);
 		commitInfo1.setProductName(productName);
 		commitInfo1.setCommitDate(commitDateString1);
-		commitInfo1.setDescription(description1);
-		commitInfo1.addCommitFile(fileName1);
-		commitInfo1.addCommitFile(fileName2);
+		commitInfo1.setMessage(message1);
+		commitInfo1.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName1);
+		commitInfo1.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName2);
 		
 		CommitInfo commitInfo2 = new CommitInfo();
 		commitInfo2.setCommitID(commitID2);
@@ -100,10 +100,10 @@ public class CommitDAOTest {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date commitDate = simpleDateFormat.parse(commitDateString2);
 		commitInfo2.setCommitDate(commitDate);
-		commitInfo2.setDescription(description2);
-		commitInfo2.addCommitFile(fileName3);
-		commitInfo2.addCommitFile(fileName4);
-		commitInfo2.addCommitFile(fileName5);
+		commitInfo2.setMessage(message2);
+		commitInfo2.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName3);
+		commitInfo2.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName4);
+		commitInfo2.addCommitFile(CommitInfo.DELETE_COMMIT, fileName5);
 
 		CommitDAO commitDAO = new CommitDAO();		
 		commitDAO.deleteAllCommitInfo();
@@ -114,10 +114,10 @@ public class CommitDAOTest {
 		assertEquals("commitID1 is wrong.", commitID1, returnedCommitInfo.getCommitID());
 		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString1 is wrong.", commitDateString1, returnedCommitInfo.getCommitDateString());
-		assertEquals("description1 is wrong.", description1, returnedCommitInfo.getDescription());
+		assertEquals("message1 is wrong.", message1, returnedCommitInfo.getMessage());
 		
-		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles().size());
-		Iterator<String> iter = returnedCommitInfo.getCommitFiles().iterator();
+		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).size());
+		Iterator<String> iter = returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).iterator();
 		String commitFile = iter.next();
 		if ( (!commitFile.equalsIgnoreCase(fileName1)) && (!commitFile.equalsIgnoreCase(fileName2))) {
 			fail("commitFiles are wrong.");
@@ -132,22 +132,24 @@ public class CommitDAOTest {
 		assertEquals("commitID2 is wrong.", commitID2, returnedCommitInfo.getCommitID());
 		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString2 is wrong.", commitDateString2, returnedCommitInfo.getCommitDateString());
-		assertEquals("description2 is wrong.", description2, returnedCommitInfo.getDescription());
+		assertEquals("message2 is wrong.", message2, returnedCommitInfo.getMessage());
 
-		assertEquals("CommitFiles count is wrong.", 3, returnedCommitInfo.getCommitFiles().size());
-		iter = returnedCommitInfo.getCommitFiles().iterator();
+		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).size());
+		iter = returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).iterator();
 		commitFile = iter.next();
-		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4)) && (!commitFile.equalsIgnoreCase(fileName5))) {
+		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4))) {
 			fail("commitFiles are wrong.");
 		}
 
 		commitFile = iter.next();
-		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4)) && (!commitFile.equalsIgnoreCase(fileName5))) {
+		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4))) {
 			fail("commitFiles are wrong.");
 		}
 		
+		assertEquals("CommitFiles count is wrong.", 1, returnedCommitInfo.getCommitFiles(CommitInfo.DELETE_COMMIT).size());
+		iter = returnedCommitInfo.getCommitFiles(CommitInfo.DELETE_COMMIT).iterator();
 		commitFile = iter.next();
-		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4)) && (!commitFile.equalsIgnoreCase(fileName5))) {
+		if (!commitFile.equalsIgnoreCase(fileName5)) {
 			fail("commitFiles are wrong.");
 		}
 	}

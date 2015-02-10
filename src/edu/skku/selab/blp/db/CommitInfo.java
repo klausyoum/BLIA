@@ -9,6 +9,7 @@ package edu.skku.selab.blp.db;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -16,11 +17,15 @@ import java.util.HashSet;
  *
  */
 public class CommitInfo {
+	public final static int INSERT_COMMIT = 1;
+	public final static int CHANGE_COMMIT = 2;
+	public final static int DELETE_COMMIT = 3;
 	private String commitID;
 	private String productName;
     private Date commitDate;
-    private String description;
-    private HashSet<String> commitFiles;
+    private String message;
+    private String committer;
+    private HashMap<Integer, HashSet<String>> commitFilesMap;
 
 	/**
 	 * 
@@ -28,8 +33,9 @@ public class CommitInfo {
 	public CommitInfo() {
 		commitID = "";
 		commitDate = new Date(System.currentTimeMillis());
-		description = "";
-		commitFiles = new HashSet<String>();
+		message = "";
+		committer = "";
+		commitFilesMap = new HashMap<Integer, HashSet<String>>();
 	}
 
 	/**
@@ -85,33 +91,53 @@ public class CommitInfo {
 	/**
 	 * @return the description
 	 */
-	public String getDescription() {
-		return description;
+	public String getMessage() {
+		return message;
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param message the description to set
 	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	/**
 	 * @return the sourceFileName
 	 */
-	public HashSet<String> getCommitFiles() {
-		return commitFiles;
+	public HashSet<String> getCommitFiles(int commitType) {
+		return commitFilesMap.get(commitType);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public HashMap<Integer, HashSet<String>> getAllCommitFiles() {
+		return commitFilesMap;
 	}
 
 	/**
 	 * @param commitFiles the commitFiles to set
 	 */
-	public void setCommitFiles(HashSet<String> commitFiles) {
-		this.commitFiles = commitFiles;
+	public void setCommitFiles(Integer commitType, HashSet<String> commitFiles) {
+		this.commitFilesMap.put(commitType, commitFiles);
 	}
 	
-	public void addCommitFile(String fileName) {
-		this.commitFiles.add(fileName);
+	/**
+	 * @param commitFiles the commitFiles to set
+	 */
+	public void setCommitFiles(HashMap<Integer, HashSet<String>> allCommitFiles) {
+		this.commitFilesMap = allCommitFiles;
+	}
+	
+	public void addCommitFile(Integer commitType, String fileName) {
+		HashSet<String> commitFiles = this.commitFilesMap.get(commitType);
+		if (null == commitFiles) {
+			commitFiles = new HashSet<String>();
+			this.commitFilesMap.put(commitType, commitFiles);
+		}
+		commitFiles.add(fileName);
 	}
 
 	/**
@@ -126,6 +152,20 @@ public class CommitInfo {
 	 */
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	/**
+	 * @return the committer
+	 */
+	public String getCommitter() {
+		return committer;
+	}
+
+	/**
+	 * @param committer the committer to set
+	 */
+	public void setCommitter(String committer) {
+		this.committer = committer;
 	}
 
 }
