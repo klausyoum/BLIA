@@ -17,9 +17,12 @@ import java.util.HashSet;
  *
  */
 public class CommitInfo {
-	public final static int INSERT_COMMIT = 1;
-	public final static int CHANGE_COMMIT = 2;
+	public final static int ADD_COMMIT = 1;
+	public final static int COPY_COMMIT = 2;
 	public final static int DELETE_COMMIT = 3;
+	public final static int MODIFY_COMMIT = 4;
+	public final static int RENAME_COMMIT = 5;
+	
 	private String commitID;
 	private String productName;
     private Date commitDate;

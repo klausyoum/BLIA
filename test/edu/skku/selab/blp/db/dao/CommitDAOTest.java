@@ -91,8 +91,8 @@ public class CommitDAOTest {
 		commitInfo1.setProductName(productName);
 		commitInfo1.setCommitDate(commitDateString1);
 		commitInfo1.setMessage(message1);
-		commitInfo1.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName1);
-		commitInfo1.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName2);
+		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName1);
+		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName2);
 		
 		CommitInfo commitInfo2 = new CommitInfo();
 		commitInfo2.setCommitID(commitID2);
@@ -101,8 +101,8 @@ public class CommitDAOTest {
 		Date commitDate = simpleDateFormat.parse(commitDateString2);
 		commitInfo2.setCommitDate(commitDate);
 		commitInfo2.setMessage(message2);
-		commitInfo2.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName3);
-		commitInfo2.addCommitFile(CommitInfo.CHANGE_COMMIT, fileName4);
+		commitInfo2.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName3);
+		commitInfo2.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName4);
 		commitInfo2.addCommitFile(CommitInfo.DELETE_COMMIT, fileName5);
 
 		CommitDAO commitDAO = new CommitDAO();		
@@ -116,8 +116,8 @@ public class CommitDAOTest {
 		assertEquals("commitDateString1 is wrong.", commitDateString1, returnedCommitInfo.getCommitDateString());
 		assertEquals("message1 is wrong.", message1, returnedCommitInfo.getMessage());
 		
-		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).size());
-		Iterator<String> iter = returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).iterator();
+		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.MODIFY_COMMIT).size());
+		Iterator<String> iter = returnedCommitInfo.getCommitFiles(CommitInfo.MODIFY_COMMIT).iterator();
 		String commitFile = iter.next();
 		if ( (!commitFile.equalsIgnoreCase(fileName1)) && (!commitFile.equalsIgnoreCase(fileName2))) {
 			fail("commitFiles are wrong.");
@@ -134,8 +134,8 @@ public class CommitDAOTest {
 		assertEquals("commitDateString2 is wrong.", commitDateString2, returnedCommitInfo.getCommitDateString());
 		assertEquals("message2 is wrong.", message2, returnedCommitInfo.getMessage());
 
-		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).size());
-		iter = returnedCommitInfo.getCommitFiles(CommitInfo.CHANGE_COMMIT).iterator();
+		assertEquals("CommitFiles count is wrong.", 2, returnedCommitInfo.getCommitFiles(CommitInfo.MODIFY_COMMIT).size());
+		iter = returnedCommitInfo.getCommitFiles(CommitInfo.MODIFY_COMMIT).iterator();
 		commitFile = iter.next();
 		if ((!commitFile.equalsIgnoreCase(fileName3)) && (!commitFile.equalsIgnoreCase(fileName4))) {
 			fail("commitFiles are wrong.");

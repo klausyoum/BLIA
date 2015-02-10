@@ -99,18 +99,15 @@ public class CommitDAO extends BaseDAO {
 			while (rs.next()) {
 				if (null == allCommitFiles) {
 					allCommitFiles = new HashMap<Integer, HashSet<String>>();
-				} else {
-					int commitType = rs.getInt("COMM_TYPE");
-					
-					HashSet<String> commitFiles = allCommitFiles.get(commitType);
-					
-					if (null == commitFiles) {
-						commitFiles = new HashSet<String>();
-						allCommitFiles.put(commitType, commitFiles);
-					}
-					
-					commitFiles.add(rs.getString("COMM_FILE"));
 				}
+
+				int commitType = rs.getInt("COMM_TYPE");
+				HashSet<String> commitFiles = allCommitFiles.get(commitType);
+				if (null == commitFiles) {
+					commitFiles = new HashSet<String>();
+					allCommitFiles.put(commitType, commitFiles);
+				}
+				commitFiles.add(rs.getString("COMM_FILE"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

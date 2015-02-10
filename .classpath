@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="lib/preferences-3.2.100-v20070522.jar"/>
 	<classpathentry kind="lib" path="lib/wvtool.jar"/>
 	<classpathentry kind="lib" path="lib/h2-1.4.184.jar"/>
-	<classpathentry kind="lib" path="lib/javagit-0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.6.2.201501210735-r.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
