@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -118,6 +119,22 @@ public class CommitInfo {
 	 */
 	public HashMap<Integer, HashSet<String>> getAllCommitFiles() {
 		return commitFilesMap;
+	}
+	
+	public HashSet<String> getAllCommitFilesWithoutCommitType() {
+		HashSet<String> allCommitFiles = new HashSet<String>();
+		
+		Iterator<Integer> iter = commitFilesMap.keySet().iterator();
+		while (iter.hasNext()) {
+			HashSet<String> commitFiles = commitFilesMap.get(iter.next());
+			
+			Iterator<String> iterFileName = commitFiles.iterator();
+			while (iterFileName.hasNext()) {
+				String fileName = iterFileName.next();
+				allCommitFiles.add(fileName);
+			}
+		}
+		return allCommitFiles;
 	}
 
 	/**

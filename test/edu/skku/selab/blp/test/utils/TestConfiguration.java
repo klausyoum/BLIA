@@ -16,23 +16,15 @@ import edu.skku.selab.blp.Property;
 public class TestConfiguration {
 	final static private float DEFAULT_ALPHA = 0.2f;
 	final static private float DEFAULT_BETA = 0.5f;
-	final static private String DEFAULT_PROJECT = "swt";
+	final static private int DEFAULT_PAST_DATE = 15;
+	final static private String DEFAULT_PROJECT = Property.SWT;
 	final static private String DEFAULT_ALGORITHM = "BLIA";
-
-//	final static private String ASPECTJ = "aspectj";
-//	final static private String ECLIPSE = "eclipse";
-//	final static private String SWT = "swt";
-//	final static private String ZXING = "zxing";
 	
-
-	final static private String ECLIPSE = "eclipse";
-	
-
 	public static void setProperty() {
-		setProperty(DEFAULT_ALPHA, DEFAULT_BETA);
+		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);
 	}
 	
-	public static void setProperty(String projectName, String algorithmName, float alpha, float beta) {
+	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDate) {
 		String osName = System.getProperty("os.name");
 		String productName = getProductName(projectName);
 		String bugFilePath = "";
@@ -55,13 +47,13 @@ public class TestConfiguration {
 			outputFile = "..\\Results\\" + outputFileName;
 		}
 		
-		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, outputFile);
+		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDate, outputFile);
 		Property.getInstance().setAlpha(alpha);
 		Property.getInstance().setBeta(beta);
 	}
 	
-	public static void setProperty(float alpha, float beta) {
-		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta);
+	public static void setProperty(float alpha, float beta, int pastDate) {
+		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDate);
 	}
 	
 	private static String getBugFileName(String projectName) {
@@ -79,15 +71,24 @@ public class TestConfiguration {
 	}
 	
 	public static String getProductName(String projectName) {
-		String productName = ""; 
-		if (projectName.equalsIgnoreCase("aspectj")) {
-			productName = "aspectj";
-		} else if (projectName.equalsIgnoreCase("eclipse")) {
-			productName = "eclipse-3.1";
-		} else if (projectName.equalsIgnoreCase("swt")) {
-			productName = "swt-3.1";
-		} else if (projectName.equalsIgnoreCase("zxing")) {
-			productName = "ZXing-1.6";
+		String productName = "";
+		
+		switch (projectName) {
+		case Property.ASPECTJ:
+			productName = Property.ASPECTJ_PRODUCT;
+			break;
+		case Property.ECLIPSE:
+			productName = Property.ECLIPSE_PRODUCT;
+			break;
+		case Property.SWT:
+			productName = Property.SWT_PRODUCT;
+			break;
+		case Property.ZXING:
+			productName = Property.ZXING_PRODUCT;
+			break;
+		default:
+			productName = Property.SWT_PRODUCT;
+			break;
 		}
 		
 		return productName;

@@ -45,7 +45,7 @@ public class BugLocator {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, false);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
 		
 		double alpha = Property.getInstance().getAlpha();
 		
@@ -71,7 +71,12 @@ public class BugLocator {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
 				
 				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-				integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
+				int updatedColumenCount = integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
+				
+				if (0 == updatedColumenCount) {
+					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+				}
+
 			}
 		}
 	}

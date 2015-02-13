@@ -38,7 +38,7 @@ public class StackTraceAnalyzerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllAnalysisData();
+		dbUtil.initializeAllData();
 
 		TestConfiguration.setProperty();
 	}

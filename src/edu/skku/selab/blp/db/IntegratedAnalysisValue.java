@@ -21,6 +21,7 @@ public class IntegratedAnalysisValue {
 	private double similarityScore;
 	private double bugLocatorScore;
 	private double stackTraceScore;
+	private double commitLogScore;
 	private double bliaScore;
 
 	/**
@@ -31,10 +32,12 @@ public class IntegratedAnalysisValue {
 		fileName = "";
 		version = "";
 		sourceFileVersionID = -1;
+		productName = "";
 		vsmScore = 0.0;
 		similarityScore = 0.0;
 		bugLocatorScore = 0.0;
 		stackTraceScore = 0.0;
+		commitLogScore = 0.0;
 		bliaScore = 0.0;
 	}
 
@@ -176,5 +179,19 @@ public class IntegratedAnalysisValue {
 	 */
 	public void setSourceFileVersionID(int sourceFileVersionID) {
 		this.sourceFileVersionID = sourceFileVersionID;
+	}
+
+	/**
+	 * @return the commitLogScore
+	 */
+	public double getCommitLogScore() {
+		return commitLogScore;
+	}
+
+	/**
+	 * @param commitLogScore the commitLogScore to set
+	 */
+	public void setCommitLogScore(double commitLogScore) {
+		this.commitLogScore = commitLogScore;
 	}
 }

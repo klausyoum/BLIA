@@ -56,6 +56,8 @@ public class BLP {
 		float alpha = 0.0F;
 		String betaStr = "";
 		float beta = 0.0F;
+		String pastDateStr = "";
+		int pastDate = 0;
 		String outputFile = "";
 
 		for (int i = 0; i < args.length - 1; i++)
@@ -74,6 +76,9 @@ public class BLP {
 			} else if (args[i].equals("-b")) {
 				i++; // to move next actual argument
 				betaStr = args[i];
+			} else if (args[i].equals("-d")) {
+				i++; // to move next actual argument
+				pastDateStr = args[i];
 			} else if (args[i].equals("-o")) {
 				i++; // to move next actual argument
 				outputFile = args[i];
@@ -110,6 +115,16 @@ public class BLP {
 						.println("-b argument is invalid, it must be a float value");
 			}
 		}
+		
+		if (!pastDateStr.equals("") && null != pastDateStr) {
+			try {
+				pastDate = Integer.parseInt(pastDateStr);
+			} catch (Exception ex) {
+				isValid = false;
+				System.out
+						.println("-d argument is invalid, it must be a int value");
+			}
+		}
 
 		if (outputFile.equals("") || null == outputFile) {
 			isValid = false;
@@ -136,7 +151,7 @@ public class BLP {
 				if (!dir.exists()) {
 					dir.mkdir();
 				}
-				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, outputFile);
+				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, pastDate, outputFile);
 			}
 		}
 		return isValid;
@@ -150,6 +165,7 @@ public class BLP {
 			System.out.printf("Source code dir: %s\n", prop.getSourceCodeDir());
 			System.out.printf("Alpha: %f\n", prop.getAlpha());
 			System.out.printf("Beta: %f\n", prop.getBeta());
+			System.out.printf("PastDate: %f\n", prop.getPastDays());
 			System.out.printf("Output file: %s\n", prop.getOutputFile());
 		}
 	}

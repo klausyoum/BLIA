@@ -58,7 +58,12 @@ public class ExperimentResultDAOTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
+	
+	@Test
+	public void verify() {
+		// empty
+	}
+	
 	/**
 	 * Ignored because all experimental results can be deleted. 
 	 * 

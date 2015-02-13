@@ -118,7 +118,8 @@ public class EvaluatorTest {
 		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta);
+		int pastDate = 15;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
 		runBugLocator();
 
 		String algorithmDescription = "[BugLocator] alpha: " + alpha;
@@ -154,7 +155,8 @@ public class EvaluatorTest {
 		String algorithmName = Evaluator.ALG_BLIA;
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta);
+		int pastDate = 15;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
 		
 		long startTime = System.currentTimeMillis();
 

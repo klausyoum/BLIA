@@ -110,7 +110,7 @@ public class CommitDAOTest {
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo1));
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo2));
 		
-		CommitInfo returnedCommitInfo = commitDAO.getCommitInfo(commitID1);
+		CommitInfo returnedCommitInfo = commitDAO.getCommitInfo(commitID1, productName);
 		assertEquals("commitID1 is wrong.", commitID1, returnedCommitInfo.getCommitID());
 		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString1 is wrong.", commitDateString1, returnedCommitInfo.getCommitDateString());
@@ -128,7 +128,7 @@ public class CommitDAOTest {
 			fail("commitFiles are wrong.");
 		}
 		
-		returnedCommitInfo = commitDAO.getCommitInfo(commitID2);
+		returnedCommitInfo = commitDAO.getCommitInfo(commitID2, productName);
 		assertEquals("commitID2 is wrong.", commitID2, returnedCommitInfo.getCommitID());
 		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString2 is wrong.", commitDateString2, returnedCommitInfo.getCommitDateString());

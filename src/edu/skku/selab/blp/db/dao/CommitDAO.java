@@ -7,9 +7,12 @@
  */
 package edu.skku.selab.blp.db.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.skku.selab.blp.db.CommitInfo;
 
@@ -116,22 +119,23 @@ public class CommitDAO extends BaseDAO {
 		return allCommitFiles;
 	}
 	
-	public CommitInfo getCommitInfo(String commitID) {
+	public CommitInfo getCommitInfo(String commitID, String productName) {
 		CommitInfo commitInfo = null;
 		
-		String sql = "SELECT PROD_NAME, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
-				"WHERE COMM_ID = ?";
+		String sql = "SELECT COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
+				"WHERE COMM_ID = ? AND PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, commitID);
+			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			
 			if (rs.next()) {
 				commitInfo = new CommitInfo();
 				commitInfo.setCommitID(commitID);
-				commitInfo.setProductName(rs.getString("PROD_NAME"));
+				commitInfo.setProductName(productName);
 				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
 				commitInfo.setMessage(rs.getString("MSG"));
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
@@ -142,5 +146,89 @@ public class CommitDAO extends BaseDAO {
 		}
 		
 		return commitInfo;
+	}
+	
+	public ArrayList<CommitInfo> getAllCommitInfos(String productName) {
+		ArrayList<CommitInfo> allCommitInfos = null;
+		CommitInfo commitInfo = null;
+		
+		String sql = "SELECT COMM_ID, PROD_NAME, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
+				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == allCommitInfos) {
+					allCommitInfos = new ArrayList<CommitInfo>();
+				}
+				commitInfo = new CommitInfo();
+				String commitID = rs.getString("COMM_ID");
+				commitInfo.setCommitID(commitID);
+				commitInfo.setProductName(rs.getString("PROD_NAME"));
+				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
+				commitInfo.setMessage(rs.getString("MSG"));
+				commitInfo.setCommitter(rs.getString("COMMITTER"));
+				allCommitInfos.add(commitInfo);
+			}
+			
+			for (int i = 0; i < allCommitInfos.size(); i++) {
+				commitInfo = allCommitInfos.get(i);
+				commitInfo.setCommitFiles(this.getCommitFiles(commitInfo.getCommitID()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return allCommitInfos;
+	}
+	
+	public ArrayList<CommitInfo> getFilteredCommitInfos(String productName) {
+		ArrayList<CommitInfo> filteredCommitInfos = null;
+		CommitInfo commitInfo = null;
+		
+		String sql = "SELECT COMM_ID, PROD_NAME, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
+				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, productName);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == filteredCommitInfos) {
+					filteredCommitInfos = new ArrayList<CommitInfo>();
+				}
+				commitInfo = new CommitInfo();
+				String commitID = rs.getString("COMM_ID");
+				commitInfo.setCommitID(commitID);
+				commitInfo.setProductName(rs.getString("PROD_NAME"));
+				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
+				commitInfo.setMessage(rs.getString("MSG"));
+				commitInfo.setCommitter(rs.getString("COMMITTER"));
+				
+				String pattern = "(?i)(.*fix.*)|(?i)(.*bug.*)";
+		        Pattern r = Pattern.compile(pattern);
+		        Matcher m = r.matcher(commitInfo.getMessage());
+
+		        if (m.find()) {
+//		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
+					filteredCommitInfos.add(commitInfo);
+		        }
+			}
+			
+			for (int i = 0; i < filteredCommitInfos.size(); i++) {
+				commitInfo = filteredCommitInfos.get(i);
+				commitInfo.setCommitFiles(this.getCommitFiles(commitInfo.getCommitID()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return filteredCommitInfos;
 	}
 }

@@ -95,7 +95,7 @@ public class BugRepositoryUtil {
 						String fixDateString = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
 						Bug bug = new Bug();
 						bug.setID(bugId);
-						bug.setOpenDateString(openDateString);
+						bug.setOpenDate(openDateString);
 						bug.setFixedDateStringNotModified(fixDateString);
 						for (Node node = bugNode.getFirstChild(); node != null; node = node.getNextSibling()) {
 							if (node.getNodeType() == 1) {

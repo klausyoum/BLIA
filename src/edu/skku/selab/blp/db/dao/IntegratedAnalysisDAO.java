@@ -10,6 +10,7 @@ package edu.skku.selab.blp.db.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 
 /**
@@ -26,8 +27,8 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	}
 	
 	public int insertAnalysisVaule(IntegratedAnalysisValue integratedAnalysisValue) {
-		String sql = "INSERT INTO INT_ANALYSIS (BUG_ID, SF_VER_ID, VSM_SCORE, SIMI_SCORE, BL_SCORE, STRACE_SCORE, BLIA_SCORE) "+
-				"VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO INT_ANALYSIS (BUG_ID, SF_VER_ID, VSM_SCORE, SIMI_SCORE, BL_SCORE, STRACE_SCORE, COMM_SCORE, BLIA_SCORE) "+
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
@@ -45,7 +46,8 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			ps.setDouble(4, integratedAnalysisValue.getSimilarityScore());
 			ps.setDouble(5, integratedAnalysisValue.getBugLocatorScore());
 			ps.setDouble(6, integratedAnalysisValue.getStackTraceScore());
-			ps.setDouble(7, integratedAnalysisValue.getBLIAScore());
+			ps.setDouble(7, integratedAnalysisValue.getCommitLogScore());
+			ps.setDouble(8, integratedAnalysisValue.getBLIAScore());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -55,15 +57,15 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int updateSimilarScore(String bugID, int sourceFileVersionID, double similarScore) {
+	public int updateSimilarScore(IntegratedAnalysisValue integratedAnalysisValue) {
 		String sql = "UPDATE INT_ANALYSIS SET SIMI_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setDouble(1, similarScore);
-			ps.setString(2, bugID);
-			ps.setInt(3, sourceFileVersionID);
+			ps.setDouble(1, integratedAnalysisValue.getSimilarityScore());
+			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -130,6 +132,71 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		return returnValue;		
+	}
+	
+	public int updateCommitLogScore(IntegratedAnalysisValue integratedAnalysisValue) throws Exception {
+		String sql = "UPDATE INT_ANALYSIS SET COMM_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		int returnValue = INVALID;
+		
+		int sourceFileVersionID = integratedAnalysisValue.getSourceFileVersionID();
+		if (INVALID == sourceFileVersionID) {
+			String productName = Property.getInstance().getProductName();
+			String fileName = integratedAnalysisValue.getFileName();
+			if (fileName.contains(".java")) {
+				fileName = fixFileName(fileName);
+				integratedAnalysisValue.setFileName(fileName);
+			}
+			String version = integratedAnalysisValue.getVersion();
+			
+			SourceFileDAO sourceFileDAO = new SourceFileDAO();
+			sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
+			
+			if (INVALID == sourceFileVersionID) {
+				return INVALID;
+			} else {
+				integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
+			}
+		}
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, integratedAnalysisValue.getCommitLogScore());
+			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;		
+	}
+	
+	private String fixFileName(String javaFileName) {
+		String productName = Property.getInstance().getProductName();
+		
+		String fixedFileName = javaFileName;
+		switch (productName) {
+		case Property.ASPECTJ_PRODUCT:
+			// TODO: implement specific codes
+			break;
+		case Property.ECLIPSE_PRODUCT:
+			// TODO: implement specific codes
+			break;
+		case Property.SWT_PRODUCT:
+			fixedFileName = fixedFileName.replace('/', '.');
+			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
+			break;
+		case Property.ZXING_PRODUCT:
+			// TODO: implement specific codes
+			break;
+		default:
+			fixedFileName = fixedFileName.replace('/', '.');
+			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length() - 1);
+			break;
+		}
+		
+		return fixedFileName;
 	}
 	
 	public int deleteAllIntegratedAnalysisInfos() {

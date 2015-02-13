@@ -47,7 +47,8 @@ public class BliaTest {
 		String algorithmName = "BLIA";
 		float alpha = 0.2f;
 		float beta = 0.5f;
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta);
+		int pastDate = 15;
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDate);
 	}
 
 	/**

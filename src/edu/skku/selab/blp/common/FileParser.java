@@ -76,6 +76,8 @@ public class FileParser {
 	public String[] getStructuredContent() {
 		String[] structuredContent = null;
 		
+		// TODO: implement here~!
+		
 		return structuredContent;		
 	}
 

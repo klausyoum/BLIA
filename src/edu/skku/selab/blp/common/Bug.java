@@ -21,8 +21,8 @@ public class Bug {
 
     private String ID;
     private String productName;
-	private String openDateString;
 	private String fixedDateStringNotModified;
+	private Date openDate;
     private Date fixedDate;
     private String summary;
     private String description;
@@ -35,7 +35,7 @@ public class Bug {
     public Bug() {
     	this.ID = "";
     	this.productName = "";
-    	this.openDateString = "";
+    	this.openDate = new Date(System.currentTimeMillis());
     	this.fixedDate = new Date(System.currentTimeMillis());
     	this.summary = "";
     	this.description = "";
@@ -48,7 +48,7 @@ public class Bug {
     public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, String version, TreeSet<String> fixedFiles) {
     	this.ID = ID;
     	this.productName = productName;
-    	this.openDateString = openDateString;
+    	setOpenDate(openDateString);
     	setFixedDate(fixedDateString);
     	this.summary = summary;
     	this.description = description;
@@ -64,13 +64,25 @@ public class Bug {
 	public void setID(String ID) {
 		this.ID = ID;
 	}
-	
-	public String getOpenDateString() {
-		return openDateString;
+
+	public Date getOpenDate() {
+		return openDate;
 	}
 	
-	public void setOpenDateString(String openDateString) {
-		this.openDateString = openDateString;
+	public String getOpenDateString() {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return simpleDateFormat.format(openDate);
+	}
+	
+	public void setOpenDate(String openDateString) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		try {
+			this.openDate = simpleDateFormat.parse(openDateString);			
+		} catch (Exception e) {
+			this.fixedDate = null;
+			e.printStackTrace();
+		}
 	}
 	
 	public String getFixedDateString() {
@@ -95,7 +107,6 @@ public class Bug {
 			this.fixedDate = null;
 			e.printStackTrace();
 		}
-
 	}
 	public String getSummary() {
 		return summary;
@@ -151,6 +162,13 @@ public class Bug {
 	 */
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+	
+	/**
+	 * @param fixedDate the fixedDate to set
+	 */
+	public void setOpenDate(Date openDate) {
+		this.openDate = openDate;
 	}
 
 	/**

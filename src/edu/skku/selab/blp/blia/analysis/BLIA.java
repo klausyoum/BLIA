@@ -64,7 +64,7 @@ public class BLIA {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, false);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
 		
 		double alpha = Property.getInstance().getAlpha();
 		
@@ -93,7 +93,11 @@ public class BLIA {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
 				
 				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-				integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
+				int updatedColumenCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
+				
+				if (0 == updatedColumenCount) {
+					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+				}
 			}
 		}
 	}

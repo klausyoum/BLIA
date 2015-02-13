@@ -5,7 +5,7 @@
  * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
  * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
  */
-package edu.skku.selab.blp.buglocator.indexer;
+package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
 import java.io.IOException;

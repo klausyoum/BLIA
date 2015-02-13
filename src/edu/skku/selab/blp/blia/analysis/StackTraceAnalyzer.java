@@ -34,7 +34,7 @@ public class StackTraceAnalyzer {
 		
 		// get bugs
 		String productName = Property.getInstance().getProductName();
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, false);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);

@@ -70,7 +70,7 @@ public class Evaluator {
 		
 		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 //		boolean isCounted = false;
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
@@ -126,7 +126,7 @@ public class Evaluator {
 		
 		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 		double sumOfRRank = 0;
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
@@ -158,7 +158,7 @@ public class Evaluator {
 		double MAP = 0;
 		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getBugs(productName, true);
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 		double sumOfAP = 0;
 		
 		for (int i = 0; i < bugs.size(); i++) {

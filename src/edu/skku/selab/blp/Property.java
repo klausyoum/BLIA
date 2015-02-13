@@ -7,6 +7,16 @@ package edu.skku.selab.blp;
 
 
 public class Property {
+	final static public String ASPECTJ = "aspectj";
+	final static public String ECLIPSE = "eclipse";
+	final static public String SWT = "swt";
+	final static public String ZXING = "zxing";
+	
+	final static public String ASPECTJ_PRODUCT = "aspectj";
+	final static public String ECLIPSE_PRODUCT = "eclipse-3.1";
+	final static public String SWT_PRODUCT = "swt-3.1";
+	final static public String ZXING_PRODUCT = "ZXing-1.6";
+	
 	public String bugFilePath;
 	public String sourceCodeDir;
 	private String workDir;
@@ -21,6 +31,7 @@ public class Property {
 	private String lineSeparator = System.getProperty("line.separator");
 	private static Property p = null;
 	private String productName;
+	private int pastDays;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -62,9 +73,9 @@ public class Property {
 		return workDir;
 	}
 
-	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDate, String outputFile) {
 		if (null == p) {
-			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, outputFile);
+			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDate, outputFile);
 		}
 	}
 
@@ -72,13 +83,14 @@ public class Property {
 		return p;
 	}
 	
-	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, String outputFile) {
+	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDate, String outputFile) {
 		this.productName = productName;
 		this.bugFilePath = bugFilePath;
 		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;
 		this.setAlpha(alpha);
 		this.setBeta(beta);
+		this.setPastDate(pastDate);
 		this.outputFile = outputFile;
 	}
 	
@@ -132,5 +144,19 @@ public class Property {
 	 */
 	public void setBeta(float beta) {
 		this.beta = beta;
+	}
+
+	/**
+	 * @return the pastDays
+	 */
+	public int getPastDays() {
+		return pastDays;
+	}
+
+	/**
+	 * @param pastDate the pastDays to set
+	 */
+	public void setPastDate(int pastDays) {
+		this.pastDays = pastDays;
 	}
 }
