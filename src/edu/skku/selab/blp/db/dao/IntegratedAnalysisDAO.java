@@ -218,7 +218,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
+		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
 		
@@ -242,6 +242,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
 				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
 				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
+				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
 				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
 				
 				integratedAnalysisValues.put(resultValue.getSourceFileVersionID(), resultValue);
@@ -301,7 +302,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		ArrayList<IntegratedAnalysisValue> bliaRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
+		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BLIA_SCORE != 0" +
 				"ORDER BY A.BLIA_SCORE DESC ";
@@ -330,6 +331,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
 				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
 				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
+				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
 				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
 				
 				bliaRankedValues.add(resultValue);

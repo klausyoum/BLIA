@@ -9,6 +9,9 @@ package edu.skku.selab.blp.evaluation;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -119,6 +122,7 @@ public class EvaluatorTest {
 		float alpha = 0.2f;
 		float beta = 0.5f;
 		int pastDate = 15;
+		String repoDir = Property.SWT_REPO_DIR;
 		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
 		runBugLocator();
 
@@ -154,10 +158,12 @@ public class EvaluatorTest {
 		String productName = TestConfiguration.getProductName(projectName);
 		String algorithmName = Evaluator.ALG_BLIA;
 		float alpha = 0.2f;
-		float beta = 0.5f;
-		int pastDate = 15;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
+		float beta = 0.3f;
+		int pastDays = 15;
+		String repoDir = Property.SWT_REPO_DIR;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDays, repoDir);
 		
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		long startTime = System.currentTimeMillis();
 
 		BLIA blia = new BLIA();
@@ -166,13 +172,18 @@ public class EvaluatorTest {
 		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
 			dbUtil.initializeAllData();
-			blia.prepareIndexData(useStrucrutedInfo);
+			
+			// for swt project ONLY
+			Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
+			Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
+			blia.prepareIndexData(useStrucrutedInfo, since.getTime(), until.getTime());
 		} else {
 			dbUtil.initializeAllAnalysisData();
 		}
 		
 		blia.prepareAnalysisData();
-		blia.analyze();
+		boolean useCommitLogAnalysis = true;
+		blia.analyze(version, useCommitLogAnalysis);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		

@@ -24,7 +24,7 @@ public class TestConfiguration {
 		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);
 	}
 	
-	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDate) {
+	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDays, String repoDir) {
 		String osName = System.getProperty("os.name");
 		String productName = getProductName(projectName);
 		String bugFilePath = "";
@@ -47,13 +47,15 @@ public class TestConfiguration {
 			outputFile = "..\\Results\\" + outputFileName;
 		}
 		
-		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDate, outputFile);
-		Property.getInstance().setAlpha(alpha);
-		Property.getInstance().setBeta(beta);
+		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
 	}
 	
-	public static void setProperty(float alpha, float beta, int pastDate) {
-		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDate);
+	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDays) {
+		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays, "");
+	}
+	
+	public static void setProperty(float alpha, float beta, int pastDays) {
+		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays);
 	}
 	
 	private static String getBugFileName(String projectName) {

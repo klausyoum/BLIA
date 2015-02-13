@@ -9,6 +9,9 @@ package edu.skku.selab.blp.blia.analysis;
 
 import static org.junit.Assert.*;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -76,12 +79,18 @@ public class BliaTest {
 	@Test
 	public void verifyBLIA() throws Exception {
 		long startTime = System.currentTimeMillis();
+		
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 
 		BLIA blia = new BLIA();
 		boolean useStrucrutedInfo = true;
-		blia.prepareIndexData(useStrucrutedInfo);
+		boolean useCommitLogAnalysis = true;
+		
+		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
+		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
+		blia.prepareIndexData(useStrucrutedInfo, since.getTime(), until.getTime());
 		blia.prepareAnalysisData();
-		blia.analyze();
+		blia.analyze(version, useCommitLogAnalysis);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		

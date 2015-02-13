@@ -58,6 +58,7 @@ public class BLP {
 		float beta = 0.0F;
 		String pastDateStr = "";
 		int pastDate = 0;
+		String repoDir = "";
 		String outputFile = "";
 
 		for (int i = 0; i < args.length - 1; i++)
@@ -79,6 +80,9 @@ public class BLP {
 			} else if (args[i].equals("-d")) {
 				i++; // to move next actual argument
 				pastDateStr = args[i];
+			} else if (args[i].equals("-r")) {
+				i++; // to move next actual argument
+				repoDir = args[i];
 			} else if (args[i].equals("-o")) {
 				i++; // to move next actual argument
 				outputFile = args[i];
@@ -126,6 +130,11 @@ public class BLP {
 			}
 		}
 
+		if (repoDir.equals("") || null == repoDir) {
+			isValid = false;
+			System.out.println("The repository directory is invalid path");
+		}
+		
 		if (outputFile.equals("") || null == outputFile) {
 			isValid = false;
 			System.out.println("you must indicate the output file");
@@ -151,7 +160,7 @@ public class BLP {
 				if (!dir.exists()) {
 					dir.mkdir();
 				}
-				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, pastDate, outputFile);
+				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, pastDate, repoDir, outputFile);
 			}
 		}
 		return isValid;
@@ -165,7 +174,8 @@ public class BLP {
 			System.out.printf("Source code dir: %s\n", prop.getSourceCodeDir());
 			System.out.printf("Alpha: %f\n", prop.getAlpha());
 			System.out.printf("Beta: %f\n", prop.getBeta());
-			System.out.printf("PastDate: %f\n", prop.getPastDays());
+			System.out.printf("PastDays: %f\n", prop.getPastDays());
+			System.out.printf("RepoDir: %s\n", prop.getRepoDir());
 			System.out.printf("Output file: %s\n", prop.getOutputFile());
 		}
 	}

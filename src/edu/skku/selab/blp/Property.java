@@ -17,6 +17,11 @@ public class Property {
 	final static public String SWT_PRODUCT = "swt-3.1";
 	final static public String ZXING_PRODUCT = "ZXing-1.6";
 	
+	final static public String ASPECTJ_REPO_DIR = "D:\\workspace\\aspectj\\org.aspectj\\.git";
+	final static public String ECLIPSE_REPO_DIR = "D:\\workspace\\eclipse.platform.swt\\.git";
+	final static public String SWT_REPO_DIR = "D:\\workspace\\eclipse.platform.swt\\.git";
+	final static public String ZXING_REPO_DIR = "D:\\workspace\\zxing\\.git";
+	
 	public String bugFilePath;
 	public String sourceCodeDir;
 	private String workDir;
@@ -32,6 +37,7 @@ public class Property {
 	private static Property p = null;
 	private String productName;
 	private int pastDays;
+	private String repoDir;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -73,9 +79,9 @@ public class Property {
 		return workDir;
 	}
 
-	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDate, String outputFile) {
+	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
 		if (null == p) {
-			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDate, outputFile);
+			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDays, repoDir, outputFile);
 		}
 	}
 
@@ -83,14 +89,15 @@ public class Property {
 		return p;
 	}
 	
-	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDate, String outputFile) {
+	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
 		this.productName = productName;
 		this.bugFilePath = bugFilePath;
 		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;
 		this.setAlpha(alpha);
 		this.setBeta(beta);
-		this.setPastDate(pastDate);
+		this.setPastDays(pastDays);
+		this.setRepoDir(repoDir);
 		this.outputFile = outputFile;
 	}
 	
@@ -156,7 +163,21 @@ public class Property {
 	/**
 	 * @param pastDate the pastDays to set
 	 */
-	public void setPastDate(int pastDays) {
+	public void setPastDays(int pastDays) {
 		this.pastDays = pastDays;
+	}
+
+	/**
+	 * @return the repoDir
+	 */
+	public String getRepoDir() {
+		return repoDir;
+	}
+
+	/**
+	 * @param repoDir the repoDir to set
+	 */
+	public void setRepoDir(String repoDir) {
+		this.repoDir = repoDir;
 	}
 }

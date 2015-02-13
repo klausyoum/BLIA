@@ -79,3 +79,5 @@ WHERE A.BUG_ID = '77948' AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID ORD
 
 # Query experiment results
 SELECT * FROM EXP_INFO where exp_date > '2015-02-07 20:15:00';
+
+DELETE FROM EXP_INFO where exp_date > '2015-02-13 20:15:00'
