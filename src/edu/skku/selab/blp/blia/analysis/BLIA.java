@@ -17,6 +17,7 @@ import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
@@ -30,9 +31,14 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
 public class BLIA {
 	private final String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 	
-	public void prepareIndexData() throws Exception {
-		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
-		sourceFileCorpusCreator.create(version);
+	public void prepareIndexData(boolean useStrucrutedInfo) throws Exception {
+		if (!useStrucrutedInfo) {
+			SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+			sourceFileCorpusCreator.create(version);
+		} else {
+			StructuredSourceFileCorpusCreator structuredSourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
+			structuredSourceFileCorpusCreator.create(version);
+		}
 		
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex(version);
@@ -40,7 +46,7 @@ public class BLIA {
 		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create(version);
-
+		
 		// Create SordtedID.txt
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnaysis = true;

@@ -78,7 +78,8 @@ public class BliaTest {
 		long startTime = System.currentTimeMillis();
 
 		BLIA blia = new BLIA();
-		blia.prepareIndexData();
+		boolean useStrucrutedInfo = true;
+		blia.prepareIndexData(useStrucrutedInfo);
 		blia.prepareAnalysisData();
 		blia.analyze();
 		

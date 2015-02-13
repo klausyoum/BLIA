@@ -162,10 +162,11 @@ public class EvaluatorTest {
 
 		BLIA blia = new BLIA();
 
-		DbUtil dbUtil = new DbUtil();		
+		DbUtil dbUtil = new DbUtil();
+		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
 			dbUtil.initializeAllData();
-			blia.prepareIndexData();
+			blia.prepareIndexData(useStrucrutedInfo);
 		} else {
 			dbUtil.initializeAllAnalysisData();
 		}
@@ -177,6 +178,9 @@ public class EvaluatorTest {
 		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 		
 		String algorithmDescription = "[BLIA] alpha: " + alpha;
+		if (useStrucrutedInfo) {
+			algorithmDescription += " with structured information";
+		}
 		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator1.evaluate();
 
