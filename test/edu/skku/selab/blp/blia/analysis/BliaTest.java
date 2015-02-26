@@ -51,7 +51,8 @@ public class BliaTest {
 		float alpha = 0.2f;
 		float beta = 0.5f;
 		int pastDate = 15;
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDate);
+		String repoDir = Property.SWT_REPO_DIR;
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDate, repoDir);
 	}
 
 	/**
