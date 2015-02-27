@@ -25,6 +25,21 @@ import edu.skku.selab.blp.utils.Stopword;
  */
 public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 
+	private String stemContent(String content[]) {
+		StringBuffer contentBuf = new StringBuffer();
+		String as[];
+		int j = (as = content).length;
+		for (int i = 0; i < j; i++) {
+			String word = as[i];
+			String stemWord = Stem.stem(word.toLowerCase());
+			if (!Stopword.isKeyword(word) && !Stopword.isEnglishStopword(word)) {
+				contentBuf.append(stemWord);
+				contentBuf.append(" ");
+			}
+		}
+		return contentBuf.toString();
+	}
+	
 	public Corpus create(File file) {
 		FileParser parser = new FileParser(file);
 		String fileName = parser.getPackageName();
@@ -38,38 +53,31 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		
 		// parser.getImportedClassed() function should be called before calling parser.getContents()
 		ArrayList<String> importedClasses = parser.getImportedClasses();
+		
 		String content[] = parser.getStructuredContent();
-		StringBuffer contentBuf = new StringBuffer();
-		String as[];
-		int j = (as = content).length;
-		for (int i = 0; i < j; i++) {
-			String word = as[i];
-			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isKeyword(word) && !Stopword.isEnglishStopword(word)) {
-				contentBuf.append(stemWord);
-				contentBuf.append(" ");
-			}
-		}
+		String sourceCodeContent = stemContent(content);
+		
+		String classContents[] = parser.getStructuredContent(FileParser.CLASS_PART);
+		String classPart = stemContent(classContents);
 
-		String sourceCodeContent = contentBuf.toString();
-		String classNameAndMethodName[] = parser.getClassNameAndMethodName();
-		StringBuffer nameBuf = new StringBuffer();
-		String as1[];
-		int l = (as1 = classNameAndMethodName).length;
-		for (int k = 0; k < l; k++) {
-			String word = as1[k];
-			String stemWord = Stem.stem(word.toLowerCase());
-			nameBuf.append(stemWord);
-			nameBuf.append(" ");
-		}
+		String methodContents[] = parser.getStructuredContent(FileParser.METHOD_PART);
+		String methodPart = stemContent(methodContents);
 
-		String names = nameBuf.toString();
+		String variableContents[] = parser.getStructuredContent(FileParser.VARIABLE_PART);
+		String variablePart = stemContent(variableContents);
+
+		String commentContents[] = parser.getStructuredContent(FileParser.COMMENT_PART);
+		String commentPart = stemContent(commentContents);
+		
 		Corpus corpus = new Corpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());
 		corpus.setJavaFileFullClassName(fileName);
-		corpus.setContent((new StringBuilder(String.valueOf(sourceCodeContent)))
-				.append(" ").append(names).toString());
 		corpus.setImportedClasses(importedClasses);
+		corpus.setContent(sourceCodeContent);
+		corpus.setClassPart(classPart);
+		corpus.setMethodPart(methodPart);
+		corpus.setVariablePart(variablePart);
+		corpus.setCommentPart(commentPart);
 		return corpus;
     }
 	
@@ -103,6 +111,8 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 
 				String corpusSet = corpus.getContent();
 				sourceFileDAO.insertSourceFile(fileName, productName);
+				
+				// TODO: start from here! insert other corpus set of sub parts.
 				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpusSet, totalCoupusCount, lengthScore);
 				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());

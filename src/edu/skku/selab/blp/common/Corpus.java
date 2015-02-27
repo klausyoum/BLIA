@@ -17,6 +17,10 @@ public class Corpus {
 	private String javaFileFullClassName;
 	private String javaFilePath;
 	private String content;
+	private String classPart;
+	private String methodPart;
+	private String variablePart;
+	private String commentPart;
 	private ArrayList<String> importedClasses;
 
 	public Corpus() {
@@ -58,5 +62,61 @@ public class Corpus {
 	 */
 	public void setImportedClasses(ArrayList<String> importedClasses) {
 		this.importedClasses = importedClasses;
+	}
+
+	/**
+	 * @return the classPart
+	 */
+	public String getClassPart() {
+		return classPart;
+	}
+
+	/**
+	 * @param classPart the classPart to set
+	 */
+	public void setClassPart(String classPart) {
+		this.classPart = classPart;
+	}
+
+	/**
+	 * @return the methodPart
+	 */
+	public String getMethodPart() {
+		return methodPart;
+	}
+
+	/**
+	 * @param methodPart the methodPart to set
+	 */
+	public void setMethodPart(String methodPart) {
+		this.methodPart = methodPart;
+	}
+
+	/**
+	 * @return the variablePart
+	 */
+	public String getVariablePart() {
+		return variablePart;
+	}
+
+	/**
+	 * @param variablePart the variablePart to set
+	 */
+	public void setVariablePart(String variablePart) {
+		this.variablePart = variablePart;
+	}
+
+	/**
+	 * @return the commentPart
+	 */
+	public String getCommentPart() {
+		return commentPart;
+	}
+
+	/**
+	 * @param commentPart the commentPart to set
+	 */
+	public void setCommentPart(String commentPart) {
+		this.commentPart = commentPart;
 	}
 }

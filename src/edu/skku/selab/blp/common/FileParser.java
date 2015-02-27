@@ -49,7 +49,13 @@ import edu.skku.selab.blp.utils.Splitter;
 public class FileParser {
 	private CompilationUnit compilationUnit;
 	private String sourceString;
-
+	
+	public static final int CLASS_PART = 1;
+	public static final int METHOD_PART = 2;
+	public static final int VARIABLE_PART = 3;
+	public static final int COMMENT_PART = 4;
+	public static final int ALL_PART = 5;
+	
 	public FileParser(File file) {
 		compilationUnit = null;
 		ASTCreator creator = new ASTCreator();
@@ -73,6 +79,46 @@ public class FileParser {
 		return len;
 	}
 	
+	private String[] splitContent(String content) {
+		String tokensInSourceCode[] = Splitter.splitSourceCode(content);
+		StringBuffer sourceCodeContentBuffer = new StringBuffer();
+		String as[];
+		int j = (as = tokensInSourceCode).length;
+		for (int i = 0; i < j; i++) {
+			String token = as[i];
+			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
+		}
+
+		String processedConent = sourceCodeContentBuffer.toString().toLowerCase();
+		return processedConent.split(" ");
+	}
+	
+	public String[] getStructuredContent(int type) {
+		String content = "";
+//		System.out.println(content);
+		
+		switch (type) {
+		case CLASS_PART:
+			content =  getAllClassNames();
+			break;
+		case METHOD_PART:
+			content =  getAllMethodNames();
+			break;
+		case VARIABLE_PART:
+			content =  getAllVariableNames();
+			break;
+		case COMMENT_PART:
+			content =  getAllComments();
+			break;
+		case ALL_PART:
+		default:
+			content = getAllStructuredInfos();
+			break;
+		}
+		
+		return splitContent(content);
+	}
+	
 	public String[] getStructuredContent() {
 		String allStructuredInfos = getAllStructuredInfos();
 //		System.out.println(allStructuredInfos);
@@ -89,7 +135,7 @@ public class FileParser {
 		String content = sourceCodeContentBuffer.toString().toLowerCase();
 		return content.split(" ");
 	}
-
+	
 	public String[] getContent() {
 		String tokensInSourceCode[] = Splitter.splitSourceCode(deleteNoNeededNode());
 		StringBuffer sourceCodeContentBuffer = new StringBuffer();
@@ -113,6 +159,121 @@ public class FileParser {
 	public String getPackageName() {
 		return compilationUnit.getPackage() != null ?
 				compilationUnit.getPackage().getName().getFullyQualifiedName() : "";
+	}
+	
+	public String getAllVariableNames() {
+    	final ArrayList<String> structuredInfoList = new ArrayList<String>();
+    	
+    	compilationUnit.accept(new ASTVisitor() {
+            public boolean visit(SingleVariableDeclaration node)
+            {
+//            	System.out.printf("single variable Node: %s\n", node.getName().getIdentifier());
+            	structuredInfoList.add(node.getName().getIdentifier());
+                return super.visit(node);
+            }
+    	});
+    	
+    	compilationUnit.accept(new ASTVisitor() {
+            public boolean visit(VariableDeclarationFragment node)
+            {
+//            	System.out.printf("variable declaration Node: %s\n", node.getName().getIdentifier());
+            	structuredInfoList.add(node.getName().getIdentifier());
+                return super.visit(node);
+            }
+    	});
+    	
+		String allStructuredInfoNames = "";
+		for (Iterator<String> iterator = structuredInfoList.iterator(); iterator.hasNext();) {
+			String structuredInfoName = (String) iterator.next();
+			allStructuredInfoNames = (new StringBuilder(String.valueOf(allStructuredInfoNames)))
+					.append(structuredInfoName).append(" ").toString();
+		}
+	
+		return allStructuredInfoNames.trim();
+	}
+	
+	public String getAllComments() {
+		final ArrayList<String> structuredInfoList = new ArrayList<String>();
+		
+	   	for (Comment comment : (List<Comment>) compilationUnit.getCommentList()) {
+    		comment.accept(new ASTVisitor() {
+                public boolean visit(Javadoc node)
+                {
+//                	System.out.printf("ClassNames: %s, comment text: %s\n", getAllClassNames(), node.toString());
+                	String javadocComment = node.toString();
+                	javadocComment = javadocComment.split("[/][*][*]")[1];
+                	javadocComment = javadocComment.split("[*][/]")[0];
+                	String[]  commentLines = javadocComment.split("\n");
+                	
+                	for (String line : commentLines) {
+                		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
+                			continue;
+                		}
+                    	String[] words = line.split("[*\\s]");
+                    	for (String word : words) {
+                    		if (word.length() > 0) {
+                    			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
+                    					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
+                    				continue;
+                    			}
+                    			
+    	                    	structuredInfoList.add(word);                		
+//    	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
+                    		}
+                    	}
+                	}
+                    return super.visit(node);
+                }
+        	});
+        	
+    		comment.accept(new ASTVisitor() {
+                public boolean visit(LineComment node)
+                {
+                	int beginIndex = node.getStartPosition();
+                	int endIndex = beginIndex + node.getLength(); 
+                	String lineComment = sourceString.substring(beginIndex + 2, endIndex).trim();
+                	
+                	String[] words = lineComment.split("[\\s]");
+                	for (String word : words) {
+                		if (word.length() > 0) {
+//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+                			structuredInfoList.add(word);                		
+                		}
+                	}
+                    return super.visit(node);
+                }
+        	});
+        	
+    		comment.accept(new ASTVisitor() {
+                public boolean visit(BlockComment node)
+                {
+                	int beginIndex = node.getStartPosition();
+                	int endIndex = beginIndex + node.getLength(); 
+                	String blockComment = sourceString.substring(beginIndex, endIndex);
+                	blockComment = blockComment.split("[/][*]")[1];
+                	blockComment = blockComment.split("[*][/]")[0];
+                	
+//                	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
+                	String[] words = blockComment.split("[*\\s]");
+                	for (String word : words) {
+                		if (word.length() > 0) {
+//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+                			structuredInfoList.add(word);                		
+                		}
+                	}
+                    return super.visit(node);
+                }
+        	});
+		}
+    
+		String allStructuredInfoNames = "";
+		for (Iterator<String> iterator = structuredInfoList.iterator(); iterator.hasNext();) {
+			String structuredInfoName = (String) iterator.next();
+			allStructuredInfoNames = (new StringBuilder(String.valueOf(allStructuredInfoNames)))
+					.append(structuredInfoName).append(" ").toString();
+		}
+	
+		return allStructuredInfoNames.trim();
 	}
 	
 	public String getAllStructuredInfos() {
@@ -157,7 +318,7 @@ public class FileParser {
     	compilationUnit.accept(new ASTVisitor() {
             public boolean visit(SingleVariableDeclaration node)
             {
-//            	System.out.printf("parameter Node: %s\n", node.getName().getIdentifier());
+//            	System.out.printf("single variable Node: %s\n", node.getName().getIdentifier());
             	structuredInfoList.add(node.getName().getIdentifier());
                 return super.visit(node);
             }
@@ -166,7 +327,7 @@ public class FileParser {
     	compilationUnit.accept(new ASTVisitor() {
             public boolean visit(VariableDeclarationFragment node)
             {
-//            	System.out.printf("variable Node: %s\n", node.getName().getIdentifier());
+//            	System.out.printf("variable declaration Node: %s\n", node.getName().getIdentifier());
             	structuredInfoList.add(node.getName().getIdentifier());
                 return super.visit(node);
             }
