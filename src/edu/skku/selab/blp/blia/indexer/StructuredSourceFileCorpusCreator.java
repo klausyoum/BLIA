@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.common.Corpus;
+import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -24,23 +24,7 @@ import edu.skku.selab.blp.utils.Stopword;
  *
  */
 public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
-
-	private String stemContent(String content[]) {
-		StringBuffer contentBuf = new StringBuffer();
-		String as[];
-		int j = (as = content).length;
-		for (int i = 0; i < j; i++) {
-			String word = as[i];
-			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isKeyword(word) && !Stopword.isEnglishStopword(word)) {
-				contentBuf.append(stemWord);
-				contentBuf.append(" ");
-			}
-		}
-		return contentBuf.toString();
-	}
-	
-	public Corpus create(File file) {
+	public SourceFileCorpus create(File file) {
 		FileParser parser = new FileParser(file);
 		String fileName = parser.getPackageName();
 		if (fileName.trim().equals("")) {
@@ -69,7 +53,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		String commentContents[] = parser.getStructuredContent(FileParser.COMMENT_PART);
 		String commentPart = stemContent(commentContents);
 		
-		Corpus corpus = new Corpus();
+		SourceFileCorpus corpus = new SourceFileCorpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());
 		corpus.setJavaFileFullClassName(fileName);
 		corpus.setImportedClasses(importedClasses);
@@ -101,7 +85,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		int j = (afile = files).length;
 		for (int i = 0; i < j; i++) {
 			File file = afile[i];
-			Corpus corpus = create(file);
+			SourceFileCorpus corpus = create(file);
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
 				String fileName = corpus.getJavaFileFullClassName();
 				if (corpus.getJavaFileFullClassName().endsWith(".java")) {
@@ -109,11 +93,8 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					fileName += ".java";
 				}
 
-				String corpusSet = corpus.getContent();
 				sourceFileDAO.insertSourceFile(fileName, productName);
-				
-				// TODO: start from here! insert other corpus set of sub parts.
-				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpusSet, totalCoupusCount, lengthScore);
+				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus, totalCoupusCount, lengthScore);
 				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());
 				count++;

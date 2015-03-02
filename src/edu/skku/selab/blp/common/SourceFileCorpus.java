@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class Corpus {
+public class SourceFileCorpus {
 	private String javaFileFullClassName;
 	private String javaFilePath;
 	private String content;
@@ -23,7 +23,15 @@ public class Corpus {
 	private String commentPart;
 	private ArrayList<String> importedClasses;
 
-	public Corpus() {
+	public SourceFileCorpus() {
+		javaFileFullClassName = "";
+		javaFilePath = "";
+		content = "";
+		classPart = "";
+		methodPart = "";
+		variablePart = "";
+		commentPart = "";
+		importedClasses = null;
 	}
 
 	public String getJavaFileFullClassName() {

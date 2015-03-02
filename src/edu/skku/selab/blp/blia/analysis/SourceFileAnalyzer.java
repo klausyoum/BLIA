@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.common.Bug;
+import edu.skku.selab.blp.common.BugCorpus;
+import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
@@ -47,7 +49,7 @@ public class SourceFileAnalyzer {
 		String productName = property.getProductName();
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		HashMap<String, Integer> corpusTable = sourceFileDAO.getCorpuses(productName);
+		HashMap<String, Integer> wordMap = sourceFileDAO.getWordMap(productName);
 		
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer(); 
 		Hashtable<String, Integer> inverseDocCountTable = sourceFileIndexer.getInverseDocCountTable(version);
@@ -60,7 +62,7 @@ public class SourceFileAnalyzer {
 		double tf = 0.0;
 		double idf = 0.0;
 		double vector = 0.0;
-		String corpusSet = "";
+		String corpusContent = "";
 		String corpus = "";
 		Iterator<String> bugsIter = bugs.keySet().iterator();
 		while (bugsIter.hasNext()) {
@@ -69,10 +71,11 @@ public class SourceFileAnalyzer {
 			
 //			if (bugID.equalsIgnoreCase("75739")) {
 				Bug bug = bugs.get(bugID);
-				corpusSet = bug.getCorpuses();
+				
+				corpusContent = bug.getCorpusContent();
 				
 				// get term count
-				String termArray[] = corpusSet.split(" ");
+				String termArray[] = corpusContent.split(" ");
 				Hashtable<String, Integer> termTable = new Hashtable<String, Integer>();
 				for (int i = 0; i < termArray.length; i++) {
 					corpus = termArray[i];
@@ -94,7 +97,7 @@ public class SourceFileAnalyzer {
 					corpus = termTableIter.next();
 					termCount = termTable.get(corpus);
 					
-					if (corpusTable.containsKey(corpus)) {
+					if (wordMap.containsKey(corpus)) {
 						totalTermCount += termCount;
 					}
 //						System.out.printf("Corpus: %s, termCount: %d\n", corpus, termCount);
@@ -107,7 +110,7 @@ public class SourceFileAnalyzer {
 				termTableIter = termTable.keySet().iterator();
 				while (termTableIter.hasNext()) {
 					corpus = termTableIter.next();
-					if (corpusTable.containsKey(corpus)) {
+					if (wordMap.containsKey(corpus)) {
 						termCount = termTable.get(corpus);
 						inverseDocCount = inverseDocCountTable.get(corpus).intValue();
 
@@ -146,7 +149,7 @@ public class SourceFileAnalyzer {
 				}
 				
 				// Compute similarity between Bug report & source files
-				HashSet<IntegratedAnalysisValue> integratedAnalysisValues = computeSimilarity(bugID, analysisValues, version);
+				HashSet<IntegratedAnalysisValue> integratedAnalysisValues = computeSimilarityVersion2(bug, analysisValues, version);
 				Iterator<IntegratedAnalysisValue> integratedAnalysisValuesIter = integratedAnalysisValues.iterator();
 				while (integratedAnalysisValuesIter.hasNext()) {
 					IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValuesIter.next();
@@ -156,7 +159,7 @@ public class SourceFileAnalyzer {
 		}
 	}
 	
-	private HashSet<IntegratedAnalysisValue> computeSimilarity(String bugID, HashMap<String, AnalysisValue> bugVectors, String version) throws Exception {
+	private HashSet<IntegratedAnalysisValue> computeSimilarityVersion1(Bug bug, HashMap<String, AnalysisValue> bugVectors, String version) throws Exception {
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
 
@@ -191,7 +194,82 @@ public class SourceFileAnalyzer {
 			}
 			
 			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
-			integratedAnalysisValue.setBugID(bugID);
+			integratedAnalysisValue.setBugID(bug.getID());
+			integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
+			integratedAnalysisValue.setVsmScore(vsmScore);
+			integratedAnalysisValues.add(integratedAnalysisValue);
+		}
+		
+		return integratedAnalysisValues;
+	}
+	
+	private HashSet<IntegratedAnalysisValue> computeSimilarityVersion2(Bug bug, HashMap<String, AnalysisValue> bugVectors, String version) throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		HashMap<String, Integer> sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
+		
+		HashSet<IntegratedAnalysisValue> integratedAnalysisValues = new HashSet<IntegratedAnalysisValue>();
+		Iterator<String> sourceFileVersionIDIter = sourceFileVersionIDs.keySet().iterator();
+		
+		while(sourceFileVersionIDIter.hasNext()) {
+			int sourceFileVersionID = sourceFileVersionIDs.get(sourceFileVersionIDIter.next());
+
+			double vsmScore = 0.0;
+			// corpus, analysisValue
+			HashMap<String, AnalysisValue> codeVectors = sourceFileDAO.getSourceFileAnalysisValues(sourceFileVersionID);
+			if (codeVectors == null) {
+//				System.err.printf("Wrong source file version ID: %d\n", sourceFileVersionID);
+				continue;
+			}
+			
+			SourceFileCorpus corpus = sourceFileDAO.getCorpus(sourceFileVersionID);
+			String[] sourceFileCorpusSet = new String[4];
+			sourceFileCorpusSet[0] = corpus.getClassPart();
+			sourceFileCorpusSet[1] = corpus.getMethodPart();
+			sourceFileCorpusSet[2] = corpus.getVariablePart();
+			sourceFileCorpusSet[3] = corpus.getCommentPart();
+			
+			BugCorpus bugCorpus = bug.getCorpus();
+			String[] bugCorpusParts = new String[2];
+			bugCorpusParts[0] = bugCorpus.getSummaryPart();
+			bugCorpusParts[1] = bugCorpus.getDescriptionPart();
+			
+			for (int i = 0; i < sourceFileCorpusSet.length; i++) {
+				for (int j = 0; j < bugCorpusParts.length; j++) {
+					if (sourceFileCorpusSet[i] == "" || bugCorpusParts[j] == "") {
+						continue;
+					}
+					
+					String[] sourceFileWords = sourceFileCorpusSet[i].split(" ");
+					String[] bugWords = bugCorpusParts[j].split(" ");
+					HashSet<String> bugWordsSet = new HashSet<String>();
+					for (int k = 0; k < bugWords.length; k++) {
+						bugWordsSet.add(bugWords[k]);
+					}
+					
+					double cosineSimilarityScore = 0.0;
+					for (int k = 0; k < sourceFileWords.length; k++) {
+						if (bugWordsSet.contains(sourceFileWords[k])) {
+							if (null == codeVectors.get(sourceFileWords[k])) {
+								System.out.printf("Exception occurred word: %s\n", sourceFileWords[k]);
+								continue;
+							}
+							
+							double codeVector = codeVectors.get(sourceFileWords[k]).getVector();
+							double bugVector = bugVectors.get(sourceFileWords[k]).getVector();
+							
+							cosineSimilarityScore += (codeVector * bugVector);
+						}
+					}
+					
+					vsmScore += cosineSimilarityScore;
+				}
+			}
+			
+			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
+			integratedAnalysisValue.setBugID(bug.getID());
 			integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
 			integratedAnalysisValue.setVsmScore(vsmScore);
 			integratedAnalysisValues.add(integratedAnalysisValue);

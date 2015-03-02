@@ -23,6 +23,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.common.Bug;
+import edu.skku.selab.blp.common.SourceFileCorpus;
+import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.SourceFile;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.SimilarBugInfo;
@@ -41,15 +43,22 @@ public class BugDAOTest {
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";
 	private String fixedDateString3 = "2015-01-27 02:48:00";
-	private String corpusSet1 = "acc contain constant us defin access";
-	private String corpusSet2 = "element listen event event result";
-	private String corpusSet3 = "event blia result";
+	private String corpusContent1 = "acc contain constant us defin access";
+	private String corpusContent2 = "element listen event event result";
+	private String corpusContent3 = "event blia result";
+	private String summaryContent1 = "acc contain";
+	private String summaryContent2 = "element";
+	private String summaryContent3 = "event";
+	private String descriptionContent1 = "constant us defin access";
+	private String descriptionContent2 = "listen event event result";
+	private String descriptionContent3 = "blia result";
+
 	private String stackTrace1 = "edu.skku.selab.blia";
 	private String stackTrace2 = "edu.skku.selab.blp";
 	private String stackTrace3 = "org.blia";
 	private String stackTrace4 = "org.blp";
-	private String corpus1 = "acc";
-	private String corpus2 = "element";
+	private String word1 = "acc";
+	private String word2 = "element";
 	private String version = "v1.0";
 	
 	private int termCount = 10;
@@ -94,7 +103,11 @@ public class BugDAOTest {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date fixedDate1 = simpleDateFormat.parse(fixedDateString1);
 		bug1.setFixedDate(fixedDate1);
-		bug1.setCorpuses(corpusSet1);
+		BugCorpus bugCorpus1 = new BugCorpus();
+		bugCorpus1.setContent(corpusContent1);
+		bugCorpus1.setSummaryPart(summaryContent1);
+		bugCorpus1.setDescriptionPart(descriptionContent1);
+		bug1.setCorpus(bugCorpus1);
 		ArrayList<String> stackTraces1 = new ArrayList<String>();
 		stackTraces1.add(stackTrace1);
 		stackTraces1.add(stackTrace2);
@@ -105,7 +118,11 @@ public class BugDAOTest {
 		bug2.setID(bugID2);
 		bug2.setProductName(productName);
 		bug2.setFixedDate(fixedDateString2);
-		bug2.setCorpuses(corpusSet2);
+		BugCorpus bugCorpus2 = new BugCorpus();
+		bugCorpus2.setContent(corpusContent2);
+		bugCorpus2.setSummaryPart(summaryContent2);
+		bugCorpus2.setDescriptionPart(descriptionContent2);
+		bug2.setCorpus(bugCorpus2);
 		ArrayList<String> stackTraces2 = new ArrayList<String>();
 		stackTraces2.add(stackTrace3);
 		stackTraces2.add(stackTrace4);
@@ -116,7 +133,11 @@ public class BugDAOTest {
 		bug3.setID(bugID3);
 		bug3.setProductName(productName);
 		bug3.setFixedDate(fixedDateString3);
-		bug3.setCorpuses(corpusSet3);
+		BugCorpus bugCorpus3 = new BugCorpus();
+		bugCorpus3.setContent(corpusContent3);
+		bugCorpus3.setSummaryPart(summaryContent3);
+		bugCorpus3.setDescriptionPart(descriptionContent3);
+		bug3.setCorpus(bugCorpus3);
 		bug3.setVersion(version);
 		
 		BugDAO bugDAO = new BugDAO();
@@ -144,7 +165,10 @@ public class BugDAOTest {
 		assertEquals("bugID1 is wrong.", bugID1, foundBug1.getID());
 		assertEquals("productName is wrong.", productName, foundBug1.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug1.getFixedDateString());
-		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug1.getCorpuses());
+		BugCorpus bugCorpus = foundBug1.getCorpus();
+		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
+		assertEquals("summaryContent1 is wrong.", summaryContent1, bugCorpus.getSummaryPart());
+		assertEquals("descriptionContent1 is wrong.", descriptionContent1, bugCorpus.getDescriptionPart());
 		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug1.getStackTraceClasses().get(0));
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug1.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug1.getVersion());
@@ -152,7 +176,10 @@ public class BugDAOTest {
 		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
 		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
 		assertEquals("fixedDateString2 is wrong.", fixedDateString2, foundBug2.getFixedDateString());
-		assertEquals("corpusSet2 is wrong.", corpusSet2, foundBug2.getCorpuses());
+		bugCorpus = foundBug2.getCorpus();
+		assertEquals("corpusContent2 is wrong.", corpusContent2, bugCorpus.getContent());
+		assertEquals("summaryContent2 is wrong.", summaryContent2, bugCorpus.getSummaryPart());
+		assertEquals("descriptionContent2 is wrong.", descriptionContent2, bugCorpus.getDescriptionPart());
 		assertEquals("stackTrace3 is wrong.", stackTrace3, foundBug2.getStackTraceClasses().get(0));
 		assertEquals("stackTrace4 is wrong.", stackTrace4, foundBug2.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug2.getVersion());
@@ -161,39 +188,41 @@ public class BugDAOTest {
 		assertEquals("bugID1 is wrong.", bugID1, foundBug.getID());
 		assertEquals("productName is wrong.", productName, foundBug.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug.getFixedDateString());
-		assertEquals("corpusSet1 is wrong.", corpusSet1, foundBug.getCorpuses());
+		bugCorpus = foundBug.getCorpus();
+		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
+		assertEquals("summaryContent1 is wrong.", summaryContent1, bugCorpus.getSummaryPart());
+		assertEquals("descriptionContent1 is wrong.", descriptionContent1, bugCorpus.getDescriptionPart());
 		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug.getStackTraceClasses().get(0));
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug.getVersion());
-		
 	}
 
 	@Test
 	public void verifyGetBugSfAnalysisValue() throws Exception {
 		BugDAO bugDAO = new BugDAO();
 
-		bugDAO.deleteAllCorpuses();
-		assertNotEquals("Corpus insertion failed!", BaseDAO.INVALID, bugDAO.insertCorpus(corpus1, productName));
-		assertNotEquals("Corpus insertion failed!", BaseDAO.INVALID, bugDAO.insertCorpus(corpus2, productName));
+		bugDAO.deleteAllWords();
+		assertNotEquals("Word insertion failed!", BaseDAO.INVALID, bugDAO.insertWord(word1, productName));
+		assertNotEquals("Word insertion failed!", BaseDAO.INVALID, bugDAO.insertWord(word2, productName));
 		
-		HashMap<String, Integer> corpuses = bugDAO.getCorpuses(productName);
-		assertNotNull("Can't find corpus1.", corpuses.get(corpus1));
-		assertNotNull("Can't find corpus2.", corpuses.get(corpus2));
+		HashMap<String, Integer> wordMap = bugDAO.getWordMap(productName);
+		assertNotNull("Can't find corpus1.", wordMap.get(word1));
+		assertNotNull("Can't find corpus2.", wordMap.get(word2));
 		
 		// preparation phase
 		bugDAO.deleteAllBugSfAnalysisValues();
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		sourceFileDAO.deleteAllCorpuses();
-		sourceFileDAO.insertCorpus(corpus1, productName);
-		sourceFileDAO.insertCorpus(corpus2, productName);
+		sourceFileDAO.deleteAllWords();
+		sourceFileDAO.insertCorpus(word1, productName);
+		sourceFileDAO.insertCorpus(word2, productName);
 		
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, corpus1, termCount, idc, tf, idf, vector);
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, word1, termCount, idc, tf, idf, vector);
 		assertNotEquals("BugSfAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugSfAnalysisValue(analysisValue));
 		
-		AnalysisValue returnValue = bugDAO.getBugSfAnalysisValue(bugID1, productName, corpus1);
+		AnalysisValue returnValue = bugDAO.getBugSfAnalysisValue(bugID1, productName, word1);
 		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getName());
 		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
-		assertEquals("corpus1 of AnalysisValue is wrong.", corpus1, returnValue.getCorpus());
+		assertEquals("word1 of AnalysisValue is wrong.", word1, returnValue.getWord());
 		assertEquals("termCount of AnalysisValue is wrong.", termCount, returnValue.getTermCount());
 		assertEquals("idc of AnalysisValue is wrong.", idc, returnValue.getInvDocCount());
 		assertEquals("tf of AnalysisValue is wrong.", tf, returnValue.getTf(), delta);
@@ -206,13 +235,13 @@ public class BugDAOTest {
 		BugDAO bugDAO = new BugDAO();
 
 		bugDAO.deleteAllBugAnalysisValues();
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, corpus1, termCount, idc, tf, idf, vector);
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, word1, termCount, idc, tf, idf, vector);
 		assertNotEquals("BugAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugAnalysisValue(analysisValue));
 		
-		AnalysisValue returnValue = bugDAO.getBugAnalysisValue(bugID1, productName, corpus1);
+		AnalysisValue returnValue = bugDAO.getBugAnalysisValue(bugID1, productName, word1);
 		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getName());
 		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
-		assertEquals("corpus1 of AnalysisValue is wrong.", corpus1, returnValue.getCorpus());
+		assertEquals("word1 of AnalysisValue is wrong.", word1, returnValue.getWord());
 		assertEquals("vector of AnalysisValue is wrong.", vector, returnValue.getVector(), delta);
 	}
 
@@ -238,8 +267,12 @@ public class BugDAOTest {
 		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
-		assertNotEquals("fileName1's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1));
-		assertNotEquals("fileName2's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpusSet2, totalCorpusCount2, lengthScore2));
+		SourceFileCorpus corpus1 = new SourceFileCorpus();
+		corpus1.setContent(corpusContent1);
+		SourceFileCorpus corpus2 = new SourceFileCorpus();
+		corpus2.setContent(corpusContent2);
+		assertNotEquals("fileName1's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
+		assertNotEquals("fileName2's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpus2, totalCorpusCount2, lengthScore2));
 		
 		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName1, version1, productName));
 		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName2, version1, productName));

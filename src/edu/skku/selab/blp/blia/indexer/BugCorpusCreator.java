@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.buglocator.indexer.BugCorpusCreatorWithFile;
 import edu.skku.selab.blp.common.Bug;
+import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Splitter;
@@ -43,6 +44,20 @@ import edu.skku.selab.blp.utils.Stopword;
  *
  */
 public class BugCorpusCreator {
+	private String stemContent(String content[]) {
+		StringBuffer contentBuf = new StringBuffer();
+		String as[];
+		int j = (as = content).length;
+		for (int i = 0; i < j; i++) {
+			String word = as[i];
+			String stemWord = Stem.stem(word.toLowerCase());
+			if (!Stopword.isEnglishStopword(word)) {
+				contentBuf.append(stemWord);
+				contentBuf.append(" ");
+			}
+		}
+		return contentBuf.toString();
+	}
 	
 	/* (non-Javadoc)
 	 * @see edu.skku.selab.blia.indexer.ICorpus#create()
@@ -69,27 +84,28 @@ public class BugCorpusCreator {
 		while (bugIter.hasNext()) {
 			bug = (Bug) bugIter.next();
 			bug.setProductName(productName);
-
+			
+			BugCorpus bugCorpus = new BugCorpus();
+			
 			String content = (new StringBuilder(String.valueOf(bug.getSummary())))
 					.append(" ").append(bug.getDescription()).toString();
 			String splitWords[] = Splitter.splitNatureLanguage(content);
-			StringBuffer corpuses = new StringBuffer();
-			String as[];
-			int j = (as = splitWords).length;
-			for (int i = 0; i < j; i++) {
-				String word = as[i];
-				word = Stem.stem(word.toLowerCase());
-				if (!Stopword.isEnglishStopword(word)) {
-					corpuses.append((new StringBuilder(String.valueOf(word))).append(" ").toString());
-				}
-			}
-			bug.setCorpuses(corpuses.toString());
+			String contentCorpus = stemContent(splitWords);
+			bugCorpus.setContent(contentCorpus);
+			
+			String summaryPart = stemContent(Splitter.splitNatureLanguage(bug.getSummary()));
+			bugCorpus.setSummaryPart(summaryPart);
+			
+			String descriptionPart = stemContent(Splitter.splitNatureLanguage(bug.getDescription()));
+			bugCorpus.setDescriptionPart(descriptionPart);
+
+			bug.setCorpus(bugCorpus);
 			
 			// To write bug corpus to file for compatibility
 			FileWriter writer = new FileWriter((new StringBuilder(
 					String.valueOf(dirPath))).append(bug.getID())
 					.append(".txt").toString());
-			writer.write(corpuses.toString().trim());
+			writer.write(bugCorpus.getContent().trim());
 			writer.flush();
 			writer.close();
 
@@ -112,8 +128,7 @@ public class BugCorpusCreator {
 	}
 	
     public ArrayList<String> extractClassName(String content) {
-    	
-        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_][a-zA-Z0-9_\\-$]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
+        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
         
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(content);
@@ -176,7 +191,7 @@ public class BugCorpusCreator {
 											bug.setDescription(description);
 											
 											if (stackTraceAnalysis) {
-												bug.setStackTraceClasses(extractClassName(description));
+												bug.setStackTraceClasses(extractClassName(bug.getDescription()));
 											}
 										}
 									}

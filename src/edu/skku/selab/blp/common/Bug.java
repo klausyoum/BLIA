@@ -27,7 +27,7 @@ public class Bug {
     private String summary;
     private String description;
     private TreeSet<String> fixedFiles;
-    private String corpuses;
+    private BugCorpus bugCorpus;
     private int	totalCorpusCount;
     private String version;
     private ArrayList<String> stackTraceClasses;
@@ -39,10 +39,11 @@ public class Bug {
     	this.fixedDate = new Date(System.currentTimeMillis());
     	this.summary = "";
     	this.description = "";
+    	this.bugCorpus = new BugCorpus();
+    	this.totalCorpusCount = -1;
     	this.version = "";
     	this.fixedFiles = new TreeSet<String>();
     	this.stackTraceClasses = new ArrayList<String>();
-
     }
     
     public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, String version, TreeSet<String> fixedFiles) {
@@ -53,6 +54,8 @@ public class Bug {
     	this.summary = summary;
     	this.description = description;
     	this.version = version;
+    	this.bugCorpus = new BugCorpus();
+    	this.totalCorpusCount = -1;
     	this.fixedFiles = fixedFiles;
     	this.stackTraceClasses = new ArrayList<String>();
     }
@@ -121,6 +124,10 @@ public class Bug {
 	}
 	
 	public void setDescription(String description) {
+		description = description.replace("&quot;", "\"");
+		description = description.replace("&lt;", "<");
+		description = description.replace("&gt;", ">");
+		
 		this.description = description;
 	}
 	
@@ -137,17 +144,17 @@ public class Bug {
 	}
 
 	/**
-	 * @return the corpuses
+	 * @return the corpus
 	 */
-	public String getCorpuses() {
-		return corpuses;
+	public String getCorpusContent() {
+		return bugCorpus.getContent();
 	}
 
 	/**
-	 * @param corpuses the corpuses to set
+	 * @param corpusContent the corpus to set
 	 */
-	public void setCorpuses(String corpuses) {
-		this.corpuses = corpuses;
+	public void setCorpusContent(String corpusContent) {
+		bugCorpus.setContent(corpusContent);
 	}
 
 	/**
@@ -229,5 +236,19 @@ public class Bug {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	/**
+	 * @return the bugCorpus
+	 */
+	public BugCorpus getCorpus() {
+		return bugCorpus;
+	}
+
+	/**
+	 * @param bugCorpus the bugCorpus to set
+	 */
+	public void setCorpus(BugCorpus bugCorpus) {
+		this.bugCorpus = bugCorpus;
 	}
 }

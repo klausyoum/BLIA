@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import edu.skku.selab.blp.Property;
+import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
@@ -35,14 +36,14 @@ public class SourceFileIndexer {
 	public Hashtable<String, Integer> getInverseDocCountTable(String version) throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		String productName = Property.getInstance().getProductName();
-		HashMap<String, String> corpusSets = sourceFileDAO.getCorpusSets(productName, version);
+		HashMap<String, SourceFileCorpus> corpusSets = sourceFileDAO.getCorpusMap(productName, version);
 		
 		Iterator<String> fileNameIter = corpusSets.keySet().iterator();
 		Hashtable<String, Integer> countTable = new Hashtable<String, Integer>();
 		
 		while(fileNameIter.hasNext()) {
 			String fileName = fileNameIter.next();
-			String courpusSet = corpusSets.get(fileName);
+			String courpusSet = corpusSets.get(fileName).getContent();
 			
 			String corpuses[] = courpusSet.split(" ");
 			TreeSet<String> wordSet = new TreeSet<String>();
@@ -189,17 +190,17 @@ public class SourceFileIndexer {
 			sourceFileDAO.insertCorpus(corpus, productName);
 		}
 		
-		HashMap<String, String> corpusSets = sourceFileDAO.getCorpusSets(productName, version);
+		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version);
 		
 		String fileName = "";
 		int totalCorpusCount = 0;
 		int termCount = 0;
 		int inverseDocCount = 0;
 		String corpusSet = "";
-		Iterator<String> corpusSetsIter = corpusSets.keySet().iterator();
+		Iterator<String> corpusSetsIter = corpusMap.keySet().iterator();
 		while (corpusSetsIter.hasNext()) {
 			fileName = corpusSetsIter.next();
-			corpusSet = corpusSets.get(fileName);
+			corpusSet = corpusMap.get(fileName).getContent();
 			
 //			System.out.printf("File Name: %s\n", fileName);
 //			System.out.printf("CorpusSet: %s\n", corpusSet);

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.TreeSet;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.common.Corpus;
+import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
 import edu.skku.selab.blp.utils.Stem;
@@ -45,7 +45,7 @@ public class SourceFileCorpusCreatorWithFile {
 		int j = (afile = files).length;
 		for (int i = 0; i < j; i++) {
 			File file = afile[i];
-			Corpus corpus = create(file);
+			SourceFileCorpus corpus = create(file);
 			if (corpus != null
 					&& !nameSet.contains(corpus.getJavaFileFullClassName())) {
 				if (corpus.getJavaFileFullClassName().endsWith(".java")) {
@@ -84,7 +84,7 @@ public class SourceFileCorpusCreatorWithFile {
 		classNameWriter.close();
 	}
 
-	public Corpus create(File file) {
+	public SourceFileCorpus create(File file) {
 		FileParser parser = new FileParser(file);
 		String fileName = parser.getPackageName();
 		if (fileName.trim().equals("")) {
@@ -120,7 +120,7 @@ public class SourceFileCorpusCreatorWithFile {
 		}
 
 		String names = nameBuf.toString();
-		Corpus corpus = new Corpus();
+		SourceFileCorpus corpus = new SourceFileCorpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());
 		corpus.setJavaFileFullClassName(fileName);
 		corpus.setContent((new StringBuilder(String.valueOf(sourceCodeContent)))

@@ -135,40 +135,40 @@ public class BugRepoAnalyzer {
 		double len2 = 0.0;
 		double product = 0.0;
 		
-		TreeSet<Integer> corpusIDSet = new TreeSet<Integer>();
-		int corpusID = -1;
+		TreeSet<Integer> wordIDSet = new TreeSet<Integer>();
+		int wordID = -1;
 		for (int i = 0; i < firstBugVector.size(); i++) {
-			corpusID = firstBugVector.get(i).getCorpusID();
-			corpusIDSet.add(corpusID);
+			wordID = firstBugVector.get(i).getWordsID();
+			wordIDSet.add(wordID);
 		}
 		
 		for (int i = 0; i < secondBugVector.size(); i++) {
-			corpusID = secondBugVector.get(i).getCorpusID();
-			corpusIDSet.add(corpusID);
+			wordID = secondBugVector.get(i).getWordsID();
+			wordIDSet.add(wordID);
 		}
 		
-		double firstBugVectorValue[] = new double[corpusIDSet.size()];
-		double secondBugVectorValue[] = new double[corpusIDSet.size()];
+		double firstBugVectorValue[] = new double[wordIDSet.size()];
+		double secondBugVectorValue[] = new double[wordIDSet.size()];
 
 		int i = 0;
 		int j = 0;
 		int k = 0;
-		Iterator<Integer> corpusIDSetIter = corpusIDSet.iterator();
-		while (corpusIDSetIter.hasNext()) {
-			corpusID = corpusIDSetIter.next();
-			if (j < firstBugVector.size() && corpusID == firstBugVector.get(j).getCorpusID()) {
+		Iterator<Integer> wordIDSetIter = wordIDSet.iterator();
+		while (wordIDSetIter.hasNext()) {
+			wordID = wordIDSetIter.next();
+			if (j < firstBugVector.size() && wordID == firstBugVector.get(j).getWordsID()) {
 				firstBugVectorValue[i] = firstBugVector.get(j).getVector();
 				j++;
 			}
 			
-			if (k < secondBugVector.size() && corpusID == secondBugVector.get(k).getCorpusID()) {
+			if (k < secondBugVector.size() && wordID == secondBugVector.get(k).getWordsID()) {
 				secondBugVectorValue[i] = secondBugVector.get(k).getVector();
 				k++;
 			}
 			i++;
 		}
 		
-		for (i = 0; i < corpusIDSet.size(); i++) {
+		for (i = 0; i < wordIDSet.size(); i++) {
 			len1 += firstBugVectorValue[i] * firstBugVectorValue[i];
 			len2 += secondBugVectorValue[i] * secondBugVectorValue[i];
 			product += firstBugVectorValue[i] * secondBugVectorValue[i];

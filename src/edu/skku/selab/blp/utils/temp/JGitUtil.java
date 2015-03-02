@@ -36,7 +36,6 @@ public class JGitUtil {
 	 * 
 	 */
 	public JGitUtil() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

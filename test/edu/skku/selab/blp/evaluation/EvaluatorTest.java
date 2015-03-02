@@ -174,7 +174,7 @@ public class EvaluatorTest {
 			dbUtil.initializeAllData();
 			
 			// for swt project ONLY
-			Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
+			Calendar since = new GregorianCalendar(2002, Calendar.APRIL, 1);
 			Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
 			blia.prepareIndexData(useStrucrutedInfo, since.getTime(), until.getTime());
 		} else {

@@ -21,6 +21,7 @@ import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -66,7 +67,7 @@ public class SourceFileAnalyzerTest {
 	}
 
 	@Test
-	public void verifyAnalyze() throws Exception {
+	public void verifyAnalyzeWithSourceFileCorpusCreator() throws Exception {
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
@@ -84,5 +85,26 @@ public class SourceFileAnalyzerTest {
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		sourceFileAnalyzer.analyze(version);
 	}
+	
+	@Test
+	public void verifyAnalyzeWithStructuredSourceFileCorpusCreator() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndex(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.create(version);
+		
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		boolean stackTraceAnalysis = false;
+		bugCorpusCreator.create(stackTraceAnalysis);
+		
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		sourceFileAnalyzer.analyze(version);
+	}
+
 
 }

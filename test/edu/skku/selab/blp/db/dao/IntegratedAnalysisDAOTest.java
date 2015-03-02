@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -53,16 +54,21 @@ public class IntegratedAnalysisDAOTest {
 		assertNotEquals("Version insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version1, releaseDate1));
 		assertNotEquals("Version insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version2, releaseDate2));
 		
-		String corpusSet1 = "acc contain constant us defin access";
-		String corpusSet2 = "element listen event event result";
+		String corpusContent1 = "acc contain constant us defin access";
+		String corpusContent2 = "element listen event event result";
+		SourceFileCorpus corpus1 = new SourceFileCorpus();
+		corpus1.setContent(corpusContent1);
+		SourceFileCorpus corpus2 = new SourceFileCorpus();
+		corpus2.setContent(corpusContent2);
+		
 		int totalCorpusCount1 = 5;
 		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
 		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpusSet1, totalCorpusCount1, lengthScore1));
+				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
 		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpusSet2, totalCorpusCount2, lengthScore2));
+				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpus2, totalCorpusCount2, lengthScore2));
 	}
 
 	/**

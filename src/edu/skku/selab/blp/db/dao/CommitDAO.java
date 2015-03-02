@@ -231,4 +231,19 @@ public class CommitDAO extends BaseDAO {
 		
 		return filteredCommitInfos;
 	}
+	
+	public int deleteAllCommitFileInfo() {
+		String sql = "DELETE FROM COMM_FILE_INFO";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
 }

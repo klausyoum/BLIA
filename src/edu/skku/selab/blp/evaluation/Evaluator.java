@@ -95,26 +95,26 @@ public class Evaluator {
 						top1++;
 						top5++;
 						top10++;
-//						System.out.printf("[TOP1] BugID: %s, fixedFile: %s, Rank: %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						System.out.printf("[TOP01] BugID %s fixedFile %s Rank %d\n",
+								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;						
 					} else if (j < 5) {
 						top5++;
 						top10++;
-//						System.out.printf("[TOP5] BugID: %s, fixedFile: %s, Rank: %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						System.out.printf("[TOP05] BugID %s fixedFile %s Rank %d\n",
+								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					} else if (j < 10) {
 						top10++;
-//						System.out.printf("[TOP10] BugID: %s, fixedFile: %s, Rank: %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						System.out.printf("[TOP10] BugID %s fixedFile %s Rank %d\n",
+								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}
 				}
 			}
 		}
 		
-//		System.out.printf("Top1: %d, Top5: %d, Top10: %d\n", top1, top5, top10);
+		System.out.printf("Top1: %d, Top5: %d, Top10: %d\n", top1, top5, top10);
 		
 		experimentResult.setTop1(top1);
 		experimentResult.setTop5(top5);

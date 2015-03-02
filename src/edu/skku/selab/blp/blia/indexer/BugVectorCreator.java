@@ -76,14 +76,14 @@ public class BugVectorCreator implements IVectorCreator {
 		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		
-		HashMap<Integer, Integer> corpusIndexMap = new HashMap<Integer, Integer>(); 
+		HashMap<Integer, Integer> bugWordIndexMap = new HashMap<Integer, Integer>(); 
 		BufferedReader reader = new BufferedReader(new FileReader(bugTermListFile));
 		String line = null;
 		int index = 0;
 		while ((line = reader.readLine()) != null) {
-			String corpus = line;
-			int bugID = bugDAO.insertCorpus(corpus, productName);
-			corpusIndexMap.put(index++, bugID);
+			String word = line;
+			int bugID = bugDAO.insertWord(word, productName);
+			bugWordIndexMap.put(index++, bugID);
 		}
 		reader.close();
 
@@ -103,15 +103,15 @@ public class BugVectorCreator implements IVectorCreator {
 			String bugID = values[0].split("\\.")[0];
 			
 			if (values.length != 1) {
-				HashMap<Integer, Double> corpusVectors = getVectors(values[1].trim(), corpusIndexMap);
-				Iterator<Integer> corpusVectorsIter = corpusVectors.keySet().iterator();
+				HashMap<Integer, Double> bugWordVectors = getVectors(values[1].trim(), bugWordIndexMap);
+				Iterator<Integer> corpusVectorsIter = bugWordVectors.keySet().iterator();
 				
 				while (corpusVectorsIter.hasNext()) {
-					int bugCorpusID =  corpusVectorsIter.next();
+					int bugWordID =  corpusVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
 					analysisValue.setName(bugID);
-					analysisValue.setCorpusID(bugCorpusID);
-					analysisValue.setVector(corpusVectors.get(bugCorpusID).doubleValue());
+					analysisValue.setWordID(bugWordID);
+					analysisValue.setVector(bugWordVectors.get(bugWordID).doubleValue());
 					bugDAO.insertBugAnalysisValue(analysisValue);
 				}
 			}
@@ -123,22 +123,22 @@ public class BugVectorCreator implements IVectorCreator {
 	/**
 	 * 
 	 * @param vecStr
-	 * @return <BugCorpusID, Vector>
+	 * @return <BugWordID, Vector>
 	 */
-	private HashMap<Integer, Double> getVectors(String vecStr, HashMap<Integer, Integer> corpusIndexMap) {
+	private HashMap<Integer, Double> getVectors(String vecStr, HashMap<Integer, Integer> bugWordIndexMap) {
 		String values[] = vecStr.split(" ");
 		String as[];
-		HashMap<Integer, Double> corpusVectors = new HashMap<Integer, Double>();
+		HashMap<Integer, Double> bugWordVectors = new HashMap<Integer, Double>();
 		int j = (as = values).length;
 		for (int i = 0; i < j; i++) {
 			String str = as[i];
 			int index = Integer.valueOf(Integer.parseInt(str.substring(0,str.indexOf(":"))));
-			Integer bugCorpusID = corpusIndexMap.get(index);
+			Integer bugWordID = bugWordIndexMap.get(index);
 			Double vector = Double.parseDouble(str.substring(str.indexOf(":") + 1));
 			
-			corpusVectors.put(bugCorpusID, vector);
+			bugWordVectors.put(bugWordID, vector);
 		}
 
-		return corpusVectors;
+		return bugWordVectors;
 	}
 }

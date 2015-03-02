@@ -15,9 +15,9 @@ public class AnalysisValue {
 	protected String name;
 	protected String version;
 	protected String productName;
-	protected String corpus;
+	protected String word;
 	protected int sourceFileVersionID;
-	protected int corpusID;
+	protected int wordID;
 	protected int termCount;
 	protected int invDocCount;
 	protected double tf;
@@ -30,9 +30,9 @@ public class AnalysisValue {
 		name = "";
 		version = "";
 		productName = "";
-		corpus = "";
+		word = "";
 		sourceFileVersionID = INIT_VALUE;
-		setCorpusID(INIT_VALUE);
+		setWordID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
@@ -40,12 +40,12 @@ public class AnalysisValue {
 		vector = INIT_VALUE;
 	}
 	
-	public AnalysisValue(String name, String productName, String corpus, double vector) {
+	public AnalysisValue(String name, String productName, String word, double vector) {
 		setName(name);
 		version = "";
 		setProductName(productName);
-		setCorpus(corpus);
-		setCorpusID(INIT_VALUE);
+		setWord(word);
+		setWordID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
@@ -53,12 +53,12 @@ public class AnalysisValue {
 		this.vector = vector;
 	}
 	
-	public AnalysisValue(String name, String productName, String corpus, int termCount, int invDocCount, double tf, double idf, double vector) {
+	public AnalysisValue(String name, String productName, String word, int termCount, int invDocCount, double tf, double idf, double vector) {
 		setName(name);
 		version = "";
 		setProductName(productName);
-		setCorpus(corpus);
-		setCorpusID(INIT_VALUE);
+		setWord(word);
+		setWordID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
@@ -70,13 +70,13 @@ public class AnalysisValue {
 	 * 
 	 */
 	public AnalysisValue(String name, String productName, String version, 
-			String corpus, int termCount, int invDocCount) {
+			String word, int termCount, int invDocCount) {
 		setName(name);
 		setVersion(version);
 		setProductName(productName);
-		setCorpus(corpus);
+		setWord(word);
 		setSourceFileVersionID(INIT_VALUE);
-		setCorpusID(INIT_VALUE);
+		setWordID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(INIT_VALUE);
@@ -88,13 +88,13 @@ public class AnalysisValue {
 	 * 
 	 */
 	public AnalysisValue(String name, String productName, String version, 
-			String corpus, int termCount, int invDocCount, double tf, double idf, double vector) {
+			String word, int termCount, int invDocCount, double tf, double idf, double vector) {
 		setName(name);
 		setVersion(version);
 		setProductName(productName);
-		setCorpus(corpus);
+		setWord(word);
 		setSourceFileVersionID(INIT_VALUE);
-		setCorpusID(INIT_VALUE);
+		setWordID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
@@ -215,17 +215,17 @@ public class AnalysisValue {
 	}
 
 	/**
-	 * @return the corpus
+	 * @return the word
 	 */
-	public String getCorpus() {
-		return corpus;
+	public String getWord() {
+		return word;
 	}
 
 	/**
-	 * @param corpus the corpus to set
+	 * @param word the word to set
 	 */
-	public void setCorpus(String corpus) {
-		this.corpus = corpus;
+	public void setWord(String word) {
+		this.word = word;
 	}
 
 	/**
@@ -243,16 +243,16 @@ public class AnalysisValue {
 	}
 
 	/**
-	 * @return the corpusID
+	 * @return the wordID
 	 */
-	public int getCorpusID() {
-		return corpusID;
+	public int getWordsID() {
+		return wordID;
 	}
 
 	/**
-	 * @param corpusID the corpusID to set
+	 * @param wordID the wordID to set
 	 */
-	public void setCorpusID(int corpusID) {
-		this.corpusID = corpusID;
+	public void setWordID(int wordID) {
+		this.wordID = wordID;
 	}
 }
