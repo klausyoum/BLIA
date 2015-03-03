@@ -112,14 +112,14 @@ public class BugVectorCreatorWithFile implements IVectorCreator {
 		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		
-		HashMap<Integer, Integer> bugWordIndexMap = new HashMap<Integer, Integer>(); 
+		HashMap<Integer, Integer> bugTermIndexMap = new HashMap<Integer, Integer>(); 
 		BufferedReader reader = new BufferedReader(new FileReader(bugTermListFile));
 		String line = null;
 		int index = 0;
 		while ((line = reader.readLine()) != null) {
-			String word = line;
-			int bugID = bugDAO.insertWord(word, productName);
-			bugWordIndexMap.put(index++, bugID);
+			String bugTerm = line;
+			int bugTermID = bugDAO.insertBugTerm(bugTerm, productName);
+			bugTermIndexMap.put(index++, bugTermID);
 		}
 
 		FileWriter outFile = new FileWriter((new StringBuilder(String.valueOf(HOME_FOLDER))).append("BugVector.txt").toString());
@@ -138,16 +138,16 @@ public class BugVectorCreatorWithFile implements IVectorCreator {
 			String bugID = values[0].split("\\.")[0];
 			
 			if (values.length != 1) {
-				HashMap<Integer, Double> bugWordVectors = getVectors(values[1].trim(), bugWordIndexMap);
-				Iterator<Integer> corpusVectorsIter = bugWordVectors.keySet().iterator();
+				HashMap<Integer, Double> bugTermVectors = getVectors(values[1].trim(), bugTermIndexMap);
+				Iterator<Integer> bugTermVectorsIter = bugTermVectors.keySet().iterator();
 				
-				while (corpusVectorsIter.hasNext()) {
-					int bugWordID =  corpusVectorsIter.next();
+				while (bugTermVectorsIter.hasNext()) {
+					int bugTermID =  bugTermVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
 					analysisValue.setName(bugID);
-					analysisValue.setWordID(bugWordID);
-					analysisValue.setVector(bugWordVectors.get(bugWordID).doubleValue());
-					bugDAO.insertBugAnalysisValue(analysisValue);
+					analysisValue.setTermID(bugTermID);
+					analysisValue.setTermWeight(bugTermVectors.get(bugTermID).doubleValue());
+					bugDAO.insertBugTermWeight(analysisValue);
 				}
 			}
 		}

@@ -15,14 +15,14 @@ public class AnalysisValue {
 	protected String name;
 	protected String version;
 	protected String productName;
-	protected String word;
+	protected String term;
 	protected int sourceFileVersionID;
-	protected int wordID;
+	protected int termID;
 	protected int termCount;
 	protected int invDocCount;
 	protected double tf;
 	protected double idf;
-	protected double vector;
+	private double termWeight;
 	
 	final private int INIT_VALUE = -1;
 
@@ -30,76 +30,87 @@ public class AnalysisValue {
 		name = "";
 		version = "";
 		productName = "";
-		word = "";
+		term = "";
 		sourceFileVersionID = INIT_VALUE;
-		setWordID(INIT_VALUE);
+		setTermID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
 		idf = INIT_VALUE;
-		vector = INIT_VALUE;
+		termWeight = INIT_VALUE;
 	}
 	
-	public AnalysisValue(String name, String productName, String word, double vector) {
+	public AnalysisValue(String name, String productName, String term, double termWeight) {
 		setName(name);
 		version = "";
 		setProductName(productName);
-		setWord(word);
-		setWordID(INIT_VALUE);
+		setTerm(term);
+		setTermID(INIT_VALUE);
 		termCount = INIT_VALUE;
 		invDocCount = INIT_VALUE;
 		tf = INIT_VALUE;
 		idf = INIT_VALUE;
-		this.vector = vector;
+		setTermWeight(termWeight);
 	}
 	
-	public AnalysisValue(String name, String productName, String word, int termCount, int invDocCount, double tf, double idf, double vector) {
+	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf) {
 		setName(name);
 		version = "";
 		setProductName(productName);
-		setWord(word);
-		setWordID(INIT_VALUE);
+		setTerm(term);
+		setTermID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
 		setIdf(idf);
-		setVector(vector);
+		setTermWeight(INIT_VALUE);
+	}
+	
+	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
+		setName(name);
+		version = "";
+		setProductName(productName);
+		setTerm(term);
+		setTermID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(tf);
+		setIdf(idf);
+		setTermWeight(termWeight);
 	}	
 	
 	/**
 	 * 
 	 */
-	public AnalysisValue(String name, String productName, String version, 
-			String word, int termCount, int invDocCount) {
+	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount) {
 		setName(name);
 		setVersion(version);
 		setProductName(productName);
-		setWord(word);
+		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
-		setWordID(INIT_VALUE);
+		setTermID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(INIT_VALUE);
 		setIdf(INIT_VALUE);
-		setVector(INIT_VALUE);
+		setTermWeight(INIT_VALUE);
 	}
 	
 	/**
 	 * 
 	 */
-	public AnalysisValue(String name, String productName, String version, 
-			String word, int termCount, int invDocCount, double tf, double idf, double vector) {
+	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount, double tf, double idf) {
 		setName(name);
 		setVersion(version);
 		setProductName(productName);
-		setWord(word);
+		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
-		setWordID(INIT_VALUE);
+		setTermID(INIT_VALUE);
 		setTermCount(termCount);
 		setInvDocCount(invDocCount);
 		setTf(tf);
 		setIdf(idf);
-		setVector(vector);
+		setTermWeight(INIT_VALUE);
 	}
 
 	/**
@@ -201,31 +212,17 @@ public class AnalysisValue {
 	}
 
 	/**
-	 * @return the vector
+	 * @return the term
 	 */
-	public double getVector() {
-		return vector;
+	public String getTerm() {
+		return term;
 	}
 
 	/**
-	 * @param vector the vector to set
+	 * @param term the term to set
 	 */
-	public void setVector(double vector) {
-		this.vector = vector;
-	}
-
-	/**
-	 * @return the word
-	 */
-	public String getWord() {
-		return word;
-	}
-
-	/**
-	 * @param word the word to set
-	 */
-	public void setWord(String word) {
-		this.word = word;
+	public void setTerm(String term) {
+		this.term = term;
 	}
 
 	/**
@@ -243,16 +240,30 @@ public class AnalysisValue {
 	}
 
 	/**
-	 * @return the wordID
+	 * @return the termID
 	 */
-	public int getWordsID() {
-		return wordID;
+	public int getTermID() {
+		return termID;
 	}
 
 	/**
-	 * @param wordID the wordID to set
+	 * @param termID the termID to set
 	 */
-	public void setWordID(int wordID) {
-		this.wordID = wordID;
+	public void setTermID(int termID) {
+		this.termID = termID;
+	}
+
+	/**
+	 * @return the termWeight
+	 */
+	public double getTermWeight() {
+		return termWeight;
+	}
+
+	/**
+	 * @param termWeight the termWeight to set
+	 */
+	public void setTermWeight(double termWeight) {
+		this.termWeight = termWeight;
 	}
 }

@@ -165,7 +165,8 @@ public class ScmRepoAnalyzerTest {
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
+		boolean useStructuredInformation = false;
+		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 		
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();

@@ -360,6 +360,59 @@ public class SourceFileDAO extends BaseDAO {
 		return corpus;
 	}
 	
+	public double getNormValue(int sourceFileVersionID) {
+		String sql = "SELECT COR_NORM " +
+					"FROM SF_VER_INFO B " +
+					"WHERE SF_VER_ID = ?";
+		
+		double norm = 0;
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, sourceFileVersionID);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				norm = rs.getDouble("COR_NORM");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return norm;
+	}
+	
+	/**
+	 * Get SourceFileCorpus with source file version ID
+	 * 
+	 * @param sourceFileVersionID	Source file version ID
+	 * @return SourceFileCorpus		Source file corpus
+	 */
+	public SourceFileCorpus getNormValues(int sourceFileVersionID) {
+		String sql = "SELECT COR_NORM, CLS_COR_NORM, MTH_COR_NORM, VAR_COR_NORM, CMT_COR_NORM " +
+					"FROM SF_VER_INFO B " +
+					"WHERE SF_VER_ID = ?";
+		
+		SourceFileCorpus corpus = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, sourceFileVersionID);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				corpus = new SourceFileCorpus();
+				corpus.setContentNorm(rs.getDouble("COR_NORM"));
+				corpus.setClassCorpusNorm(rs.getDouble("CLS_COR_NORM"));
+				corpus.setMethodCorpusNorm(rs.getDouble("MTH_COR_NORM"));
+				corpus.setVariableCorpusNorm(rs.getDouble("VAR_COR_NORM"));
+				corpus.setCommentCorpusNorm(rs.getDouble("CMT_COR_NORM"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return corpus;
+	}
+	
 	public HashMap<String, Integer> getSourceFileVersionIDs(String productName, String version) {
 		HashMap<String, Integer> sourceFileVersionIDs = new HashMap<String, Integer>();
 		
@@ -448,6 +501,55 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public int updateNormValue(String productName, String fileName, String version, double corpusNorm) {
+		String sql = "UPDATE SF_VER_INFO SET COR_NORM = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"AND A.SF_NAME = ? AND B.VER = ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, corpusNorm);
+			
+			ps.setString(2, productName);
+			ps.setString(3, fileName);
+			ps.setString(4, version);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int updateNormValues(String productName, String fileName, String version,
+			double corpusNorm, double classNorm, double methodNorm, double variableNorm, double commentNorm) {
+		String sql = "UPDATE SF_VER_INFO SET COR_NORM = ?, CLS_COR_NORM = ?, MTH_COR_NORM = ?, VAR_COR_NORM = ?, CMT_COR_NORM = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"AND A.SF_NAME = ? AND B.VER = ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, corpusNorm);
+			ps.setDouble(2, classNorm);
+			ps.setDouble(3, methodNorm);
+			ps.setDouble(4, variableNorm);
+			ps.setDouble(5, commentNorm);
+			
+			ps.setString(6, productName);
+			ps.setString(7, fileName);
+			ps.setString(8, version);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
 	public HashMap<String, Double> getLengthScores(String productName, String version) {
 		HashMap<String, Double> lengthScores = new HashMap<String, Double>();
 		
@@ -492,13 +594,13 @@ public class SourceFileDAO extends BaseDAO {
 		return lengthScore;
 	}
 	
-	public int insertCorpus(String corpus, String productName) {
-		String sql = "INSERT INTO SF_WRD_INFO (WRD, PROD_NAME) VALUES (?, ?)";
+	public int insertTerm(String term, String productName) {
+		String sql = "INSERT INTO SF_TERM_INFO (TERM, PROD_NAME) VALUES (?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, corpus);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
@@ -515,8 +617,8 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllWords() {
-		String sql = "DELETE FROM SF_WRD_INFO";
+	public int deleteAllTerms() {
+		String sql = "DELETE FROM SF_TERM_INFO";
 		int returnValue = INVALID;
 		
 		try {
@@ -530,10 +632,10 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, Integer> getWordMap(String productName) {
+	public HashMap<String, Integer> getTermMap(String productName) {
 		HashMap<String, Integer> fileInfo = new HashMap<String, Integer>();
 		
-		String sql = "SELECT WRD, SF_WRD_ID FROM SF_WRD_INFO WHERE PROD_NAME = ?";
+		String sql = "SELECT TERM, SF_TERM_ID FROM SF_TERM_INFO WHERE PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -541,7 +643,7 @@ public class SourceFileDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				fileInfo.put(rs.getString("WRD"), rs.getInt("SF_WRD_ID"));
+				fileInfo.put(rs.getString("TERM"), rs.getInt("SF_TERM_ID"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -549,18 +651,18 @@ public class SourceFileDAO extends BaseDAO {
 		return fileInfo;
 	}
 	
-	public int getWordID(String word, String productName) {
+	public int getTermID(String term, String productName) {
 		int returnValue = INVALID;
-		String sql = "SELECT SF_WRD_ID FROM SF_WRD_INFO WHERE WRD = ? AND PROD_NAME = ?";
+		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				returnValue = rs.getInt("SF_WRD_ID");
+				returnValue = rs.getInt("SF_TERM_ID");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -677,25 +779,24 @@ public class SourceFileDAO extends BaseDAO {
 		return importedClasses;
 	}
 	
-	public int insertSourceFileAnalysisValue(AnalysisValue analysisValue) {
+	public int insertTermWeight(AnalysisValue termWeight) {
 		
-		int fileVersionID = getSourceFileVersionID(analysisValue.getName(),
-				analysisValue.getProductName(), analysisValue.getVersion());
-		int wordID = getWordID(analysisValue.getWord(), analysisValue.getProductName());
+		int fileVersionID = getSourceFileVersionID(termWeight.getName(),
+				termWeight.getProductName(), termWeight.getVersion());
+		int termID = getTermID(termWeight.getTerm(), termWeight.getProductName());
 		
-		String sql = "INSERT INTO SF_VEC (SF_VER_ID, SF_WRD_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
-				"VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO SF_TERM_WGT (SF_VER_ID, SF_TERM_ID, TERM_CNT, INV_DOC_CNT, TF, IDF) " +
+				"VALUES (?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, fileVersionID);
-			ps.setInt(2, wordID);
-			ps.setInt(3, analysisValue.getTermCount());
-			ps.setInt(4, analysisValue.getInvDocCount());
-			ps.setDouble(5, analysisValue.getTf());
-			ps.setDouble(6, analysisValue.getIdf());
-			ps.setDouble(7, analysisValue.getVector());
+			ps.setInt(2, termID);
+			ps.setInt(3, termWeight.getTermCount());
+			ps.setInt(4, termWeight.getInvDocCount());
+			ps.setDouble(5, termWeight.getTf());
+			ps.setDouble(6, termWeight.getIdf());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -705,20 +806,19 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int updateSourceFileAnalysisValue(AnalysisValue analysisValue) {
-		String sql = "UPDATE SF_VEC SET TERM_CNT = ?, INV_DOC_CNT = ?, TF = ?, IDF = ?, VEC = ? " +
-				"WHERE SF_VER_ID = ? AND SF_WRD_ID = ?";
+	public int updateTermWeight(AnalysisValue termWeight) {
+		String sql = "UPDATE SF_TERM_WGT SET TERM_CNT = ?, INV_DOC_CNT = ?, TF = ?, IDF = ?" +
+				"WHERE SF_VER_ID = ? AND SF_TERM_ID = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, analysisValue.getTermCount());
-			ps.setInt(2, analysisValue.getInvDocCount());
-			ps.setDouble(3, analysisValue.getTf());
-			ps.setDouble(4, analysisValue.getIdf());
-			ps.setDouble(5, analysisValue.getVector());
-			ps.setInt(6, analysisValue.getSourceFileVersionID());
-			ps.setInt(7, analysisValue.getWordsID());
+			ps.setInt(1, termWeight.getTermCount());
+			ps.setInt(2, termWeight.getInvDocCount());
+			ps.setDouble(3, termWeight.getTf());
+			ps.setDouble(4, termWeight.getIdf());
+			ps.setInt(5, termWeight.getSourceFileVersionID());
+			ps.setInt(6, termWeight.getTermID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -728,8 +828,8 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllAnalysisValues() {
-		String sql = "DELETE FROM SF_VEC";
+	public int deleteAllTermWeights() {
+		String sql = "DELETE FROM SF_TERM_WGT";
 		int returnValue = INVALID;
 		
 		try {
@@ -743,22 +843,21 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public AnalysisValue getSourceFileAnalysisValue(String fileName, String productName, String version,
-			String word) {
+	public AnalysisValue getTermWeight(String fileName, String productName, String version, String term) {
 		AnalysisValue returnValue = null;
 
-		String sql = "SELECT D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_INFO A, SF_VER_INFO B, SF_WRD_INFO C, SF_VEC D " +
+		String sql = "SELECT D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF "+
+				"FROM SF_INFO A, SF_VER_INFO B, SF_TERM_INFO C, SF_TERM_WGT D " +
 				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
-				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND C.WRD = ? AND " +
-				"C.PROD_NAME = ? AND C.SF_WRD_ID = D.SF_WRD_ID";
+				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND C.TERM = ? AND " +
+				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			ps.setString(3, version);
-			ps.setString(4, word);
+			ps.setString(4, term);
 			ps.setString(5, productName);
 			
 			rs = ps.executeQuery();
@@ -769,12 +868,11 @@ public class SourceFileDAO extends BaseDAO {
 				returnValue.setName(fileName);
 				returnValue.setProductName(productName);
 				returnValue.setVersion(version);
-				returnValue.setWord(word);
+				returnValue.setTerm(term);
 				returnValue.setTermCount(rs.getInt("TERM_CNT"));
 				returnValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
 				returnValue.setTf(rs.getDouble("TF"));
 				returnValue.setIdf(rs.getDouble("IDF"));
-				returnValue.setVector(rs.getDouble("VEC"));				
 			}
 
 		} catch (Exception e) {
@@ -784,14 +882,14 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, AnalysisValue> getSourceFileAnalysisValues(String productName, String fileName, String version) {
-		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
+	public HashMap<String, AnalysisValue> getTermMap(String productName, String fileName, String version) {
+		HashMap<String, AnalysisValue> termMap = null;
 
-		String sql = "SELECT C.WRD, D.SF_VER_ID, D.SF_WRD_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_INFO A, SF_VER_INFO B, SF_WRD_INFO C, SF_VEC D " +
+		String sql = "SELECT C.TERM, D.SF_VER_ID, D.SF_TERM_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF "+
+				"FROM SF_INFO A, SF_VER_INFO B, SF_TERM_INFO C, SF_TERM_WGT D " +
 				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
 				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND " +
-				"C.PROD_NAME = ? AND C.SF_WRD_ID = D.SF_WRD_ID";
+				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -803,40 +901,39 @@ public class SourceFileDAO extends BaseDAO {
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				if (null == sourceFileAnalysisValues) {
-					sourceFileAnalysisValues = new HashMap<String, AnalysisValue>();
+				if (null == termMap) {
+					termMap = new HashMap<String, AnalysisValue>();
 				}
-				AnalysisValue analysisValue = new AnalysisValue();
+				AnalysisValue termWeight = new AnalysisValue();
 				
-				String word = rs.getString("WRD");
-				analysisValue.setName(fileName);
-				analysisValue.setProductName(productName);
-				analysisValue.setVersion(version);
-				analysisValue.setWord(word);
-				analysisValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
-				analysisValue.setWordID(rs.getInt("SF_WRD_ID"));
-				analysisValue.setTermCount(rs.getInt("TERM_CNT"));
-				analysisValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
-				analysisValue.setTf(rs.getDouble("TF"));
-				analysisValue.setIdf(rs.getDouble("IDF"));
-				analysisValue.setVector(rs.getDouble("VEC"));
+				String term = rs.getString("TERM");
+				termWeight.setName(fileName);
+				termWeight.setProductName(productName);
+				termWeight.setVersion(version);
+				termWeight.setTerm(term);
+				termWeight.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
+				termWeight.setTermID(rs.getInt("SF_TERM_ID"));
+				termWeight.setTermCount(rs.getInt("TERM_CNT"));
+				termWeight.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				termWeight.setTf(rs.getDouble("TF"));
+				termWeight.setIdf(rs.getDouble("IDF"));
 				
-				sourceFileAnalysisValues.put(word, analysisValue);
+				termMap.put(term, termWeight);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return sourceFileAnalysisValues;
+		return termMap;
 	}
 	
-	public HashMap<String, AnalysisValue> getSourceFileAnalysisValues(int sourceFileVersionID) {
-		HashMap<String, AnalysisValue> sourceFileAnalysisValues = null;
+	public HashMap<String, AnalysisValue> getTermMap(int sourceFileVersionID) {
+		HashMap<String, AnalysisValue> termMap = null;
 
-		String sql = "SELECT C.WRD, D.SF_VER_ID, D.SF_WRD_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF, D.VEC "+
-				"FROM SF_WRD_INFO C, SF_VEC D " +
-				"WHERE D.SF_VER_ID = ? AND C.SF_WRD_ID = D.SF_WRD_ID";
+		String sql = "SELECT C.TERM, D.SF_VER_ID, D.SF_TERM_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF "+
+				"FROM SF_TERM_INFO C, SF_TERM_WGT D " +
+				"WHERE D.SF_VER_ID = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -845,28 +942,27 @@ public class SourceFileDAO extends BaseDAO {
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				if (null == sourceFileAnalysisValues) {
-					sourceFileAnalysisValues = new HashMap<String, AnalysisValue>();
+				if (null == termMap) {
+					termMap = new HashMap<String, AnalysisValue>();
 				}
 				AnalysisValue analysisValue = new AnalysisValue();
 				
-				String word = rs.getString("WRD");
-				analysisValue.setWord(word);
+				String term = rs.getString("TERM");
+				analysisValue.setTerm(term);
 				analysisValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
-				analysisValue.setWordID(rs.getInt("SF_WRD_ID"));
+				analysisValue.setTermID(rs.getInt("SF_TERM_ID"));
 				analysisValue.setTermCount(rs.getInt("TERM_CNT"));
 				analysisValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
 				analysisValue.setTf(rs.getDouble("TF"));
 				analysisValue.setIdf(rs.getDouble("IDF"));
-				analysisValue.setVector(rs.getDouble("VEC"));
 				
-				sourceFileAnalysisValues.put(word, analysisValue);
+				termMap.put(term, analysisValue);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return sourceFileAnalysisValues;
+		return termMap;
 	}
 }

@@ -81,9 +81,9 @@ public class BugVectorCreator implements IVectorCreator {
 		String line = null;
 		int index = 0;
 		while ((line = reader.readLine()) != null) {
-			String word = line;
-			int bugID = bugDAO.insertWord(word, productName);
-			bugWordIndexMap.put(index++, bugID);
+			String term = line;
+			int bugTermID = bugDAO.insertBugTerm(term, productName);
+			bugWordIndexMap.put(index++, bugTermID);
 		}
 		reader.close();
 
@@ -103,16 +103,16 @@ public class BugVectorCreator implements IVectorCreator {
 			String bugID = values[0].split("\\.")[0];
 			
 			if (values.length != 1) {
-				HashMap<Integer, Double> bugWordVectors = getVectors(values[1].trim(), bugWordIndexMap);
-				Iterator<Integer> corpusVectorsIter = bugWordVectors.keySet().iterator();
+				HashMap<Integer, Double> bugTermVectors = getVectors(values[1].trim(), bugWordIndexMap);
+				Iterator<Integer> corpusVectorsIter = bugTermVectors.keySet().iterator();
 				
 				while (corpusVectorsIter.hasNext()) {
-					int bugWordID =  corpusVectorsIter.next();
+					int bugTermID =  corpusVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
 					analysisValue.setName(bugID);
-					analysisValue.setWordID(bugWordID);
-					analysisValue.setVector(bugWordVectors.get(bugWordID).doubleValue());
-					bugDAO.insertBugAnalysisValue(analysisValue);
+					analysisValue.setTermID(bugTermID);
+					analysisValue.setTermWeight(bugTermVectors.get(bugTermID).doubleValue());
+					bugDAO.insertBugTermWeight(analysisValue);
 				}
 			}
 		}

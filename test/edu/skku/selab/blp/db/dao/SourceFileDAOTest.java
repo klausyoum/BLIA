@@ -37,8 +37,8 @@ public class SourceFileDAOTest {
 	private String releaseDate1 = "2004-10-18 17:40:00";
 	private String version2 = "v0.2";
 	private String releaseDate2 = "2014-02-12 07:12:00";
-	private String word1 = "acc";
-	private String word2 = "element";
+	private String term1 = "acc";
+	private String term2 = "element";
 	private double delta = 0.00001;
 
 
@@ -136,40 +136,38 @@ public class SourceFileDAOTest {
 		assertEquals("lengthScore1 is NOT same!", lengthScore1, lengthScores.get(fileName1), delta);
 		assertEquals("lengthScore1 is NOT same!", lengthScore3, lengthScores.get(fileName2), delta);
 
-		sourceFileDAO.deleteAllWords();
-		assertNotEquals("word1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpus(word1, productName));
-		assertNotEquals("word2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpus(word2, productName));
+		sourceFileDAO.deleteAllTerms();
+		assertNotEquals("term1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertTerm(term1, productName));
+		assertNotEquals("term2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertTerm(term2, productName));
 		
-		HashMap<String, Integer> wordMap = sourceFileDAO.getWordMap(productName);
+		HashMap<String, Integer> wordMap = sourceFileDAO.getTermMap(productName);
 		assertEquals("corpuses size is wrong.", 2, wordMap.size());
-		assertNotNull("word1 can't be found.", wordMap.get(word1));
-		assertNotNull("word2 can't be found.", wordMap.get(word2));
+		assertNotNull("term1 can't be found.", wordMap.get(term1));
+		assertNotNull("term2 can't be found.", wordMap.get(term2));
 	}
 
 	@Test
 	public void verifyGetSourceFileAnalysisValue() throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		
-		sourceFileDAO.deleteAllAnalysisValues();
+		sourceFileDAO.deleteAllTermWeights();
 		int termCount = 5;
 		int idvDocCount = 20;
 		double tf = 0.23;
 		double idf = 0.42;
-		double vector = 0.78;
-		AnalysisValue analysisValue1 = new AnalysisValue(fileName1, productName, version1,
-				word1, termCount, idvDocCount, tf, idf, vector);
-		assertNotEquals("analysisValue1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFileAnalysisValue(analysisValue1));
+		AnalysisValue termWeight1 = new AnalysisValue(fileName1, productName, version1,
+				term1, termCount, idvDocCount, tf, idf);
+		assertNotEquals("analysisValue1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertTermWeight(termWeight1));
 		
-		AnalysisValue returnValue = sourceFileDAO.getSourceFileAnalysisValue(fileName1, productName, version1, word1);
+		AnalysisValue returnValue = sourceFileDAO.getTermWeight(fileName1, productName, version1, term1);
 		assertEquals("fileName1 is wrong.", fileName1, returnValue.getName());
 		assertEquals("productName is wrong.", productName, returnValue.getProductName());
 		assertEquals("version1 is wrong.", version1, returnValue.getVersion());
-		assertEquals("word1 is wrong.", word1, returnValue.getWord());
+		assertEquals("term1 is wrong.", term1, returnValue.getTerm());
 		assertEquals("termCount is wrong.", termCount, returnValue.getTermCount());
 		assertEquals("idvDocCount is wrong.", idvDocCount, returnValue.getInvDocCount());
 		assertEquals("tf is wrong.", tf, returnValue.getTf(), delta);
 		assertEquals("idf is wrong.", idf, returnValue.getIdf(), delta);
-		assertEquals("vector is wrong.", vector, returnValue.getVector(), delta);
 	}
 	
 	@Test

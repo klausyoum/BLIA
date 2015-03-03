@@ -67,7 +67,8 @@ public class BLIA {
 	
 	public void prepareAnalysisData() throws Exception {
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
+		boolean useStructuredInformation = true;
+		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 		
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
@@ -76,7 +77,6 @@ public class BLIA {
 	public void analyze(String version, boolean useCommitLogAnalysis) throws Exception {
 		String productName = Property.getInstance().getProductName();
 		BugDAO bugDAO = new BugDAO();
-		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
 		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
@@ -96,17 +96,6 @@ public class BLIA {
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
-			
-			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
-			while (integratedAnalysisValuesIter.hasNext()) {
-				int sourceFileVersionID = integratedAnalysisValuesIter.next();
-				
-				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-				double vsmScore = integratedAnalysisValue.getVsmScore();
-				vsmScore *= sourceFileDAO.getLengthScore(sourceFileVersionID);
-				integratedAnalysisValue.setVsmScore(vsmScore);
-			}
-			
 			normalize(integratedAnalysisValues);
 			
 			if (!useCommitLogAnalysis) {
@@ -115,7 +104,7 @@ public class BLIA {
 				combine(integratedAnalysisValues, alpha, beta);
 			}
 			
-			integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
 				

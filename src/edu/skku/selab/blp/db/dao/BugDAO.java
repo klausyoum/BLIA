@@ -213,25 +213,25 @@ public class BugDAO extends BaseDAO {
 	}
 
 	
-	public int insertWord(String word, String productName) {
-		String sql = "INSERT INTO BUG_WRD_INFO (WRD, PROD_NAME) VALUES (?, ?)";
+	public int insertBugTerm(String term, String productName) {
+		String sql = "INSERT INTO BUG_TERM_INFO (TERM, PROD_NAME) VALUES (?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
 			
-			sql = "SELECT BUG_WRD_ID FROM BUG_WRD_INFO WHERE WRD = ? AND PROD_NAME = ?";
+			sql = "SELECT BUG_TERM_ID FROM BUG_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				returnValue = rs.getInt("BUG_WRD_ID");	
+				returnValue = rs.getInt("BUG_TERM_ID");	
 			}
 		} catch (JdbcSQLException e) {
 			e.printStackTrace();
@@ -246,8 +246,8 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllWords() {
-		String sql = "DELETE FROM BUG_WRD_INFO";
+	public int deleteAllTerms() {
+		String sql = "DELETE FROM BUG_TERM_INFO";
 		int returnValue = INVALID;
 		
 		try {
@@ -287,12 +287,40 @@ public class BugDAO extends BaseDAO {
 		}
 		return corpusMap;
 	}
+	
+	/**
+	 * Get norm value with bug ID
+	 * 
+	 * @param bugID		Bug ID
+	 * @return double 	corpus norm value
+	 */
+	public double getNormValue(String bugID) {
+		double norm = 0;
+		
+		String sql = "SELECT COR_NORM " +
+					"FROM BUG_INFO " +
+					"WHERE BUG_ID = ?";
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, bugID);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				norm = rs.getDouble("COR_NORM");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return norm;
+	}
+
 
 	
-	public HashMap<String, Integer> getWordMap(String productName) {
-		HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+	public HashMap<String, Integer> getTermMap(String productName) {
+		HashMap<String, Integer> termMap = new HashMap<String, Integer>();
 		
-		String sql = "SELECT WRD, BUG_WRD_ID FROM BUG_WRD_INFO WHERE PROD_NAME = ?";
+		String sql = "SELECT TERM, BUG_TERM_ID FROM BUG_TERM_INFO WHERE PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -300,18 +328,18 @@ public class BugDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				wordMap.put(rs.getString("WRD"), rs.getInt("BUG_WRD_ID"));
+				termMap.put(rs.getString("TERM"), rs.getInt("BUG_TERM_ID"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return wordMap;
+		return termMap;
 	}
 	
-	public int getWordCount(String productName) {
-		String sql = "SELECT COUNT(BUG_WRD_ID) FROM BUG_WRD_INFO WHERE PROD_NAME = ?";
+	public int getAllTermCount(String productName) {
+		String sql = "SELECT COUNT(BUG_TERM_ID) FROM BUG_TERM_INFO WHERE PROD_NAME = ?";
 		
-		int wordCount = 0;
+		int allTermCount = 0;
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -319,12 +347,12 @@ public class BugDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				wordCount = rs.getInt(1);
+				allTermCount = rs.getInt(1);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return wordCount;
+		return allTermCount;
 	}
 	
 	public int getBugCount(String productName) {
@@ -346,23 +374,50 @@ public class BugDAO extends BaseDAO {
 		return bugCount;
 	}
 	
-	public int getSfWordID(String word, String productName) {
+	public int getSfTermID(String term, String productName) {
 		int returnValue = INVALID;
-		String sql = "SELECT SF_WRD_ID FROM SF_WRD_INFO WHERE WRD = ? AND PROD_NAME = ?";
+		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				returnValue = rs.getInt("SF_WRD_ID");
+				returnValue = rs.getInt("SF_TERM_ID");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return returnValue;	
+	}
+	
+	public HashMap<String, AnalysisValue> getSfTermMap(String bugID) {
+		String sql = "SELECT A.TF, A.IDF, B.TERM FROM BUG_SF_TERM_WGT A, SF_TERM_INFO B WHERE A.BUG_ID = ? AND A.SF_TERM_ID = B.SF_TERM_ID";
+		
+		HashMap<String, AnalysisValue> sourceFileTermMap = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, bugID);
+			
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				if (null == sourceFileTermMap) {
+					sourceFileTermMap = new HashMap<String, AnalysisValue>();
+				}
+				
+				AnalysisValue sourceFileTermWeight = new AnalysisValue();
+				sourceFileTermWeight.setTf(rs.getDouble("TF"));
+				sourceFileTermWeight.setIdf(rs.getDouble("IDF"));
+				
+				String term = rs.getString("TERM");
+				sourceFileTermMap.put(term, sourceFileTermWeight);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFileTermMap;	
 	}
 	
 	public int insertStackTraceClass(String bugID, String className) {
@@ -431,22 +486,21 @@ public class BugDAO extends BaseDAO {
 		return stackTraceClasses;
 	}
 	
-	public int insertBugSfAnalysisValue(AnalysisValue analysisValue) {
-		int wordID = getSfWordID(analysisValue.getWord(), analysisValue.getProductName());
+	public int insertBugSfTermWeight(AnalysisValue bugSfTermWeight) {
+		int termID = getSfTermID(bugSfTermWeight.getTerm(), bugSfTermWeight.getProductName());
 		
-		String sql = "INSERT INTO BUG_SF_VEC (BUG_ID, SF_WRD_ID, TERM_CNT, INV_DOC_CNT, TF, IDF, VEC) " +
-				"VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_SF_TERM_WGT (BUG_ID, SF_TERM_ID, TERM_CNT, INV_DOC_CNT, TF, IDF) " +
+				"VALUES (?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, analysisValue.getName());
-			ps.setInt(2, wordID);
-			ps.setInt(3, analysisValue.getTermCount());
-			ps.setInt(4, analysisValue.getInvDocCount());
-			ps.setDouble(5, analysisValue.getTf());
-			ps.setDouble(6, analysisValue.getIdf());
-			ps.setDouble(7, analysisValue.getVector());
+			ps.setString(1, bugSfTermWeight.getName());
+			ps.setInt(2, termID);
+			ps.setInt(3, bugSfTermWeight.getTermCount());
+			ps.setInt(4, bugSfTermWeight.getInvDocCount());
+			ps.setDouble(5, bugSfTermWeight.getTf());
+			ps.setDouble(6, bugSfTermWeight.getIdf());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -456,8 +510,8 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllBugSfAnalysisValues() {
-		String sql = "DELETE FROM BUG_SF_VEC";
+	public int deleteAllBugSfTermWeights() {
+		String sql = "DELETE FROM BUG_SF_TERM_WGT";
 		int returnValue = INVALID;
 		
 		try {
@@ -471,56 +525,55 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public AnalysisValue getBugSfAnalysisValue(String bugID, String productName, String word) {
-		AnalysisValue returnValue = null;
+	public AnalysisValue getBugSfTermWeight(String bugID, String productName, String term) {
+		AnalysisValue termWeight = null;
 
-		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF, C.VEC "+
-				"FROM BUG_INFO A, SF_WRD_INFO B, BUG_SF_VEC C " +
+		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF "+
+				"FROM BUG_INFO A, SF_TERM_INFO B, BUG_SF_TERM_WGT C " +
 				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND " +
-				"B.WRD = ? AND " +
-				"B.PROD_NAME = ? AND B.SF_WRD_ID = C.SF_WRD_ID";
+				"B.TERM = ? AND " +
+				"B.PROD_NAME = ? AND B.SF_TERM_ID = C.SF_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
-			ps.setString(3, word);
+			ps.setString(3, term);
 			ps.setString(4, productName);
 			
 			rs = ps.executeQuery();
 			
 			if (rs.next()) {
-				returnValue = new AnalysisValue();
+				termWeight = new AnalysisValue();
 				
-				returnValue.setName(bugID);
-				returnValue.setProductName(productName);
-				returnValue.setWord(word);
-				returnValue.setTermCount(rs.getInt("TERM_CNT"));
-				returnValue.setInvDocCount(rs.getInt("INV_DOC_CNT"));
-				returnValue.setTf(rs.getDouble("TF"));
-				returnValue.setIdf(rs.getDouble("IDF"));
-				returnValue.setVector(rs.getDouble("VEC"));				
+				termWeight.setName(bugID);
+				termWeight.setProductName(productName);
+				termWeight.setTerm(term);
+				termWeight.setTermCount(rs.getInt("TERM_CNT"));
+				termWeight.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				termWeight.setTf(rs.getDouble("TF"));
+				termWeight.setIdf(rs.getDouble("IDF"));
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return returnValue;
+		return termWeight;
 	}
 	
-	public int getBugWordID(String word, String productName) {
+	public int getBugTermID(String term, String productName) {
 		int returnValue = INVALID;
-		String sql = "SELECT BUG_WRD_ID FROM BUG_WRD_INFO WHERE WRD = ? AND PROD_NAME = ?";
+		String sql = "SELECT BUG_TERM_ID FROM BUG_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, word);
+			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				returnValue = rs.getInt("BUG_WRD_ID");
+				returnValue = rs.getInt("BUG_TERM_ID");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -528,21 +581,21 @@ public class BugDAO extends BaseDAO {
 		return returnValue;	
 	}
 	
-	public int insertBugAnalysisValue(AnalysisValue analysisValue) {
-		int wordID = analysisValue.getWordsID();
-		if (INVALID == wordID) {
-			wordID = getBugWordID(analysisValue.getWord(), analysisValue.getProductName());
+	public int insertBugTermWeight(AnalysisValue analysisValue) {
+		int termID = analysisValue.getTermID();
+		if (INVALID == termID) {
+			termID = getBugTermID(analysisValue.getTerm(), analysisValue.getProductName());
 		}
 		
-		String sql = "INSERT INTO BUG_VEC (BUG_ID, BUG_WRD_ID, VEC) " +
+		String sql = "INSERT INTO BUG_TERM_WGT (BUG_ID, BUG_TERM_ID, TW) " +
 				"VALUES (?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, analysisValue.getName());
-			ps.setInt(2, wordID);
-			ps.setDouble(3, analysisValue.getVector());
+			ps.setInt(2, termID);
+			ps.setDouble(3, analysisValue.getTermWeight());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -552,8 +605,8 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int deleteAllBugAnalysisValues() {
-		String sql = "DELETE FROM BUG_VEC";
+	public int deleteAllBugTermWeights() {
+		String sql = "DELETE FROM BUG_TERM_WGT";
 		int returnValue = INVALID;
 		
 		try {
@@ -567,19 +620,19 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public AnalysisValue getBugAnalysisValue(String bugID, String productName, String word) {
+	public AnalysisValue getBugTermWeight(String bugID, String productName, String term) {
 		AnalysisValue returnValue = null;
 
-		String sql = "SELECT C.VEC "+
-				"FROM BUG_INFO A, BUG_WRD_INFO B, BUG_VEC C " +
+		String sql = "SELECT C.TW "+
+				"FROM BUG_INFO A, BUG_TERM_INFO B, BUG_TERM_WGT C " +
 				"WHERE A.BUG_ID = ? AND A.PROD_NAME = ? AND "+
-				"A.BUG_ID = C.BUG_ID AND B.WRD = ? AND B.BUG_WRD_ID = C.BUG_WRD_ID";
+				"A.BUG_ID = C.BUG_ID AND B.TERM = ? AND B.BUG_TERM_ID = C.BUG_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
-			ps.setString(3, word);
+			ps.setString(3, term);
 			
 			rs = ps.executeQuery();
 			
@@ -588,8 +641,8 @@ public class BugDAO extends BaseDAO {
 				
 				returnValue.setName(bugID);
 				returnValue.setProductName(productName);
-				returnValue.setWord(word);
-				returnValue.setVector(rs.getDouble("VEC"));				
+				returnValue.setTerm(term);
+				returnValue.setTermWeight(rs.getDouble("TW"));				
 			}
 
 		} catch (Exception e) {
@@ -599,13 +652,13 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public ArrayList<AnalysisValue> getBugAnalysisValues(String bugID) {
+	public ArrayList<AnalysisValue> getBugTermWeightList(String bugID) {
 		ArrayList<AnalysisValue> bugAnalysisValues = null;
-		AnalysisValue returnValue = null;
+		AnalysisValue bugTermWeight = null;
 
-		String sql = "SELECT B.WRD, C.BUG_WRD_ID, C.VEC "+
-				"FROM BUG_WRD_INFO B, BUG_VEC C " +
-				"WHERE C.BUG_ID = ? AND B.BUG_WRD_ID = C.BUG_WRD_ID ORDER BY C.BUG_WRD_ID";
+		String sql = "SELECT B.TERM, C.BUG_TERM_ID, C.TW "+
+				"FROM BUG_TERM_INFO B, BUG_TERM_WGT C " +
+				"WHERE C.BUG_ID = ? AND B.BUG_TERM_ID = C.BUG_TERM_ID ORDER BY C.BUG_TERM_ID";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -618,13 +671,13 @@ public class BugDAO extends BaseDAO {
 					bugAnalysisValues = new ArrayList<AnalysisValue>();
 				}
 				
-				returnValue = new AnalysisValue();
-				returnValue.setName(bugID);
-				returnValue.setWord(rs.getString("WRD"));
-				returnValue.setWordID(rs.getInt("BUG_WRD_ID"));
-				returnValue.setVector(rs.getDouble("VEC"));		
+				bugTermWeight = new AnalysisValue();
+				bugTermWeight.setName(bugID);
+				bugTermWeight.setTerm(rs.getString("TERM"));
+				bugTermWeight.setTermID(rs.getInt("BUG_TERM_ID"));
+				bugTermWeight.setTermWeight(rs.getDouble("TW"));
 				
-				bugAnalysisValues.add(returnValue);
+				bugAnalysisValues.add(bugTermWeight);
 			}
 
 		} catch (Exception e) {
@@ -844,16 +897,38 @@ public class BugDAO extends BaseDAO {
 		return similarBugInfos;
 	}
 	
-	public int updateTotalCoupusCount(String productName, String bugID, int totalWordCount) {
+	public int updateTotalTermCount(String productName, String bugID, int totalTermCount) {
 		String sql = "UPDATE BUG_INFO SET TOT_CNT = ? " +
 				"WHERE BUG_ID = ? AND PROD_NAME = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, totalWordCount);
+			ps.setInt(1, totalTermCount);
 			ps.setString(2, bugID);
 			ps.setString(3, productName);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int updateNormValues(String productName, String bugID, double corpusNorm, double summaryCorpusNorm, double descriptionCorpusNorm) {
+		String sql = "UPDATE BUG_INFO SET COR_NORM = ?, SMR_COR_NORM = ?, DESC_COR_NORM = ? " +
+				"WHERE BUG_ID = ? AND PROD_NAME = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setDouble(1, corpusNorm);
+			ps.setDouble(2, summaryCorpusNorm);
+			ps.setDouble(3, descriptionCorpusNorm);
+			
+			ps.setString(4, bugID);
+			ps.setString(5, productName);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {

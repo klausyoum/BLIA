@@ -88,6 +88,11 @@ public class Evaluator {
 			}
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 10);
+			if (rankedValues == null) {
+				// TODO: Start from HERE!
+				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				continue;
+			}
 			for (int j = 0; j < rankedValues.size(); j++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {
@@ -139,6 +144,11 @@ public class Evaluator {
 			}
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 0);
+			if (rankedValues == null) {
+				// TODO: Start from HERE!
+				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				continue;
+			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				
@@ -175,6 +185,11 @@ public class Evaluator {
 			int numberOfFixedFiles = 0;
 			int numberOfPositiveInstances = 0;
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 0);
+			if (rankedValues == null) {
+				// TODO: Start from HERE!
+				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				continue;
+			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {

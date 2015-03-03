@@ -135,40 +135,40 @@ public class BugRepoAnalyzer {
 		double len2 = 0.0;
 		double product = 0.0;
 		
-		TreeSet<Integer> wordIDSet = new TreeSet<Integer>();
-		int wordID = -1;
+		TreeSet<Integer> bugTermIDSet = new TreeSet<Integer>();
+		int bugTermID = -1;
 		for (int i = 0; i < firstBugVector.size(); i++) {
-			wordID = firstBugVector.get(i).getWordsID();
-			wordIDSet.add(wordID);
+			bugTermID = firstBugVector.get(i).getTermID();
+			bugTermIDSet.add(bugTermID);
 		}
 		
 		for (int i = 0; i < secondBugVector.size(); i++) {
-			wordID = secondBugVector.get(i).getWordsID();
-			wordIDSet.add(wordID);
+			bugTermID = secondBugVector.get(i).getTermID();
+			bugTermIDSet.add(bugTermID);
 		}
 		
-		double firstBugVectorValue[] = new double[wordIDSet.size()];
-		double secondBugVectorValue[] = new double[wordIDSet.size()];
+		double firstBugVectorValue[] = new double[bugTermIDSet.size()];
+		double secondBugVectorValue[] = new double[bugTermIDSet.size()];
 
 		int i = 0;
 		int j = 0;
 		int k = 0;
-		Iterator<Integer> wordIDSetIter = wordIDSet.iterator();
-		while (wordIDSetIter.hasNext()) {
-			wordID = wordIDSetIter.next();
-			if (j < firstBugVector.size() && wordID == firstBugVector.get(j).getWordsID()) {
-				firstBugVectorValue[i] = firstBugVector.get(j).getVector();
+		Iterator<Integer> bugTermIDSetIter = bugTermIDSet.iterator();
+		while (bugTermIDSetIter.hasNext()) {
+			bugTermID = bugTermIDSetIter.next();
+			if (j < firstBugVector.size() && bugTermID == firstBugVector.get(j).getTermID()) {
+				firstBugVectorValue[i] = firstBugVector.get(j).getTermWeight();
 				j++;
 			}
 			
-			if (k < secondBugVector.size() && wordID == secondBugVector.get(k).getWordsID()) {
-				secondBugVectorValue[i] = secondBugVector.get(k).getVector();
+			if (k < secondBugVector.size() && bugTermID == secondBugVector.get(k).getTermID()) {
+				secondBugVectorValue[i] = secondBugVector.get(k).getTermWeight();
 				k++;
 			}
 			i++;
 		}
 		
-		for (i = 0; i < wordIDSet.size(); i++) {
+		for (i = 0; i < bugTermIDSet.size(); i++) {
 			len1 += firstBugVectorValue[i] * firstBugVectorValue[i];
 			len2 += secondBugVectorValue[i] * secondBugVectorValue[i];
 			product += firstBugVectorValue[i] * secondBugVectorValue[i];
@@ -193,7 +193,7 @@ public class BugRepoAnalyzer {
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
-			bugVectors.put(bugID, bugDAO.getBugAnalysisValues(bugID));			
+			bugVectors.put(bugID, bugDAO.getBugTermWeightList(bugID));			
 		}
 		
 		return bugVectors;

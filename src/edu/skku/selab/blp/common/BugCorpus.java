@@ -15,6 +15,9 @@ public class BugCorpus {
 	private String content;
 	private String summaryPart;
 	private String descriptionPart;
+	private double contentNorm;
+	private double summaryCorpusNorm;
+	private double decriptionCorpusNorm;
 
 	/**
 	 * 
@@ -23,6 +26,9 @@ public class BugCorpus {
 		content = "";
 		summaryPart = "";
 		descriptionPart = "";
+		contentNorm = 0;
+		summaryCorpusNorm = 0;
+		decriptionCorpusNorm = 0;	
 	}
 
 	/**
@@ -65,6 +71,48 @@ public class BugCorpus {
 	 */
 	public void setDescriptionPart(String descriptionPart) {
 		this.descriptionPart = descriptionPart;
+	}
+
+	/**
+	 * @return the contentNorm
+	 */
+	public double getContentNorm() {
+		return contentNorm;
+	}
+
+	/**
+	 * @param contentNorm the contentNorm to set
+	 */
+	public void setContentNorm(double contentNorm) {
+		this.contentNorm = contentNorm;
+	}
+
+	/**
+	 * @return the summaryCorpusNorm
+	 */
+	public double getSummaryCorpusNorm() {
+		return summaryCorpusNorm;
+	}
+
+	/**
+	 * @param summaryCorpusNorm the summaryCorpusNorm to set
+	 */
+	public void setSummaryCorpusNorm(double summaryCorpusNorm) {
+		this.summaryCorpusNorm = summaryCorpusNorm;
+	}
+
+	/**
+	 * @return the decriptionCorpusNorm
+	 */
+	public double getDecriptionCorpusNorm() {
+		return decriptionCorpusNorm;
+	}
+
+	/**
+	 * @param decriptionCorpusNorm the decriptionCorpusNorm to set
+	 */
+	public void setDecriptionCorpusNorm(double decriptionCorpusNorm) {
+		this.decriptionCorpusNorm = decriptionCorpusNorm;
 	}
 
 }

@@ -57,16 +57,17 @@ public class BugDAOTest {
 	private String stackTrace2 = "edu.skku.selab.blp";
 	private String stackTrace3 = "org.blia";
 	private String stackTrace4 = "org.blp";
-	private String word1 = "acc";
-	private String word2 = "element";
+	private String term1 = "acc";
+	private String term2 = "element";
 	private String version = "v1.0";
 	
 	private int termCount = 10;
 	private int idc = 32;
 	private double tf = 0.53;
 	private double idf = 0.259;
-	private double vector = 0.4219;
 	private double delta = 0.00005;
+	
+	private double termWeight = 0.0482;
 	
 	private String fileName1 = "test_10.java";
 	private String fileName2 = "test_11.java";
@@ -198,51 +199,53 @@ public class BugDAOTest {
 	}
 
 	@Test
-	public void verifyGetBugSfAnalysisValue() throws Exception {
+	public void verifyGetBugSfTermVector() throws Exception {
 		BugDAO bugDAO = new BugDAO();
 
-		bugDAO.deleteAllWords();
-		assertNotEquals("Word insertion failed!", BaseDAO.INVALID, bugDAO.insertWord(word1, productName));
-		assertNotEquals("Word insertion failed!", BaseDAO.INVALID, bugDAO.insertWord(word2, productName));
+		bugDAO.deleteAllTerms();
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1, productName));
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term2, productName));
 		
-		HashMap<String, Integer> wordMap = bugDAO.getWordMap(productName);
-		assertNotNull("Can't find corpus1.", wordMap.get(word1));
-		assertNotNull("Can't find corpus2.", wordMap.get(word2));
+		HashMap<String, Integer> wordMap = bugDAO.getTermMap(productName);
+		assertNotNull("Can't find corpus1.", wordMap.get(term1));
+		assertNotNull("Can't find corpus2.", wordMap.get(term2));
 		
 		// preparation phase
-		bugDAO.deleteAllBugSfAnalysisValues();
+		bugDAO.deleteAllBugSfTermWeights();
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		sourceFileDAO.deleteAllWords();
-		sourceFileDAO.insertCorpus(word1, productName);
-		sourceFileDAO.insertCorpus(word2, productName);
+		sourceFileDAO.deleteAllTerms();
+		sourceFileDAO.insertTerm(term1, productName);
+		sourceFileDAO.insertTerm(term2, productName);
 		
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, word1, termCount, idc, tf, idf, vector);
-		assertNotEquals("BugSfAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugSfAnalysisValue(analysisValue));
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, term1, termCount, idc, tf, idf);
+		assertNotEquals("BugSfAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugSfTermWeight(analysisValue));
 		
-		AnalysisValue returnValue = bugDAO.getBugSfAnalysisValue(bugID1, productName, word1);
-		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getName());
-		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
-		assertEquals("word1 of AnalysisValue is wrong.", word1, returnValue.getWord());
-		assertEquals("termCount of AnalysisValue is wrong.", termCount, returnValue.getTermCount());
-		assertEquals("idc of AnalysisValue is wrong.", idc, returnValue.getInvDocCount());
-		assertEquals("tf of AnalysisValue is wrong.", tf, returnValue.getTf(), delta);
-		assertEquals("idf of AnalysisValue is wrong.", idf, returnValue.getIdf(), delta);
-		assertEquals("vector of AnalysisValue is wrong.", vector, returnValue.getVector(), delta);
+		AnalysisValue termWeight = bugDAO.getBugSfTermWeight(bugID1, productName, term1);
+		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, termWeight.getName());
+		assertEquals("productName of AnalysisValue is wrong.", productName, termWeight.getProductName());
+		assertEquals("term1 of AnalysisValue is wrong.", term1, termWeight.getTerm());
+		assertEquals("termCount of AnalysisValue is wrong.", termCount, termWeight.getTermCount());
+		assertEquals("idc of AnalysisValue is wrong.", idc, termWeight.getInvDocCount());
+		assertEquals("tf of AnalysisValue is wrong.", tf, termWeight.getTf(), delta);
+		assertEquals("idf of AnalysisValue is wrong.", idf, termWeight.getIdf(), delta);
 	}
 
 	@Test
-	public void verifyGetBugAnalysisValue() throws Exception {
+	public void verifyGetBugTermWeight() throws Exception {
 		BugDAO bugDAO = new BugDAO();
-
-		bugDAO.deleteAllBugAnalysisValues();
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, word1, termCount, idc, tf, idf, vector);
-		assertNotEquals("BugAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugAnalysisValue(analysisValue));
 		
-		AnalysisValue returnValue = bugDAO.getBugAnalysisValue(bugID1, productName, word1);
+		bugDAO.deleteAllTerms();
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1, productName));
+		
+		bugDAO.deleteAllBugTermWeights();
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, term1, termWeight);
+		assertNotEquals("BugAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTermWeight(analysisValue));
+		
+		AnalysisValue returnValue = bugDAO.getBugTermWeight(bugID1, productName, term1);
 		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getName());
 		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
-		assertEquals("word1 of AnalysisValue is wrong.", word1, returnValue.getWord());
-		assertEquals("vector of AnalysisValue is wrong.", vector, returnValue.getVector(), delta);
+		assertEquals("term1 of AnalysisValue is wrong.", term1, returnValue.getTerm());
+		assertEquals("termWeight of AnalysisValue is wrong.", termWeight, returnValue.getTermWeight(), delta);
 	}
 
 	@Test

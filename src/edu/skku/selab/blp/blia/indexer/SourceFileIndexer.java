@@ -183,11 +183,11 @@ public class SourceFileIndexer {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 
 		// insert corpus
-		String corpus = "";
+		String term = "";
 		Iterator<String> idcTableIter = inverseDocCountTable.keySet().iterator();
 		while (idcTableIter.hasNext()) {
-			corpus = idcTableIter.next();
-			sourceFileDAO.insertCorpus(corpus, productName);
+			term = idcTableIter.next();
+			sourceFileDAO.insertTerm(term, productName);
 		}
 		
 		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version);
@@ -210,16 +210,16 @@ public class SourceFileIndexer {
 			totalCorpusCount = 0;
 			Hashtable<String, Integer> termTable = new Hashtable<String, Integer>();
 			for (int i = 0; i < termArray.length; i++) {
-				corpus = termArray[i];
-				if (!corpus.trim().equals("")) {
+				term = termArray[i];
+				if (!term.trim().equals("")) {
 					totalCorpusCount++;
-					if (termTable.containsKey(corpus)) {
-						Integer count = (Integer) termTable.get(corpus);
+					if (termTable.containsKey(term)) {
+						Integer count = (Integer) termTable.get(term);
 						count = Integer.valueOf(count.intValue() + 1);
-						termTable.remove(corpus);
-						termTable.put(corpus, count);
+						termTable.remove(term);
+						termTable.put(term, count);
 					} else {
-						termTable.put(corpus, Integer.valueOf(1));
+						termTable.put(term, Integer.valueOf(1));
 					}
 				}
 			}
@@ -228,11 +228,11 @@ public class SourceFileIndexer {
 
 			Iterator<String> termTableIter = termTable.keySet().iterator();
 			while (termTableIter.hasNext()) {
-				corpus = termTableIter.next();
-				termCount = termTable.get(corpus);
-				inverseDocCount = inverseDocCountTable.get(corpus).intValue();
-				AnalysisValue analysisValue = new AnalysisValue(fileName, productName, version, corpus, termCount, inverseDocCount);
-				sourceFileDAO.insertSourceFileAnalysisValue(analysisValue);		
+				term = termTableIter.next();
+				termCount = termTable.get(term);
+				inverseDocCount = inverseDocCountTable.get(term).intValue();
+				AnalysisValue termWeight = new AnalysisValue(fileName, productName, version, term, termCount, inverseDocCount);
+				sourceFileDAO.insertTermWeight(termWeight);		
 			}
 		}
 	}

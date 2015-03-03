@@ -22,6 +22,11 @@ public class SourceFileCorpus {
 	private String variablePart;
 	private String commentPart;
 	private ArrayList<String> importedClasses;
+	private double contentNorm;
+	private double classCorpusNorm;
+	private double methodCorpusNorm;
+	private double variableCorpusNorm;
+	private double commentCorpusNorm;
 
 	public SourceFileCorpus() {
 		javaFileFullClassName = "";
@@ -32,6 +37,11 @@ public class SourceFileCorpus {
 		variablePart = "";
 		commentPart = "";
 		importedClasses = null;
+		
+		classCorpusNorm = 0;
+		methodCorpusNorm = 0;
+		variableCorpusNorm = 0;
+		commentCorpusNorm = 0;
 	}
 
 	public String getJavaFileFullClassName() {
@@ -126,5 +136,75 @@ public class SourceFileCorpus {
 	 */
 	public void setCommentPart(String commentPart) {
 		this.commentPart = commentPart;
+	}
+
+	/**
+	 * @return the classCorpusNorm
+	 */
+	public double getClassCorpusNorm() {
+		return classCorpusNorm;
+	}
+
+	/**
+	 * @param classCorpusNorm the classCorpusNorm to set
+	 */
+	public void setClassCorpusNorm(double classCorpusNorm) {
+		this.classCorpusNorm = classCorpusNorm;
+	}
+
+	/**
+	 * @return the methodCorpusNorm
+	 */
+	public double getMethodCorpusNorm() {
+		return methodCorpusNorm;
+	}
+
+	/**
+	 * @param methodCorpusNorm the methodCorpusNorm to set
+	 */
+	public void setMethodCorpusNorm(double methodCorpusNorm) {
+		this.methodCorpusNorm = methodCorpusNorm;
+	}
+
+	/**
+	 * @return the variableCorpusNorm
+	 */
+	public double getVariableCorpusNorm() {
+		return variableCorpusNorm;
+	}
+
+	/**
+	 * @param variableCorpusNorm the variableCorpusNorm to set
+	 */
+	public void setVariableCorpusNorm(double variableCorpusNorm) {
+		this.variableCorpusNorm = variableCorpusNorm;
+	}
+
+	/**
+	 * @return the commentCorpusNorm
+	 */
+	public double getCommentCorpusNorm() {
+		return commentCorpusNorm;
+	}
+
+	/**
+	 * @param commentCorpusNorm the commentCorpusNorm to set
+	 */
+	public void setCommentCorpusNorm(double commentCorpusNorm) {
+		this.commentCorpusNorm = commentCorpusNorm;
+	}
+
+	/**
+	 * @return the contentNorm
+	 */
+	public double getContentNorm() {
+		return contentNorm;
+	}
+
+	/**
+	 * @param contentNorm the contentNorm to set
+	 */
+	public void setContentNorm(double contentNorm) {
+		this.contentNorm = contentNorm;
 	}
 }

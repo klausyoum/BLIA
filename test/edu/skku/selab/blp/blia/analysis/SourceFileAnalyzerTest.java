@@ -83,7 +83,8 @@ public class SourceFileAnalyzerTest {
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
+		boolean useStructuredInformation = false;
+		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 	}
 	
 	@Test
@@ -103,7 +104,8 @@ public class SourceFileAnalyzerTest {
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		sourceFileAnalyzer.analyze(version);
+		boolean useStructuredInformation = false;
+		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 	}
 
 
