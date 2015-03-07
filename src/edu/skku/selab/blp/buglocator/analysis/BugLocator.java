@@ -77,7 +77,7 @@ public class BugLocator {
 	 * @param f
 	 * @return
 	 */
-	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double weightFactor) {
+	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha) {
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -86,7 +86,7 @@ public class BugLocator {
 			double vsmScore = integratedAnalysisValue.getVsmScore();
 			double similarityScore = integratedAnalysisValue.getSimilarityScore();
 			
-			double finalScore = vsmScore * (1 - weightFactor) + similarityScore * weightFactor;
+			double finalScore = vsmScore * (1 - alpha) + similarityScore * alpha;
 			integratedAnalysisValue.setBugLocatorScore(finalScore);
 		}
 	}

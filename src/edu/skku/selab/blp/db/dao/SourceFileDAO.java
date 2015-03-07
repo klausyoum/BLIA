@@ -335,7 +335,7 @@ public class SourceFileDAO extends BaseDAO {
 	 * @return SourceFileCorpus		Source file corpus
 	 */
 	public SourceFileCorpus getCorpus(int sourceFileVersionID) {
-		String sql = "SELECT COR, CLS_COR, MTH_COR, VAR_COR, CMT_COR " +
+		String sql = "SELECT COR, CLS_COR, MTH_COR, VAR_COR, CMT_COR, COR_NORM, CLS_COR_NORM, MTH_COR_NORM, VAR_COR_NORM, CMT_COR_NORM  " +
 					"FROM SF_VER_INFO B " +
 					"WHERE SF_VER_ID = ?";
 		
@@ -352,6 +352,11 @@ public class SourceFileDAO extends BaseDAO {
 				corpus.setMethodPart(rs.getString("MTH_COR"));
 				corpus.setVariablePart(rs.getString("VAR_COR"));
 				corpus.setCommentPart(rs.getString("CMT_COR"));
+				corpus.setContentNorm(rs.getDouble("COR_NORM"));
+				corpus.setClassCorpusNorm(rs.getDouble("CLS_COR_NORM"));
+				corpus.setMethodCorpusNorm(rs.getDouble("MTH_COR_NORM"));
+				corpus.setVariableCorpusNorm(rs.getDouble("VAR_COR_NORM"));
+				corpus.setCommentCorpusNorm(rs.getDouble("CMT_COR_NORM"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

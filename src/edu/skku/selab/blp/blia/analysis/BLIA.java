@@ -21,6 +21,7 @@ import edu.skku.selab.blp.blia.indexer.GitCommitLogCollector;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
+import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
@@ -35,7 +36,7 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
 public class BLIA {
 	private final String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 	
-	public void prepareIndexData(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
+	public void preAnalyze(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
 		if (!useStrucrutedInfo) {
 			SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 			sourceFileCorpusCreator.create(version);
@@ -63,18 +64,29 @@ public class BLIA {
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
 		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil);
-	}
-	
-	public void prepareAnalysisData() throws Exception {
+		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
+		
+		// VSM_SCORE
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 		
+		// SIMI_SCORE
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
+		
+		// STRACE_SCORE
+		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
+		stackTraceAnalyzer.analyze();
+		
+		// COMM_SCORE
+		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
+		scmRepoAnalyzer.analyze(version);
 	}
 	
-	public void analyze(String version, boolean useCommitLogAnalysis) throws Exception {
+	public void analyze(String version) throws Exception {
 		String productName = Property.getInstance().getProductName();
 		BugDAO bugDAO = new BugDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
@@ -85,35 +97,27 @@ public class BLIA {
 		double alpha = property.getAlpha();
 		double beta = property.getBeta();
 		
-		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
-		stackTraceAnalyzer.analyze();
-		
-		if (useCommitLogAnalysis) {
-			ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
-			scmRepoAnalyzer.analyze(version);
-		}
-		
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
 			normalize(integratedAnalysisValues);
 			
-			if (!useCommitLogAnalysis) {
-				combine(integratedAnalysisValues, alpha);
-			} else {
-				combine(integratedAnalysisValues, alpha, beta);
-			}
-			
+			combine(integratedAnalysisValues, alpha, beta);
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
 				
 				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 				int updatedColumenCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
-				
 				if (0 == updatedColumenCount) {
 					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
+				
+				updatedColumenCount = integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
+				if (0 == updatedColumenCount) {
+					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+				}
+
 			}
 		}
 	}
@@ -141,10 +145,6 @@ public class BLIA {
 			double bliaScore = vsmScore * (1 - alpha) + similarityScore * alpha;
 			if (bliaScore > 0) {
 				bliaScore = bliaScore * (1 - beta) + commitLogScore * beta + stackTraceScore;
-				
-				if (commitLogScore > 0) {
-					System.out.printf("CommitScore: %f, bugLocatorScore: %f, bliaScore: %f\n", commitLogScore, bugLocatorScore, bliaScore);
-				}
 			} else {
 				bliaScore = 0;
 			}
@@ -153,31 +153,31 @@ public class BLIA {
 		}
 	}
 
-	/**
-	 * Combine rVSMScore(vsmVector) and SimiScore(graphVector)
-	 * 
-	 * @param vsmVector
-	 * @param graphVector
-	 * @param f
-	 * @return
-	 */
-	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha) {
-		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
-		while (integratedAnalysisValuesIter.hasNext()) {
-			int sourceFileVersionID = integratedAnalysisValuesIter.next();
-			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-			
-			double vsmScore = integratedAnalysisValue.getVsmScore();
-			double similarityScore = integratedAnalysisValue.getSimilarityScore();
-			double stackTraceScore = integratedAnalysisValue.getStackTraceScore();
-			
-			double bugLocatorScore = vsmScore * (1 - alpha) + similarityScore * alpha;
-			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
-
-			// Only Stack Trace analysis included.
-//			integratedAnalysisValue.setBLIAScore(bugLocatorScore + stackTraceScore);
-		}
-	}
+//	/**
+//	 * Combine rVSMScore(vsmVector) and SimiScore(graphVector)
+//	 * 
+//	 * @param vsmVector
+//	 * @param graphVector
+//	 * @param f
+//	 * @return
+//	 */
+//	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha) {
+//		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+//		while (integratedAnalysisValuesIter.hasNext()) {
+//			int sourceFileVersionID = integratedAnalysisValuesIter.next();
+//			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+//			
+//			double vsmScore = integratedAnalysisValue.getVsmScore();
+//			double similarityScore = integratedAnalysisValue.getSimilarityScore();
+////			double stackTraceScore = integratedAnalysisValue.getStackTraceScore();
+//			
+//			double bugLocatorScore = vsmScore * (1 - alpha) + similarityScore * alpha;
+//			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
+//
+//			// Only Stack Trace analysis included.
+////			integratedAnalysisValue.setBLIAScore(bugLocatorScore + stackTraceScore);
+//		}
+//	}
 
 	/**
 	 * Normalize values in array from max. to min of array
@@ -190,6 +190,9 @@ public class BLIA {
 		double minVsmScore = Double.MAX_VALUE;;
 		double maxSimiScore = Double.MIN_VALUE;
 		double minSimiScore = Double.MAX_VALUE;;
+		double maxCommitLogScore = Double.MIN_VALUE;
+		double minCommitLogScore = Double.MAX_VALUE;;
+
 		
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
@@ -197,6 +200,7 @@ public class BLIA {
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 			double vsmScore = integratedAnalysisValue.getVsmScore();
 			double simiScore = integratedAnalysisValue.getSimilarityScore();
+			double commitLogScore = integratedAnalysisValue.getCommitLogScore();
 			if (maxVsmScore < vsmScore) {
 				maxVsmScore = vsmScore;
 			}
@@ -208,19 +212,28 @@ public class BLIA {
 			}
 			if (minSimiScore > simiScore) {
 				minSimiScore = simiScore;
-			}		
+			}
+			if (maxCommitLogScore < commitLogScore) {
+				maxCommitLogScore = commitLogScore;
+			}
+			if (minCommitLogScore > commitLogScore) {
+				minCommitLogScore = commitLogScore;
+			}	
 		}
 		
 		double spanVsmScore = maxVsmScore - minVsmScore;
 		double spanSimiScore = maxSimiScore - minSimiScore;
+		double spanCommitLogScore = maxCommitLogScore - minCommitLogScore;
 		integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-			double vsmScore = (integratedAnalysisValue.getVsmScore() - minVsmScore) / spanVsmScore;
-			double simiScore = (integratedAnalysisValue.getSimilarityScore() - minSimiScore) / spanSimiScore;
-			integratedAnalysisValue.setVsmScore(vsmScore);
-			integratedAnalysisValue.setSimilarityScore(simiScore);
+			double normalizedVsmScore = (integratedAnalysisValue.getVsmScore() - minVsmScore) / spanVsmScore;
+			double normalizedSimiScore = (integratedAnalysisValue.getSimilarityScore() - minSimiScore) / spanSimiScore;
+			double normalizedCommitLogScore = (integratedAnalysisValue.getCommitLogScore() - minCommitLogScore) / spanCommitLogScore;
+			integratedAnalysisValue.setVsmScore(normalizedVsmScore);
+			integratedAnalysisValue.setSimilarityScore(normalizedSimiScore);
+			integratedAnalysisValue.setCommitLogScore(normalizedCommitLogScore);
 		}
 	}
 }

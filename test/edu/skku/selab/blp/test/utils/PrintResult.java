@@ -116,5 +116,11 @@ public class PrintResult {
 		}		
 		bugInfotWriter.close();
 	}
+	
+	@Test
+	public void arrayTest() {
+		double arr[] = new double[3];
+		System.out.printf("1: %f, 2: %f, 3: %f\n", arr[0], arr[1], arr[2]);
+	}
 
 }

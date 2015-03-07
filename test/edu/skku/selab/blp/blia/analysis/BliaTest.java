@@ -85,13 +85,11 @@ public class BliaTest {
 
 		BLIA blia = new BLIA();
 		boolean useStrucrutedInfo = true;
-		boolean useCommitLogAnalysis = true;
 		
 		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
 		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
-		blia.prepareIndexData(useStrucrutedInfo, since.getTime(), until.getTime());
-		blia.prepareAnalysisData();
-		blia.analyze(version, useCommitLogAnalysis);
+		blia.preAnalyze(useStrucrutedInfo, since.getTime(), until.getTime());
+		blia.analyze(version);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		

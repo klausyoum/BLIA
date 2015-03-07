@@ -38,20 +38,22 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		// parser.getImportedClassed() function should be called before calling parser.getContents()
 		ArrayList<String> importedClasses = parser.getImportedClasses();
 		
-		String content[] = parser.getStructuredContent();
-		String sourceCodeContent = stemContent(content);
-		
+		String classPart = parser.getStructuredContentWithFullyIdentifier(FileParser.CLASS_PART);		
 		String classContents[] = parser.getStructuredContent(FileParser.CLASS_PART);
-		String classPart = stemContent(classContents);
+		classPart += " " + stemContent(classContents);
 
+		String methodPart = parser.getStructuredContentWithFullyIdentifier(FileParser.METHOD_PART);	
 		String methodContents[] = parser.getStructuredContent(FileParser.METHOD_PART);
-		String methodPart = stemContent(methodContents);
+		methodPart += " " + stemContent(methodContents);
 
+		String variablePart = parser.getStructuredContentWithFullyIdentifier(FileParser.VARIABLE_PART);	
 		String variableContents[] = parser.getStructuredContent(FileParser.VARIABLE_PART);
-		String variablePart = stemContent(variableContents);
+		variablePart += " " + stemContent(variableContents);
 
 		String commentContents[] = parser.getStructuredContent(FileParser.COMMENT_PART);
 		String commentPart = stemContent(commentContents);
+		
+		String sourceCodeContent = classPart + " " + methodPart + " " + variablePart + " " + commentPart;
 		
 		SourceFileCorpus corpus = new SourceFileCorpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());

@@ -85,8 +85,8 @@ public class SourceFileVectorCreator {
 					double termWeightValue = (tf * idf);
 					double termWeightValueSquare = termWeightValue * termWeightValue;
 					
-					System.out.printf("term: %s, termCount: %d, documentCount: %d, tf: %f, idf: %f, termWeight: %f\n",
-							term, termWeight.getTermCount(), termWeight.getInvDocCount(), tf, idf, termWeightValue);
+//					System.out.printf("term: %s, termCount: %d, documentCount: %d, tf: %f, idf: %f, termWeight: %f\n",
+//							term, termWeight.getTermCount(), termWeight.getInvDocCount(), tf, idf, termWeightValue);
 					corpusNorm += termWeightValueSquare;
 					
 					if (classTermSet.contains(term)) {
@@ -114,8 +114,8 @@ public class SourceFileVectorCreator {
 				methodCorpusNorm = Math.sqrt(methodCorpusNorm);
 				variableNorm = Math.sqrt(variableNorm);
 				commentNorm = Math.sqrt(commentNorm);
-				System.out.printf(">>>> corpusNorm: %f, classCorpusNorm: %f, methodCorpusNorm: %f, variableNorm: %f, commentNorm: %f\n",
-						corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, variableNorm);
+//				System.out.printf(">>>> corpusNorm: %f, classCorpusNorm: %f, methodCorpusNorm: %f, variableNorm: %f, commentNorm: %f\n",
+//						corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, variableNorm);
 				
 				sourceFileDAO.updateNormValues(productName, fileName, version, corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, commentNorm);
 		}

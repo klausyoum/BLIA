@@ -181,14 +181,6 @@ public class DbUtil {
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
 	}
 	
-	public void initializeAllAnalysisData() throws Exception {
-		BugDAO bugDAO = new BugDAO();
-		bugDAO.deleteAllSimilarBugInfo();
-		
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
-	}	
-	
 	public void initializeExperimentResultData() throws Exception {
 		ExperimentResultDAO experimentDAO = new ExperimentResultDAO();
 		experimentDAO.deleteAllExperimentResults();

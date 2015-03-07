@@ -104,9 +104,10 @@ public class BugRepoAnalyzer {
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
+		boolean orderedByFixedDate = true;
+		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
 		
-		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVector();
+		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
         for(int i = 0; i < bugs.size(); i++) {
         	String firstBugID = bugs.get(i).getID();
@@ -134,46 +135,37 @@ public class BugRepoAnalyzer {
 		double len1 = 0.0;
 		double len2 = 0.0;
 		double product = 0.0;
-		
-		TreeSet<Integer> bugTermIDSet = new TreeSet<Integer>();
-		int bugTermID = -1;
-		for (int i = 0; i < firstBugVector.size(); i++) {
-			bugTermID = firstBugVector.get(i).getTermID();
-			bugTermIDSet.add(bugTermID);
-		}
-		
-		for (int i = 0; i < secondBugVector.size(); i++) {
-			bugTermID = secondBugVector.get(i).getTermID();
-			bugTermIDSet.add(bugTermID);
-		}
-		
-		double firstBugVectorValue[] = new double[bugTermIDSet.size()];
-		double secondBugVectorValue[] = new double[bugTermIDSet.size()];
 
-		int i = 0;
+		int startTermID = firstBugVector.get(0).getTermID() < secondBugVector.get(0).getTermID() ?
+				firstBugVector.get(0).getTermID() : secondBugVector.get(0).getTermID(); 
+		int endTermID = firstBugVector.get(firstBugVector.size() - 1).getTermID() > secondBugVector.get(secondBugVector.size() - 1).getTermID() ?
+				firstBugVector.get(firstBugVector.size() - 1).getTermID() :
+				secondBugVector.get(secondBugVector.size() - 1).getTermID();
+		
+		double firstTermWeight = 0.0;
+		double secondTermWeight = 0.0;
 		int j = 0;
 		int k = 0;
-		Iterator<Integer> bugTermIDSetIter = bugTermIDSet.iterator();
-		while (bugTermIDSetIter.hasNext()) {
-			bugTermID = bugTermIDSetIter.next();
-			if (j < firstBugVector.size() && bugTermID == firstBugVector.get(j).getTermID()) {
-				firstBugVectorValue[i] = firstBugVector.get(j).getTermWeight();
-				j++;
+		for (int i  = startTermID; i <= endTermID; i++) {
+			firstTermWeight = 0.0;
+			secondTermWeight = 0.0;
+
+			if (j < firstBugVector.size()) {
+				if (i == firstBugVector.get(j).getTermID()) {
+					firstTermWeight = firstBugVector.get(j++).getTermWeight();
+					len1 += firstTermWeight * firstTermWeight;
+				}
 			}
 			
-			if (k < secondBugVector.size() && bugTermID == secondBugVector.get(k).getTermID()) {
-				secondBugVectorValue[i] = secondBugVector.get(k).getTermWeight();
-				k++;
+			if (k < secondBugVector.size()) {
+				if (i == secondBugVector.get(k).getTermID()) {
+					secondTermWeight = secondBugVector.get(k++).getTermWeight();
+					len2 += secondTermWeight * secondTermWeight;
+				}
 			}
-			i++;
+			
+			product += firstTermWeight * secondTermWeight;
 		}
-		
-		for (i = 0; i < bugTermIDSet.size(); i++) {
-			len1 += firstBugVectorValue[i] * firstBugVectorValue[i];
-			len2 += secondBugVectorValue[i] * secondBugVectorValue[i];
-			product += firstBugVectorValue[i] * secondBugVectorValue[i];
-		}
-				
 		return ((double) product / (Math.sqrt(len1) * Math.sqrt(len2)));
 	}
 	
@@ -183,7 +175,7 @@ public class BugRepoAnalyzer {
 	 * @return <bug ID, <Corpus ID, AnalysisValue>> 
 	 * @throws IOException
 	 */
-	public HashMap<String, ArrayList<AnalysisValue>> getVector() throws Exception {
+	public HashMap<String, ArrayList<AnalysisValue>> getVectors() throws Exception {
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
 		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();

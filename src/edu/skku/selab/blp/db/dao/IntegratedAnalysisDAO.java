@@ -76,16 +76,14 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	}
 	
 	public int updateBugLocatorScore(IntegratedAnalysisValue integratedAnalysisValue) {
-		String sql = "UPDATE INT_ANALYSIS SET VSM_SCORE = ?, SIMI_SCORE = ?, BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		String sql = "UPDATE INT_ANALYSIS SET BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setDouble(1, integratedAnalysisValue.getVsmScore());
-			ps.setDouble(2, integratedAnalysisValue.getSimilarityScore());
-			ps.setDouble(3, integratedAnalysisValue.getBugLocatorScore());
-			ps.setString(4, integratedAnalysisValue.getBugID());
-			ps.setInt(5, integratedAnalysisValue.getSourceFileVersionID());
+			ps.setDouble(1, integratedAnalysisValue.getBugLocatorScore());
+			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -96,17 +94,14 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	}
 	
 	public int updateBLIAScore(IntegratedAnalysisValue integratedAnalysisValue) {
-		String sql = "UPDATE INT_ANALYSIS SET VSM_SCORE = ?, SIMI_SCORE = ?, BL_SCORE = ?, BLIA_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		String sql = "UPDATE INT_ANALYSIS SET BLIA_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setDouble(1, integratedAnalysisValue.getVsmScore());
-			ps.setDouble(2, integratedAnalysisValue.getSimilarityScore());
-			ps.setDouble(3, integratedAnalysisValue.getBugLocatorScore());
-			ps.setDouble(4, integratedAnalysisValue.getBLIAScore());
-			ps.setString(5, integratedAnalysisValue.getBugID());
-			ps.setInt(6, integratedAnalysisValue.getSourceFileVersionID());
+			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
+			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {

@@ -23,6 +23,7 @@ import edu.skku.selab.blp.blia.analysis.BLIA;
 import edu.skku.selab.blp.blia.analysis.BugRepoAnalyzer;
 import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
@@ -95,6 +96,9 @@ public class EvaluatorTest {
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
+		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
@@ -123,7 +127,6 @@ public class EvaluatorTest {
 		float alpha = 0.2f;
 		float beta = 0.5f;
 		int pastDate = 15;
-		String repoDir = Property.SWT_REPO_DIR;
 		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
 		runBugLocator();
 
@@ -158,7 +161,7 @@ public class EvaluatorTest {
 		String projectName = "swt";
 		String productName = TestConfiguration.getProductName(projectName);
 		String algorithmName = Evaluator.ALG_BLIA;
-		float alpha = 0.2f;
+		float alpha = 0.2f;   
 		float beta = 0.3f;
 		int pastDays = 15;
 		String repoDir = Property.SWT_REPO_DIR;
@@ -177,21 +180,17 @@ public class EvaluatorTest {
 			// for swt project ONLY
 			Calendar since = new GregorianCalendar(2002, Calendar.APRIL, 1);
 			Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
-			blia.prepareIndexData(useStrucrutedInfo, since.getTime(), until.getTime());
-		} else {
-			dbUtil.initializeAllAnalysisData();
+			blia.preAnalyze(useStrucrutedInfo, since.getTime(), until.getTime());
 		}
-		
-		blia.prepareAnalysisData();
-		boolean useCommitLogAnalysis = true;
-		blia.analyze(version, useCommitLogAnalysis);
+
+		blia.analyze(version);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 		
-		String algorithmDescription = "[BLIA] alpha: " + alpha;
+		String algorithmDescription = "[BLIA] alpha: " + alpha + ", beta: " + beta + ", pastDays: " + pastDays;
 		if (useStrucrutedInfo) {
-			algorithmDescription += " with structured information";
+			algorithmDescription += " with structured info";
 		}
 		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
 		evaluator1.evaluate();

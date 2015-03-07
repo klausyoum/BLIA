@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.h2.api.ErrorCode;
 import org.h2.jdbc.JdbcSQLException;
@@ -92,7 +90,7 @@ public class BugDAO extends BaseDAO {
 	public HashMap<String, Bug> getBugs() {
 		HashMap<String, Bug> bugs = new HashMap<String, Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, VER FROM BUG_INFO";
+		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO";
 		
 		try {
 			ps = conn.prepareStatement(sql);
@@ -112,6 +110,9 @@ public class BugDAO extends BaseDAO {
 				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
+				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
+				bugCorpus.setSummaryCorpusNorm(rs.getDouble("SMR_COR_NORM"));
+				bugCorpus.setDecriptionCorpusNorm(rs.getDouble("DESC_COR_NORM"));
 				bug.setCorpus(bugCorpus);
 				
 				bug.setTotalCorpusCount(rs.getInt("TOT_CNT"));

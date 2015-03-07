@@ -93,6 +93,33 @@ public class FileParser {
 		return processedConent.split(" ");
 	}
 	
+	public String getStructuredContentWithFullyIdentifier(int type) {
+		String content = "";
+//		System.out.println(content);
+		
+		switch (type) {
+		case CLASS_PART:
+			content =  getAllClassNames();
+			break;
+		case METHOD_PART:
+			content =  getAllMethodNames();
+			break;
+		case VARIABLE_PART:
+			content =  getAllVariableNames();
+			break;
+		case COMMENT_PART:
+			content =  getAllComments();
+			break;
+		case ALL_PART:
+		default:
+			content = getAllStructuredInfos();
+			break;
+		}
+		
+		return content.toLowerCase();
+	}
+	
+	
 	public String[] getStructuredContent(int type) {
 		String content = "";
 //		System.out.println(content);
@@ -201,25 +228,28 @@ public class FileParser {
                 {
 //                	System.out.printf("ClassNames: %s, comment text: %s\n", getAllClassNames(), node.toString());
                 	String javadocComment = node.toString();
-                	javadocComment = javadocComment.split("[/][*][*]")[1];
-                	javadocComment = javadocComment.split("[*][/]")[0];
-                	String[]  commentLines = javadocComment.split("\n");
                 	
-                	for (String line : commentLines) {
-                		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
-                			continue;
-                		}
-                    	String[] words = line.split("[*\\s]");
-                    	for (String word : words) {
-                    		if (word.length() > 0) {
-                    			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
-                    					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
-                    				continue;
-                    			}
-                    			
-    	                    	structuredInfoList.add(word);                		
-//    	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
+                	if (!javadocComment.toLowerCase().contains("copyright")) {
+                    	javadocComment = javadocComment.split("[/][*][*]")[1];
+                    	javadocComment = javadocComment.split("[*][/]")[0];
+                    	String[]  commentLines = javadocComment.split("\n");
+                    	
+                    	for (String line : commentLines) {
+                    		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
+                    			continue;
                     		}
+                        	String[] words = line.split("[*\\s]");
+                        	for (String word : words) {
+                        		if (word.length() > 0) {
+                        			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
+                        					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
+                        				continue;
+                        			}
+                        			
+        	                    	structuredInfoList.add(word);                		
+//        	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
+                        		}
+                        	}
                     	}
                 	}
                     return super.visit(node);

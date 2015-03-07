@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -28,7 +27,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.buglocator.indexer.BugCorpusCreatorWithFile;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.db.dao.BugDAO;

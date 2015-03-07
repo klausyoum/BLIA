@@ -106,8 +106,8 @@ public class SourceFileCorpusCreatorWithFile {
 				contentBuf.append(" ");
 			}
 		}
-
 		String sourceCodeContent = contentBuf.toString();
+		
 		String classNameAndMethodName[] = parser.getClassNameAndMethodName();
 		StringBuffer nameBuf = new StringBuffer();
 		String as1[];
@@ -118,8 +118,8 @@ public class SourceFileCorpusCreatorWithFile {
 			nameBuf.append(stemWord);
 			nameBuf.append(" ");
 		}
-
 		String names = nameBuf.toString();
+		
 		SourceFileCorpus corpus = new SourceFileCorpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());
 		corpus.setJavaFileFullClassName(fileName);

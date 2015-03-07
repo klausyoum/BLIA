@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
@@ -113,14 +115,21 @@ public class ScmRepoAnalyzer {
 		    if (diffDays > pastDays) {
 		    	continue;
 		    }
-		    
-			if (diffDays <= pastDays) {
+
+	        String pattern = "(.*fix.*)|(.*bug.*)";		    
+	        Pattern r = Pattern.compile(pattern);
+	        if (diffDays <= pastDays) {
 				if (diffDays > 0) {
 					if (null == foundCommitInfos) {
 						foundCommitInfos = new ArrayList<CommitInfo>();
 					}
-					
-					foundCommitInfos.add(commitInfo);
+
+					String commitMessage = commitInfo.getMessage();
+			        Matcher m = r.matcher(commitMessage);
+			        if (m.find()) {
+//			        	System.out.printf("Commit message: %s\n", commitMessage);
+						foundCommitInfos.add(commitInfo);						
+					}
 				} else {
 					break;
 				}
