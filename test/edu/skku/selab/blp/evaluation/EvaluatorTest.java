@@ -156,7 +156,7 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyBLIAEvaluate() throws Exception {
-		boolean isNeededToPrepare = true;
+		boolean isNeededToPrepare = false;
 
 		String projectName = "swt";
 		String productName = TestConfiguration.getProductName(projectName);

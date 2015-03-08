@@ -216,7 +216,7 @@ public class CommitDAO extends BaseDAO {
 		        Matcher m = r.matcher(commitInfo.getMessage());
 
 		        if (m.find()) {
-//		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
+		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
 					filteredCommitInfos.add(commitInfo);
 		        }
 			}

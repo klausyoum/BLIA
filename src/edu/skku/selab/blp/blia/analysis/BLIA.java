@@ -100,6 +100,7 @@ public class BLIA {
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+			// AmaLgam doesn't use normalize
 			normalize(integratedAnalysisValues);
 			
 			combine(integratedAnalysisValues, alpha, beta);
@@ -117,7 +118,6 @@ public class BLIA {
 				if (0 == updatedColumenCount) {
 					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
-
 			}
 		}
 	}
@@ -190,8 +190,8 @@ public class BLIA {
 		double minVsmScore = Double.MAX_VALUE;;
 		double maxSimiScore = Double.MIN_VALUE;
 		double minSimiScore = Double.MAX_VALUE;;
-		double maxCommitLogScore = Double.MIN_VALUE;
-		double minCommitLogScore = Double.MAX_VALUE;;
+//		double maxCommitLogScore = Double.MIN_VALUE;
+//		double minCommitLogScore = Double.MAX_VALUE;;
 
 		
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
@@ -200,7 +200,7 @@ public class BLIA {
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 			double vsmScore = integratedAnalysisValue.getVsmScore();
 			double simiScore = integratedAnalysisValue.getSimilarityScore();
-			double commitLogScore = integratedAnalysisValue.getCommitLogScore();
+//			double commitLogScore = integratedAnalysisValue.getCommitLogScore();
 			if (maxVsmScore < vsmScore) {
 				maxVsmScore = vsmScore;
 			}
@@ -213,27 +213,27 @@ public class BLIA {
 			if (minSimiScore > simiScore) {
 				minSimiScore = simiScore;
 			}
-			if (maxCommitLogScore < commitLogScore) {
-				maxCommitLogScore = commitLogScore;
-			}
-			if (minCommitLogScore > commitLogScore) {
-				minCommitLogScore = commitLogScore;
-			}	
+//			if (maxCommitLogScore < commitLogScore) {
+//				maxCommitLogScore = commitLogScore;
+//			}
+//			if (minCommitLogScore > commitLogScore) {
+//				minCommitLogScore = commitLogScore;
+//			}	
 		}
 		
 		double spanVsmScore = maxVsmScore - minVsmScore;
 		double spanSimiScore = maxSimiScore - minSimiScore;
-		double spanCommitLogScore = maxCommitLogScore - minCommitLogScore;
+//		double spanCommitLogScore = maxCommitLogScore - minCommitLogScore;
 		integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 			double normalizedVsmScore = (integratedAnalysisValue.getVsmScore() - minVsmScore) / spanVsmScore;
 			double normalizedSimiScore = (integratedAnalysisValue.getSimilarityScore() - minSimiScore) / spanSimiScore;
-			double normalizedCommitLogScore = (integratedAnalysisValue.getCommitLogScore() - minCommitLogScore) / spanCommitLogScore;
+//			double normalizedCommitLogScore = (integratedAnalysisValue.getCommitLogScore() - minCommitLogScore) / spanCommitLogScore;
 			integratedAnalysisValue.setVsmScore(normalizedVsmScore);
 			integratedAnalysisValue.setSimilarityScore(normalizedSimiScore);
-			integratedAnalysisValue.setCommitLogScore(normalizedCommitLogScore);
+//			integratedAnalysisValue.setCommitLogScore(normalizedCommitLogScore);
 		}
 	}
 }

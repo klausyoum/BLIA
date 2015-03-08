@@ -76,16 +76,16 @@ public class ScmRepoAnalyzer {
 						analysisValues.put(commitFileName, analysisValue);		
 					}
 				}
+			}
+			
+			// Then save the score for the fixed files
+			Iterator<IntegratedAnalysisValue> analysisValueIter = analysisValues.values().iterator();
+			while (analysisValueIter.hasNext()) {
+				IntegratedAnalysisValue analysisValue = analysisValueIter.next();
+				int updatedColumenCount = integratedAnalysisDAO.updateCommitLogScore(analysisValue);
 				
-				// Then save the score for the fixed files
-				Iterator<IntegratedAnalysisValue> analysisValueIter = analysisValues.values().iterator();
-				while (analysisValueIter.hasNext()) {
-					IntegratedAnalysisValue analysisValue = analysisValueIter.next();
-					int updatedColumenCount = integratedAnalysisDAO.updateCommitLogScore(analysisValue);
-					
-					if (0 == updatedColumenCount) {
-						integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
-					}
+				if (0 == updatedColumenCount) {
+					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
 				}
 			}
 		}
@@ -116,23 +116,12 @@ public class ScmRepoAnalyzer {
 		    	continue;
 		    }
 
-	        String pattern = "(.*fix.*)|(.*bug.*)";		    
-	        Pattern r = Pattern.compile(pattern);
-	        if (diffDays <= pastDays) {
-				if (diffDays > 0) {
-					if (null == foundCommitInfos) {
-						foundCommitInfos = new ArrayList<CommitInfo>();
-					}
-
-					String commitMessage = commitInfo.getMessage();
-			        Matcher m = r.matcher(commitMessage);
-			        if (m.find()) {
-//			        	System.out.printf("Commit message: %s\n", commitMessage);
-						foundCommitInfos.add(commitInfo);						
-					}
-				} else {
-					break;
+	        if ((diffDays > 0) && (diffDays <= pastDays)) {
+				if (null == foundCommitInfos) {
+					foundCommitInfos = new ArrayList<CommitInfo>();
 				}
+
+				foundCommitInfos.add(commitInfo);						
 			} else {
 				break;
 			}			

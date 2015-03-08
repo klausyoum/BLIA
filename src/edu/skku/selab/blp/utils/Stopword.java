@@ -34,15 +34,29 @@ public class Stopword
 
     static 
     {
+    	// BugLocator's keywords
+//        String keywords[] = {
+//            "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", 
+//            "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected", "throw", 
+//            "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
+//            "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
+//            "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
+//            "org", "eclipse", "swt", "string", "main", "args", "null", "this", "extends", "true", 
+//            "false"
+//        };
+        
+    	// References
+    	// http://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
+    	// http://en.wikipedia.org/wiki/List_of_Java_keywords#Reserved_words_for_literal_values
         String keywords[] = {
-            "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", 
-            "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected", "throw", 
-            "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
-            "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
-            "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
-            "org", "eclipse", "swt", "string", "main", "args", "null", "this", "extends", "true", 
-            "false"
-        };
+                "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", 
+                "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected", "throw", 
+                "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
+                "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
+                "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
+                "false", "true", "null"
+            };
+        
         JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet();
         for(int i = 0; i < keywords.length; i++)
         {
@@ -109,7 +123,7 @@ public class Stopword
             "whoever", "whole", "whom", "whose", "why", "will", "willing", "wish", "with", "within", 
             "without", "won't", "wonder", "would", "would", "wouldn't", "x", "y", "yes", "yet", 
             "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves", "z", 
-            "zero", "quot"
+            "zero" // , "quot" <- Original BugLocator inlcuded
         };
         ENG_STOP_WORDS_SET = new TreeSet();
         for(int i = 0; i < EngStopWord.length; i++)
