@@ -18,11 +18,17 @@ public class ExperimentResult {
 	private int top1;
 	private int top5;
 	private int top10;
+	private double top1Rate;
+	private double top5Rate;
+	private double top10Rate;
 	private double MRR;
 	private double MAP;
 	private String productName;
 	private String algorithmName;
 	private String algorithmDescription;
+	private double alpha;
+	private double beta;
+	private int pastDays;
 	private Date experimentDate;
 
 	/**
@@ -32,11 +38,17 @@ public class ExperimentResult {
 		top1 = 0;
 		top5 = 0;
 		top10 = 0;
+		top1Rate = 0.0;
+		top5Rate = 0.0;
+		top10Rate = 0.0;
 		MRR = 0.0;
 		MAP = 0.0;
 		productName = "";
 		algorithmName = "";
 		algorithmDescription = "";
+		alpha = 0.0;
+		beta = 0.0;
+		pastDays = 0;
 		setExperimentDate(new Date(System.currentTimeMillis()));
 	}
 
@@ -186,6 +198,90 @@ public class ExperimentResult {
 			this.experimentDate = null;
 			e.printStackTrace();
 		}		
+	}
+
+	/**
+	 * @return the top1Rate
+	 */
+	public double getTop1Rate() {
+		return top1Rate;
+	}
+
+	/**
+	 * @param top1Rate the top1Rate to set
+	 */
+	public void setTop1Rate(double top1Rate) {
+		this.top1Rate = top1Rate;
+	}
+
+	/**
+	 * @return the top5Rate
+	 */
+	public double getTop5Rate() {
+		return top5Rate;
+	}
+
+	/**
+	 * @param top5Rate the top5Rate to set
+	 */
+	public void setTop5Rate(double top5Rate) {
+		this.top5Rate = top5Rate;
+	}
+
+	/**
+	 * @return the top10Rate
+	 */
+	public double getTop10Rate() {
+		return top10Rate;
+	}
+
+	/**
+	 * @param top10Rate the top10Rate to set
+	 */
+	public void setTop10Rate(double top10Rate) {
+		this.top10Rate = top10Rate;
+	}
+
+	/**
+	 * @return the alpha
+	 */
+	public double getAlpha() {
+		return alpha;
+	}
+
+	/**
+	 * @param alpha the alpha to set
+	 */
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+
+	/**
+	 * @return the beta
+	 */
+	public double getBeta() {
+		return beta;
+	}
+
+	/**
+	 * @param beta the beta to set
+	 */
+	public void setBeta(double beta) {
+		this.beta = beta;
+	}
+
+	/**
+	 * @return the pastDays
+	 */
+	public int getPastDays() {
+		return pastDays;
+	}
+
+	/**
+	 * @param pastDays the pastDays to set
+	 */
+	public void setPastDays(int pastDays) {
+		this.pastDays = pastDays;
 	}
 
 }

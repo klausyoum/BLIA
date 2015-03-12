@@ -280,17 +280,30 @@ public class FileParser {
                 	int beginIndex = node.getStartPosition();
                 	int endIndex = beginIndex + node.getLength(); 
                 	String blockComment = sourceString.substring(beginIndex, endIndex);
-                	blockComment = blockComment.split("[/][*]")[1];
-                	blockComment = blockComment.split("[*][/]")[0];
                 	
-//                	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
-                	String[] words = blockComment.split("[*\\s]");
-                	for (String word : words) {
-                		if (word.length() > 0) {
-//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
-                			structuredInfoList.add(word);                		
+                	if (blockComment.contains("/**/")) {
+                		System.out.printf("original BlockComment text: %s\n", blockComment);
+                	}
+                	
+                	String[] splitComment = blockComment.split("[/][*]");
+                	if (splitComment.length == 2) { 
+                		blockComment = splitComment[1];
+                		
+                		splitComment = blockComment.split("[*][/]");
+                		if (splitComment.length == 1) {
+                			blockComment = splitComment[0];
+
+//                        	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
+                        	String[] words = blockComment.split("[*\\s]");
+                        	for (String word : words) {
+                        		if (word.length() > 0) {
+//        	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+                        			structuredInfoList.add(word);                		
+                        		}
+                        	}
                 		}
                 	}
+                	
                     return super.visit(node);
                 }
         	});
@@ -447,16 +460,17 @@ public class FileParser {
 	private String getAllMethodNames() {
 		ArrayList<String> methodNameList = new ArrayList<String>();
 		for (int i = 0; i < compilationUnit.types().size(); i++) {
-			TypeDeclaration type = (TypeDeclaration) compilationUnit.types().get(i);
-			MethodDeclaration methodDecls[] = type.getMethods();
-			MethodDeclaration methodDeclaration[];
-			int k = (methodDeclaration = methodDecls).length;
-			for (int j = 0; j < k; j++) {
-				MethodDeclaration methodDecl = methodDeclaration[j];
-				String methodName = methodDecl.getName().getFullyQualifiedName();
-				methodNameList.add(methodName);
+			if (compilationUnit.types().get(i) instanceof TypeDeclaration) {
+				TypeDeclaration type = (TypeDeclaration) compilationUnit.types().get(i);
+				MethodDeclaration methodDecls[] = type.getMethods();
+				MethodDeclaration methodDeclaration[];
+				int k = (methodDeclaration = methodDecls).length;
+				for (int j = 0; j < k; j++) {
+					MethodDeclaration methodDecl = methodDeclaration[j];
+					String methodName = methodDecl.getName().getFullyQualifiedName();
+					methodNameList.add(methodName);
+				}
 			}
-
 		}
 
 		String allMethodName = "";
@@ -471,10 +485,13 @@ public class FileParser {
 	
 	private String getAllClassNames() {
 		ArrayList<String> classNameList = new ArrayList<String>();
+		
 		for (int i = 0; i < compilationUnit.types().size(); i++) {
-			TypeDeclaration type = (TypeDeclaration) compilationUnit.types().get(i);
-			String name = type.getName().getFullyQualifiedName();
-			classNameList.add(name);
+			if (compilationUnit.types().get(i) instanceof TypeDeclaration) {
+				TypeDeclaration type = (TypeDeclaration) compilationUnit.types().get(i);
+				String name = type.getName().getFullyQualifiedName();
+				classNameList.add(name);
+			}
 		}
 
 		String allClassName = "";

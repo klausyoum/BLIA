@@ -39,10 +39,10 @@ public class SourceFileVectorCreatorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		TestConfiguration.setProperty();
+		
 		DbUtil dbUtil = new DbUtil();
 		dbUtil.initializeAllData();
-
-		TestConfiguration.setProperty();
 	}
 
 	/**

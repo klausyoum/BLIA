@@ -40,7 +40,7 @@ public class BugDAO extends BaseDAO {
 		
 		// releaseDate format : "2004-10-18 17:40:00"
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bug.getID());
 			ps.setString(2, bug.getProductName());
 			ps.setString(3, bug.getOpenDateString());
@@ -77,7 +77,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -93,7 +93,7 @@ public class BugDAO extends BaseDAO {
 		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			Bug bug = null;
 			String bugID = "";
@@ -144,7 +144,7 @@ public class BugDAO extends BaseDAO {
 		}
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			
 			Bug bug = null;
@@ -184,7 +184,7 @@ public class BugDAO extends BaseDAO {
 		Bug bug = null;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
 			
@@ -219,14 +219,14 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
 			
 			sql = "SELECT BUG_TERM_ID FROM BUG_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
@@ -252,7 +252,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -276,7 +276,7 @@ public class BugDAO extends BaseDAO {
 					"WHERE PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
@@ -303,7 +303,7 @@ public class BugDAO extends BaseDAO {
 					"WHERE BUG_ID = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -324,7 +324,7 @@ public class BugDAO extends BaseDAO {
 		String sql = "SELECT TERM, BUG_TERM_ID FROM BUG_TERM_INFO WHERE PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1,  productName);
 			
 			rs = ps.executeQuery();
@@ -343,7 +343,7 @@ public class BugDAO extends BaseDAO {
 		int allTermCount = 0;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1,  productName);
 			
 			rs = ps.executeQuery();
@@ -362,7 +362,7 @@ public class BugDAO extends BaseDAO {
 		int bugCount = 0;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1,  productName);
 			
 			rs = ps.executeQuery();
@@ -380,7 +380,7 @@ public class BugDAO extends BaseDAO {
 		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
@@ -399,7 +399,7 @@ public class BugDAO extends BaseDAO {
 		
 		HashMap<String, AnalysisValue> sourceFileTermMap = null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -426,7 +426,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, className);
 			
@@ -449,7 +449,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -467,7 +467,7 @@ public class BugDAO extends BaseDAO {
 				"WHERE BUG_ID = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -495,7 +495,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugSfTermWeight.getName());
 			ps.setInt(2, termID);
 			ps.setInt(3, bugSfTermWeight.getTermCount());
@@ -516,7 +516,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -536,7 +536,7 @@ public class BugDAO extends BaseDAO {
 				"B.PROD_NAME = ? AND B.SF_TERM_ID = C.SF_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
 			ps.setString(3, term);
@@ -568,7 +568,7 @@ public class BugDAO extends BaseDAO {
 		String sql = "SELECT BUG_TERM_ID FROM BUG_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
@@ -593,7 +593,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, analysisValue.getName());
 			ps.setInt(2, termID);
 			ps.setDouble(3, analysisValue.getTermWeight());
@@ -611,7 +611,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -630,7 +630,7 @@ public class BugDAO extends BaseDAO {
 				"A.BUG_ID = C.BUG_ID AND B.TERM = ? AND B.BUG_TERM_ID = C.BUG_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, productName);
 			ps.setString(3, term);
@@ -662,7 +662,7 @@ public class BugDAO extends BaseDAO {
 				"WHERE C.BUG_ID = ? AND B.BUG_TERM_ID = C.BUG_TERM_ID ORDER BY C.BUG_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -699,7 +699,7 @@ public class BugDAO extends BaseDAO {
 			// TODO: implement functionDAO.getFunctionVersionID() later
 			int fixedFunctionID = INVALID;
 
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
@@ -721,7 +721,7 @@ public class BugDAO extends BaseDAO {
 			int fixedSourceFileID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
 			int fixedFunctionID = INVALID;
 
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
@@ -744,7 +744,7 @@ public class BugDAO extends BaseDAO {
 			// TODO: implement functionDAO.getFunctionVersionID() later
 			int fixedFunctionID = INVALID;
 
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
@@ -763,7 +763,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -780,7 +780,7 @@ public class BugDAO extends BaseDAO {
 				"WHERE C.BUG_ID = ? AND C.FIXED_SF_VER_ID = B.SF_VER_ID AND A.SF_ID = B.SF_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -816,7 +816,7 @@ public class BugDAO extends BaseDAO {
 //				"WHERE A.BUG_ID = B.BUG_ID AND A.PROD_NAME = ?";
 //		
 //		try {
-//			ps = conn.prepareStatement(sql);
+//			ps = analysisDbConnection.prepareStatement(sql);
 //			ps.setString(1, productName);
 //			
 //			rs = ps.executeQuery();
@@ -840,7 +840,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			ps.setString(2, similarBugID);
 			ps.setDouble(3, similarityScore);
@@ -858,7 +858,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -875,7 +875,7 @@ public class BugDAO extends BaseDAO {
 				"WHERE BUG_ID = ? AND SIMI_BUG_SCORE != 0.0";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -904,7 +904,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, totalTermCount);
 			ps.setString(2, bugID);
 			ps.setString(3, productName);
@@ -923,7 +923,7 @@ public class BugDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, corpusNorm);
 			ps.setDouble(2, summaryCorpusNorm);
 			ps.setDouble(3, descriptionCorpusNorm);

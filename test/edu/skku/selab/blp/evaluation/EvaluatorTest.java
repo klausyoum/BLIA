@@ -125,13 +125,11 @@ public class EvaluatorTest {
 		String productName = TestConfiguration.getProductName(projectName);
 		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
 		float alpha = 0.2f;
-		float beta = 0.5f;
-		int pastDate = 15;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, 0, 0);
 		runBugLocator();
 
 		String algorithmDescription = "[BugLocator] alpha: " + alpha;
-		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
+		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription, alpha, 0, 0);
 		evaluator1.evaluate();
 
 //		dbUtil.initializeAllAnalysisData();
@@ -155,7 +153,7 @@ public class EvaluatorTest {
 	}
 	
 	@Test
-	public void verifyBLIAEvaluate() throws Exception {
+	public void verifyBLIAEvaluateForSwt() throws Exception {
 		boolean isNeededToPrepare = false;
 
 		String projectName = "swt";
@@ -192,8 +190,8 @@ public class EvaluatorTest {
 		if (useStrucrutedInfo) {
 			algorithmDescription += " with structured info";
 		}
-		Evaluator evaluator1 = new Evaluator(productName, algorithmName, algorithmDescription);
-		evaluator1.evaluate();
+		Evaluator evaluator = new Evaluator(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+		evaluator.evaluate();
 
 //		dbUtil.initializeAllAnalysisData();
 //		
@@ -213,6 +211,48 @@ public class EvaluatorTest {
 //		algorithmDescription = "[BugLocator] alpha: " + alpha;
 //		Evaluator evaluator3 = new Evaluator(productName, algorithmName, algorithmDescription);
 //		evaluator3.evaluate();
+	}
+	
+	@Test
+	public void verifyBLIAEvaluateForAspectJ() throws Exception {
+		boolean isNeededToPrepare = false;
+
+		String projectName = "aspectj";
+		String productName = TestConfiguration.getProductName(projectName);
+		String algorithmName = Evaluator.ALG_BLIA;
+		float alpha = 0.3f;   
+		float beta = 0.3f;
+		int pastDays = 15;
+		String repoDir = Property.ASPECTJ_REPO_DIR;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDays, repoDir);
+		
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		long startTime = System.currentTimeMillis();
+
+		BLIA blia = new BLIA();
+
+		DbUtil dbUtil = new DbUtil();
+		boolean useStrucrutedInfo = true;
+		if (isNeededToPrepare) {
+			dbUtil.initializeAllData();
+			
+			// for aspectj project ONLY
+			Calendar since = new GregorianCalendar(2002, Calendar.DECEMBER, 1);
+			Calendar until = new GregorianCalendar(2010, Calendar.MAY, 15);
+			blia.preAnalyze(useStrucrutedInfo, since.getTime(), until.getTime());
+		}
+
+		blia.analyze(version);
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		System.out.printf("Elapsed time of BLIA for evaluation: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		
+		String algorithmDescription = "[BLIA] alpha: " + alpha + ", beta: " + beta + ", pastDays: " + pastDays;
+		if (useStrucrutedInfo) {
+			algorithmDescription += " with structured info";
+		}
+		Evaluator evaluator = new Evaluator(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+		evaluator.evaluate();
 	}
 
 }

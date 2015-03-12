@@ -35,7 +35,7 @@ public class CommitDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, commitInfo.getCommitID());
 			ps.setString(2, commitInfo.getCommitDateString());
 			ps.setString(3, commitInfo.getMessage());
@@ -55,7 +55,7 @@ public class CommitDAO extends BaseDAO {
 					String checkedInFileName = commitFilesIter.next();
 					sql = "INSERT INTO COMM_FILE_INFO (COMM_ID, COMM_FILE, COMM_TYPE) VALUES (?, ?, ?)";
 					
-					ps = conn.prepareStatement(sql);
+					ps = analysisDbConnection.prepareStatement(sql);
 					ps.setString(1, commitInfo.getCommitID());
 					ps.setString(2, checkedInFileName);
 					ps.setInt(3, commitType);
@@ -77,7 +77,7 @@ public class CommitDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -94,7 +94,7 @@ public class CommitDAO extends BaseDAO {
 				"WHERE COMM_ID = ? ORDER BY COMM_TYPE";
 
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, commitID);
 			
 			rs = ps.executeQuery();
@@ -126,7 +126,7 @@ public class CommitDAO extends BaseDAO {
 				"WHERE COMM_ID = ? AND PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, commitID);
 			ps.setString(2, productName);
 			
@@ -156,7 +156,7 @@ public class CommitDAO extends BaseDAO {
 				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
@@ -194,7 +194,7 @@ public class CommitDAO extends BaseDAO {
 				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
@@ -237,7 +237,7 @@ public class CommitDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {

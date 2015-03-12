@@ -15,9 +15,9 @@ import edu.skku.selab.blp.Property;
  */
 public class TestConfiguration {
 	final static private float DEFAULT_ALPHA = 0.2f;
-	final static private float DEFAULT_BETA = 0.5f;
+	final static private float DEFAULT_BETA = 0.3f;
 	final static private int DEFAULT_PAST_DATE = 15;
-	final static private String DEFAULT_PROJECT = Property.SWT;
+	final static private String DEFAULT_PROJECT = Property.ASPECTJ;
 	final static private String DEFAULT_ALGORITHM = "BLIA";
 	
 	public static void setProperty() {

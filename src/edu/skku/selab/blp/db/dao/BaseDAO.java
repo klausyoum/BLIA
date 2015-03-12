@@ -12,30 +12,65 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import edu.skku.selab.blp.Property;
+
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
 public class BaseDAO {
-
-	protected static Connection conn = null;
+	protected static Connection analysisDbConnection = null;
+	protected static Connection evaluationDbConnection = null;
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
 	
 	final static int INVALID = -1;	
 	
 	public BaseDAO() throws Exception {
-		openConnection();
+		String dbName = "blia";	// default DB name
+		
+		Property property = Property.getInstance(); 
+		if (null != property) {
+			dbName = property.getProductName();
+		}
+		
+		openConnection(dbName);
 	}
-	
+
 	public static void openConnection() throws Exception {
-		if (null == conn) {
+		if (null == evaluationDbConnection) {
 			Class.forName("org.h2.Driver");
-			conn = DriverManager.getConnection("jdbc:h2:file:./db/blia", "sa", "");
+			evaluationDbConnection = DriverManager.getConnection("jdbc:h2:file:./db/evaluation", "sa", "");
 		}
 	}
+
+	
+	public static void openConnection(String dbName) throws Exception {
+		if (null == analysisDbConnection) {
+			Class.forName("org.h2.Driver");
+			String connectionURL = "jdbc:h2:file:./db/" + dbName;
+			analysisDbConnection = DriverManager.getConnection(connectionURL, "sa", "");
+		}
+		
+		openConnection();
+	}
 	public static void closeConnection() throws Exception {
-		conn.close();
-		conn = null;
+		if (null != analysisDbConnection) {
+			analysisDbConnection.close();
+			analysisDbConnection = null;
+		}
+		
+		if (null != evaluationDbConnection) {
+			evaluationDbConnection.close();
+			evaluationDbConnection = null;
+		}
+	}
+	
+	public static Connection getAnalysisDbConnection() {
+		return analysisDbConnection;
+	}
+	
+	public static Connection getEvaluationDbConnection() {
+		return evaluationDbConnection;
 	}
 }

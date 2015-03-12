@@ -40,7 +40,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			
@@ -57,7 +57,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class SourceFileDAO extends BaseDAO {
 		String sql = "SELECT SF_NAME, SF_ID FROM SF_INFO WHERE PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
@@ -91,7 +91,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -111,7 +111,7 @@ public class SourceFileDAO extends BaseDAO {
 		
 		// releaseDate format : "2004-10-18 17:40:00"
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, version);
 			ps.setString(2, releaseDate);
 			
@@ -128,7 +128,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -144,7 +144,7 @@ public class SourceFileDAO extends BaseDAO {
 		String sql = "SELECT VER, REL_DATE FROM VER_INFO";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -162,7 +162,7 @@ public class SourceFileDAO extends BaseDAO {
 				"WHERE SF_NAME = ? AND PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			
@@ -184,7 +184,7 @@ public class SourceFileDAO extends BaseDAO {
 				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			ps.setString(3, version);
@@ -206,7 +206,7 @@ public class SourceFileDAO extends BaseDAO {
 				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -230,7 +230,7 @@ public class SourceFileDAO extends BaseDAO {
 				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -258,7 +258,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, fileInfo.get(fileName));
 			ps.setString(2, version);
 			ps.setString(3, corpus.getContent());
@@ -282,7 +282,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -308,7 +308,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -341,7 +341,7 @@ public class SourceFileDAO extends BaseDAO {
 		
 		SourceFileCorpus corpus = null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, sourceFileVersionID);
 			
 			rs = ps.executeQuery();
@@ -372,7 +372,7 @@ public class SourceFileDAO extends BaseDAO {
 		
 		double norm = 0;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, sourceFileVersionID);
 			
 			rs = ps.executeQuery();
@@ -399,7 +399,7 @@ public class SourceFileDAO extends BaseDAO {
 		
 		SourceFileCorpus corpus = null;
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, sourceFileVersionID);
 			
 			rs = ps.executeQuery();
@@ -427,7 +427,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -450,7 +450,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -471,7 +471,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, lengthScore);
 			ps.setString(2, productName);
 			ps.setString(3, fileName);
@@ -492,7 +492,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, totalCorpusCount);
 			ps.setString(2, productName);
 			ps.setString(3, fileName);
@@ -513,7 +513,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, corpusNorm);
 			
 			ps.setString(2, productName);
@@ -536,7 +536,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, corpusNorm);
 			ps.setDouble(2, classNorm);
 			ps.setDouble(3, methodNorm);
@@ -564,7 +564,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -586,7 +586,7 @@ public class SourceFileDAO extends BaseDAO {
 					"WHERE SF_VER_ID = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, sourceFileVersionID);
 			
 			rs = ps.executeQuery();
@@ -604,7 +604,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
@@ -627,7 +627,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -643,7 +643,7 @@ public class SourceFileDAO extends BaseDAO {
 		String sql = "SELECT TERM, SF_TERM_ID FROM SF_TERM_INFO WHERE PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1,  productName);
 			
 			rs = ps.executeQuery();
@@ -661,7 +661,7 @@ public class SourceFileDAO extends BaseDAO {
 		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
 			ps.setString(2, productName);
 			
@@ -684,7 +684,7 @@ public class SourceFileDAO extends BaseDAO {
 		for (int i = 0; i < importedClasses.size(); i++) {
 			try {
 				String importedClass = importedClasses.get(i);
-				ps = conn.prepareStatement(sql);
+				ps = analysisDbConnection.prepareStatement(sql);
 				ps.setInt(1, sourceFileVersionID);
 				ps.setString(2, importedClass);
 				
@@ -712,7 +712,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -732,7 +732,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			
@@ -765,7 +765,7 @@ public class SourceFileDAO extends BaseDAO {
 					"A.PROD_NAME = ? AND B.VER = ? AND A.SF_NAME = ?";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, version);
 			ps.setString(3, fileName);
@@ -795,7 +795,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, fileVersionID);
 			ps.setInt(2, termID);
 			ps.setInt(3, termWeight.getTermCount());
@@ -817,7 +817,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, termWeight.getTermCount());
 			ps.setInt(2, termWeight.getInvDocCount());
 			ps.setDouble(3, termWeight.getTf());
@@ -838,7 +838,7 @@ public class SourceFileDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -858,7 +858,7 @@ public class SourceFileDAO extends BaseDAO {
 				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			ps.setString(3, version);
@@ -897,7 +897,7 @@ public class SourceFileDAO extends BaseDAO {
 				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
 			ps.setString(3, version);
@@ -941,7 +941,7 @@ public class SourceFileDAO extends BaseDAO {
 				"WHERE D.SF_VER_ID = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, sourceFileVersionID);
 			
 			rs = ps.executeQuery();

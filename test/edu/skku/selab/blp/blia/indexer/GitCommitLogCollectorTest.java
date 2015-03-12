@@ -35,10 +35,10 @@ public class GitCommitLogCollectorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		TestConfiguration.setProperty();
+		
 		DbUtil dbUtil = new DbUtil();
 		dbUtil.initializeAllData();
-
-		TestConfiguration.setProperty();
 	}
 
 	/**
@@ -67,19 +67,19 @@ public class GitCommitLogCollectorTest {
 	public void verifyCollectCommitLog() throws Exception {
 		long startTime = System.currentTimeMillis();
 		
-//		String repoDir = "D:\\workspace\\aspectj\\org.aspectj\\.git";
-//		String productName = "aspectj";
-//		Calendar since = new GregorianCalendar(2014, Calendar.JANUARY, 1);
-//		Calendar until = new GregorianCalendar(2015, Calendar.JANUARY, 1);
-//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-//		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
-		
-		String repoDir = "D:\\workspace\\eclipse.platform.swt\\.git";
-		String productName = Property.getInstance().getProductName();
-		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
-		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
+		String repoDir = "D:\\workspace\\aspectj\\org.aspectj\\.git";
+		String productName = "aspectj";
+		Calendar since = new GregorianCalendar(2002, Calendar.DECEMBER, 1);
+		Calendar until = new GregorianCalendar(2010, Calendar.MARCH, 15);
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
 		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
+		
+//		String repoDir = "D:\\workspace\\eclipse.platform.swt\\.git";
+//		String productName = Property.getInstance().getProductName();
+//		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
+//		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
+//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+//		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of collectCommitLog() for %s: %d.%d sec\n", productName, elapsedTime / 1000, elapsedTime % 1000);		

@@ -39,7 +39,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(integratedAnalysisValue.getFileName(), integratedAnalysisValue.getProductName(), integratedAnalysisValue.getVersion());
 			}
 			
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, integratedAnalysisValue.getBugID());
 			ps.setInt(2, sourceFileVersionID);
 			ps.setDouble(3, integratedAnalysisValue.getVsmScore());
@@ -62,7 +62,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getSimilarityScore());
 			ps.setString(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
@@ -80,7 +80,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBugLocatorScore());
 			ps.setString(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
@@ -98,7 +98,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
 			ps.setString(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
@@ -116,7 +116,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getStackTraceScore());
 			ps.setString(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
@@ -154,7 +154,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getCommitLogScore());
 			ps.setString(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
@@ -199,7 +199,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		int returnValue = INVALID;
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -218,7 +218,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -263,7 +263,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();
@@ -307,7 +307,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, bugID);
 			
 			rs = ps.executeQuery();

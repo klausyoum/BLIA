@@ -34,11 +34,14 @@ public class Evaluator {
 	/**
 	 * 
 	 */
-	public Evaluator(String productName, String algorithmName, String algorithmDescription) {
+	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays) {
 		experimentResult = new ExperimentResult();
 		experimentResult.setProductName(productName);
 		experimentResult.setAlgorithmName(algorithmName);
 		experimentResult.setAlgorithmDescription(algorithmDescription);
+		experimentResult.setAlpha(alpha);
+		experimentResult.setBeta(beta);
+		experimentResult.setPastDays(pastDays);
 	}
 	
 	public void evaluate() throws Exception {
@@ -75,11 +78,16 @@ public class Evaluator {
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			// Exception handling
+			if (null == fixedFiles) {
+				continue;
+			}
+
 			HashSet<Integer> fixedFileVersionIDs = new HashSet<Integer>();
 			
 			// For test
 			HashMap<Integer, SourceFile> fixedFileVersionMap = new HashMap<Integer, SourceFile>();
-			
+
 			Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
 			while (fixedFilesIter.hasNext()) {
 				SourceFile fixedFile = fixedFilesIter.next();
@@ -119,11 +127,18 @@ public class Evaluator {
 			}
 		}
 		
-		System.out.printf("Top1: %d, Top5: %d, Top10: %d\n", top1, top5, top10);
-		
 		experimentResult.setTop1(top1);
 		experimentResult.setTop5(top5);
 		experimentResult.setTop10(top10);
+		
+		int bugCount = bugs.size();
+		experimentResult.setTop1Rate((double) top1 / bugCount);
+		experimentResult.setTop5Rate((double) top5 / bugCount);
+		experimentResult.setTop10Rate((double) top10 / bugCount);
+		
+		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
+				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
 	}
 	
 	private void calculateMRR() throws Exception {
@@ -136,6 +151,11 @@ public class Evaluator {
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			// Exception handling
+			if (null == fixedFiles) {
+				continue;
+			}
+
 			HashSet<Integer> fixedFileVersionIDs = new HashSet<Integer>();
 			Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
 			while (fixedFilesIter.hasNext()) {
@@ -162,6 +182,8 @@ public class Evaluator {
 		
 		MRR = sumOfRRank / bugs.size();
 		experimentResult.setMRR(MRR);
+		
+		System.out.printf("MRR: %f\n", experimentResult.getMRR());
 	}
 	
 	private void calulateMAP() throws Exception {
@@ -175,6 +197,11 @@ public class Evaluator {
 			sumOfAP = 0;
 			String bugID = bugs.get(i).getID();
 			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			// Exception handling
+			if (null == fixedFiles) {
+				continue;
+			}
+
 			HashSet<Integer> fixedFileVersionIDs = new HashSet<Integer>();
 			Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
 			while (fixedFilesIter.hasNext()) {
@@ -212,5 +239,7 @@ public class Evaluator {
 		
 		MAP = MAP / bugs.size();
 		experimentResult.setMAP(MAP);
+		
+		System.out.printf("MAP: %f\n", experimentResult.getMAP());
 	}
 }

@@ -8,30 +8,35 @@
 package edu.skku.selab.blp.db.dao;
 
 import java.sql.Connection;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import edu.skku.selab.blp.Property;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
 public class DbUtil {
-	protected static Connection conn = null;
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
 
-	/**
-	 * 
-	 */
-	public DbUtil() throws Exception {
-		if (null == conn) {
-			Class.forName("org.h2.Driver");
-			conn = DriverManager.getConnection("jdbc:h2:file:./db/blia", "sa", "");
-		}
+	private void openConnetion(String dbName) throws Exception {
+		BaseDAO.openConnection(dbName);
 	}
 	
-	public int createAllTables() throws Exception {
+	private void openConnetion() throws Exception {
+		BaseDAO.openConnection();
+	}
+
+	
+	private void closeConnection() throws Exception {
+		BaseDAO.closeConnection();
+	}
+	
+	public int createAllAnalysisTables() throws Exception {
 		String sql = "CREATE TABLE SF_INFO(SF_ID INT PRIMARY KEY AUTO_INCREMENT, SF_NAME VARCHAR(255), PROD_NAME VARCHAR(31)); " +
 				"CREATE UNIQUE INDEX IDX_SF_INFO_NAME ON SF_INFO(SF_NAME); " +
 				"CREATE INDEX IDX_SF_PROD_NAME ON SF_INFO(PROD_NAME); " +
@@ -92,18 +97,11 @@ public class DbUtil {
 
 				"CREATE TABLE INT_ANALYSIS(BUG_ID VARCHAR(31), SF_VER_ID INT, VSM_SCORE DOUBLE, SIMI_SCORE DOUBLE, BL_SCORE DOUBLE, STRACE_SCORE DOUBLE, COMM_SCORE DOUBLE, BLIA_SCORE DOUBLE); " +
 				"CREATE INDEX IDX_INT_ANAL_BUG_ID ON INT_ANALYSIS(BUG_ID); " +
-				"CREATE UNIQUE INDEX COMP_IDX_INT_ANALYSIS ON INT_ANALYSIS(BUG_ID, SF_VER_ID); "; // +
-				
-		// Uncomment if EXP_INFO is needed to create again
-//				"CREATE TABLE EXP_INFO(TOP1 INT, TOP5 INT, TOP10 INT, MRR DOUBLE, MAP DOUBLE, PROD_NAME VARCHAR(31), ALG_NAME VARCHAR(31), ALG_DESC VARCHAR(255), EXP_DATE DATETIME); " +
-//				"CREATE INDEX IDX_EXP_INFO_PROD ON EXP_INFO(PROD_NAME); " +
-//				"CREATE INDEX IDX_EXP_INFO_ALG ON EXP_INFO(ALG_NAME); ";
-								
-				
+				"CREATE UNIQUE INDEX COMP_IDX_INT_ANALYSIS ON INT_ANALYSIS(BUG_ID, SF_VER_ID); ";
+
 		int returnValue = BaseDAO.INVALID;
-		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = BaseDAO.getAnalysisDbConnection().prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -113,7 +111,25 @@ public class DbUtil {
 		return returnValue;
 	}
 	
-	public int dropAllTables() throws Exception {
+	public int createEvaluationTable() throws Exception {
+		String sql = "CREATE TABLE EXP_INFO(TOP1 INT, TOP5 INT, TOP10 INT, TOP1_RATE DOUBLE, TOP5_RATE DOUBLE, TOP10_RATE DOUBLE, MRR DOUBLE, MAP DOUBLE, PROD_NAME VARCHAR(31),"
+					+ " ALG_NAME VARCHAR(31), ALG_DESC VARCHAR(255), ALPHA DOUBLE, BETA DOUBLE, PAST_DAYS INT, EXP_DATE DATETIME); " +
+				"CREATE INDEX IDX_EXP_INFO_PROD ON EXP_INFO(PROD_NAME); " +
+				"CREATE INDEX IDX_EXP_INFO_ALG ON EXP_INFO(ALG_NAME); ";
+				
+		int returnValue = BaseDAO.INVALID;
+		try {
+			ps = BaseDAO.getEvaluationDbConnection().prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int dropAllAnalysisTables() throws Exception {
 		String sql = "DROP TABLE SF_INFO; " +
 				"DROP TABLE SF_VER_INFO; " +
 				"DROP TABLE SF_TERM_INFO; " +
@@ -136,16 +152,26 @@ public class DbUtil {
 
 				"DROP TABLE COMM_INFO; " +
 				"DROP TABLE COMM_FILE_INFO; " +
-				"DROP TABLE VER_INFO; "; // +
-
-		// Uncomment if EXP_INFO is needed to remove
-//				"DROP TABLE EXP_INFO; ";
-
+				"DROP TABLE VER_INFO; ";
+		
+		int returnValue = BaseDAO.INVALID;
+		try {
+			ps = BaseDAO.getAnalysisDbConnection().prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;		
+	}
+	
+	public int dropEvaluationTable() throws Exception {
+		String sql = "DROP TABLE EXP_INFO; ";
 
 		int returnValue = BaseDAO.INVALID;
-		
 		try {
-			ps = conn.prepareStatement(sql);
+			ps = BaseDAO.getEvaluationDbConnection().prepareStatement(sql);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -192,10 +218,33 @@ public class DbUtil {
 	public static void main(String[] args) throws Exception {
 		DbUtil dbUtil = new DbUtil();
 		
-		dbUtil.dropAllTables();
-		dbUtil.createAllTables();
-//		dbUtil.initializeDB();
+		String productName[] = { Property.ASPECTJ_PRODUCT,
+				Property.ECLIPSE_PRODUCT,
+				Property.SWT_PRODUCT,
+				Property.ZXING_PRODUCT,
+				"blia"};
+		
+		for (int i = 0; i < productName.length; i++) {
+			dbUtil.openConnetion(productName[i]);
+
+//			dbUtil.dropAllAnalysisTables();
+//			dbUtil.createAllAnalysisTables();
+
+			dbUtil.initializeAllData();
+
+			dbUtil.closeConnection();
+		}
+
+		
+		// Uncomment if ONLY Experiment result data reset is needed.
+		dbUtil.openConnetion();
+
+//		dbUtil.dropEvaluationTable();
+//		dbUtil.createEvaluationTable();
+		
 //		dbUtil.initializeExperimentResultData();
+		
+		dbUtil.closeConnection();
 	}
 
 }

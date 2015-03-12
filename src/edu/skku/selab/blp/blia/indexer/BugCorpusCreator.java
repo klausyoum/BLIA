@@ -211,7 +211,7 @@ public class BugCorpusCreator {
 													fileName = fileName.substring(index, fileName.length());
 												}
 												
-												System.err.printf("fixed file name: %s\n", fileName);
+												System.err.printf("[ERROR] fixed file name: %s\n", fileName);
 											}
 											bug.addFixedFile(fileName);
 										}
