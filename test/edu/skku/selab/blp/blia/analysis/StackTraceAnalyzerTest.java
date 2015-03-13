@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
@@ -31,16 +32,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class StackTraceAnalyzerTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
-
-		TestConfiguration.setProperty();
 	}
 
 	/**
@@ -48,7 +45,6 @@ public class StackTraceAnalyzerTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -56,6 +52,12 @@ public class StackTraceAnalyzerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -81,6 +83,9 @@ public class StackTraceAnalyzerTest {
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnalysis = true;
 		bugCorpusCreator.create(stackTraceAnalysis);
+		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;

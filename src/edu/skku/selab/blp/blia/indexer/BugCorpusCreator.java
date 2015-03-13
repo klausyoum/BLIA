@@ -126,7 +126,9 @@ public class BugCorpusCreator {
 	}
 	
     public ArrayList<String> extractClassName(String content) {
-        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
+//        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
+        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*" +
+        		"[a-zA-Z_<(][a-zA-Z0-9_\\-$>);/\\[]*" + "\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
         
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(content);
@@ -140,7 +142,7 @@ public class BugCorpusCreator {
         		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
         	} else {
         		if (-1 == methodName.lastIndexOf(".")) {
-        			System.err.printf(">>>> Wrong stack trace: %s\n", foundLine);
+        			System.err.printf("[BugCorpusCreator.extractClassName()] Wrong stack trace: %s\n", foundLine);
         		} else {
         			fileName = methodName.substring(0, methodName.lastIndexOf("."));
         		}
@@ -210,8 +212,9 @@ public class BugCorpusCreator {
 												if (index > 0) {
 													fileName = fileName.substring(index, fileName.length());
 												}
-												
-												System.err.printf("[ERROR] fixed file name: %s\n", fileName);
+
+												// debug code
+//												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %s, Fixed file name: %s\n", bug.getID(), fileName);
 											}
 											bug.addFixedFile(fileName);
 										}

@@ -139,12 +139,12 @@ public class BLIA {
 			double stackTraceScore = integratedAnalysisValue.getStackTraceScore();
 			double commitLogScore = integratedAnalysisValue.getCommitLogScore();
 			
-			double bugLocatorScore = vsmScore * (1 - alpha) + similarityScore * alpha;
+			double bugLocatorScore = (1 - alpha) * (vsmScore) + alpha * similarityScore;
 			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
 			
-			double bliaScore = vsmScore * (1 - alpha) + similarityScore * alpha;
+			double bliaScore = (1 - alpha) * vsmScore + alpha * similarityScore + stackTraceScore;
 			if (bliaScore > 0) {
-				bliaScore = bliaScore * (1 - beta) + commitLogScore * beta + stackTraceScore;
+				bliaScore = (1 - beta) * bliaScore + beta * commitLogScore;
 			} else {
 				bliaScore = 0;
 			}

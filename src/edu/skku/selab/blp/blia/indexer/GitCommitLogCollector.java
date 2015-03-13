@@ -34,7 +34,6 @@ import edu.skku.selab.blp.db.dao.CommitDAO;
 public class GitCommitLogCollector implements ICommitLogCollector {
 	private String repoDir;
 	private String productName;
-	private static final String REMOTE_URL = "http://git.eclipse.org/gitroot/aspectj/org.aspectj.git";
 	
 	/**
 	 * 

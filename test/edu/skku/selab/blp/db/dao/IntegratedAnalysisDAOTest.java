@@ -34,8 +34,24 @@ public class IntegratedAnalysisDAOTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
+
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
 		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
 		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 
 		String fileName1 = "test_10.java";
 		String fileName2 = "test_11.java";
@@ -69,21 +85,6 @@ public class IntegratedAnalysisDAOTest {
 				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
 		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
 				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpus2, totalCorpusCount2, lengthScore2));
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
 	}
 
 	/**

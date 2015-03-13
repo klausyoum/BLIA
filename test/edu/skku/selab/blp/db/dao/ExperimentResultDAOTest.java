@@ -33,8 +33,6 @@ public class ExperimentResultDAOTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -42,7 +40,6 @@ public class ExperimentResultDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -50,6 +47,10 @@ public class ExperimentResultDAOTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**

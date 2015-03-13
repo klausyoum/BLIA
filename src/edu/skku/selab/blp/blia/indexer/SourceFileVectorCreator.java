@@ -49,6 +49,7 @@ public class SourceFileVectorCreator {
 		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
 		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
 
+		HashMap<String, SourceFileCorpus> sourceFileCorpusMap = sourceFileDAO.getCorpusMap(productName, version);
 		while (fileNameIter.hasNext()) {
 			String fileName = fileNameIter.next();
 			
@@ -56,10 +57,9 @@ public class SourceFileVectorCreator {
 				Integer totalTermCount = totalCorpusLengths.get(fileName);
 				
 				HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(productName, fileName, version);
-				HashMap<String, SourceFileCorpus> sourceFileCorpusMap = sourceFileDAO.getCorpusMap(productName, version);
-				
 				if (sourceFileTermMap == null) {
-					System.out.printf("Wrong file name: %s\n", fileName);
+					// debug code
+					System.out.printf("[SourceFileVectorCreator.create()] The file name that has no valid terms: %s\n", fileName);
 					continue;
 				}
 

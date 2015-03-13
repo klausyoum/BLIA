@@ -27,16 +27,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class SourceFileCorpusCreatorTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-		
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -44,7 +40,6 @@ public class SourceFileCorpusCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -52,6 +47,12 @@ public class SourceFileCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**

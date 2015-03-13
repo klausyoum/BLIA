@@ -29,16 +29,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class GitCommitLogCollectorTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-		
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -46,7 +42,6 @@ public class GitCommitLogCollectorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -54,6 +49,12 @@ public class GitCommitLogCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -67,14 +68,14 @@ public class GitCommitLogCollectorTest {
 	public void verifyCollectCommitLog() throws Exception {
 		long startTime = System.currentTimeMillis();
 		
-		String repoDir = "D:\\workspace\\aspectj\\org.aspectj\\.git";
+		String repoDir = Property.ASPECTJ_REPO_DIR;
 		String productName = "aspectj";
 		Calendar since = new GregorianCalendar(2002, Calendar.DECEMBER, 1);
 		Calendar until = new GregorianCalendar(2010, Calendar.MARCH, 15);
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
 		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
 		
-//		String repoDir = "D:\\workspace\\eclipse.platform.swt\\.git";
+//		String repoDir = Property.SWT_REPO_DIR;
 //		String productName = Property.getInstance().getProductName();
 //		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
 //		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);

@@ -37,22 +37,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class BliaTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
-
-		String productName = "swt";
-		String algorithmName = "BLIA";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		int pastDate = 15;
-		String repoDir = Property.SWT_REPO_DIR;
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDate, repoDir);
 	}
 
 	/**
@@ -60,7 +50,6 @@ public class BliaTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -68,6 +57,18 @@ public class BliaTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		String projectName = Property.SWT;
+		String algorithmName = "BLIA";
+		float alpha = 0.2f;
+		float beta = 0.5f;
+		int pastDate = 15;
+		String repoDir = Property.SWT_REPO_DIR;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate, repoDir);
+
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**

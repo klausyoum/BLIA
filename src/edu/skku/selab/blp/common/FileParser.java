@@ -281,9 +281,9 @@ public class FileParser {
                 	int endIndex = beginIndex + node.getLength(); 
                 	String blockComment = sourceString.substring(beginIndex, endIndex);
                 	
-                	if (blockComment.contains("/**/")) {
-                		System.out.printf("original BlockComment text: %s\n", blockComment);
-                	}
+//                	if (blockComment.contains("/**/")) {
+//                		System.out.printf("original BlockComment text: %s\n", blockComment);
+//                	}
                 	
                 	String[] splitComment = blockComment.split("[/][*]");
                 	if (splitComment.length == 2) { 

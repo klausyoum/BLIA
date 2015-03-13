@@ -22,17 +22,17 @@ import edu.skku.selab.blp.Property;
 public class DbUtil {
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
-
-	private void openConnetion(String dbName) throws Exception {
+	
+	public void openConnetion(String dbName) throws Exception {
 		BaseDAO.openConnection(dbName);
 	}
 	
-	private void openConnetion() throws Exception {
+	public void openConnetion() throws Exception {
 		BaseDAO.openConnection();
 	}
 
 	
-	private void closeConnection() throws Exception {
+	public void closeConnection() throws Exception {
 		BaseDAO.closeConnection();
 	}
 	
@@ -227,8 +227,8 @@ public class DbUtil {
 		for (int i = 0; i < productName.length; i++) {
 			dbUtil.openConnetion(productName[i]);
 
-//			dbUtil.dropAllAnalysisTables();
-//			dbUtil.createAllAnalysisTables();
+			dbUtil.dropAllAnalysisTables();
+			dbUtil.createAllAnalysisTables();
 
 			dbUtil.initializeAllData();
 

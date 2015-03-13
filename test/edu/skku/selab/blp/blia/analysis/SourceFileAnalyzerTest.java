@@ -18,6 +18,7 @@ import org.junit.Test;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
@@ -32,16 +33,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class SourceFileAnalyzerTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -49,7 +46,6 @@ public class SourceFileAnalyzerTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -57,6 +53,12 @@ public class SourceFileAnalyzerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -82,6 +84,9 @@ public class SourceFileAnalyzerTest {
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
+		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
@@ -102,6 +107,9 @@ public class SourceFileAnalyzerTest {
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
+		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
 		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;

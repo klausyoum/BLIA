@@ -8,6 +8,7 @@
 package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -81,20 +82,40 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		int totalCoupusCount = SourceFileDAO.INIT_TOTAL_COUPUS_COUNT;
 		double lengthScore = SourceFileDAO.INIT_LENGTH_SCORE;
 
+		// debug code
+//		System.out.printf("Source code dir: %s\n", property.getSourceCodeDir());
+//		
+//		FileWriter tempWriter = new FileWriter(".\\temp.txt");
+//		for (int i = 0; i < files.length; i++) {
+//			tempWriter.write("[" + (i+1) + "] " + files[i].getAbsolutePath() + "\n"); 
+//			System.out.printf("[%d] %s\n", i + 1, files[i].getAbsolutePath());
+//		}
+//		tempWriter.close();
+
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
 		File afile[];
 		int j = (afile = files).length;
 		for (int i = 0; i < j; i++) {
 			File file = afile[i];
+			
 			SourceFileCorpus corpus = create(file);
+
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
 				String fileName = corpus.getJavaFileFullClassName();
-				if (corpus.getJavaFileFullClassName().endsWith(".java")) {
-				} else {
+				if (!corpus.getJavaFileFullClassName().endsWith(".java")) {
 					fileName += ".java";
 				}
-
+				
+				String filePath = file.getAbsolutePath().replace("\\", ".");
+				filePath = filePath.replace("/", ".");
+				
+				// Wrong file that has invalid package or path 
+				if (!filePath.endsWith(fileName)) {
+//					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
+					continue;
+				}
+				
 				sourceFileDAO.insertSourceFile(fileName, productName);
 				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus, totalCoupusCount, lengthScore);
 				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());

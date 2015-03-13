@@ -34,14 +34,11 @@ public class CommitDAOTest {
 	private String fileName4 = "test_21.java";
 	private String fileName5 = "test_22.java";
 
-
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -49,7 +46,6 @@ public class CommitDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -57,6 +53,10 @@ public class CommitDAOTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		

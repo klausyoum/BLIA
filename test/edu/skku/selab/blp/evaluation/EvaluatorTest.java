@@ -16,6 +16,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
@@ -119,8 +120,10 @@ public class EvaluatorTest {
 	@Test
 	public void verifyBugLocatorEvaluate() throws Exception {
 		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
 		dbUtil.initializeAllData();
-
+		dbUtil.closeConnection();
+		
 		String projectName = "swt";
 		String productName = TestConfiguration.getProductName(projectName);
 		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
@@ -170,10 +173,12 @@ public class EvaluatorTest {
 
 		BLIA blia = new BLIA();
 
-		DbUtil dbUtil = new DbUtil();
 		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
+			DbUtil dbUtil = new DbUtil();
+			dbUtil.openConnetion();
 			dbUtil.initializeAllData();
+			dbUtil.closeConnection();
 			
 			// for swt project ONLY
 			Calendar since = new GregorianCalendar(2002, Calendar.APRIL, 1);
@@ -213,15 +218,16 @@ public class EvaluatorTest {
 //		evaluator3.evaluate();
 	}
 	
-	@Test
+	@Ignore
+//	@Test
 	public void verifyBLIAEvaluateForAspectJ() throws Exception {
 		boolean isNeededToPrepare = false;
 
 		String projectName = "aspectj";
 		String productName = TestConfiguration.getProductName(projectName);
 		String algorithmName = Evaluator.ALG_BLIA;
-		float alpha = 0.3f;   
-		float beta = 0.3f;
+		float alpha = 0.5f;   
+		float beta = 0.4f;
 		int pastDays = 15;
 		String repoDir = Property.ASPECTJ_REPO_DIR;
 		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDays, repoDir);
@@ -231,10 +237,12 @@ public class EvaluatorTest {
 
 		BLIA blia = new BLIA();
 
-		DbUtil dbUtil = new DbUtil();
 		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
+			DbUtil dbUtil = new DbUtil();
+			dbUtil.openConnetion();
 			dbUtil.initializeAllData();
+			dbUtil.closeConnection();
 			
 			// for aspectj project ONLY
 			Calendar since = new GregorianCalendar(2002, Calendar.DECEMBER, 1);

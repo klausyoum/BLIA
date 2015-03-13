@@ -41,7 +41,6 @@ public class SourceFileDAOTest {
 	private String term2 = "element";
 	private double delta = 0.00001;
 
-
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -62,7 +61,9 @@ public class SourceFileDAOTest {
 	@Before
 	public void setUp() throws Exception {
 		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
 		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 		
 		prepareTestingData();
 	}
@@ -72,7 +73,6 @@ public class SourceFileDAOTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		BaseDAO.closeConnection();
 	}
 	
 	private void prepareTestingData() throws Exception {

@@ -31,10 +31,6 @@ public class StructuredSourceFileCorpusCreatorTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-		
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -42,7 +38,6 @@ public class StructuredSourceFileCorpusCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -50,6 +45,12 @@ public class StructuredSourceFileCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**

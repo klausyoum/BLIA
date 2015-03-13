@@ -18,7 +18,7 @@ public class Property {
 	final static public String ZXING_PRODUCT = "ZXing-1.6";
 	
 	final static public String ASPECTJ_REPO_DIR = "D:\\workspace\\aspectj\\org.aspectj\\.git";
-	final static public String ECLIPSE_REPO_DIR = "D:\\workspace\\eclipse.platform.swt\\.git";
+	final static public String ECLIPSE_REPO_DIR = "D:\\workspace\\eclipse.platform\\.git";
 	final static public String SWT_REPO_DIR = "D:\\workspace\\eclipse.platform.swt\\.git";
 	final static public String ZXING_REPO_DIR = "D:\\workspace\\zxing\\.git";
 	

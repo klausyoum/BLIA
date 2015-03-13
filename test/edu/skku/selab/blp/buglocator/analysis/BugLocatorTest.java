@@ -20,6 +20,7 @@ import edu.skku.selab.blp.buglocator.analysis.BugLocator;
 import edu.skku.selab.blp.blia.analysis.BugRepoAnalyzer;
 import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
+import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
@@ -34,21 +35,13 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class BugLocatorTest {
-
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
-
-		String productName = "swt";
-		String algorithmName = "BugLocatorInBLP";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		int pastDate = 15;
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDate);
 	}
 
 	/**
@@ -56,7 +49,6 @@ public class BugLocatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -64,6 +56,17 @@ public class BugLocatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		String projectName = Property.SWT;
+		String algorithmName = "BugLocatorInBLP";
+		float alpha = 0.2f;
+		float beta = 0.5f;
+		int pastDate = 15;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate);
+
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -93,10 +96,13 @@ public class BugLocatorTest {
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
 		
+		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
+		bugSourceFileVectorCreator.create(version);
+		
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
-
+		
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
 

@@ -37,16 +37,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class BugCorpusCreatorTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-		
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -54,7 +50,6 @@ public class BugCorpusCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -62,6 +57,12 @@ public class BugCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -72,13 +73,24 @@ public class BugCorpusCreatorTest {
 	}
 
 	@Test
-	public void verifyCreate() throws Exception {
+	public void verifyCreateWithSourceFileCorpusCreator() throws Exception {
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnalysis = false;
+		bugCorpusCreator.create(stackTraceAnalysis);
+	}
+	
+	@Test
+	public void verifyCreateWithStructuredSourceFileCorpusCreator() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
+		boolean stackTraceAnalysis = true;
 		bugCorpusCreator.create(stackTraceAnalysis);
 	}
 	
@@ -167,5 +179,21 @@ public class BugCorpusCreatorTest {
 		assertEquals("org.eclipse.jface.viewers.AbstractTreeViewer", classNames.get(7));
 		assertEquals("org.eclipse.jface.viewers.AbstractTreeViewer", classNames.get(8));
 		assertEquals("org.eclipse.jface.viewers.StructuredViewer", classNames.get(9));
+		
+
+		// Bug ID: 122580, Project: aspectj
+		description = "Stack Trace: " + 
+			"java.lang.IllegalArgumentException: null kind " +
+				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Lorg/aspectj/bridge/ISourceLocation;Ljava/lang/Throwable;[Lorg/aspectj/bridge/ISourceLocation;ZIII)V(Message.java:89)" +
+				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Lorg/aspectj/bridge/ISourceLocation;Ljava/lang/Throwable;[Lorg/aspectj/bridge/ISourceLocation;)V(Message.java:67)" +
+				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Ljava/lang/Throwable;Lorg/aspectj/bridge/ISourceLocation;)V(Message.java:110)";
+		bug.setDescription(description);
+		classNames = bugCorpusCreator.extractClassName(bug.getDescription());
+		for(int i = 0; i < classNames.size(); i++) {
+			System.out.printf("%d: %s\n", i + 1, classNames.get(i));
+		}
+		assertEquals("org.aspectj.bridge.Message", classNames.get(0));
+		assertEquals("org.aspectj.bridge.Message", classNames.get(1));
+		assertEquals("org.aspectj.bridge.Message", classNames.get(2));
 	}
 }

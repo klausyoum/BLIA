@@ -8,6 +8,7 @@
 package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -50,7 +51,7 @@ public class SourceFileCorpusCreator {
 		}
 		fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		
-		// parser.getImportedClassed() function should be called before calling parser.getContents()
+		// parser.getImportedClasses() function should be called before calling parser.getContents()
 		ArrayList<String> importedClasses = parser.getImportedClasses();
 		String content[] = parser.getContent();
 		String sourceCodeContent = stemContent(content);
@@ -89,8 +90,7 @@ public class SourceFileCorpusCreator {
 			SourceFileCorpus corpus = create(file);
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
 				String fileName = corpus.getJavaFileFullClassName();
-				if (corpus.getJavaFileFullClassName().endsWith(".java")) {
-				} else {
+				if (!corpus.getJavaFileFullClassName().endsWith(".java")) {
 					fileName += ".java";
 				}
 

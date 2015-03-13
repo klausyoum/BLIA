@@ -74,14 +74,12 @@ public class BugDAOTest {
 	
 	private double similarityScore1 = 0.82;
 	private double similarityScore2 = 0.24;
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -89,7 +87,6 @@ public class BugDAOTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -97,6 +94,11 @@ public class BugDAOTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
+		
 		Bug bug1 = new Bug();
 		bug1.setID(bugID1);
 		bug1.setProductName(productName);

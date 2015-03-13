@@ -33,16 +33,12 @@ import edu.skku.selab.blp.test.utils.TestConfiguration;
  *
  */
 public class SourceFileVectorCreatorTest {
-
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		TestConfiguration.setProperty();
-		
-		DbUtil dbUtil = new DbUtil();
-		dbUtil.initializeAllData();
 	}
 
 	/**
@@ -50,7 +46,6 @@ public class SourceFileVectorCreatorTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		BaseDAO.closeConnection();
 	}
 
 	/**
@@ -58,6 +53,12 @@ public class SourceFileVectorCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		TestConfiguration.setProperty();
+		
+		DbUtil dbUtil = new DbUtil();
+		dbUtil.openConnetion();
+		dbUtil.initializeAllData();
+		dbUtil.closeConnection();
 	}
 
 	/**
@@ -68,9 +69,22 @@ public class SourceFileVectorCreatorTest {
 	}
 
 	@Test
-	public void verifyCreateWithDB() throws Exception {
+	public void verifyCreateWithSourceFileCorpusCreator() throws Exception {
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
+		sourceFileIndexer.createIndex(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.create(version);
+	}
+	
+	@Test
+	public void verifyCreateWithStructuredSourceFileCorpusCreator() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();

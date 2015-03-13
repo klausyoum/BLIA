@@ -171,22 +171,36 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		String productName = Property.getInstance().getProductName();
 		
 		String fixedFileName = javaFileName;
+		fixedFileName = fixedFileName.replace('/', '.');
+
 		switch (productName) {
 		case Property.ASPECTJ_PRODUCT:
-			// TODO: implement specific codes
+			if (-1 != fixedFileName.lastIndexOf("org.aspectj")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.aspectj"), fixedFileName.length());
+			} else {
+				System.err.printf("Fixed file name that is not source file: %s\n", fixedFileName);
+			}
 			break;
 		case Property.ECLIPSE_PRODUCT:
-			// TODO: implement specific codes
+			// TODO: check this code is valid for eclipse project
+			if (-1 != fixedFileName.lastIndexOf("org.eclipse")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse"), fixedFileName.length());
+			} else {
+				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
+			}
 			break;
 		case Property.SWT_PRODUCT:
-			fixedFileName = fixedFileName.replace('/', '.');
+			if (-1 != fixedFileName.lastIndexOf("org.eclipse.swt")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
+			} else {
+				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
+			}
 			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
 			break;
 		case Property.ZXING_PRODUCT:
-			// TODO: implement specific codes
+			// TODO: implement specific codes for zxing project
 			break;
 		default:
-			fixedFileName = fixedFileName.replace('/', '.');
 			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length() - 1);
 			break;
 		}
