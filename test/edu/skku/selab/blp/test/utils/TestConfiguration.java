@@ -24,15 +24,14 @@ public class TestConfiguration {
 		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);
 	}
 	
-	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDays, String repoDir) {
+	public static void setProperty(String productName, String algorithmName, float alpha, float beta, int pastDays, String repoDir) {
 		String osName = System.getProperty("os.name");
-		String productName = getProductName(projectName);
 		String bugFilePath = "";
-		String bugFileName = getBugFileName(projectName);
-		String sourceCodeDirName = getSourceCodeDirName(projectName);
+		String bugFileName = getBugFileName(productName);
+		String sourceCodeDirName = getSourceCodeDirName(productName);
 		String sourceCodePath = "";
 		String workDir = "";
-		String outputFileName = algorithmName + "-" + projectName + "-" + Float.toString(alpha) + ".txt"; 
+		String outputFileName = algorithmName + "-" + productName + "-" + Float.toString(alpha) + ".txt"; 
 		String outputFile = "";
 
 		if (osName.equals("Mac OS X")) {
@@ -50,55 +49,50 @@ public class TestConfiguration {
 		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
 	}
 	
-	public static void setProperty(String projectName, String algorithmName, float alpha, float beta, int pastDays) {
-		setProperty(projectName, algorithmName, alpha, beta, pastDays, "");
+	public static void setProperty(String productName, String algorithmName, float alpha, float beta, int pastDays) {
+		setProperty(productName, algorithmName, alpha, beta, pastDays, "");
 	}
 	
 	public static void setProperty(float alpha, float beta, int pastDays) {
 		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays);
 	}
 	
-	private static String getBugFileName(String projectName) {
+	private static String getBugFileName(String productName) {
 		String bugFileName = ""; 
-		if (projectName.equalsIgnoreCase("aspectj")) {
+		if (productName.equalsIgnoreCase(Property.ASPECTJ)) {
 			bugFileName = "AspectJBugRepository.xml";
-		} else if (projectName.equalsIgnoreCase("eclipse")) {
+		} else if (productName.equalsIgnoreCase(Property.ECLIPSE)) {
 			bugFileName = "EclipseBugRepository.xml";
-		} else if (projectName.equalsIgnoreCase("swt")) {
+		} else if (productName.equalsIgnoreCase(Property.SWT)) {
 			bugFileName = "SWTBugRepository.xml";
-		} else if (projectName.equalsIgnoreCase("zxing")) {
+		} else if (productName.equalsIgnoreCase(Property.ZXING)) {
 			bugFileName = "ZXingBugRepository.xml";
 		}
 		return bugFileName;
 	}
 	
-	public static String getProductName(String projectName) {
-		String productName = "";
+	private static String getSourceCodeDirName(String productName) {
+		String sourceCodeDirName;
 		
-		switch (projectName) {
+		switch (productName) {
 		case Property.ASPECTJ:
-			productName = Property.ASPECTJ_PRODUCT;
+			sourceCodeDirName = Property.ASPECTJ_SOURCE_DIR_NAME;
 			break;
 		case Property.ECLIPSE:
-			productName = Property.ECLIPSE_PRODUCT;
+			sourceCodeDirName = Property.ECLIPSE_SOURCE_DIR_NAME;
 			break;
 		case Property.SWT:
-			productName = Property.SWT_PRODUCT;
+			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
 			break;
 		case Property.ZXING:
-			productName = Property.ZXING_PRODUCT;
+			sourceCodeDirName = Property.ZXING_SOURCE_DIR_NAME;
 			break;
 		default:
-			productName = Property.SWT_PRODUCT;
+			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
 			break;
 		}
-		
-		return productName;
-	}
-	
-	private static String getSourceCodeDirName(String projectName) {
-		String sourceCodeDirName = getProductName(projectName);
-		if (projectName.equalsIgnoreCase("swt")) {
+
+		if (productName.equalsIgnoreCase(Property.SWT)) {
 			String osName = System.getProperty("os.name");
 			if (osName.equals("Mac OS X")) {
 				sourceCodeDirName += "/src";

@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -48,7 +49,8 @@ public class StructuredSourceFileCorpusCreatorTest {
 		TestConfiguration.setProperty();
 		
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.openConnetion();
+		String dbName = Property.getInstance().getProductName();
+		dbUtil.openConnetion(dbName);
 		dbUtil.initializeAllData();
 		dbUtil.closeConnection();
 	}

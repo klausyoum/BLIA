@@ -2,3 +2,19 @@
 /db/
 /h2/
 /tmp/
+/junit/
+/report/
+/임시 AspectJ 중간 산출물 결과 분석.txt
+/BugInfo.txt
+/BugInfo(SWT).xlsx
+/build.xml
+/EvaluationResults(~0309).xlsx
+/ExperimentResult.txt
+/ExperimentResult.xlsx
+/jacoco.exec
+/junit7656101336299408792.properties
+/junitvmwatcher2507558891732724765.properties
+/test_coverage.xml
+/TopN분석 - 복사본.xlsx
+/TopN분석.xlsx
+/temp.txt

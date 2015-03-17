@@ -11,11 +11,12 @@ public class Property {
 	final static public String ECLIPSE = "eclipse";
 	final static public String SWT = "swt";
 	final static public String ZXING = "zxing";
+	final static public String DEFAULT = "default";
 	
-	final static public String ASPECTJ_PRODUCT = "aspectj";
-	final static public String ECLIPSE_PRODUCT = "eclipse-3.1";
-	final static public String SWT_PRODUCT = "swt-3.1";
-	final static public String ZXING_PRODUCT = "ZXing-1.6";
+	final static public String ASPECTJ_SOURCE_DIR_NAME = "aspectj";
+	final static public String ECLIPSE_SOURCE_DIR_NAME = "eclipse-3.1";
+	final static public String SWT_SOURCE_DIR_NAME = "swt-3.1";
+	final static public String ZXING_SOURCE_DIR_NAME = "ZXing-1.6";
 	
 	final static public String ASPECTJ_REPO_DIR = "D:\\workspace\\aspectj\\org.aspectj\\.git";
 	final static public String ECLIPSE_REPO_DIR = "D:\\workspace\\eclipse.platform\\.git";
@@ -82,7 +83,11 @@ public class Property {
 	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
 		if (null == p) {
 			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDays, repoDir, outputFile);
+		} else {
+			p.setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
+					beta, pastDays, repoDir, outputFile);
 		}
+		
 	}
 
 	public static Property getInstance() {
@@ -90,7 +95,14 @@ public class Property {
 	}
 	
 	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
-		this.productName = productName;
+		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
+				beta, pastDays, repoDir, outputFile);
+	}
+
+	private void setValues(String productName, String bugFilePath,
+			String sourceCodeDir, String workDir, float alpha, float beta,
+			int pastDays, String repoDir, String outputFile) {
+		this.setProductName(productName);
 		this.bugFilePath = bugFilePath;
 		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;

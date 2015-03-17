@@ -27,7 +27,7 @@ public class BaseDAO {
 	final static int INVALID = -1;	
 	
 	public BaseDAO() throws Exception {
-		String dbName = "blia";	// default DB name
+		String dbName = Property.DEFAULT;	// default DB name
 		
 		Property property = Property.getInstance(); 
 		if (null != property) {
@@ -37,12 +37,23 @@ public class BaseDAO {
 		openConnection(dbName);
 	}
 
-	public static void openConnection() throws Exception {
+	private static void openEvaluationDbConnection() throws Exception {
 		if (null == evaluationDbConnection) {
 			Class.forName("org.h2.Driver");
 			evaluationDbConnection = DriverManager.getConnection("jdbc:h2:file:./db/evaluation", "sa", "");
 		}
 	}
+	
+	public static void openConnection() throws Exception {
+		openEvaluationDbConnection();
+		
+		if (null == analysisDbConnection) {
+			Class.forName("org.h2.Driver");
+			String connectionURL = "jdbc:h2:file:./db/" + Property.DEFAULT;
+			analysisDbConnection = DriverManager.getConnection(connectionURL, "sa", "");
+		}
+	}
+
 
 	
 	public static void openConnection(String dbName) throws Exception {
@@ -52,7 +63,7 @@ public class BaseDAO {
 			analysisDbConnection = DriverManager.getConnection(connectionURL, "sa", "");
 		}
 		
-		openConnection();
+		openEvaluationDbConnection();
 	}
 	public static void closeConnection() throws Exception {
 		if (null != analysisDbConnection) {

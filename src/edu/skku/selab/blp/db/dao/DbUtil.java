@@ -218,14 +218,14 @@ public class DbUtil {
 	public static void main(String[] args) throws Exception {
 		DbUtil dbUtil = new DbUtil();
 		
-		String productName[] = { Property.ASPECTJ_PRODUCT,
-				Property.ECLIPSE_PRODUCT,
-				Property.SWT_PRODUCT,
-				Property.ZXING_PRODUCT,
-				"blia"};
+		String projectName[] = { Property.ASPECTJ,
+				Property.ECLIPSE,
+				Property.SWT,
+				Property.ZXING,
+				Property.DEFAULT};
 		
-		for (int i = 0; i < productName.length; i++) {
-			dbUtil.openConnetion(productName[i]);
+		for (int i = 0; i < projectName.length; i++) {
+			dbUtil.openConnetion(projectName[i]);
 
 			dbUtil.dropAllAnalysisTables();
 			dbUtil.createAllAnalysisTables();

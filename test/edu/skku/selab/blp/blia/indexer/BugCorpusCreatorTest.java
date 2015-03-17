@@ -60,7 +60,8 @@ public class BugCorpusCreatorTest {
 		TestConfiguration.setProperty();
 		
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.openConnetion();
+		String dbName = Property.getInstance().getProductName();
+		dbUtil.openConnetion(dbName);
 		dbUtil.initializeAllData();
 		dbUtil.closeConnection();
 	}

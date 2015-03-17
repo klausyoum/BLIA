@@ -119,16 +119,17 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyBugLocatorEvaluate() throws Exception {
+		String productName = "swt";
+		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
+		float alpha = 0.2f;
+		TestConfiguration.setProperty(productName, algorithmName, alpha, 0, 0);
+
 		DbUtil dbUtil = new DbUtil();
-		dbUtil.openConnetion();
+		String dbName = Property.getInstance().getProductName();
+		dbUtil.openConnetion(dbName);
 		dbUtil.initializeAllData();
 		dbUtil.closeConnection();
 		
-		String projectName = "swt";
-		String productName = TestConfiguration.getProductName(projectName);
-		String algorithmName = Evaluator.ALG_BUG_LOCATOR;
-		float alpha = 0.2f;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, 0, 0);
 		runBugLocator();
 
 		String algorithmDescription = "[BugLocator] alpha: " + alpha;
@@ -157,16 +158,15 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyBLIAEvaluateForSwt() throws Exception {
-		boolean isNeededToPrepare = false;
+		boolean isNeededToPrepare = true;
 
-		String projectName = "swt";
-		String productName = TestConfiguration.getProductName(projectName);
+		String productName = Property.SWT;
 		String algorithmName = Evaluator.ALG_BLIA;
 		float alpha = 0.2f;   
 		float beta = 0.3f;
 		int pastDays = 15;
 		String repoDir = Property.SWT_REPO_DIR;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDays, repoDir);
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays, repoDir);
 		
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		long startTime = System.currentTimeMillis();
@@ -176,7 +176,8 @@ public class EvaluatorTest {
 		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
 			DbUtil dbUtil = new DbUtil();
-			dbUtil.openConnetion();
+			String dbName = Property.getInstance().getProductName();
+			dbUtil.openConnetion(dbName);
 			dbUtil.initializeAllData();
 			dbUtil.closeConnection();
 			
@@ -223,14 +224,13 @@ public class EvaluatorTest {
 	public void verifyBLIAEvaluateForAspectJ() throws Exception {
 		boolean isNeededToPrepare = false;
 
-		String projectName = "aspectj";
-		String productName = TestConfiguration.getProductName(projectName);
+		String productName = "aspectj";
 		String algorithmName = Evaluator.ALG_BLIA;
 		float alpha = 0.5f;   
 		float beta = 0.4f;
 		int pastDays = 15;
 		String repoDir = Property.ASPECTJ_REPO_DIR;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDays, repoDir);
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays, repoDir);
 		
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		long startTime = System.currentTimeMillis();
@@ -240,7 +240,8 @@ public class EvaluatorTest {
 		boolean useStrucrutedInfo = true;
 		if (isNeededToPrepare) {
 			DbUtil dbUtil = new DbUtil();
-			dbUtil.openConnetion();
+			String dbName = Property.getInstance().getProductName();
+			dbUtil.openConnetion(dbName);
 			dbUtil.initializeAllData();
 			dbUtil.closeConnection();
 			

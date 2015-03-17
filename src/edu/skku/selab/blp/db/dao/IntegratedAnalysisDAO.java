@@ -174,14 +174,14 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		fixedFileName = fixedFileName.replace('/', '.');
 
 		switch (productName) {
-		case Property.ASPECTJ_PRODUCT:
+		case Property.ASPECTJ:
 			if (-1 != fixedFileName.lastIndexOf("org.aspectj")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.aspectj"), fixedFileName.length());
 			} else {
 				System.err.printf("Fixed file name that is not source file: %s\n", fixedFileName);
 			}
 			break;
-		case Property.ECLIPSE_PRODUCT:
+		case Property.ECLIPSE:
 			// TODO: check this code is valid for eclipse project
 			if (-1 != fixedFileName.lastIndexOf("org.eclipse")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse"), fixedFileName.length());
@@ -189,7 +189,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
 			}
 			break;
-		case Property.SWT_PRODUCT:
+		case Property.SWT:
 			if (-1 != fixedFileName.lastIndexOf("org.eclipse.swt")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
 			} else {
@@ -197,7 +197,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			}
 			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
 			break;
-		case Property.ZXING_PRODUCT:
+		case Property.ZXING:
 			// TODO: implement specific codes for zxing project
 			break;
 		default:

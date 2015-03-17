@@ -32,7 +32,7 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class PrintResult {
+public class PrintTestResult {
 
 	/**
 	 * @throws java.lang.Exception
