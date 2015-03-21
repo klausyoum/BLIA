@@ -30,8 +30,8 @@ public class Property {
 	private int wordCount;
 	private int bugReportCount;
 	private int bugTermCount;
-	private float alpha;
-	private float beta;
+	private double alpha;
+	private double beta;
 	private String outputFile;
 	private String separator = System.getProperty("file.separator");
 	private String lineSeparator = System.getProperty("line.separator");
@@ -80,7 +80,7 @@ public class Property {
 		return workDir;
 	}
 
-	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
+	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, double alpha, double beta, int pastDays, String repoDir, String outputFile) {
 		if (null == p) {
 			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDays, repoDir, outputFile);
 		} else {
@@ -94,13 +94,13 @@ public class Property {
 		return p;
 	}
 	
-	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, float alpha, float beta, int pastDays, String repoDir, String outputFile) {
+	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, double alpha, double beta, int pastDays, String repoDir, String outputFile) {
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
 				beta, pastDays, repoDir, outputFile);
 	}
 
 	private void setValues(String productName, String bugFilePath,
-			String sourceCodeDir, String workDir, float alpha, float beta,
+			String sourceCodeDir, String workDir, double alpha, double beta,
 			int pastDays, String repoDir, String outputFile) {
 		this.setProductName(productName);
 		this.bugFilePath = bugFilePath;
@@ -113,11 +113,11 @@ public class Property {
 		this.outputFile = outputFile;
 	}
 	
-	public float getAlpha() {
+	public double getAlpha() {
 		return alpha;
 	}
 
-	public float getBeta() {
+	public double getBeta() {
 		return beta;
 	}
 
@@ -154,14 +154,14 @@ public class Property {
 	/**
 	 * @param alpha the alpha to set
 	 */
-	public void setAlpha(float alpha) {
+	public void setAlpha(double alpha) {
 		this.alpha = alpha;
 	}
 
 	/**
 	 * @param beta the beta to set
 	 */
-	public void setBeta(float beta) {
+	public void setBeta(double beta) {
 		this.beta = beta;
 	}
 

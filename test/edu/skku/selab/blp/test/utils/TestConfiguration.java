@@ -24,14 +24,14 @@ public class TestConfiguration {
 		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);
 	}
 	
-	public static void setProperty(String productName, String algorithmName, float alpha, float beta, int pastDays, String repoDir) {
+	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays, String repoDir) {
 		String osName = System.getProperty("os.name");
 		String bugFilePath = "";
 		String bugFileName = getBugFileName(productName);
 		String sourceCodeDirName = getSourceCodeDirName(productName);
 		String sourceCodePath = "";
 		String workDir = "";
-		String outputFileName = algorithmName + "-" + productName + "-" + Float.toString(alpha) + ".txt"; 
+		String outputFileName = algorithmName + "-" + productName + "-" + Double.toString(alpha) + ".txt"; 
 		String outputFile = "";
 
 		if (osName.equals("Mac OS X")) {

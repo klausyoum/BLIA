@@ -47,7 +47,7 @@ public class BugLocatorWithFile {
         outputFile = property.getOutputFile();
         fileCount = property.getFileCount();
         bugCount = property.getBugReportCount();
-        alpha = property.getAlpha();
+        alpha = (float) property.getAlpha();
         lineSparator = property.getLineSeparator();
         idTable = getFileId();
         fixTable = getFixLinkTable();

@@ -198,7 +198,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
 			break;
 		case Property.ZXING:
-			// TODO: implement specific codes for zxing project
+			// Noting to to for this ZXING project
 			break;
 		default:
 			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length() - 1);
