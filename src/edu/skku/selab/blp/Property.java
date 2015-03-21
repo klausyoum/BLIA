@@ -5,6 +5,10 @@
 
 package edu.skku.selab.blp;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 
 public class Property {
 	final static public String ASPECTJ = "aspectj";
@@ -18,10 +22,10 @@ public class Property {
 	final static public String SWT_SOURCE_DIR_NAME = "swt-3.1";
 	final static public String ZXING_SOURCE_DIR_NAME = "ZXing-1.6";
 	
-	final static public String ASPECTJ_REPO_DIR = "D:\\workspace\\aspectj\\org.aspectj\\.git";
-	final static public String ECLIPSE_REPO_DIR = "D:\\workspace\\eclipse.platform\\.git";
-	final static public String SWT_REPO_DIR = "D:\\workspace\\eclipse.platform.swt\\.git";
-	final static public String ZXING_REPO_DIR = "D:\\workspace\\zxing\\.git";
+	final static public String ASPECTJ_REPO_DIR = Property.readProperty("ASPECTJ_REPO_DIR");
+	final static public String ECLIPSE_REPO_DIR = Property.readProperty("ECLIPSE_REPO_DIR");
+	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
+	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
 	
 	public String bugFilePath;
 	public String sourceCodeDir;
@@ -78,6 +82,16 @@ public class Property {
 
 	public String getWorkDir() {
 		return workDir;
+	}
+	
+	private static String readProperty(String key) {
+		Properties properties = new Properties();
+		try {
+			properties.load(new FileInputStream("blp.properties"));
+		} catch (IOException e) {
+		}
+
+		return properties.getProperty(key);
 	}
 
 	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, double alpha, double beta, int pastDays, String repoDir, String outputFile) {
