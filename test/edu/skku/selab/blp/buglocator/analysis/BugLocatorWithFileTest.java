@@ -37,7 +37,7 @@ public class BugLocatorWithFileTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		String productName = "swt";
+		String productName = Property.ZXING;
 		String algorithmName = "BugLocatorWithFile";
 		float alpha = 0.2f;
 		float beta = 0.5f;

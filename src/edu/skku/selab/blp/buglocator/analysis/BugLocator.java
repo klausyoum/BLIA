@@ -109,18 +109,20 @@ public class BugLocator {
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 			double vsmScore = integratedAnalysisValue.getVsmScore();
 			double simiScore = integratedAnalysisValue.getSimilarityScore();
+			
 			if (maxVsmScore < vsmScore) {
 				maxVsmScore = vsmScore;
 			}
 			if (minVsmScore > vsmScore) {
 				minVsmScore = vsmScore;
 			}
+			
 			if (maxSimiScore < simiScore) {
 				maxSimiScore = simiScore;
 			}
 			if (minSimiScore > simiScore) {
 				minSimiScore = simiScore;
-			}		
+			}
 		}
 		
 		double spanVsmScore = maxVsmScore - minVsmScore;

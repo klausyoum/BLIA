@@ -35,8 +35,17 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  */
 public class BLIA {
 	private final String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+
+	private String getElapsedTimeSting(long startTime) {
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		String elpsedTimeString = (elapsedTime / 1000) + "." + (elapsedTime % 1000);
+		return elpsedTimeString;
+	}
 	
 	public void preAnalyze(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
+		long startTime = System.currentTimeMillis();
+		
+		System.out.printf("[STARTED] Source file corpus creating.\n");
 		if (!useStrucrutedInfo) {
 			SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 			sourceFileCorpusCreator.create(version);
@@ -44,46 +53,67 @@ public class BLIA {
 			StructuredSourceFileCorpusCreator structuredSourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 			structuredSourceFileCorpusCreator.create(version);
 		}
-		
+		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
+
+		System.out.printf("[STARTED] Source file index creating.\n");
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex(version);
 		sourceFileIndexer.computeLengthScore(version);
+		System.out.printf("[DONE] Source file index creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
+		System.out.printf("[STARTED] Source file vector creating.\n");
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create(version);
+		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// Create SordtedID.txt
+		System.out.printf("[STARTED] Bug corpus creating.\n");
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnaysis = true;
 		bugCorpusCreator.create(stackTraceAnaysis);
+		System.out.printf("[DONE] Bug corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
+		System.out.printf("[STARTED] Bug vector creating.\n");
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
+		System.out.printf("[DONE] Bug vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 
+		System.out.printf("[STARTED] Commit log collecting.\n");
 		String productName = Property.getInstance().getProductName();
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
 		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil);
+		System.out.printf("[DONE] Commit log collecting.(%s sec)\n", getElapsedTimeSting(startTime));
 		
+		System.out.printf("[STARTED] Bug-Source file vector creating.\n");
 		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
 		bugSourceFileVectorCreator.create(version);
+		System.out.printf("[DONE] Bug-Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// VSM_SCORE
+		System.out.printf("[STARTED] Source file analysis.\n");
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
-		
+		System.out.printf("[DONE] Source file analysis.(%s sec)\n", getElapsedTimeSting(startTime));
+
 		// SIMI_SCORE
+		System.out.printf("[STARTED] Bug repository analysis.\n");
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
+		System.out.printf("[DONE] Bug repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// STRACE_SCORE
+		System.out.printf("[STARTED] Stack-trace analysis.\n");
 		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
 		stackTraceAnalyzer.analyze();
+		System.out.printf("[DONE] Stack-trace analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// COMM_SCORE
+		System.out.printf("[STARTED] Scm repository analysis.\n");
 		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
 		scmRepoAnalyzer.analyze(version);
+		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 	
 	public void analyze(String version) throws Exception {

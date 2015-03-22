@@ -146,23 +146,6 @@ public class FileParser {
 		return splitContent(content);
 	}
 	
-	public String[] getStructuredContent() {
-		String allStructuredInfos = getAllStructuredInfos();
-//		System.out.println(allStructuredInfos);
-		
-		String tokensInSourceCode[] = Splitter.splitSourceCode(allStructuredInfos);
-		StringBuffer sourceCodeContentBuffer = new StringBuffer();
-		String as[];
-		int j = (as = tokensInSourceCode).length;
-		for (int i = 0; i < j; i++) {
-			String token = as[i];
-			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
-		}
-
-		String content = sourceCodeContentBuffer.toString().toLowerCase();
-		return content.split(" ");
-	}
-	
 	public String[] getContent() {
 		String tokensInSourceCode[] = Splitter.splitSourceCode(deleteNoNeededNode());
 		StringBuffer sourceCodeContentBuffer = new StringBuffer();

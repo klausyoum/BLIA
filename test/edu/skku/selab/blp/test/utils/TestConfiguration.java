@@ -49,11 +49,11 @@ public class TestConfiguration {
 		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
 	}
 	
-	public static void setProperty(String productName, String algorithmName, float alpha, float beta, int pastDays) {
+	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays) {
 		setProperty(productName, algorithmName, alpha, beta, pastDays, "");
 	}
 	
-	public static void setProperty(float alpha, float beta, int pastDays) {
+	public static void setProperty(double alpha, double beta, int pastDays) {
 		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays);
 	}
 	
