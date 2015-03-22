@@ -54,8 +54,9 @@ public class Stopword
                 "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
                 "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
                 "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
-                "false", "true", "null"
-            };
+                "false", "true", "null",
+                "args" //, "string", "main"
+                };
         
         JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet();
         for(int i = 0; i < keywords.length; i++)
