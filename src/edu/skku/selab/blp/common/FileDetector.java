@@ -8,6 +8,7 @@
 package edu.skku.selab.blp.common;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -28,12 +29,42 @@ public class FileDetector {
 		this.fileType = null;
 		this.fileType = fileType;
 	}
-
+	
 	public File[] detect(String absoluteFilePath) {
 		File files[] = listFiles(absoluteFilePath);
 		if (files != null)
 			classifyFileAndDirectory(files);
 		return (File[]) fileList.toArray(new File[fileList.size()]);
+	}
+
+	public File[] detect(String[] absoluteFilePathList) {
+		File files[] = listFiles(absoluteFilePathList);
+		if (files != null)
+			classifyFileAndDirectory(files);
+		return (File[]) fileList.toArray(new File[fileList.size()]);
+	}
+	
+	private File[] listFiles(String[] absoluteFilePathList) {
+		ArrayList<File[]> filesArray = new ArrayList<File[]>(); 
+		for (int i = 0; i < absoluteFilePathList.length; i++) {
+			File dir = new File(absoluteFilePathList[i]);
+			filesArray.add(dir.listFiles());
+		}
+		
+		int fileCount = 0;
+		for (int i = 0; i < filesArray.size(); i++) {
+			fileCount += filesArray.get(i).length;
+		}
+		
+		File[] totalListFile = new File[fileCount];
+		int k = 0;
+		for (int i = 0; i < filesArray.size(); i++) {
+			for (int j = 0; j < filesArray.get(i).length; j++) {
+				totalListFile[k++] = filesArray.get(i)[j];
+			}
+		}
+		
+		return totalListFile;
 	}
 	
 	private File[] listFiles(String absoluteFilePath) {

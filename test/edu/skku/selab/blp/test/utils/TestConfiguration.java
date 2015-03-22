@@ -91,15 +91,6 @@ public class TestConfiguration {
 			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
 			break;
 		}
-
-		if (productName.equalsIgnoreCase(Property.SWT)) {
-			String osName = System.getProperty("os.name");
-			if (osName.equals("Mac OS X")) {
-				sourceCodeDirName += "/src";
-			} else {
-				sourceCodeDirName += "\\src";
-			}
-		}
 		
 		return sourceCodeDirName;
 	}

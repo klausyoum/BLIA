@@ -195,13 +195,15 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			} else {
 				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
 			}
-			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length());
 			break;
 		case Property.ZXING:
-			// Noting to to for this ZXING project
+			if (-1 != fixedFileName.lastIndexOf("com.google.zxing")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("com.google.zxing"), fixedFileName.length());
+			} else {
+				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
+			}
 			break;
 		default:
-			fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse.swt"), fixedFileName.length() - 1);
 			break;
 		}
 		

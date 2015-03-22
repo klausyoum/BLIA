@@ -171,7 +171,7 @@ public class BLP {
 
 		if (null != prop) {
 			System.out.printf("Bug file path: %s\n", prop.getBugFilePath());
-			System.out.printf("Source code dir: %s\n", prop.getSourceCodeDir());
+			System.out.printf("Source code dir: %s\n", prop.getSourceCodeDirList());
 			System.out.printf("Alpha: %f\n", prop.getAlpha());
 			System.out.printf("Beta: %f\n", prop.getBeta());
 			System.out.printf("PastDays: %f\n", prop.getPastDays());

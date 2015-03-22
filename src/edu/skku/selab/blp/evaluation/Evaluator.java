@@ -108,18 +108,18 @@ public class Evaluator {
 						top1++;
 						top5++;
 						top10++;
-						System.out.printf("[TOP01] BugID %s fixedFile %s Rank %d\n",
+						System.out.printf("%s %s %d\n",
 								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;						
 					} else if (j < 5) {
 						top5++;
 						top10++;
-						System.out.printf("[TOP05] BugID %s fixedFile %s Rank %d\n",
+						System.out.printf("%s %s %d\n",
 								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					} else if (j < 10) {
 						top10++;
-						System.out.printf("[TOP10] BugID %s fixedFile %s Rank %d\n",
+						System.out.printf("%s %s %d\n",
 								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}

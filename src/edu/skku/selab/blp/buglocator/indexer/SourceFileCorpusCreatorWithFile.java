@@ -32,7 +32,7 @@ public class SourceFileCorpusCreatorWithFile {
 	public void create() throws IOException {
 		Property property = Property.getInstance();
 		FileDetector detector = new FileDetector("java");
-		File files[] = detector.detect(property.getSourceCodeDir());
+		File files[] = detector.detect(property.getSourceCodeDirList());
 		FileWriter corpusWriter = new FileWriter((new StringBuilder(String.valueOf(property.getWorkDir())))
 				.append(property.getSeparator())
 				.append("CodeCorpus.txt").toString());

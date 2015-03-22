@@ -29,9 +29,9 @@ public class EvaluationPropertyFactory {
 		
 		switch(productName) {
 		case Property.SWT:
-			alpha = 0.3;  
-			beta = 0.2;
-			pastDays = 15;
+			alpha = 0.2;  
+			beta = 0.4;
+			pastDays = 30;
 			repoDir = Property.SWT_REPO_DIR;
 			// for swt project ONLY
 			// There is a bug that opened at April of 2002
@@ -53,8 +53,8 @@ public class EvaluationPropertyFactory {
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ZXING:
-			alpha = 0.3;  
-			beta = 0.2;
+			alpha = 0.15;  
+			beta = 0.5;
 			pastDays = 15;
 			repoDir = Property.ZXING_REPO_DIR;
 

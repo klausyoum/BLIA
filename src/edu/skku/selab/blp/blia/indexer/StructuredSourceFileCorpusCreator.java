@@ -47,9 +47,11 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		String methodContents[] = parser.getStructuredContent(FileParser.METHOD_PART);
 		methodPart += " " + stemContent(methodContents);
 
-		String variablePart = parser.getStructuredContentWithFullyIdentifier(FileParser.VARIABLE_PART);	
+//		String variablePart = parser.getStructuredContentWithFullyIdentifier(FileParser.VARIABLE_PART);	
+//		String variableContents[] = parser.getStructuredContent(FileParser.VARIABLE_PART);
+		
 		String variableContents[] = parser.getStructuredContent(FileParser.VARIABLE_PART);
-		variablePart += " " + stemContent(variableContents);
+		String variablePart = stemContent(variableContents);
 
 		String commentContents[] = parser.getStructuredContent(FileParser.COMMENT_PART);
 		String commentPart = stemContent(commentContents);
@@ -75,7 +77,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 	public void create(String version) throws Exception {
 		Property property = Property.getInstance();
 		FileDetector detector = new FileDetector("java");
-		File files[] = detector.detect(property.getSourceCodeDir());
+		File files[] = detector.detect(property.getSourceCodeDirList());
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		String productName = property.getProductName();

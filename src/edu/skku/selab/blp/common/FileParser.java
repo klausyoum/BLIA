@@ -54,7 +54,6 @@ public class FileParser {
 	public static final int METHOD_PART = 2;
 	public static final int VARIABLE_PART = 3;
 	public static final int COMMENT_PART = 4;
-	public static final int ALL_PART = 5;
 	
 	public FileParser(File file) {
 		compilationUnit = null;
@@ -110,10 +109,6 @@ public class FileParser {
 		case COMMENT_PART:
 			content =  getAllComments();
 			break;
-		case ALL_PART:
-		default:
-			content = getAllStructuredInfos();
-			break;
 		}
 		
 		return content.toLowerCase();
@@ -136,10 +131,6 @@ public class FileParser {
 			break;
 		case COMMENT_PART:
 			content =  getAllComments();
-			break;
-		case ALL_PART:
-		default:
-			content = getAllStructuredInfos();
 			break;
 		}
 		
@@ -245,13 +236,15 @@ public class FileParser {
                 	int beginIndex = node.getStartPosition();
                 	int endIndex = beginIndex + node.getLength(); 
                 	String lineComment = sourceString.substring(beginIndex + 2, endIndex).trim();
-                	
-                	String[] words = lineComment.split("[\\s]");
-                	for (String word : words) {
-                		if (word.length() > 0) {
-//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
-                			structuredInfoList.add(word);                		
-                		}
+
+                	if (!lineComment.toLowerCase().contains("copyright")) {
+	                	String[] words = lineComment.split("[\\s]");
+	                	for (String word : words) {
+	                		if (word.length() > 0) {
+	//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+	                			structuredInfoList.add(word);                		
+	                		}
+	                	}
                 	}
                     return super.visit(node);
                 }
@@ -268,25 +261,26 @@ public class FileParser {
 //                		System.out.printf("original BlockComment text: %s\n", blockComment);
 //                	}
                 	
-                	String[] splitComment = blockComment.split("[/][*]");
-                	if (splitComment.length == 2) { 
-                		blockComment = splitComment[1];
-                		
-                		splitComment = blockComment.split("[*][/]");
-                		if (splitComment.length == 1) {
-                			blockComment = splitComment[0];
-
-//                        	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
-                        	String[] words = blockComment.split("[*\\s]");
-                        	for (String word : words) {
-                        		if (word.length() > 0) {
-//        	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
-                        			structuredInfoList.add(word);                		
-                        		}
-                        	}
-                		}
-                	}
-                	
+                   	if (!blockComment.toLowerCase().contains("copyright")) {
+	                	String[] splitComment = blockComment.split("[/][*]");
+	                	if (splitComment.length == 2) { 
+	                		blockComment = splitComment[1];
+	                		
+	                		splitComment = blockComment.split("[*][/]");
+	                		if (splitComment.length == 1) {
+	                			blockComment = splitComment[0];
+	
+	//                        	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
+	                        	String[] words = blockComment.split("[*\\s]");
+	                        	for (String word : words) {
+	                        		if (word.length() > 0) {
+	//        	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+	                        			structuredInfoList.add(word);                		
+	                        		}
+	                        	}
+	                		}
+	                	}
+                   	}
                     return super.visit(node);
                 }
         	});
@@ -302,143 +296,143 @@ public class FileParser {
 		return allStructuredInfoNames.trim();
 	}
 	
-	public String getAllStructuredInfos() {
-    	final ArrayList<String> structuredInfoList = new ArrayList<String>();
-
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(TypeDeclaration node)
-            {
-//            	System.out.printf("class Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(EnumDeclaration node)
-            {
-//            	System.out.printf("enum Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(EnumConstantDeclaration node)
-            {
-//            	System.out.printf("enum constant Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(MethodDeclaration node)
-            {
-//            	System.out.printf("method Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-    	
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(SingleVariableDeclaration node)
-            {
-//            	System.out.printf("single variable Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-    	
-    	compilationUnit.accept(new ASTVisitor() {
-            public boolean visit(VariableDeclarationFragment node)
-            {
-//            	System.out.printf("variable declaration Node: %s\n", node.getName().getIdentifier());
-            	structuredInfoList.add(node.getName().getIdentifier());
-                return super.visit(node);
-            }
-    	});
-    	
-    	for (Comment comment : (List<Comment>) compilationUnit.getCommentList()) {
-    		comment.accept(new ASTVisitor() {
-                public boolean visit(Javadoc node)
-                {
-//                	System.out.printf("ClassNames: %s, comment text: %s\n", getAllClassNames(), node.toString());
-                	String javadocComment = node.toString();
-                	javadocComment = javadocComment.split("[/][*][*]")[1];
-                	javadocComment = javadocComment.split("[*][/]")[0];
-                	String[]  commentLines = javadocComment.split("\n");
-                	
-                	for (String line : commentLines) {
-                		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
-                			continue;
-                		}
-                    	String[] words = line.split("[*\\s]");
-                    	for (String word : words) {
-                    		if (word.length() > 0) {
-                    			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
-                    					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
-                    				continue;
-                    			}
-                    			
-    	                    	structuredInfoList.add(word);                		
-//    	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
-                    		}
-                    	}
-                	}
-                    return super.visit(node);
-                }
-        	});
-        	
-    		comment.accept(new ASTVisitor() {
-                public boolean visit(LineComment node)
-                {
-                	int beginIndex = node.getStartPosition();
-                	int endIndex = beginIndex + node.getLength(); 
-                	String lineComment = sourceString.substring(beginIndex + 2, endIndex).trim();
-                	
-                	String[] words = lineComment.split("[\\s]");
-                	for (String word : words) {
-                		if (word.length() > 0) {
-//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
-                			structuredInfoList.add(word);                		
-                		}
-                	}
-                    return super.visit(node);
-                }
-        	});
-        	
-    		comment.accept(new ASTVisitor() {
-                public boolean visit(BlockComment node)
-                {
-                	int beginIndex = node.getStartPosition();
-                	int endIndex = beginIndex + node.getLength(); 
-                	String blockComment = sourceString.substring(beginIndex, endIndex);
-                	blockComment = blockComment.split("[/][*]")[1];
-                	blockComment = blockComment.split("[*][/]")[0];
-                	
-//                	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
-                	String[] words = blockComment.split("[*\\s]");
-                	for (String word : words) {
-                		if (word.length() > 0) {
-//	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
-                			structuredInfoList.add(word);                		
-                		}
-                	}
-                    return super.visit(node);
-                }
-        	});
-		}
-    
-		String allStructuredInfoNames = "";
-		for (Iterator<String> iterator = structuredInfoList.iterator(); iterator.hasNext();) {
-			String structuredInfoName = (String) iterator.next();
-			allStructuredInfoNames = (new StringBuilder(String.valueOf(allStructuredInfoNames)))
-					.append(structuredInfoName).append(" ").toString();
-		}
-	
-		return allStructuredInfoNames.trim();
-    }
+//	public String getAllStructuredInfos() {
+//    	final ArrayList<String> structuredInfoList = new ArrayList<String>();
+//
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(TypeDeclaration node)
+//            {
+////            	System.out.printf("class Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(EnumDeclaration node)
+//            {
+////            	System.out.printf("enum Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(EnumConstantDeclaration node)
+//            {
+////            	System.out.printf("enum constant Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(MethodDeclaration node)
+//            {
+////            	System.out.printf("method Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//    	
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(SingleVariableDeclaration node)
+//            {
+////            	System.out.printf("single variable Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//    	
+//    	compilationUnit.accept(new ASTVisitor() {
+//            public boolean visit(VariableDeclarationFragment node)
+//            {
+////            	System.out.printf("variable declaration Node: %s\n", node.getName().getIdentifier());
+//            	structuredInfoList.add(node.getName().getIdentifier());
+//                return super.visit(node);
+//            }
+//    	});
+//    	
+//    	for (Comment comment : (List<Comment>) compilationUnit.getCommentList()) {
+//    		comment.accept(new ASTVisitor() {
+//                public boolean visit(Javadoc node)
+//                {
+////                	System.out.printf("ClassNames: %s, comment text: %s\n", getAllClassNames(), node.toString());
+//                	String javadocComment = node.toString();
+//                	javadocComment = javadocComment.split("[/][*][*]")[1];
+//                	javadocComment = javadocComment.split("[*][/]")[0];
+//                	String[]  commentLines = javadocComment.split("\n");
+//                	
+//                	for (String line : commentLines) {
+//                		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
+//                			continue;
+//                		}
+//                    	String[] words = line.split("[*\\s]");
+//                    	for (String word : words) {
+//                    		if (word.length() > 0) {
+//                    			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
+//                    					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
+//                    				continue;
+//                    			}
+//                    			
+//    	                    	structuredInfoList.add(word);                		
+////    	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
+//                    		}
+//                    	}
+//                	}
+//                    return super.visit(node);
+//                }
+//        	});
+//        	
+//    		comment.accept(new ASTVisitor() {
+//                public boolean visit(LineComment node)
+//                {
+//                	int beginIndex = node.getStartPosition();
+//                	int endIndex = beginIndex + node.getLength(); 
+//                	String lineComment = sourceString.substring(beginIndex + 2, endIndex).trim();
+//                	
+//                	String[] words = lineComment.split("[\\s]");
+//                	for (String word : words) {
+//                		if (word.length() > 0) {
+////	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+//                			structuredInfoList.add(word);                		
+//                		}
+//                	}
+//                    return super.visit(node);
+//                }
+//        	});
+//        	
+//    		comment.accept(new ASTVisitor() {
+//                public boolean visit(BlockComment node)
+//                {
+//                	int beginIndex = node.getStartPosition();
+//                	int endIndex = beginIndex + node.getLength(); 
+//                	String blockComment = sourceString.substring(beginIndex, endIndex);
+//                	blockComment = blockComment.split("[/][*]")[1];
+//                	blockComment = blockComment.split("[*][/]")[0];
+//                	
+////                	System.out.printf("ClassNames: %s, original BlockComment text: %s\n", getAllClassNames(), blockComment);
+//                	String[] words = blockComment.split("[*\\s]");
+//                	for (String word : words) {
+//                		if (word.length() > 0) {
+////	                		System.out.printf("ClassNames: %s, BlockComment text: %s\n", getAllClassNames(), word);
+//                			structuredInfoList.add(word);                		
+//                		}
+//                	}
+//                    return super.visit(node);
+//                }
+//        	});
+//		}
+//    
+//		String allStructuredInfoNames = "";
+//		for (Iterator<String> iterator = structuredInfoList.iterator(); iterator.hasNext();) {
+//			String structuredInfoName = (String) iterator.next();
+//			allStructuredInfoNames = (new StringBuilder(String.valueOf(allStructuredInfoNames)))
+//					.append(structuredInfoName).append(" ").toString();
+//		}
+//	
+//		return allStructuredInfoNames.trim();
+//    }
 
 	private String getAllMethodNames() {
 		ArrayList<String> methodNameList = new ArrayList<String>();

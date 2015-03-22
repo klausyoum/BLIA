@@ -74,7 +74,7 @@ public class SourceFileCorpusCreator {
 	public void create(String version) throws Exception {
 		Property property = Property.getInstance();
 		FileDetector detector = new FileDetector("java");
-		File files[] = detector.detect(property.getSourceCodeDir());
+		File files[] = detector.detect(property.getSourceCodeDirList());
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		String productName = property.getProductName();

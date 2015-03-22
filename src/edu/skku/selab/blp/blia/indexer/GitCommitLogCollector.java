@@ -97,12 +97,18 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 			List<DiffEntry> diffs = new Git(repository).diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
 			for (DiffEntry entry : diffs) {
 				int commitType = convertCommitType(entry.getChangeType());
-				String updatedFileName = entry.getPath(DiffEntry.Side.NEW); 
-				commitInfo.addCommitFile(commitType, updatedFileName);
-//				System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
+				String updatedFileName = entry.getPath(DiffEntry.Side.NEW);
+			
+				// ONLLY java files added to save computing time and space
+				if (updatedFileName.contains(".java")) {
+					commitInfo.addCommitFile(commitType, updatedFileName);
+	//				System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
+				}
 			}
 			
-			commitDAO.insertCommitInfo(commitInfo);
+			if (commitInfo.getAllCommitFilesWithoutCommitType().size() > 0) {
+				commitDAO.insertCommitInfo(commitInfo);
+			}
 		}
 
 		repository.close();

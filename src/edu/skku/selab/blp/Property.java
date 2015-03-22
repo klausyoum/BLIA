@@ -27,8 +27,8 @@ public class Property {
 	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
 	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
 	
-	public String bugFilePath;
-	public String sourceCodeDir;
+	private String bugFilePath;
+	private String[] sourceCodeDirList;
 	private String workDir;
 	private int fileCount;
 	private int wordCount;
@@ -118,13 +118,99 @@ public class Property {
 			int pastDays, String repoDir, String outputFile) {
 		this.setProductName(productName);
 		this.bugFilePath = bugFilePath;
-		this.sourceCodeDir = sourceCodeDir;
 		this.workDir = workDir;
 		this.setAlpha(alpha);
 		this.setBeta(beta);
 		this.setPastDays(pastDays);
 		this.setRepoDir(repoDir);
 		this.outputFile = outputFile;
+		
+		String osName = System.getProperty("os.name");
+		switch (productName) {
+		case Property.ASPECTJ:
+			this.sourceCodeDirList = new String[20];
+			if (osName.equals("Mac OS X")) {
+				this.sourceCodeDirList[0] = sourceCodeDir + "/org.aspectj/modules/ajbrowser/src";
+				this.sourceCodeDirList[1] = sourceCodeDir + "/org.aspectj/modules/ajde/src";
+				this.sourceCodeDirList[2] = sourceCodeDir + "/org.aspectj/modules/ajde.core/src";
+				this.sourceCodeDirList[3] = sourceCodeDir + "/org.aspectj/modules/ajdoc/src";
+				this.sourceCodeDirList[4] = sourceCodeDir + "/org.aspectj/modules/asm/src";
+				this.sourceCodeDirList[5] = sourceCodeDir + "/org.aspectj/modules/aspectj-attic/ajdoc-src";
+				this.sourceCodeDirList[6] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/java5-src";
+				this.sourceCodeDirList[7] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/src";
+				this.sourceCodeDirList[8] = sourceCodeDir + "/org.aspectj/modules/bcel-builder/src";
+				this.sourceCodeDirList[9] = sourceCodeDir + "/org.aspectj/modules/bridge/src";
+				this.sourceCodeDirList[10] = sourceCodeDir + "/org.aspectj/modules/build/src";
+				this.sourceCodeDirList[11] = sourceCodeDir + "/org.aspectj/modules/loadtime/src";
+				this.sourceCodeDirList[12] = sourceCodeDir + "/org.aspectj/modules/loadtime5/java5-src";
+				this.sourceCodeDirList[13] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.ajdt.core/src";
+				this.sourceCodeDirList[14] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.lib/src";
+				this.sourceCodeDirList[15] = sourceCodeDir + "/org.aspectj/modules/runtime/src";
+				this.sourceCodeDirList[16] = sourceCodeDir + "/org.aspectj/modules/taskdefs/src";
+				this.sourceCodeDirList[17] = sourceCodeDir + "/org.aspectj/modules/util/src";
+				this.sourceCodeDirList[18] = sourceCodeDir + "/org.aspectj/modules/weaver/src";
+				this.sourceCodeDirList[19] = sourceCodeDir + "/org.aspectj/modules/weaver5/java5-src";
+			} else {
+				this.sourceCodeDirList[0] = sourceCodeDir + "\\org.aspectj\\modules\\ajbrowser\\src";
+				this.sourceCodeDirList[1] = sourceCodeDir + "\\org.aspectj\\modules\\ajde\\src";
+				this.sourceCodeDirList[2] = sourceCodeDir + "\\org.aspectj\\modules\\ajde.core\\src";
+				this.sourceCodeDirList[3] = sourceCodeDir + "\\org.aspectj\\modules\\ajdoc\\src";
+				this.sourceCodeDirList[4] = sourceCodeDir + "\\org.aspectj\\modules\\asm\\src";
+				this.sourceCodeDirList[5] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj-attic\\ajdoc-src";
+				this.sourceCodeDirList[6] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\java5-src";
+				this.sourceCodeDirList[7] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\src";
+				this.sourceCodeDirList[8] = sourceCodeDir + "\\org.aspectj\\modules\\bcel-builder\\src";
+				this.sourceCodeDirList[9] = sourceCodeDir + "\\org.aspectj\\modules\\bridge\\src";
+				this.sourceCodeDirList[10] = sourceCodeDir + "\\org.aspectj\\modules\\build\\src";
+				this.sourceCodeDirList[11] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime\\src";
+				this.sourceCodeDirList[12] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime5\\java5-src";
+				this.sourceCodeDirList[13] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.ajdt.core\\src";
+				this.sourceCodeDirList[14] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.lib\\src";
+				this.sourceCodeDirList[15] = sourceCodeDir + "\\org.aspectj\\modules\\runtime\\src";
+				this.sourceCodeDirList[16] = sourceCodeDir + "\\org.aspectj\\modules\\taskdefs\\src";
+				this.sourceCodeDirList[17] = sourceCodeDir + "\\org.aspectj\\modules\\util\\src";
+				this.sourceCodeDirList[18] = sourceCodeDir + "\\org.aspectj\\modules\\weaver\\src";
+				this.sourceCodeDirList[19] = sourceCodeDir + "\\org.aspectj\\modules\\weaver5\\java5-src";
+			}
+			break;
+		case Property.ECLIPSE:
+			// TODO: add essential source directories for eclipse
+			this.sourceCodeDirList = new String[1];
+			this.sourceCodeDirList[0] = sourceCodeDir;
+			break;
+		case Property.SWT:
+			this.sourceCodeDirList = new String[1];
+			if (osName.equals("Mac OS X")) {
+				this.sourceCodeDirList[0] = sourceCodeDir + "/src";
+			} else {
+				this.sourceCodeDirList[0] = sourceCodeDir + "\\src";
+			}
+			break;
+		case Property.ZXING:
+			this.sourceCodeDirList = new String[8];
+			if (osName.equals("Mac OS X")) {
+				this.sourceCodeDirList[0] = sourceCodeDir + "/android/src";
+				this.sourceCodeDirList[1] = sourceCodeDir + "/android-integration/src";
+				this.sourceCodeDirList[2] = sourceCodeDir + "/core/src";
+				this.sourceCodeDirList[3] = sourceCodeDir + "/javame/src";
+				this.sourceCodeDirList[4] = sourceCodeDir + "/javase/src";
+				this.sourceCodeDirList[5] = sourceCodeDir + "/rim/src";
+				this.sourceCodeDirList[6] = sourceCodeDir + "/zxing.appspot.com/generator/src";
+				this.sourceCodeDirList[7] = sourceCodeDir + "/zxingorg/src";
+			} else {
+				this.sourceCodeDirList[0] = sourceCodeDir + "\\android\\src";
+				this.sourceCodeDirList[1] = sourceCodeDir + "\\android-integration\\src";
+				this.sourceCodeDirList[2] = sourceCodeDir + "\\core\\src";
+				this.sourceCodeDirList[3] = sourceCodeDir + "\\javame\\src";
+				this.sourceCodeDirList[4] = sourceCodeDir + "\\javase\\src";
+				this.sourceCodeDirList[5] = sourceCodeDir + "\\rim\\src";
+				this.sourceCodeDirList[6] = sourceCodeDir + "\\zxing.appspot.com\\generator\\src";
+				this.sourceCodeDirList[7] = sourceCodeDir + "\\zxingorg\\src";
+			}
+			break;
+		default:
+			break;
+		}
 	}
 	
 	public double getAlpha() {
@@ -143,8 +229,8 @@ public class Property {
 		return bugFilePath;
 	}
 
-	public String getSourceCodeDir() {
-		return sourceCodeDir;
+	public String[] getSourceCodeDirList() {
+		return sourceCodeDirList;
 	}
 
 	public String getSeparator() {

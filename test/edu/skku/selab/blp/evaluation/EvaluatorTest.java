@@ -194,8 +194,8 @@ public class EvaluatorTest {
 		
 		// Change target project for experiment if you want
 //		String productName = Property.SWT;
-//		String productName = Property.ASPECTJ;
-		String productName = Property.ZXING;
+		String productName = Property.ASPECTJ;
+//		String productName = Property.ZXING;
 //		String productName = Property.ECLIPSE;
 		
 		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
