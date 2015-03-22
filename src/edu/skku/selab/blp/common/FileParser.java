@@ -81,10 +81,8 @@ public class FileParser {
 	private String[] splitContent(String content) {
 		String tokensInSourceCode[] = Splitter.splitSourceCode(content);
 		StringBuffer sourceCodeContentBuffer = new StringBuffer();
-		String as[];
-		int j = (as = tokensInSourceCode).length;
-		for (int i = 0; i < j; i++) {
-			String token = as[i];
+		for (int i = 0; i < tokensInSourceCode.length; i++) {
+			String token = tokensInSourceCode[i];
 			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
 		}
 
@@ -92,7 +90,7 @@ public class FileParser {
 		return processedConent.split(" ");
 	}
 	
-	public String getStructuredContentWithFullyIdentifier(int type) {
+	public String[] getStructuredContentWithFullyIdentifier(int type) {
 		String content = "";
 //		System.out.println(content);
 		
@@ -111,7 +109,8 @@ public class FileParser {
 			break;
 		}
 		
-		return content.toLowerCase();
+		content = content.toLowerCase();
+		return content.split(" ");
 	}
 	
 	
@@ -140,10 +139,8 @@ public class FileParser {
 	public String[] getContent() {
 		String tokensInSourceCode[] = Splitter.splitSourceCode(deleteNoNeededNode());
 		StringBuffer sourceCodeContentBuffer = new StringBuffer();
-		String as[];
-		int j = (as = tokensInSourceCode).length;
-		for (int i = 0; i < j; i++) {
-			String token = as[i];
+		for (int i = 0; i < tokensInSourceCode.length; i++) {
+			String token = tokensInSourceCode[i];
 			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
 		}
 

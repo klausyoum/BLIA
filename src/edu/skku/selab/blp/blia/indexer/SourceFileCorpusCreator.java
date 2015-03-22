@@ -27,12 +27,10 @@ import edu.skku.selab.blp.utils.Stopword;
 public class SourceFileCorpusCreator {
 	protected String stemContent(String content[]) {
 		StringBuffer contentBuf = new StringBuffer();
-		String as[];
-		int j = (as = content).length;
-		for (int i = 0; i < j; i++) {
-			String word = as[i];
+		for (int i = 0; i < content.length; i++) {
+			String word = content[i];
 			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isKeyword(word) && !Stopword.isEnglishStopword(word)) {
+			if (!Stopword.isKeyword(stemWord) && !Stopword.isEnglishStopword(stemWord)) {
 				contentBuf.append(stemWord);
 				contentBuf.append(" ");
 			}

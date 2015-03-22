@@ -44,12 +44,10 @@ import edu.skku.selab.blp.utils.Stopword;
 public class BugCorpusCreator {
 	private String stemContent(String content[]) {
 		StringBuffer contentBuf = new StringBuffer();
-		String as[];
-		int j = (as = content).length;
-		for (int i = 0; i < j; i++) {
-			String word = as[i];
+		for (int i = 0; i < content.length; i++) {
+			String word = content[i];
 			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isEnglishStopword(word)) {
+			if (!Stopword.isEnglishStopword(stemWord)) {
 				contentBuf.append(stemWord);
 				contentBuf.append(" ");
 			}
@@ -82,6 +80,11 @@ public class BugCorpusCreator {
 		while (bugIter.hasNext()) {
 			bug = (Bug) bugIter.next();
 			bug.setProductName(productName);
+			
+			// test code
+			if (bug.getID().contains("80506")) {
+				System.out.println("BugID: " + bug.getID());
+			}
 			
 			BugCorpus bugCorpus = new BugCorpus();
 			

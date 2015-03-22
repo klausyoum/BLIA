@@ -128,49 +128,53 @@ public class Property {
 		String osName = System.getProperty("os.name");
 		switch (productName) {
 		case Property.ASPECTJ:
-			this.sourceCodeDirList = new String[20];
+			this.sourceCodeDirList = new String[1];
 			if (osName.equals("Mac OS X")) {
-				this.sourceCodeDirList[0] = sourceCodeDir + "/org.aspectj/modules/ajbrowser/src";
-				this.sourceCodeDirList[1] = sourceCodeDir + "/org.aspectj/modules/ajde/src";
-				this.sourceCodeDirList[2] = sourceCodeDir + "/org.aspectj/modules/ajde.core/src";
-				this.sourceCodeDirList[3] = sourceCodeDir + "/org.aspectj/modules/ajdoc/src";
-				this.sourceCodeDirList[4] = sourceCodeDir + "/org.aspectj/modules/asm/src";
-				this.sourceCodeDirList[5] = sourceCodeDir + "/org.aspectj/modules/aspectj-attic/ajdoc-src";
-				this.sourceCodeDirList[6] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/java5-src";
-				this.sourceCodeDirList[7] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/src";
-				this.sourceCodeDirList[8] = sourceCodeDir + "/org.aspectj/modules/bcel-builder/src";
-				this.sourceCodeDirList[9] = sourceCodeDir + "/org.aspectj/modules/bridge/src";
-				this.sourceCodeDirList[10] = sourceCodeDir + "/org.aspectj/modules/build/src";
-				this.sourceCodeDirList[11] = sourceCodeDir + "/org.aspectj/modules/loadtime/src";
-				this.sourceCodeDirList[12] = sourceCodeDir + "/org.aspectj/modules/loadtime5/java5-src";
-				this.sourceCodeDirList[13] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.ajdt.core/src";
-				this.sourceCodeDirList[14] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.lib/src";
-				this.sourceCodeDirList[15] = sourceCodeDir + "/org.aspectj/modules/runtime/src";
-				this.sourceCodeDirList[16] = sourceCodeDir + "/org.aspectj/modules/taskdefs/src";
-				this.sourceCodeDirList[17] = sourceCodeDir + "/org.aspectj/modules/util/src";
-				this.sourceCodeDirList[18] = sourceCodeDir + "/org.aspectj/modules/weaver/src";
-				this.sourceCodeDirList[19] = sourceCodeDir + "/org.aspectj/modules/weaver5/java5-src";
+				this.sourceCodeDirList[0] = sourceCodeDir + "/org.aspectj/modules";
+				
+//				this.sourceCodeDirList[0] = sourceCodeDir + "/org.aspectj/modules/ajbrowser/src";
+//				this.sourceCodeDirList[1] = sourceCodeDir + "/org.aspectj/modules/ajde/src";
+//				this.sourceCodeDirList[2] = sourceCodeDir + "/org.aspectj/modules/ajde.core/src";
+//				this.sourceCodeDirList[3] = sourceCodeDir + "/org.aspectj/modules/ajdoc/src";
+//				this.sourceCodeDirList[4] = sourceCodeDir + "/org.aspectj/modules/asm/src";
+//				this.sourceCodeDirList[5] = sourceCodeDir + "/org.aspectj/modules/aspectj-attic/ajdoc-src";
+//				this.sourceCodeDirList[6] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/java5-src";
+//				this.sourceCodeDirList[7] = sourceCodeDir + "/org.aspectj/modules/aspectj5rt/src";
+//				this.sourceCodeDirList[8] = sourceCodeDir + "/org.aspectj/modules/bcel-builder/src";
+//				this.sourceCodeDirList[9] = sourceCodeDir + "/org.aspectj/modules/bridge/src";
+//				this.sourceCodeDirList[10] = sourceCodeDir + "/org.aspectj/modules/build/src";
+//				this.sourceCodeDirList[11] = sourceCodeDir + "/org.aspectj/modules/loadtime/src";
+//				this.sourceCodeDirList[12] = sourceCodeDir + "/org.aspectj/modules/loadtime5/java5-src";
+//				this.sourceCodeDirList[13] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.ajdt.core/src";
+//				this.sourceCodeDirList[14] = sourceCodeDir + "/org.aspectj/modules/org.aspectj.lib/src";
+//				this.sourceCodeDirList[15] = sourceCodeDir + "/org.aspectj/modules/runtime/src";
+//				this.sourceCodeDirList[16] = sourceCodeDir + "/org.aspectj/modules/taskdefs/src";
+//				this.sourceCodeDirList[17] = sourceCodeDir + "/org.aspectj/modules/util/src";
+//				this.sourceCodeDirList[18] = sourceCodeDir + "/org.aspectj/modules/weaver/src";
+//				this.sourceCodeDirList[19] = sourceCodeDir + "/org.aspectj/modules/weaver5/java5-src";
 			} else {
-				this.sourceCodeDirList[0] = sourceCodeDir + "\\org.aspectj\\modules\\ajbrowser\\src";
-				this.sourceCodeDirList[1] = sourceCodeDir + "\\org.aspectj\\modules\\ajde\\src";
-				this.sourceCodeDirList[2] = sourceCodeDir + "\\org.aspectj\\modules\\ajde.core\\src";
-				this.sourceCodeDirList[3] = sourceCodeDir + "\\org.aspectj\\modules\\ajdoc\\src";
-				this.sourceCodeDirList[4] = sourceCodeDir + "\\org.aspectj\\modules\\asm\\src";
-				this.sourceCodeDirList[5] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj-attic\\ajdoc-src";
-				this.sourceCodeDirList[6] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\java5-src";
-				this.sourceCodeDirList[7] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\src";
-				this.sourceCodeDirList[8] = sourceCodeDir + "\\org.aspectj\\modules\\bcel-builder\\src";
-				this.sourceCodeDirList[9] = sourceCodeDir + "\\org.aspectj\\modules\\bridge\\src";
-				this.sourceCodeDirList[10] = sourceCodeDir + "\\org.aspectj\\modules\\build\\src";
-				this.sourceCodeDirList[11] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime\\src";
-				this.sourceCodeDirList[12] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime5\\java5-src";
-				this.sourceCodeDirList[13] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.ajdt.core\\src";
-				this.sourceCodeDirList[14] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.lib\\src";
-				this.sourceCodeDirList[15] = sourceCodeDir + "\\org.aspectj\\modules\\runtime\\src";
-				this.sourceCodeDirList[16] = sourceCodeDir + "\\org.aspectj\\modules\\taskdefs\\src";
-				this.sourceCodeDirList[17] = sourceCodeDir + "\\org.aspectj\\modules\\util\\src";
-				this.sourceCodeDirList[18] = sourceCodeDir + "\\org.aspectj\\modules\\weaver\\src";
-				this.sourceCodeDirList[19] = sourceCodeDir + "\\org.aspectj\\modules\\weaver5\\java5-src";
+				this.sourceCodeDirList[0] = sourceCodeDir + "\\org.aspectj\\modules";
+				
+//				this.sourceCodeDirList[0] = sourceCodeDir + "\\org.aspectj\\modules\\ajbrowser\\src";
+//				this.sourceCodeDirList[1] = sourceCodeDir + "\\org.aspectj\\modules\\ajde\\src";
+//				this.sourceCodeDirList[2] = sourceCodeDir + "\\org.aspectj\\modules\\ajde.core\\src";
+//				this.sourceCodeDirList[3] = sourceCodeDir + "\\org.aspectj\\modules\\ajdoc\\src";
+//				this.sourceCodeDirList[4] = sourceCodeDir + "\\org.aspectj\\modules\\asm\\src";
+//				this.sourceCodeDirList[5] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj-attic\\ajdoc-src";
+//				this.sourceCodeDirList[6] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\java5-src";
+//				this.sourceCodeDirList[7] = sourceCodeDir + "\\org.aspectj\\modules\\aspectj5rt\\src";
+//				this.sourceCodeDirList[8] = sourceCodeDir + "\\org.aspectj\\modules\\bcel-builder\\src";
+//				this.sourceCodeDirList[9] = sourceCodeDir + "\\org.aspectj\\modules\\bridge\\src";
+//				this.sourceCodeDirList[10] = sourceCodeDir + "\\org.aspectj\\modules\\build\\src";
+//				this.sourceCodeDirList[11] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime\\src";
+//				this.sourceCodeDirList[12] = sourceCodeDir + "\\org.aspectj\\modules\\loadtime5\\java5-src";
+//				this.sourceCodeDirList[13] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.ajdt.core\\src";
+//				this.sourceCodeDirList[14] = sourceCodeDir + "\\org.aspectj\\modules\\org.aspectj.lib\\src";
+//				this.sourceCodeDirList[15] = sourceCodeDir + "\\org.aspectj\\modules\\runtime\\src";
+//				this.sourceCodeDirList[16] = sourceCodeDir + "\\org.aspectj\\modules\\taskdefs\\src";
+//				this.sourceCodeDirList[17] = sourceCodeDir + "\\org.aspectj\\modules\\util\\src";
+//				this.sourceCodeDirList[18] = sourceCodeDir + "\\org.aspectj\\modules\\weaver\\src";
+//				this.sourceCodeDirList[19] = sourceCodeDir + "\\org.aspectj\\modules\\weaver5\\java5-src";
 			}
 			break;
 		case Property.ECLIPSE:

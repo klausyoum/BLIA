@@ -48,7 +48,7 @@ public class BugSourceFileVectorCreator {
 		while (bugsIter.hasNext()) {
 			// calculate term count, IDC, TF and IDF
 			bugID = bugsIter.next();
-			
+
 //			if (bugID.equalsIgnoreCase("75739")) {
 				Bug bug = bugs.get(bugID);
 				
@@ -71,6 +71,7 @@ public class BugSourceFileVectorCreator {
 					}
 				}
 				
+				totalTermCount = 0;
 				// calculate totalTermCount
 				Iterator<String> bugTermTableIter = bugTermTable.keySet().iterator();
 				while (bugTermTableIter.hasNext()) {

@@ -39,11 +39,13 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		// parser.getImportedClassed() function should be called before calling parser.getContents()
 		ArrayList<String> importedClasses = parser.getImportedClasses();
 		
-		String classPart = parser.getStructuredContentWithFullyIdentifier(FileParser.CLASS_PART);		
+		String classIdentifiers[] = parser.getStructuredContentWithFullyIdentifier(FileParser.CLASS_PART);		
+		String classPart = stemContent(classIdentifiers);
 		String classContents[] = parser.getStructuredContent(FileParser.CLASS_PART);
 		classPart += " " + stemContent(classContents);
 
-		String methodPart = parser.getStructuredContentWithFullyIdentifier(FileParser.METHOD_PART);	
+		String methodIdentifiers[] = parser.getStructuredContentWithFullyIdentifier(FileParser.METHOD_PART);
+		String methodPart = stemContent(methodIdentifiers);
 		String methodContents[] = parser.getStructuredContent(FileParser.METHOD_PART);
 		methodPart += " " + stemContent(methodContents);
 
