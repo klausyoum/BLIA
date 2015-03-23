@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="lib/h2-1.4.184.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.6.2.201501210735-r.jar"/>
 	<classpathentry kind="lib" path="lib/indri.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

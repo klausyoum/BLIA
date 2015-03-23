@@ -293,7 +293,7 @@ public class SourceFileAnalyzer {
 							AnalysisValue bugTermValue = bugSfTermMap.get(sourceFileTerms[k]);
 							if (null != bugTermValue) {
 								bugTermWeight = bugTermValue.getTf() * bugTermValue.getIdf();
-							}
+							} 
 							
 							cosineSimilarityScore += (bugTermWeight * sourceFileTermWeight);
 						}

@@ -209,15 +209,17 @@ public class FileParser {
                     		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
                     			continue;
                     		}
-                        	String[] words = line.split("[*\\s]");
+
+                    		// Split line with space and html tag
+                        	String[] words = line.split("([*\\s]|(?i)\\<[^\\>]*\\>)");
                         	for (String word : words) {
                         		if (word.length() > 0) {
                         			if ( (word.equalsIgnoreCase("@param")) || (word.equalsIgnoreCase("@return")) || (word.equalsIgnoreCase("@exception")) ||
                         					(word.equalsIgnoreCase("@see")) || (word.equalsIgnoreCase("@serial")) || (word.equalsIgnoreCase("@deprecated")) )  {
                         				continue;
                         			}
-                        			
-        	                    	structuredInfoList.add(word);                		
+
+                        			structuredInfoList.add(word);                		
 //        	                		System.out.printf("ClassNames: %s, javadocComment text: %s\n", getAllClassNames(), word);
                         		}
                         	}

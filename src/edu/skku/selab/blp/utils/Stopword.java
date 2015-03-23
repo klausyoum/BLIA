@@ -17,12 +17,14 @@ public class Stopword
     {
     }
 
+    // For checking source file term
     public static boolean isKeyword(String word)
     {
         boolean isKeyword = JAVA_KEYWORDS_STOP_WORD_SET.contains(word);
         return isKeyword;
     }
 
+    // For checking source file term and bug report
     public static boolean isEnglishStopword(String word)
     {
         boolean isEnglishStopword = ENG_STOP_WORDS_SET.contains(word);
@@ -45,6 +47,7 @@ public class Stopword
 //            "false"
 //        };
         
+    	
     	// References
     	// http://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
     	// http://en.wikipedia.org/wiki/List_of_Java_keywords#Reserved_words_for_literal_values
@@ -55,7 +58,7 @@ public class Stopword
                 "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
                 "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
                 "false", "true", "null",
-                "args" //, "string", "main"
+                "args", "method", "main", "param" //, "string", "element", "org", "eclipse", "swt" 
                 };
         
         JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet();

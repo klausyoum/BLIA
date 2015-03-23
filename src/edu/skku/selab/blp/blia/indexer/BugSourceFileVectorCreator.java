@@ -48,86 +48,91 @@ public class BugSourceFileVectorCreator {
 		while (bugsIter.hasNext()) {
 			// calculate term count, IDC, TF and IDF
 			bugID = bugsIter.next();
+			
+			if (bugID.contains("99145")) {
+				System.out.println("BugSourceFileVectorCreator.create(): " + bugID);
+			}
 
-//			if (bugID.equalsIgnoreCase("75739")) {
-				Bug bug = bugs.get(bugID);
-				
-				String bugCorpusContent = bug.getCorpusContent();
-				
-				// get term count
-				String bugTermArray[] = bugCorpusContent.split(" ");
-				Hashtable<String, Integer> bugTermTable = new Hashtable<String, Integer>();
-				for (int i = 0; i < bugTermArray.length; i++) {
-					bugTerm = bugTermArray[i];
-					if (!bugTerm.trim().equals("")) {
-						if (bugTermTable.containsKey(bugTerm)) {
-							Integer count = (Integer) bugTermTable.get(bugTerm);
-							count = Integer.valueOf(count.intValue() + 1);
-							bugTermTable.remove(bugTerm);
-							bugTermTable.put(bugTerm, count);
-						} else {
-							bugTermTable.put(bugTerm, Integer.valueOf(1));
-						}
+			Bug bug = bugs.get(bugID);
+			
+			String bugCorpusContent = bug.getCorpusContent();
+			
+			// get term count
+			String bugTermArray[] = bugCorpusContent.split(" ");
+			Hashtable<String, Integer> bugTermTable = new Hashtable<String, Integer>();
+			for (int i = 0; i < bugTermArray.length; i++) {
+				bugTerm = bugTermArray[i];
+				if (!bugTerm.trim().equals("")) {
+					if (bugTermTable.containsKey(bugTerm)) {
+						Integer count = (Integer) bugTermTable.get(bugTerm);
+						count = Integer.valueOf(count.intValue() + 1);
+						bugTermTable.remove(bugTerm);
+						bugTermTable.put(bugTerm, count);
+					} else {
+						bugTermTable.put(bugTerm, Integer.valueOf(1));
 					}
 				}
+			}
+			
+			totalTermCount = 0;
+			// calculate totalTermCount
+			Iterator<String> bugTermTableIter = bugTermTable.keySet().iterator();
+			while (bugTermTableIter.hasNext()) {
+				bugTerm = bugTermTableIter.next();
+				bugTermCount = bugTermTable.get(bugTerm);
 				
-				totalTermCount = 0;
-				// calculate totalTermCount
-				Iterator<String> bugTermTableIter = bugTermTable.keySet().iterator();
-				while (bugTermTableIter.hasNext()) {
-					bugTerm = bugTermTableIter.next();
-					bugTermCount = bugTermTable.get(bugTerm);
-					
-					if (sourceFileTermMap.containsKey(bugTerm)) {
-						totalTermCount += bugTermCount;
-					}
+				if (sourceFileTermMap.containsKey(bugTerm)) {
+					totalTermCount += bugTermCount;
+				}
 //						System.out.printf("Corpus: %s, termCount: %d\n", corpus, termCount);
-				}
-				
-				bugDAO.updateTotalTermCount(productName, bugID, totalTermCount);
+			}
+			
+			bugDAO.updateTotalTermCount(productName, bugID, totalTermCount);
 //				System.out.printf("totalTermCount: %d\n", totalTermCount);
+			
+			double corpusNorm = 0.0D;
+			double summaryCorpusNorm = 0.0D;
+			double descriptionCorpusNorm = 0.0D;
+
+			HashSet<String> summaryTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getSummaryPart());
+			HashSet<String> descriptionTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getDescriptionPart());
+
+			bugTermTableIter = bugTermTable.keySet().iterator();
+			while (bugTermTableIter.hasNext()) {
+				bugTerm = bugTermTableIter.next();
 				
-				double corpusNorm = 0.0D;
-				double summaryCorpusNorm = 0.0D;
-				double descriptionCorpusNorm = 0.0D;
-
-				HashSet<String> summaryTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getSummaryPart());
-				HashSet<String> descriptionTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getDescriptionPart());
-
-				bugTermTableIter = bugTermTable.keySet().iterator();
-				while (bugTermTableIter.hasNext()) {
-					bugTerm = bugTermTableIter.next();
-					if (sourceFileTermMap.containsKey(bugTerm)) {
-						bugTermCount = bugTermTable.get(bugTerm);
-						inverseDocCount = inverseDocCountTable.get(bugTerm).intValue();
-						
-						// calculate TF, IDF, Vector
-						tf = getTfValue(bugTermCount, totalTermCount);
-						idf = getIdfValue(inverseDocCount, fileCount);
-						termWeight = tf * idf;
-						double termWeightSquare = termWeight * termWeight;
-						corpusNorm += termWeightSquare;
-						
-						if (summaryTermSet.contains(bugTerm)) {
-							summaryCorpusNorm += termWeightSquare;
-						}
-
-						if (descriptionTermSet.contains(bugTerm)) {
-							descriptionCorpusNorm += termWeightSquare;
-						}
-						
-						AnalysisValue bugSfTermWeight = new AnalysisValue(bugID, productName, bugTerm, bugTermCount, inverseDocCount, tf, idf);						
-						bugDAO.insertBugSfTermWeight(bugSfTermWeight);
+				// test code
+//				System.out.println("bugTerm:" + bugTerm);
+				if (sourceFileTermMap.containsKey(bugTerm)) {
+					bugTermCount = bugTermTable.get(bugTerm);
+					inverseDocCount = inverseDocCountTable.get(bugTerm).intValue();
+					
+					// calculate TF, IDF, Vector
+					tf = getTfValue(bugTermCount, totalTermCount);
+					idf = getIdfValue(inverseDocCount, fileCount);
+					termWeight = tf * idf;
+					double termWeightSquare = termWeight * termWeight;
+					corpusNorm += termWeightSquare;
+					
+					if (summaryTermSet.contains(bugTerm)) {
+						summaryCorpusNorm += termWeightSquare;
 					}
+
+					if (descriptionTermSet.contains(bugTerm)) {
+						descriptionCorpusNorm += termWeightSquare;
+					}
+					
+					AnalysisValue bugSfTermWeight = new AnalysisValue(bugID, productName, bugTerm, bugTermCount, inverseDocCount, tf, idf);						
+					bugDAO.insertBugSfTermWeight(bugSfTermWeight);
 				}
+			}
 
 //				System.out.printf("word: %f\n", word);
-				corpusNorm = Math.sqrt(corpusNorm);
-				summaryCorpusNorm = Math.sqrt(summaryCorpusNorm);
-				descriptionCorpusNorm = Math.sqrt(descriptionCorpusNorm);
+			corpusNorm = Math.sqrt(corpusNorm);
+			summaryCorpusNorm = Math.sqrt(summaryCorpusNorm);
+			descriptionCorpusNorm = Math.sqrt(descriptionCorpusNorm);
 
-				bugDAO.updateNormValues(productName, bugID, corpusNorm, summaryCorpusNorm, descriptionCorpusNorm);					
-//			} 	// for testing
+			bugDAO.updateNormValues(productName, bugID, corpusNorm, summaryCorpusNorm, descriptionCorpusNorm);					
 		}
 	}
 	

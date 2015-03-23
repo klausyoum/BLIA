@@ -46,10 +46,12 @@ public class BugCorpusCreator {
 		StringBuffer contentBuf = new StringBuffer();
 		for (int i = 0; i < content.length; i++) {
 			String word = content[i];
-			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isEnglishStopword(stemWord)) {
-				contentBuf.append(stemWord);
-				contentBuf.append(" ");
+			if (word.length() > 0) {
+				String stemWord = Stem.stem(word.toLowerCase());
+				if (!Stopword.isEnglishStopword(stemWord)) {
+					contentBuf.append(stemWord);
+					contentBuf.append(" ");
+				}
 			}
 		}
 		return contentBuf.toString();
@@ -82,23 +84,32 @@ public class BugCorpusCreator {
 			bug.setProductName(productName);
 			
 			// test code
-			if (bug.getID().contains("80506")) {
-				System.out.println("BugID: " + bug.getID());
-			}
+//			if (bug.getID().contains("99145")) {
+//				System.out.println("BugID: " + bug.getID());
+//			}
 			
 			BugCorpus bugCorpus = new BugCorpus();
 			
 			String content = (new StringBuilder(String.valueOf(bug.getSummary())))
 					.append(" ").append(bug.getDescription()).toString();
-			String splitWords[] = Splitter.splitNatureLanguage(content);
+//			String splitWords[] = Splitter.splitNatureLanguage(content);
+			String splitWords[] = Splitter.splitNatureLanguageEx(content);
 			String contentCorpus = stemContent(splitWords);
 			bugCorpus.setContent(contentCorpus);
+			// debug code
+//			System.out.println("contentCorpus: " + contentCorpus);
 			
-			String summaryPart = stemContent(Splitter.splitNatureLanguage(bug.getSummary()));
+//			String summaryPart = stemContent(Splitter.splitNatureLanguage(bug.getSummary()));
+			String summaryPart = stemContent(Splitter.splitNatureLanguageEx(bug.getSummary()));
 			bugCorpus.setSummaryPart(summaryPart);
+			// debug code
+//			System.out.println("summaryPart: " + summaryPart);
 			
-			String descriptionPart = stemContent(Splitter.splitNatureLanguage(bug.getDescription()));
+//			String descriptionPart = stemContent(Splitter.splitNatureLanguage(bug.getDescription()));
+			String descriptionPart = stemContent(Splitter.splitNatureLanguageEx(bug.getDescription()));
 			bugCorpus.setDescriptionPart(descriptionPart);
+			// debug code
+//			System.out.println("descriptionPart: " + descriptionPart);
 
 			bug.setCorpus(bugCorpus);
 			
