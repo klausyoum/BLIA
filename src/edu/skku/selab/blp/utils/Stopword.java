@@ -58,7 +58,7 @@ public class Stopword
                 "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
                 "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
                 "false", "true", "null",
-                "args", "method", "main", "param" //, "string", "element", "org", "eclipse", "swt" 
+                "args", "method", "main", "param"
                 };
         
         JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet();

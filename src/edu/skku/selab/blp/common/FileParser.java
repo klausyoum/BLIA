@@ -190,6 +190,16 @@ public class FileParser {
 		return allStructuredInfoNames.trim();
 	}
 	
+	private String replaceHtmlSpecicalCharacters(String line) {
+		line = line.replace("&quot;", "\"");
+		line = line.replace("&amp;", "&");
+		line = line.replace("&lt;", "<");
+		line = line.replace("&gt;", ">");
+		line = line.replace("&nbsp;", " ");
+		
+		return line;
+	}
+	
 	public String getAllComments() {
 		final ArrayList<String> structuredInfoList = new ArrayList<String>();
 		
@@ -209,6 +219,8 @@ public class FileParser {
                     		if (line.contains("@author") || line.contains("@version") || line.contains("@since") ) {
                     			continue;
                     		}
+                    		
+                    		line = replaceHtmlSpecicalCharacters(line);
 
                     		// Split line with space and html tag
                         	String[] words = line.split("([*\\s]|(?i)\\<[^\\>]*\\>)");

@@ -48,6 +48,13 @@ public class BugCorpusCreator {
 			String word = content[i];
 			if (word.length() > 0) {
 				String stemWord = Stem.stem(word.toLowerCase());
+				
+				// debug code
+//				System.out.printf("%d stemWord: %s\n", i, stemWord);
+//				if (stemWord.contains("keys")) {
+//					System.out.println("stemWord: " + stemWord);
+//				}
+				
 				if (!Stopword.isEnglishStopword(stemWord)) {
 					contentBuf.append(stemWord);
 					contentBuf.append(" ");
@@ -84,7 +91,7 @@ public class BugCorpusCreator {
 			bug.setProductName(productName);
 			
 			// test code
-//			if (bug.getID().contains("99145")) {
+//			if (bug.getID().contains("92241")) {
 //				System.out.println("BugID: " + bug.getID());
 //			}
 			
@@ -184,6 +191,12 @@ public class BugCorpusCreator {
 					Node bugNode = bugRepository.item(i);
 					if (bugNode.getNodeType() == 1) {
 						String bugId = bugNode.getAttributes().getNamedItem("id").getNodeValue();
+						
+						// debug code
+//						if (bugId.contains("80830")) {
+//							System.out.println("parseXML()> BugID: " + bugId);
+//						}
+						
 						String openDateString = bugNode.getAttributes().getNamedItem("opendate").getNodeValue();
 						String fixDateString = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
 						Bug bug = new Bug();
@@ -201,7 +214,15 @@ public class BugCorpusCreator {
 											bug.setSummary(summary);
 										}
 										if (_n.getNodeName().equals("description")) {
-											String description = _n.getTextContent();
+											String content = _n.getTextContent();
+				                        	String[] words = content.split("(?i)\\<[^\\>]*\\>");
+				                        	String description = "";
+				                        	for (int k = 0; k < words.length; k++) {
+				                        		if (words[k].length() > 0) {
+				                        			description += words[k];
+				                        		}
+				                        	}
+				                        	description = description.trim();
 											bug.setDescription(description);
 											
 											if (stackTraceAnalysis) {

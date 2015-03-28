@@ -78,8 +78,6 @@ public class SourceFileCorpusCreator {
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		String productName = property.getProductName();
-		int totalCoupusCount = SourceFileDAO.INIT_TOTAL_COUPUS_COUNT;
-		double lengthScore = SourceFileDAO.INIT_LENGTH_SCORE;
 
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
@@ -95,7 +93,8 @@ public class SourceFileCorpusCreator {
 				}
 
 				sourceFileDAO.insertSourceFile(fileName, productName);
-				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus, totalCoupusCount, lengthScore);
+				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus,
+						SourceFileDAO.INIT_TOTAL_COUPUS_COUNT, SourceFileDAO.INIT_LENGTH_SCORE);
 				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());
 				count++;

@@ -29,9 +29,9 @@ public class EvaluationPropertyFactory {
 		
 		switch(productName) {
 		case Property.SWT:
-			alpha = 0.2;  
-			beta = 0.4;
-			pastDays = 30;
+			alpha = 0.24;  
+			beta = 0.1;
+			pastDays = 15;
 			repoDir = Property.SWT_REPO_DIR;
 			// for swt project ONLY
 			// There is a bug that opened at April of 2002

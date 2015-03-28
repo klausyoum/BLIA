@@ -95,7 +95,12 @@ public class Evaluator {
 				fixedFileVersionMap.put(fixedFile.getSourceFileVersionID(), fixedFile);
 			}
 			
-			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 10);
+			int limitedCount = 10;
+			
+			// test code
+			limitedCount = 30;
+			
+			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, limitedCount);
 			if (rankedValues == null) {
 				// TODO: Start from HERE!
 				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
@@ -119,6 +124,12 @@ public class Evaluator {
 						break;
 					} else if (j < 10) {
 						top10++;
+						System.out.printf("%s %s %d\n",
+								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						break;
+					}
+					// debug code
+					else if (j < limitedCount) {
 						System.out.printf("%s %s %d\n",
 								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;

@@ -5,6 +5,8 @@
 
 package edu.skku.selab.blp.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,18 +49,19 @@ public class Splitter
 			} else {
 				String word = wordBuffer.toString();
 				wordList.add(word);	// add full identifier
-				
-				String[] splitWords = StringUtils.splitByCharacterTypeCamelCase(word);
-				if (splitWords.length > 1) {
-					for (int i = 0; i < splitWords.length; i++) {
-						if (splitWords[i].length() == 0) {
-							System.out.println("Word: " + word);
-						} else {
-							wordList.add(splitWords[i]);
+
+				if (word.lastIndexOf("\'s") > 0) {
+					wordList.add(word.substring(0, word.lastIndexOf("\'s")));
+				} else if (!word.contains("\'")) { 	// except as like "I'll", "I've"		
+					String[] splitWords = StringUtils.splitByCharacterTypeCamelCase(word);
+					if (splitWords.length > 1) {
+						for (int i = 0; i < splitWords.length; i++) {
+							if (splitWords[i].length() > 0) {
+								wordList.add(splitWords[i]);
+							}
 						}
 					}
 				}
-				
 				wordBuffer = new StringBuffer();
 			}
 		}

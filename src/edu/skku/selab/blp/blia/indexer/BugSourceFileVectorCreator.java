@@ -49,9 +49,10 @@ public class BugSourceFileVectorCreator {
 			// calculate term count, IDC, TF and IDF
 			bugID = bugsIter.next();
 			
-			if (bugID.contains("99145")) {
-				System.out.println("BugSourceFileVectorCreator.create(): " + bugID);
-			}
+			// debug code
+//			if (bugID.contains("99145")) {
+//				System.out.println("BugSourceFileVectorCreator.create(): " + bugID);
+//			}
 
 			Bug bug = bugs.get(bugID);
 			

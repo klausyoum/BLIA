@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import edu.skku.selab.blp.common.SourceFile;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
+import edu.skku.selab.blp.utils.Stem;
 
 /**
  * Copyright (c) 2014 by Software Engineering Lab. of Sungkyunkwan University. All Rights Reserved.
@@ -60,6 +62,26 @@ public class PrintTestResult {
 	 */
 	@After
 	public void tearDown() throws Exception {
+	}
+	
+	@Test
+	public void testStem() {
+		String word = "i'll";
+		assertEquals(word, Stem.stem(word));
+		
+		String[] results = StringUtils.splitByCharacterTypeCamelCase(word);
+		assertEquals("i", results[0]);
+		assertEquals("'", results[1]);
+		assertEquals("ll", results[2]);
+		
+		word = "'s";
+		assertEquals("", word.substring(0, word.lastIndexOf("\'s")));
+		
+		word = "tree's";
+		assertEquals("tree", word.substring(0, word.lastIndexOf("\'s")));
+		
+		word = "tree's's";
+		assertEquals("tree's", word.substring(0, word.lastIndexOf("\'s")));
 	}
 
 	@Test
