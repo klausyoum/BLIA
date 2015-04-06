@@ -49,12 +49,25 @@ public class GitCommitLogCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestConfiguration.setProperty();
+//		String productName = Property.ASPECTJ;
+//		String repoDir = Property.ASPECTJ_REPO_DIR;
+		
+		String productName = Property.ECLIPSE;
+		String repoDir = Property.ECLIPSE_REPO_DIR;
+		
+		String algorithmName = TestConfiguration.BLIA_ALGORITHM;
+		double alpha = 0.2;
+		double beta = 0.3;
+		int pastDays = 15;
+
+		
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays, repoDir); 
 		
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();
 		dbUtil.openConnetion(dbName);
-		dbUtil.initializeAllData();
+		boolean commitDataIncluded = true;
+		dbUtil.initializeAllData(commitDataIncluded);
 		dbUtil.closeConnection();
 	}
 
@@ -69,23 +82,29 @@ public class GitCommitLogCollectorTest {
 	public void verifyCollectCommitLog() throws Exception {
 		long startTime = System.currentTimeMillis();
 		
-		String repoDir = Property.ASPECTJ_REPO_DIR;
-		String productName = "aspectj";
-		Calendar since = new GregorianCalendar(2002, Calendar.DECEMBER, 1);
-		Calendar until = new GregorianCalendar(2010, Calendar.MARCH, 15);
-		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
-		
 //		String repoDir = Property.SWT_REPO_DIR;
 //		String productName = Property.getInstance().getProductName();
 //		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
 //		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
 //		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-//		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
+//		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
+		
+//		String repoDir = Property.getInstance().getRepoDir();
+//		String productName = Property.getInstance().getProductName();
+//		Calendar since = new GregorianCalendar(2002, Calendar.JULY, 1);
+//		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 15);
+//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+//		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
+		
+		String repoDir = Property.getInstance().getRepoDir();
+		String productName = Property.getInstance().getProductName();
+		Calendar since = new GregorianCalendar(2004, Calendar.AUGUST, 1);
+		Calendar until = new GregorianCalendar(2011, Calendar.MARCH, 31);
+		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of collectCommitLog() for %s: %d.%d sec\n", productName, elapsedTime / 1000, elapsedTime % 1000);		
 
 	}
-
 }

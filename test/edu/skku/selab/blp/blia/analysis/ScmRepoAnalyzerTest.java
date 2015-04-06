@@ -189,7 +189,7 @@ public class ScmRepoAnalyzerTest {
 		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
 		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime());
+		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
 
 		elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time2 of ScmRepoAnalyzer.analyze(): %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		

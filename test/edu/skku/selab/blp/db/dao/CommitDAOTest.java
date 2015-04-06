@@ -109,6 +109,7 @@ public class CommitDAOTest {
 		commitDAO.deleteAllCommitInfo();
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo1));
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo2));
+		assertEquals("CommitInfoCount is wrong.", 2, commitDAO.getCommitInfoCount(productName));
 		
 		CommitInfo returnedCommitInfo = commitDAO.getCommitInfo(commitID1, productName);
 		assertEquals("commitID1 is wrong.", commitID1, returnedCommitInfo.getCommitID());

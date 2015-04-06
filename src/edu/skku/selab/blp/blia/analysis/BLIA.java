@@ -82,7 +82,8 @@ public class BLIA {
 		String productName = Property.getInstance().getProductName();
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil);
+		boolean collectForcely = false;
+		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil, collectForcely);
 		System.out.printf("[DONE] Commit log collecting.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Bug-Source file vector creating.\n");

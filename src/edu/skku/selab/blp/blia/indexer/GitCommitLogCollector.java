@@ -43,7 +43,7 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 		this.productName = productName;
 	}
 	
-	public void collectCommitLog(Date since, Date until) throws Exception {
+	public void collectCommitLog(Date since, Date until, boolean collectForcely) throws Exception {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(new File(repoDir))
 		  .readEnvironment() // scan environment GIT_* variables
@@ -52,66 +52,73 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 		
 		CommitDAO commitDAO = new CommitDAO();
 		
-		Git git = new Git(repository);
-		Iterator<RevCommit> commitLogs = git.log().call().iterator();
+		if (collectForcely) {
+			commitDAO.deleteAllCommitInfo();
+			commitDAO.deleteAllCommitFileInfo();
+		}
 		
-		while (commitLogs.hasNext()) {
-			RevCommit currentCommit = commitLogs.next();
-			if (currentCommit.getParentCount() == 0) {
-				break;
-			}
-			RevCommit parentCommit = currentCommit.getParent(0);
+		if (commitDAO.getCommitInfoCount(productName) == 0) {
+			Git git = new Git(repository);
+			Iterator<RevCommit> commitLogs = git.log().call().iterator();
 			
-			// prepare the two iterators to compute the diff between
-			ObjectReader reader = repository.newObjectReader();
-			CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
-			oldTreeIter.reset(reader, parentCommit.getTree().getId());
-			CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-			newTreeIter.reset(reader, currentCommit.getTree().getId());
+			while (commitLogs.hasNext()) {
+				RevCommit currentCommit = commitLogs.next();
+				if (currentCommit.getParentCount() == 0) {
+					break;
+				}
+				RevCommit parentCommit = currentCommit.getParent(0);
+				
+				// prepare the two iterators to compute the diff between
+				ObjectReader reader = repository.newObjectReader();
+				CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
+				oldTreeIter.reset(reader, parentCommit.getTree().getId());
+				CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+				newTreeIter.reset(reader, currentCommit.getTree().getId());
 
-			long timestamp = (long) currentCommit.getCommitTime() * 1000;
-			Date commitDate = new Date(timestamp);
+				long timestamp = (long) currentCommit.getCommitTime() * 1000;
+				Date commitDate = new Date(timestamp);
 
-			if (commitDate.after(until)) {
-				continue;
-			}
-			
-			if (commitDate.before(since)) {
-				break;
-			}
-			
-			CommitInfo commitInfo = new CommitInfo();
-			commitInfo.setCommitID(currentCommit.getId().name());
-			commitInfo.setCommitter(currentCommit.getCommitterIdent().getName());
-			commitInfo.setMessage(currentCommit.getShortMessage());
-			commitInfo.setCommitDate(commitDate);
-			commitInfo.setProductName(productName);
+				if (commitDate.after(until)) {
+					continue;
+				}
+				
+				if (commitDate.before(since)) {
+					break;
+				}
+				
+				CommitInfo commitInfo = new CommitInfo();
+				commitInfo.setCommitID(currentCommit.getId().name());
+				commitInfo.setCommitter(currentCommit.getCommitterIdent().getName());
+				commitInfo.setMessage(currentCommit.getShortMessage());
+				commitInfo.setCommitDate(commitDate);
+				commitInfo.setProductName(productName);
 
-//			System.out.printf("Committer: %s, Time: %s, Msg: %s\n",
-//					commitInfo.getCommitter(),
-//					commitInfo.getCommitDateString(), 
-//					commitInfo.getMessage());
-//			System.out.printf(">> Commit ID: %s\n", commitInfo.getCommitID());
-			
-			// finally get the list of changed files
-			List<DiffEntry> diffs = new Git(repository).diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
-			for (DiffEntry entry : diffs) {
-				int commitType = convertCommitType(entry.getChangeType());
-				String updatedFileName = entry.getPath(DiffEntry.Side.NEW);
-			
-				// ONLLY java files added to save computing time and space
-				if (updatedFileName.contains(".java")) {
-					commitInfo.addCommitFile(commitType, updatedFileName);
-	//				System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
+				System.out.printf("Committer: %s, Time: %s, Msg: %s\n",
+						commitInfo.getCommitter(),
+						commitInfo.getCommitDateString(), 
+						commitInfo.getMessage());
+				System.out.printf(">> Commit ID: %s\n", commitInfo.getCommitID());
+				
+				// finally get the list of changed files
+				List<DiffEntry> diffs = new Git(repository).diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
+				for (DiffEntry entry : diffs) {
+					int commitType = convertCommitType(entry.getChangeType());
+					String updatedFileName = entry.getPath(DiffEntry.Side.NEW);
+				
+					// ONLLY java files added to save computing time and space
+					if (updatedFileName.contains(".java")) {
+						commitInfo.addCommitFile(commitType, updatedFileName);
+						System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
+					}
+				}
+				
+				if (commitInfo.getAllCommitFilesWithoutCommitType().size() > 0) {
+					commitDAO.insertCommitInfo(commitInfo);
 				}
 			}
-			
-			if (commitInfo.getAllCommitFilesWithoutCommitType().size() > 0) {
-				commitDAO.insertCommitInfo(commitInfo);
-			}
-		}
 
-		repository.close();
+			repository.close();
+		}
 	}
 	
 	private int convertCommitType(ChangeType changeType) {

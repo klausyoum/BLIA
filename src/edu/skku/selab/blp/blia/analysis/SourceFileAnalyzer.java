@@ -235,7 +235,8 @@ public class SourceFileAnalyzer {
 		
 		Iterator<String> sourceFileVersionIDIter = sourceFileVersionIDs.keySet().iterator();
 		while(sourceFileVersionIDIter.hasNext()) {
-			int sourceFileVersionID = sourceFileVersionIDs.get(sourceFileVersionIDIter.next());
+			String sourceFileName = sourceFileVersionIDIter.next();
+			int sourceFileVersionID = sourceFileVersionIDs.get(sourceFileName);
 
 			double vsmScore = 0.0;
 			// corpus, analysisValue
@@ -299,15 +300,41 @@ public class SourceFileAnalyzer {
 						}
 					}
 					
-					if (sourceFileNormSet[i] != 0 && bugNormSet[j] != 0) {
-//						System.out.printf("cosineSimilarityScore: %f, sourceFileNormSet[%d]: %f, bugNormSet[%d]: %f\n",
-//								cosineSimilarityScore, i, sourceFileNormSet[i], j, bugNormSet[j]);
-						vsmScore += (cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j]));
+					if (cosineSimilarityScore != 0 && sourceFileNormSet[i] != 0 && bugNormSet[j] != 0) {
+						
+						// debug code
+						if (bug.getID().contains("59895")) {
+							if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
+									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
+									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
+								System.out.printf("source: %s, cosineScore: %f, sourceNormSet[%d]: %f, bugNormSet[%d]: %f, vsmScore: %f\n",
+										sourceFileName, cosineSimilarityScore, i, sourceFileNormSet[i], j, bugNormSet[j],
+										(cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j])));
+							}
+						}
+						
+						double weight = 1;
+						if (i == 3) {
+							weight = 0.5;
+						}
+						vsmScore += (cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j])) * weight;
 					}
+				}
+			}
+
+			// debug code
+			if (bug.getID().contains("59895")) {
+				if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
+						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
+						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
+					System.out.printf("source: %s, vsmScore: %f, LengthScore: %f, finalVsmScore: %f\n",
+							sourceFileName, vsmScore, sourceFileDAO.getLengthScore(sourceFileVersionID),
+							vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID));
 				}
 			}
 			
 			vsmScore = vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID);
+
 			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
 			integratedAnalysisValue.setBugID(bug.getID());
 			integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);

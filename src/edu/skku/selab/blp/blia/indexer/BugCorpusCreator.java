@@ -146,7 +146,7 @@ public class BugCorpusCreator {
 		}
 	}
 	
-    public ArrayList<String> extractClassName(String content) {
+    public ArrayList<String> extractClassName(String content, String bugID) {
 //        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
         String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*" +
         		"[a-zA-Z_<(][a-zA-Z0-9_\\-$>);/\\[]*" + "\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
@@ -163,7 +163,7 @@ public class BugCorpusCreator {
         		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
         	} else {
         		if (-1 == methodName.lastIndexOf(".")) {
-        			System.err.printf("[BugCorpusCreator.extractClassName()] Wrong stack trace: %s\n", foundLine);
+        			System.err.printf("[BugCorpusCreator.extractClassName()] BugID: %s, Wrong stack trace: %s\n", bugID, foundLine);
         		} else {
         			fileName = methodName.substring(0, methodName.lastIndexOf("."));
         		}
@@ -226,7 +226,7 @@ public class BugCorpusCreator {
 											bug.setDescription(description);
 											
 											if (stackTraceAnalysis) {
-												bug.setStackTraceClasses(extractClassName(bug.getDescription()));
+												bug.setStackTraceClasses(extractClassName(bug.getDescription(), bug.getID()));
 											}
 										}
 									}

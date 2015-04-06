@@ -102,7 +102,6 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, limitedCount);
 			if (rankedValues == null) {
-				// TODO: Start from HERE!
 				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
 				continue;
 			}
@@ -176,7 +175,6 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 0);
 			if (rankedValues == null) {
-				// TODO: Start from HERE!
 				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
 				continue;
 			}
@@ -224,7 +222,6 @@ public class Evaluator {
 			int numberOfPositiveInstances = 0;
 			ArrayList<IntegratedAnalysisValue> rankedValues = getRankedValues(bugID, 0);
 			if (rankedValues == null) {
-				// TODO: Start from HERE!
 				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
 				continue;
 			}

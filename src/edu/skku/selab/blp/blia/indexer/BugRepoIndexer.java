@@ -17,7 +17,7 @@ public class BugRepoIndexer {
 	 * @see edu.skku.selab.blia.indexer.IIndexer#createIndex()
 	 */
 	public void createIndex() {
-		// TODO Auto-generated method stub
+		// TODO Implement if this class is needed.
 
 	}
 

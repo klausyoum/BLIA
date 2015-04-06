@@ -182,6 +182,11 @@ public class DbUtil {
 	}
 	
 	public void initializeAllData() throws Exception {
+		boolean commitDataIncluded = true;
+		initializeAllData(commitDataIncluded);
+	}
+	
+	public void initializeAllData(boolean commitDataIncluded) throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		sourceFileDAO.deleteAllSourceFiles();
 		sourceFileDAO.deleteAllVersions();
@@ -199,14 +204,16 @@ public class DbUtil {
 		bugDAO.deleteAllBugFixedInfo();
 		bugDAO.deleteAllSimilarBugInfo();
 		
-		CommitDAO commitDAO = new CommitDAO();
-		commitDAO.deleteAllCommitInfo();
-		commitDAO.deleteAllCommitFileInfo();
+		if (commitDataIncluded) {
+			CommitDAO commitDAO = new CommitDAO();
+			commitDAO.deleteAllCommitInfo();
+			commitDAO.deleteAllCommitFileInfo();
+		}
 		
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
 	}
-	
+
 	public void initializeExperimentResultData() throws Exception {
 		ExperimentResultDAO experimentDAO = new ExperimentResultDAO();
 		experimentDAO.deleteAllExperimentResults();
@@ -227,8 +234,8 @@ public class DbUtil {
 		for (int i = 0; i < projectName.length; i++) {
 			dbUtil.openConnetion(projectName[i]);
 
-			dbUtil.dropAllAnalysisTables();
-			dbUtil.createAllAnalysisTables();
+//			dbUtil.dropAllAnalysisTables();
+//			dbUtil.createAllAnalysisTables();
 
 			dbUtil.initializeAllData();
 

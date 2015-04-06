@@ -148,6 +148,26 @@ public class CommitDAO extends BaseDAO {
 		return commitInfo;
 	}
 	
+	public int getCommitInfoCount(String productName) {
+		String sql = "SELECT count(COMM_ID) FROM COMM_INFO " + 
+				"WHERE PROD_NAME = ?";
+		
+		int commitInfoCount = 0;
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, productName);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				commitInfoCount = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return commitInfoCount;
+	}
+	
 	public ArrayList<CommitInfo> getAllCommitInfos(String productName) {
 		ArrayList<CommitInfo> allCommitInfos = null;
 		CommitInfo commitInfo = null;
@@ -216,7 +236,8 @@ public class CommitDAO extends BaseDAO {
 		        Matcher m = r.matcher(commitInfo.getMessage());
 
 		        if (m.find()) {
-		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
+		        	// debug code
+//		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
 					filteredCommitInfos.add(commitInfo);
 		        }
 			}

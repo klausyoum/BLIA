@@ -33,6 +33,7 @@ public class EvaluationPropertyFactory {
 			beta = 0.1;
 			pastDays = 15;
 			repoDir = Property.SWT_REPO_DIR;
+			
 			// for swt project ONLY
 			// There is a bug that opened at April of 2002
 			//   <bug id="14654" opendate="2002-04-25 13:35:00" fixdate="2007-04-09 11:23:00">
@@ -41,13 +42,16 @@ public class EvaluationPropertyFactory {
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ASPECTJ:
-			alpha = 0.5;  
-			beta = 0.4;
-			pastDays = 15;
+			alpha = 0.4;  
+			beta = 0.2;
+			pastDays = 50;
 			repoDir = Property.ASPECTJ_REPO_DIR;
+			
 			// for aspectj project ONLY
 			// Following bug is the oldest one.
 			//   <bug fixdate="2003-1-14 15:06:00" id="28919" opendate="2002-12-30 16:40:00">
+			// Following bug is the newest one.
+			//   <bug fixdate="2010-5-12 7:04:00" id="150271" opendate="2006-7-11 11:31:00">
 			since = new GregorianCalendar(2002, Calendar.JULY, 1);
 			until = new GregorianCalendar(2010, Calendar.MAY, 15);
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
@@ -70,9 +74,9 @@ public class EvaluationPropertyFactory {
 			pastDays = 15;
 			repoDir = Property.ECLIPSE_REPO_DIR;
 
-			// TODO: verify the period for eclipse
-			// for zxing project ONLY
-			since = new GregorianCalendar(2004, Calendar.APRIL, 1);
+			// for ecplise project ONLY
+			//   <bug id="76098" opendate="2004-10-12 12:29:00" fixdate="2004-10-12 17:56:00">
+			since = new GregorianCalendar(2004, Calendar.AUGUST, 1);
 			until = new GregorianCalendar(2011, Calendar.MARCH, 31);
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
