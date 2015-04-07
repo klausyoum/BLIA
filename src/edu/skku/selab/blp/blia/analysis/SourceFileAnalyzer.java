@@ -303,15 +303,15 @@ public class SourceFileAnalyzer {
 					if (cosineSimilarityScore != 0 && sourceFileNormSet[i] != 0 && bugNormSet[j] != 0) {
 						
 						// debug code
-						if (bug.getID().contains("59895")) {
-							if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
-									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
-									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
-								System.out.printf("source: %s, cosineScore: %f, sourceNormSet[%d]: %f, bugNormSet[%d]: %f, vsmScore: %f\n",
-										sourceFileName, cosineSimilarityScore, i, sourceFileNormSet[i], j, bugNormSet[j],
-										(cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j])));
-							}
-						}
+//						if (bug.getID().contains("59895")) {
+//							if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
+//									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
+//									sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
+//								System.out.printf("source: %s, cosineScore: %f, sourceNormSet[%d]: %f, bugNormSet[%d]: %f, vsmScore: %f\n",
+//										sourceFileName, cosineSimilarityScore, i, sourceFileNormSet[i], j, bugNormSet[j],
+//										(cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j])));
+//							}
+//						}
 						
 						double weight = 1;
 						if (i == 3) {

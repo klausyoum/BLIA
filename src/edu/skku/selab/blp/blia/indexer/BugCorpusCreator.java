@@ -216,6 +216,13 @@ public class BugCorpusCreator {
 										}
 										if (_n.getNodeName().equals("description")) {
 											String content = _n.getTextContent();
+											
+											// Extract class name before removement of HTML tag
+											if (stackTraceAnalysis) {
+												bug.setStackTraceClasses(extractClassName(content, bug.getID()));
+											}
+											
+											// to remove HTML tag
 				                        	String[] words = content.split("(?i)\\<[^\\>]*\\>");
 				                        	String description = "";
 				                        	for (int k = 0; k < words.length; k++) {
@@ -225,10 +232,6 @@ public class BugCorpusCreator {
 				                        	}
 				                        	description = description.trim();
 											bug.setDescription(description);
-											
-											if (stackTraceAnalysis) {
-												bug.setStackTraceClasses(extractClassName(bug.getDescription(), bug.getID()));
-											}
 										}
 									}
 								}

@@ -200,11 +200,22 @@ public class BugCorpusCreatorTest {
 
 		// Bug ID: 122580, Project: aspectj
 		bug.setID("122580");
-		description = "Stack Trace: " + 
+		
+		description = "Stack Trace: " +
 			"java.lang.IllegalArgumentException: null kind " +
 				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Lorg/aspectj/bridge/ISourceLocation;Ljava/lang/Throwable;[Lorg/aspectj/bridge/ISourceLocation;ZIII)V(Message.java:89)" +
 				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Lorg/aspectj/bridge/ISourceLocation;Ljava/lang/Throwable;[Lorg/aspectj/bridge/ISourceLocation;)V(Message.java:67)" +
-				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Ljava/lang/Throwable;Lorg/aspectj/bridge/ISourceLocation;)V(Message.java:110)";
+				" at org.aspectj.bridge.Message.&lt;init&gt;(Ljava/lang/String;Lorg/aspectj/bridge/IMessage$Kind;Ljava/lang/Throwable;Lorg/aspectj/bridge/ISourceLocation;)V(Message.java:110)" +
+				" at org.aspectj.bridge.MessageUtil.info(Ljava/lang/String;)Lorg/aspectj/bridge/IMessage;(MessageUtil.java:211)" +
+				" at org.aspectj.bridge.MessageUtil.info(Lorg/aspectj/bridge/IMessageHandler;Ljava/lang/String;)Z(MessageUtil.java:98)" +
+				" at org.aspectj.weaver.tools.WeavingAdaptor.info(Ljava/lang/String;)Z(WeavingAdaptor.java:343)" +
+				" at org.aspectj.weaver.tools.WeavingAdaptor.createMessageHandler()V(WeavingAdaptor.java:168)" +
+				" at org.aspectj.weaver.tools.WeavingAdaptor.&lt;init&gt;()V(WeavingAdaptor.java:80)" +
+				" at org.aspectj.weaver.loadtime.ClassLoaderWeavingAdaptor.&lt;init&gt;(Ljava/lang/ClassLoader;Lorg/aspectj/weaver/loadtime/IWeavingContext;)V(ClassLoaderWeavingAdaptor.java:70)" +
+				" at org.aspectj.weaver.loadtime.Aj$WeaverContainer.getWeaver(Ljava/lang/ClassLoader;Lorg/aspectj/weaver/loadtime/IWeavingContext;)Lorg/aspectj/weaver/tools/WeavingAdaptor;(Aj.java:94)" +
+				" at org.aspectj.weaver.loadtime.Aj.preProcess(Ljava/lang/String;[BLjava/lang/ClassLoader;)[B(Aj.java:61)" +
+				" at org.aspectj.weaver.loadtime.JRockitAgent.preProcess(Ljava/lang/ClassLoader;Ljava/lang/String;[B)[B(JRockitAgent.java:74)";
+
 		bug.setDescription(description);
 		classNames = bugCorpusCreator.extractClassName(bug.getDescription(), bug.getID());
 		for(int i = 0; i < classNames.size(); i++) {
@@ -213,6 +224,16 @@ public class BugCorpusCreatorTest {
 		assertEquals("org.aspectj.bridge.Message", classNames.get(0));
 		assertEquals("org.aspectj.bridge.Message", classNames.get(1));
 		assertEquals("org.aspectj.bridge.Message", classNames.get(2));
+		assertEquals("org.aspectj.bridge.MessageUtil", classNames.get(3));
+		assertEquals("org.aspectj.bridge.MessageUtil", classNames.get(4));
+		assertEquals("org.aspectj.weaver.tools.WeavingAdaptor", classNames.get(5));
+		assertEquals("org.aspectj.weaver.tools.WeavingAdaptor", classNames.get(6));
+		assertEquals("org.aspectj.weaver.tools.WeavingAdaptor", classNames.get(7));
+		assertEquals("org.aspectj.weaver.loadtime.ClassLoaderWeavingAdaptor", classNames.get(8));
+		assertEquals("org.aspectj.weaver.loadtime.Aj", classNames.get(9));
+		assertEquals("org.aspectj.weaver.loadtime.Aj", classNames.get(10));
+		assertEquals("org.aspectj.weaver.loadtime.JRockitAgent", classNames.get(11));
+		
 		
 		// Bug ID: 79757, Project: eclipse
 		bug.setID("79757");
