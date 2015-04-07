@@ -78,12 +78,6 @@ public class EvaluatorTest {
 	public void tearDown() throws Exception {
 	}
 	
-	private String getElapsedTimeSting(long startTime) {
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		String elpsedTimeString = (elapsedTime / 1000) + "." + (elapsedTime % 1000);
-		return elpsedTimeString;
-	}
-	
 	public void runBugLocator() throws Exception {
 		long startTime = System.currentTimeMillis();
 
@@ -91,51 +85,51 @@ public class EvaluatorTest {
 		System.out.printf("[STARTED] Source file corpus creating.\n");
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
-		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Source file index creating.\n");
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex(version);
 		sourceFileIndexer.computeLengthScore(version);
-		System.out.printf("[DONE] Source file index creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Source file index creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Source file vector creating.\n");
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create(version);
-		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		// Create SordtedID.txt
 		System.out.printf("[STARTED] Bug corpus creating.\n");
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnalysis = false;
 		bugCorpusCreator.create(stackTraceAnalysis);
-		System.out.printf("[DONE] Bug corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Bug corpus creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Bug-Source file vector creating.\n");
 		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
 		bugSourceFileVectorCreator.create(version);
-		System.out.printf("[DONE] Bug-Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Bug-Source file vector creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Source file analysis.\n");
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = false;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
-		System.out.printf("[DONE] Source file analysis.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Source file analysis.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 
 		System.out.printf("[STARTED] Bug vector creating.\n");
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
-		System.out.printf("[DONE] Bug vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Bug vector creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 
 		System.out.printf("[STARTED] Bug report analysis.\n");
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
-		System.out.printf("[DONE] Bug report analysis.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] Bug report analysis.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] BugLocator analysis.\n");
 		BugLocator bugLocator = new BugLocator();
 		bugLocator.analyze();
-		System.out.printf("[DONE] BugLocator analysis.(%s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] BugLocator analysis.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}
 	
 	@Test
@@ -179,12 +173,12 @@ public class EvaluatorTest {
 
 			System.out.printf("[STARTED] BLIA pre-anlaysis.\n");
 			blia.preAnalyze(useStrucrutedInfo, evaluationProperty.getSince().getTime(), evaluationProperty.getUntil().getTime());
-			System.out.printf("[DONE] BLIA pre-anlaysis.(Total %s sec)\n", getElapsedTimeSting(startTime));
+			System.out.printf("[DONE] BLIA pre-anlaysis.(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		}
 
 		System.out.printf("[STARTED] BLIA anlaysis.\n");
 		blia.analyze(version);
-		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}
 	
 	
@@ -214,7 +208,7 @@ public class EvaluatorTest {
 				evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
 		evaluator.evaluate();
 		
-		System.out.printf("[DONE] BLIA Evaluation once(Total %s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] BLIA Evaluation once(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}
 	
 	@Test
@@ -251,6 +245,6 @@ public class EvaluatorTest {
 			}
 		}
 		
-		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}	
 }

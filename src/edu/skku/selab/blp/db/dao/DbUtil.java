@@ -225,7 +225,8 @@ public class DbUtil {
 	public static void main(String[] args) throws Exception {
 		DbUtil dbUtil = new DbUtil();
 		
-		String projectName[] = { Property.ASPECTJ,
+		String projectName[] = {
+				Property.ASPECTJ,
 				Property.ECLIPSE,
 				Property.SWT,
 				Property.ZXING,
@@ -234,8 +235,8 @@ public class DbUtil {
 		for (int i = 0; i < projectName.length; i++) {
 			dbUtil.openConnetion(projectName[i]);
 
-//			dbUtil.dropAllAnalysisTables();
-//			dbUtil.createAllAnalysisTables();
+			dbUtil.dropAllAnalysisTables();
+			dbUtil.createAllAnalysisTables();
 
 			dbUtil.initializeAllData();
 

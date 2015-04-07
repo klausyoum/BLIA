@@ -22,7 +22,11 @@ public class TestConfiguration {
 	final static private String DEFAULT_PROJECT = Property.SWT;
 	final static private String DEFAULT_ALGORITHM = BLIA_ALGORITHM;
 	
-
+	public static String getElapsedTimeSting(long startTime) {
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		String elpsedTimeString = (elapsedTime / 1000) + "." + (elapsedTime % 1000);
+		return elpsedTimeString;
+	}
 	
 	public static void setProperty() {
 		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);

@@ -149,7 +149,8 @@ public class BugCorpusCreator {
     public ArrayList<String> extractClassName(String content, String bugID) {
 //        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
         String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*" +
-        		"[a-zA-Z_<(][a-zA-Z0-9_\\-$>);/\\[]*" + "\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
+        		"[a-zA-Z_<(][a-zA-Z0-9_\\-$>);/\\[]*" +
+        		"\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|[a-zA-Z_][a-zA-Z0-9_\\-]*\\.java\\((?i)inlined compiled code\\)|[a-zA-Z_][a-zA-Z0-9_\\-]*\\.java\\((?i)compiled code\\)|(?i)native method|(?i)unknown source)\\))";
         
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(content);

@@ -92,13 +92,19 @@ public class BugCorpusCreatorTest {
 	
 	@Test
 	public void verifyCreateWithStructuredSourceFileCorpusCreator() throws Exception {
+		long startTime = System.currentTimeMillis();
+
+		System.out.printf("[STARTED] StructuredSourceFileCorpusCreator.create()\n");
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
+		System.out.printf("[DONE] StructuredSourceFileCorpusCreator.create() (%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
+		System.out.printf("[STARTED] BugCorpusCreator.create()\n");
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnalysis = true;
 		bugCorpusCreator.create(stackTraceAnalysis);
+		System.out.printf("[DONE] BugCorpusCreator.create() (%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}
 	
 	@Test
@@ -207,5 +213,42 @@ public class BugCorpusCreatorTest {
 		assertEquals("org.aspectj.bridge.Message", classNames.get(0));
 		assertEquals("org.aspectj.bridge.Message", classNames.get(1));
 		assertEquals("org.aspectj.bridge.Message", classNames.get(2));
+		
+		// Bug ID: 79757, Project: eclipse
+		bug.setID("79757");
+		description = "!STACK 0 org.osgi.framework.BundleException: Exception in " +
+				"org.eclipse.debug.internal.ui.DebugUIPlugin.start() of bundle org.eclipse.debug.ui." +""
+						+ " at org.eclipse.osgi.framework.internal.core.BundleContextImpl.startActivator(BundleContextImpl.java:975)"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleContextImpl.start(BundleContextImpl.java:937)"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleHost.startWorker(BundleHost.java:421)"
+						+ " at org.eclipse.osgi.framework.internal.core.AbstractBundle.start(AbstractBundle.java:293)"
+						+ " at org.eclipse.core.runtime.adaptor.EclipseClassLoader.findLocalClass(EclipseClassLoader.java(Compiled Code))"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleLoader.findLocalClass(BundleLoader.java(Compiled Code))"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleLoader.requireClass(BundleLoader.java(Inlined Compiled Code))"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleLoader.findRequiredClass(BundleLoader.java(Compiled Code))"
+						+ " at org.eclipse.osgi.framework.internal.core.BundleLoader.findClass(BundleLoader.java(Compiled Code))"
+						+ " at org.eclipse.osgi.framework.adaptor.core.AbstractClassLoader.loadClass(AbstractClassLoader.java(Compiled Code))"
+						+ " at java.lang.ClassLoader.loadClass(ClassLoader.java(Compiled Code))"
+						+ " at org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil.getResourcesForBuildScope(ExternalToolsUtil.java:180)"
+						+ " at org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder.doBuildBasedOnScope(ExternalToolBuilder.java:120)";
+		bug.setDescription(description);
+		classNames = bugCorpusCreator.extractClassName(bug.getDescription(), bug.getID());
+		for(int i = 0; i < classNames.size(); i++) {
+			System.out.printf("%d: %s\n", i + 1, classNames.get(i));
+		}
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleContextImpl", classNames.get(0));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleContextImpl", classNames.get(1));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleHost", classNames.get(2));
+		assertEquals("org.eclipse.osgi.framework.internal.core.AbstractBundle", classNames.get(3));
+		assertEquals("org.eclipse.core.runtime.adaptor.EclipseClassLoader", classNames.get(4));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleLoader", classNames.get(5));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleLoader", classNames.get(6));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleLoader", classNames.get(7));
+		assertEquals("org.eclipse.osgi.framework.internal.core.BundleLoader", classNames.get(8));
+		assertEquals("org.eclipse.osgi.framework.adaptor.core.AbstractClassLoader", classNames.get(9));
+		assertEquals("java.lang.ClassLoader", classNames.get(10));
+		assertEquals("org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil", classNames.get(11));
+		assertEquals("org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder", classNames.get(12));
+		
 	}
 }

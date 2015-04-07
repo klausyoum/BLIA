@@ -185,7 +185,10 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			// TODO: check this code is valid for eclipse project
 			if (-1 != fixedFileName.lastIndexOf("org.eclipse")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse"), fixedFileName.length());
-			} else {
+			} else if (-1 != fixedFileName.lastIndexOf("org.osgi")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.osgi"), fixedFileName.length());
+			}
+			else {
 				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
 			}
 			break;
