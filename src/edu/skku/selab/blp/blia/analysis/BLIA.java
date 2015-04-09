@@ -173,8 +173,8 @@ public class BLIA {
 			double bugLocatorScore = (1 - alpha) * (vsmScore) + alpha * similarityScore;
 			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
 			
-			double bliaScore = (1 - alpha) * vsmScore + alpha * similarityScore + stackTraceScore;
-			if (bliaScore > 0) {
+			double bliaScore = bugLocatorScore + stackTraceScore;
+			if (bugLocatorScore > 0) {
 				bliaScore = (1 - beta) * bliaScore + beta * commitLogScore;
 			} else {
 				bliaScore = 0;

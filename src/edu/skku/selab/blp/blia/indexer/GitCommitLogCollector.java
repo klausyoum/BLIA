@@ -93,11 +93,12 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 				commitInfo.setCommitDate(commitDate);
 				commitInfo.setProductName(productName);
 
-				System.out.printf("Committer: %s, Time: %s, Msg: %s\n",
-						commitInfo.getCommitter(),
-						commitInfo.getCommitDateString(), 
-						commitInfo.getMessage());
-				System.out.printf(">> Commit ID: %s\n", commitInfo.getCommitID());
+				// debug code
+//				System.out.printf("Committer: %s, Time: %s, Msg: %s\n",
+//						commitInfo.getCommitter(),
+//						commitInfo.getCommitDateString(), 
+//						commitInfo.getMessage());
+//				System.out.printf(">> Commit ID: %s\n", commitInfo.getCommitID());
 				
 				// finally get the list of changed files
 				List<DiffEntry> diffs = new Git(repository).diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
