@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.blia.analysis;
 
 import java.io.BufferedReader;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -315,7 +315,7 @@ public class SourceFileAnalyzer {
 						
 						double weight = 1;
 						if (i == 3) {
-							weight = 0.5;
+							weight = 0.5;	// weight 0.3~0.5 is best for AspectJ
 						}
 						vsmScore += (cosineSimilarityScore / (sourceFileNormSet[i] * bugNormSet[j])) * weight;
 					}
@@ -323,17 +323,17 @@ public class SourceFileAnalyzer {
 			}
 
 			// debug code
-			if (bug.getID().contains("59895")) {
-				if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
-						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
-						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
-					System.out.printf("source: %s, vsmScore: %f, LengthScore: %f, finalVsmScore: %f\n",
-							sourceFileName, vsmScore, sourceFileDAO.getLengthScore(sourceFileVersionID),
-							vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID));
-				}
-			}
+//			if (bug.getID().contains("59895")) {
+//				if (sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjState.java") ||
+//						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildManager.java") ||
+//						sourceFileName.contains("org.aspectj.ajdt.internal.core.builder.AjBuildConfig.java")) {
+//					System.out.printf("source: %s, vsmScore: %f, LengthScore: %f, finalVsmScore: %f\n",
+//							sourceFileName, vsmScore, sourceFileDAO.getLengthScore(sourceFileVersionID),
+//							vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID));
+//				}
+//			}
 			
-			vsmScore = vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID);
+			vsmScore = vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID);		
 
 			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
 			integratedAnalysisValue.setBugID(bug.getID());

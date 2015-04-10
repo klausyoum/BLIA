@@ -142,12 +142,20 @@ public class BLIA {
 				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 				int updatedColumenCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
 				if (0 == updatedColumenCount) {
-					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+					System.err.printf("[ERROR] BLIA.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
+							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+
+					// remove following line after testing.
+//					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
 				
 				updatedColumenCount = integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
 				if (0 == updatedColumenCount) {
-					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+					System.err.printf("[ERROR] BLIA.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
+							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+
+					// remove following line after testing.
+//					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
 			}
 		}
@@ -179,6 +187,12 @@ public class BLIA {
 			} else {
 				bliaScore = 0;
 			}
+
+//			if (vsmScore > 0.5) {
+//				bliaScore = (1 - beta) * bliaScore + beta * commitLogScore;
+//			} else if (bugLocatorScore <= 0){
+//				bliaScore = 0;
+//			}
 			
 			integratedAnalysisValue.setBLIAScore(bliaScore);
 		}

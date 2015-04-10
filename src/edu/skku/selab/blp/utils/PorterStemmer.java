@@ -1,7 +1,10 @@
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3) 
-// Source File Name:   PorterStemmer.java
+/**
+ * Copyright (c) 2014 by Software Engineering Lab. of Sungkyunkwan University. All Rights Reserved.
+ * 
+ * Permission to use, copy, modify, and distribute this software and its documentation for
+ * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
+ * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
+ */
 
 package edu.skku.selab.blp.utils;
 

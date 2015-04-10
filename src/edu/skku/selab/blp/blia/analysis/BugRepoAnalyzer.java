@@ -92,7 +92,10 @@ public class BugRepoAnalyzer {
 						int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
 						
 						if (0 == updatedColumenCount) {
-							integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+							System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
+									integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+							// remove following line after testing.
+//							integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 						}
 					}
 				}

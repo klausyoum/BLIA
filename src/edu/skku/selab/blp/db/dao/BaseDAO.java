@@ -24,7 +24,7 @@ public class BaseDAO {
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
 	
-	final static int INVALID = -1;	
+	final public static int INVALID = -1;	
 	
 	public BaseDAO() throws Exception {
 		String dbName = Property.DEFAULT;	// default DB name

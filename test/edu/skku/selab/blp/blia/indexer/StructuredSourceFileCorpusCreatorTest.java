@@ -19,6 +19,7 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
+import edu.skku.selab.blp.evaluation.Evaluator;
 import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
@@ -46,12 +47,18 @@ public class StructuredSourceFileCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestConfiguration.setProperty();
-		
+		String productName = Property.ASPECTJ;
+		String algorithmName = Evaluator.ALG_BLIA;
+		double alpha = 0.2;
+		double beta = 0.2;
+		int pastDays = 20;
+		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays);
+
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();
+		boolean commitDataIncluded = false;
 		dbUtil.openConnetion(dbName);
-		dbUtil.initializeAllData();
+		dbUtil.initializeAllData(commitDataIncluded);
 		dbUtil.closeConnection();
 	}
 

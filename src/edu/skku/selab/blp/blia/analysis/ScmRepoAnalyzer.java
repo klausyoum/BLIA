@@ -85,8 +85,12 @@ public class ScmRepoAnalyzer {
 				int updatedColumenCount = integratedAnalysisDAO.updateCommitLogScore(analysisValue);
 				
 				if (0 == updatedColumenCount) {
-					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
+					System.err.printf("[ERROR] ScmRepoAnalyzer.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
+							analysisValue.getBugID(), analysisValue.getSourceFileVersionID());
+					// remove following line after testing.
+//					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
 				}
+
 			}
 		}
 	}

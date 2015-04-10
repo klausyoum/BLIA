@@ -20,6 +20,8 @@ import edu.skku.selab.blp.db.IntegratedAnalysisValue;
  *
  */
 public class IntegratedAnalysisDAO extends BaseDAO {
+	
+	public final static int INVALID_SCORE = -1;
 
 	/**
 	 * @throws Exception
