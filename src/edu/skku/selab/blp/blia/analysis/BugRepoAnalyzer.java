@@ -49,19 +49,30 @@ public class BugRepoAnalyzer {
 		computeSimilarity();
 
 		BugDAO bugDAO = new BugDAO();
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		
+		HashMap<String, HashSet<SourceFile>> fixedFilesMap = new HashMap<String, HashSet<SourceFile>>(); 
+		HashMap<String, HashSet<SimilarBugInfo>> similarBugInfosMap = new HashMap<String, HashSet<SimilarBugInfo>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug bug = bugs.get(i);
+			String bugID = bug.getID();
+			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			fixedFilesMap.put(bugID, fixedFiles);
+			
+			HashSet<SimilarBugInfo> similarBugInfos = bugDAO.getSimilarBugInfos(bugID);
+			similarBugInfosMap.put(bugID, similarBugInfos);
+		}
+
+		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();		
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);
 			String bugID = bug.getID();
 			HashMap<Integer, Double> similarScores = new HashMap<Integer, Double>(); 
-			HashSet<SimilarBugInfo> similarBugInfos = bugDAO.getSimilarBugInfos(bugID);
+			HashSet<SimilarBugInfo> similarBugInfos = similarBugInfosMap.get(bugID);
 			if (null != similarBugInfos) {
 				Iterator<SimilarBugInfo> similarBugInfosIter = similarBugInfos.iterator();
 				while (similarBugInfosIter.hasNext()) {
 					SimilarBugInfo similarBugInfo = similarBugInfosIter.next();
 					
-					HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(similarBugInfo.getSimilarBugID());
+					HashSet<SourceFile> fixedFiles = fixedFilesMap.get(similarBugInfo.getSimilarBugID());
 					if (null != fixedFiles) {
 						int fixedFilesCount = fixedFiles.size();
 						double singleValue = similarBugInfo.getSimilarityScore() / fixedFilesCount;
@@ -177,13 +188,8 @@ public class BugRepoAnalyzer {
 	 * @throws IOException
 	 */
 	public HashMap<String, ArrayList<AnalysisValue>> getVectors() throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();
-		
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
-		
+		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			bugVectors.put(bugID, bugDAO.getBugTermWeightList(bugID));			
