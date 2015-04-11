@@ -27,7 +27,6 @@ import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.buglocator.analysis.BugLocator;
 import edu.skku.selab.blp.buglocator.analysis.BugLocatorWithFile;
@@ -87,14 +86,10 @@ public class EvaluatorTest {
 		sourceFileCorpusCreator.create(version);
 		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
-		System.out.printf("[STARTED] Source file index creating.\n");
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		sourceFileIndexer.computeLengthScore(version);
-		System.out.printf("[DONE] Source file index creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
-		
 		System.out.printf("[STARTED] Source file vector creating.\n");
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
+		sourceFileVectorCreator.computeLengthScore(version);
 		sourceFileVectorCreator.create(version);
 		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		

@@ -20,7 +20,6 @@ import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
 import edu.skku.selab.blp.db.dao.BaseDAO;
@@ -75,10 +74,8 @@ public class SourceFileAnalyzerTest {
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
 		sourceFileVectorCreator.create(version);
 		
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
@@ -99,10 +96,8 @@ public class SourceFileAnalyzerTest {
 		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
 		sourceFileVectorCreator.create(version);
 		
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();

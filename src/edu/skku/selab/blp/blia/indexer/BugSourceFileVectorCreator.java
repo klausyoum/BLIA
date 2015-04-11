@@ -32,8 +32,8 @@ public class BugSourceFileVectorCreator {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		HashMap<String, Integer> sourceFileTermMap = sourceFileDAO.getTermMap(productName);
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer(); 
-		Hashtable<String, Integer> inverseDocCountTable = sourceFileIndexer.getInverseDocCountTable(version);
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator(); 
+		Hashtable<String, Integer> inverseDocCountTable = sourceFileVectorCreator.getInverseDocCountTable(version);
 		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
 		
 		String bugID = "";

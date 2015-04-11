@@ -18,7 +18,6 @@ import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
 import edu.skku.selab.blp.buglocator.indexer.SourceFileIndexerWithFile;
@@ -75,10 +74,8 @@ public class SourceFileVectorCreatorTest {
 		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
 		sourceFileVectorCreator.create(version);
 	}
 	
@@ -88,11 +85,22 @@ public class SourceFileVectorCreatorTest {
 		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
 		
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
 		sourceFileVectorCreator.create(version);
 	}
+	
+	@Test
+	public void verifyCreateIndex() throws Exception {
+		// Following function is needed to set file count for Property.getFileCount() at BugRepoAnalyzer
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
+		sourceFileCorpusCreator.create(version);
+		
+		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
+		sourceFileVectorCreator.computeLengthScore(version);
+	}
+
 
 }

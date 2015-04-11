@@ -19,7 +19,6 @@ import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.GitCommitLogCollector;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
@@ -54,16 +53,11 @@ public class BLIA {
 		}
 		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
 
-		System.out.printf("[STARTED] Source file index creating.\n");
-		startTime = System.currentTimeMillis();
-		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
-		sourceFileIndexer.createIndex(version);
-		sourceFileIndexer.computeLengthScore(version);
-		System.out.printf("[DONE] Source file index creating.(%s sec)\n", getElapsedTimeSting(startTime));
-		
 		System.out.printf("[STARTED] Source file vector creating.\n");
 		startTime = System.currentTimeMillis();
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
+		sourceFileVectorCreator.createIndex(version);
+		sourceFileVectorCreator.computeLengthScore(version);
 		sourceFileVectorCreator.create(version);
 		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		

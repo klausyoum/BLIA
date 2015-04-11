@@ -13,7 +13,6 @@ import edu.skku.selab.blp.blia.indexer.BugCorpusCreatorTest;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreatorTest;
 import edu.skku.selab.blp.blia.indexer.GitCommitLogCollectorTest;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreatorTest;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexderTest;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreatorTest;
 
 @RunWith(Suite.class)
@@ -23,8 +22,7 @@ import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreatorTest;
 	SourceFileAnalyzerTest.class,StackTraceAnalyzerTest.class,
 	BugCorpusCreatorTest.class, BugVectorCreatorTest.class,
 	GitCommitLogCollectorTest.class, 
-	SourceFileCorpusCreatorTest.class, SourceFileIndexderTest.class,
-	SourceFileVectorCreatorTest.class})
+	SourceFileCorpusCreatorTest.class, SourceFileVectorCreatorTest.class})
 public class BLIAAllTests {
 
 }

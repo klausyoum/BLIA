@@ -7,9 +7,12 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.SourceFileCorpus;
@@ -24,6 +27,216 @@ public class SourceFileVectorCreator {
     
     public SourceFileVectorCreator() {
     }
+    
+	/**
+	 * Calculate document counts from source code corpus data
+	 *  
+	 * @return Hashtable<String, Integer>	Corpus, Term Count 
+	 * @throws IOException
+	 */
+	public Hashtable<String, Integer> getInverseDocCountTable(String version) throws Exception {
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		String productName = Property.getInstance().getProductName();
+		HashMap<String, SourceFileCorpus> corpusSets = sourceFileDAO.getCorpusMap(productName, version);
+		
+		Iterator<String> fileNameIter = corpusSets.keySet().iterator();
+		Hashtable<String, Integer> countTable = new Hashtable<String, Integer>();
+		
+		while(fileNameIter.hasNext()) {
+			String fileName = fileNameIter.next();
+			String courpusSet = corpusSets.get(fileName).getContent();
+			
+			String corpuses[] = courpusSet.split(" ");
+			TreeSet<String> wordSet = new TreeSet<String>();
+			for (int i = 0; i < corpuses.length; i++) {
+				String word = corpuses[i];
+				if (!word.trim().equals("") && !wordSet.contains(word)) {
+					wordSet.add(word);
+				}
+			}
+			
+			Iterator<String> iterator = wordSet.iterator();
+			while (iterator.hasNext()) {
+				String word = iterator.next();
+				if (countTable.containsKey(word)) {
+					Integer count = (Integer) countTable.get(word) + 1;
+					countTable.remove(word);
+					countTable.put(word, count);
+				} else {
+					countTable.put(word, 1);
+				}
+			}
+		}
+		
+		return countTable;
+	}	
+	
+	/**
+	 * Compute length score of each source file then write them to LengthScore.txt file  
+	 * 
+	 * @throws Exception
+	 */
+	public void computeLengthScore(String version) throws Exception {
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		
+		int max = 0x80000000;
+		HashMap<String, Integer> lensTable = sourceFileDAO.getTotalCorpusLengths(productName, version);
+	
+		int count = 0;
+		int sum = 0;
+		int totalCorpusLength = 0;
+		Iterator<String> lensIter = lensTable.keySet().iterator();
+		while (lensIter.hasNext()) {
+			totalCorpusLength = lensTable.get(lensIter.next());
+			if (totalCorpusLength != 0) {
+				count++;
+			}
+			
+			if (totalCorpusLength > max) {
+				max = totalCorpusLength;
+			}
+			
+			sum += totalCorpusLength;
+		}
+		
+		double average = (double) sum / (double) count;
+		double squareDevi = 0.0D;
+		
+ 		lensIter = lensTable.keySet().iterator();
+		while (lensIter.hasNext()) {
+			totalCorpusLength = lensTable.get(lensIter.next());
+			if (0 != totalCorpusLength) {
+				squareDevi += ((double) totalCorpusLength - average) * ((double) totalCorpusLength - average);
+			}
+		}
+		
+		double standardDevi = Math.sqrt(squareDevi / (double) count);
+		double low = average - 3D * standardDevi;
+		double high = average + 3D * standardDevi;
+		int min = 0;
+		if (low > 0.0D) {
+			min = (int) low;
+		}
+		
+		lensIter = lensTable.keySet().iterator();
+		while (lensIter.hasNext()) {
+			String fileName = lensIter.next();
+			totalCorpusLength = lensTable.get(fileName);
+			double score = 0.0D;
+			double nor = getNormalizedValue(totalCorpusLength, high, min);
+			if (totalCorpusLength != 0) {
+				if ((double) totalCorpusLength > low && (double) totalCorpusLength < high) {
+					score = getLengthScore(nor);
+				} else if ((double) totalCorpusLength < low) {
+					score = 0.5D;
+				} else {
+					score = 1.0D;
+				}
+			} else {
+				score = 0.0D;
+			}
+			if (nor > 6D) {
+				nor = 6D;
+			}
+			if (score < 0.5D) {
+				score = 0.5D;
+			}
+			
+//			System.out.printf("FileName: %s, score: %f\n", fileName, score);
+			sourceFileDAO.updateLengthScore(productName, fileName, version, score);
+		}
+	}
+
+	/**
+	 * Get normalized value of x from Max. to min.
+	 * 
+	 * @param x
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	private double getNormalizedValue(int x, double max, double min) {
+		return (6F * (x - min)) / (max - min);
+	}
+
+	/**
+	 * Get length score of BugLocator
+	 * 
+	 * @param len
+	 * @return
+	 */
+	public double getLengthScore(double len) {
+		return Math.exp(len) / (1.0D + Math.exp(len));
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.skku.selab.blia.indexer.IIndexer#createIndex()
+	 */
+	public void createIndex(String version) throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		Hashtable<String, Integer> inverseDocCountTable = getInverseDocCountTable(version);
+		// set total word count
+		property.setWordCount(inverseDocCountTable.size());	
+		
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+
+		// insert corpus
+		String term = "";
+		Iterator<String> idcTableIter = inverseDocCountTable.keySet().iterator();
+		while (idcTableIter.hasNext()) {
+			term = idcTableIter.next();
+			sourceFileDAO.insertTerm(term, productName);
+		}
+		
+		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version);
+		
+		String fileName = "";
+		int totalCorpusCount = 0;
+		int termCount = 0;
+		int inverseDocCount = 0;
+		String corpusSet = "";
+		Iterator<String> corpusSetsIter = corpusMap.keySet().iterator();
+		while (corpusSetsIter.hasNext()) {
+			fileName = corpusSetsIter.next();
+			corpusSet = corpusMap.get(fileName).getContent();
+			
+//			System.out.printf("File Name: %s\n", fileName);
+//			System.out.printf("CorpusSet: %s\n", corpusSet);
+
+			// get term count
+			String termArray[] = corpusSet.split(" ");
+			totalCorpusCount = 0;
+			Hashtable<String, Integer> termTable = new Hashtable<String, Integer>();
+			for (int i = 0; i < termArray.length; i++) {
+				term = termArray[i];
+				if (!term.trim().equals("")) {
+					totalCorpusCount++;
+					if (termTable.containsKey(term)) {
+						Integer count = (Integer) termTable.get(term);
+						count = Integer.valueOf(count.intValue() + 1);
+						termTable.remove(term);
+						termTable.put(term, count);
+					} else {
+						termTable.put(term, Integer.valueOf(1));
+					}
+				}
+			}
+			
+			sourceFileDAO.updateTotalCoupusCount(productName, fileName, version, totalCorpusCount);
+
+			Iterator<String> termTableIter = termTable.keySet().iterator();
+			while (termTableIter.hasNext()) {
+				term = termTableIter.next();
+				termCount = termTable.get(term);
+				inverseDocCount = inverseDocCountTable.get(term).intValue();
+				AnalysisValue termWeight = new AnalysisValue(fileName, productName, version, term, termCount, inverseDocCount);
+				sourceFileDAO.insertTermWeight(termWeight);		
+			}
+		}
+	}
     
     public static HashSet<String> CorpusToSet(String corpus) {
     	HashSet<String> termSet = new HashSet<String>();

@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.SourceFileCorpus;

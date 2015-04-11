@@ -25,7 +25,6 @@ import edu.skku.selab.blp.blia.analysis.SourceFileAnalyzer;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileIndexer;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
