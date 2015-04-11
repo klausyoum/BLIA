@@ -115,12 +115,14 @@ public class SourceFileDAOTest {
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
 		double lengthScore3 = 0.738;
+		int sourceFileID = sourceFileDAO.getSourceFileID(fileName1, productName);
 		assertNotEquals("fileName1's corpusSet insertion failed!", BaseDAO.INVALID, 
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
+				sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus1, totalCorpusCount1, lengthScore1));
 		assertNotEquals("fileName1's corpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpus2, totalCorpusCount2, lengthScore2));
+				sourceFileDAO.insertCorpusSet(sourceFileID, version2, corpus2, totalCorpusCount2, lengthScore2));
+		sourceFileID = sourceFileDAO.getSourceFileID(fileName2, productName);
 		assertNotEquals("fileName2's corpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpus3, totalCorpusCount3, lengthScore3));
+				sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus3, totalCorpusCount3, lengthScore3));
 		
 		
 		assertEquals("Source file count is WRONG!", 2, sourceFileDAO.getSourceFileCount(productName, version1));
@@ -182,10 +184,12 @@ public class SourceFileDAOTest {
 		ArrayList<String> importedClasses = new ArrayList<String>();
 		importedClasses.add(importedClass1);
 		importedClasses.add(importedClass2);
-		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(fileName1, productName, version1, importedClasses));
+		int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName1, productName, version1);
+		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(sourceFileVersionID, importedClasses));
 		importedClasses = new ArrayList<String>();
 		importedClasses.add(importedClass3);
-		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(fileName2, productName, version1, importedClasses));
+		sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName2, productName, version1);
+		assertNotEquals("importedClass insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertImportedClasses(sourceFileVersionID, importedClasses));
 		
 		HashMap<String, ArrayList<String>> importedClassesMap = sourceFileDAO.getAllImportedClasses(productName, version1);
 		assertEquals("importedClassesMap size is wrong.", 2, importedClassesMap.size());

@@ -43,9 +43,8 @@ public class BLIA {
 	}
 	
 	public void preAnalyze(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
-		long startTime = System.currentTimeMillis();
-		
 		System.out.printf("[STARTED] Source file corpus creating.\n");
+		long startTime = System.currentTimeMillis();
 		if (!useStrucrutedInfo) {
 			SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
 			sourceFileCorpusCreator.create(version);
@@ -56,29 +55,34 @@ public class BLIA {
 		System.out.printf("[DONE] Source file corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
 
 		System.out.printf("[STARTED] Source file index creating.\n");
+		startTime = System.currentTimeMillis();
 		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer();
 		sourceFileIndexer.createIndex(version);
 		sourceFileIndexer.computeLengthScore(version);
 		System.out.printf("[DONE] Source file index creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Source file vector creating.\n");
+		startTime = System.currentTimeMillis();
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.create(version);
 		System.out.printf("[DONE] Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// Create SordtedID.txt
 		System.out.printf("[STARTED] Bug corpus creating.\n");
+		startTime = System.currentTimeMillis();
 		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
 		boolean stackTraceAnaysis = true;
 		bugCorpusCreator.create(stackTraceAnaysis);
 		System.out.printf("[DONE] Bug corpus creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Bug vector creating.\n");
+		startTime = System.currentTimeMillis();
 		BugVectorCreator bugVectorCreator = new BugVectorCreator();
 		bugVectorCreator.create();
 		System.out.printf("[DONE] Bug vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 
 		System.out.printf("[STARTED] Commit log collecting.\n");
+		startTime = System.currentTimeMillis();
 		String productName = Property.getInstance().getProductName();
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
@@ -87,12 +91,14 @@ public class BLIA {
 		System.out.printf("[DONE] Commit log collecting.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		System.out.printf("[STARTED] Bug-Source file vector creating.\n");
+		startTime = System.currentTimeMillis();
 		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
 		bugSourceFileVectorCreator.create(version);
 		System.out.printf("[DONE] Bug-Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// VSM_SCORE
 		System.out.printf("[STARTED] Source file analysis.\n");
+		startTime = System.currentTimeMillis();
 		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
 		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
@@ -100,18 +106,21 @@ public class BLIA {
 
 		// SIMI_SCORE
 		System.out.printf("[STARTED] Bug repository analysis.\n");
+		startTime = System.currentTimeMillis();
 		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
 		bugRepoAnalyzer.analyze();
 		System.out.printf("[DONE] Bug repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// STRACE_SCORE
 		System.out.printf("[STARTED] Stack-trace analysis.\n");
+		startTime = System.currentTimeMillis();
 		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
 		stackTraceAnalyzer.analyze();
 		System.out.printf("[DONE] Stack-trace analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// COMM_SCORE
 		System.out.printf("[STARTED] Scm repository analysis.\n");
+		startTime = System.currentTimeMillis();
 		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
 		scmRepoAnalyzer.analyze(version);
 		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));

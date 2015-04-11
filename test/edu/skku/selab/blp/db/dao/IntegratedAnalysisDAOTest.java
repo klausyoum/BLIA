@@ -81,10 +81,11 @@ public class IntegratedAnalysisDAOTest {
 		int totalCorpusCount2 = 34;
 		double lengthScore1 = 0.32;
 		double lengthScore2 = 0.1238;
+		int sourceFileID = sourceFileDAO.getSourceFileID(fileName1, productName);
 		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
+				sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus1, totalCorpusCount1, lengthScore1));
 		assertNotEquals("CorpusSet insertion failed!", BaseDAO.INVALID,
-				sourceFileDAO.insertCorpusSet(fileName1, productName, version2, corpus2, totalCorpusCount2, lengthScore2));
+				sourceFileDAO.insertCorpusSet(sourceFileID, version2, corpus2, totalCorpusCount2, lengthScore2));
 	}
 
 	/**

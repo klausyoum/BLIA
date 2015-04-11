@@ -16,6 +16,7 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Stem;
 import edu.skku.selab.blp.utils.Stopword;
@@ -92,10 +93,20 @@ public class SourceFileCorpusCreator {
 					fileName += ".java";
 				}
 
-				sourceFileDAO.insertSourceFile(fileName, productName);
-				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus,
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, productName);
+				if (BaseDAO.INVALID == sourceFileID) {
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", fileName);
+					throw new Exception(); 
+				}
+				
+				int sourceFileVersionID = sourceFileDAO.insertCorpusSet(sourceFileID, version, corpus,
 						SourceFileDAO.INIT_TOTAL_COUPUS_COUNT, SourceFileDAO.INIT_LENGTH_SCORE);
-				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
+				if (BaseDAO.INVALID == sourceFileVersionID) {
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", fileName);
+					throw new Exception(); 
+				}
+
+				sourceFileDAO.insertImportedClasses(sourceFileVersionID, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());
 				count++;
 			}

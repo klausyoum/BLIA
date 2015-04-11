@@ -16,6 +16,7 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Stem;
 import edu.skku.selab.blp.utils.Stopword;
@@ -98,11 +99,8 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
-		File afile[];
-		int j = (afile = files).length;
-		for (int i = 0; i < j; i++) {
-			File file = afile[i];
-			
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
 			SourceFileCorpus corpus = create(file);
 
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
@@ -119,10 +117,20 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 //					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
 					continue;
 				}
+
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, productName);
+				if (BaseDAO.INVALID == sourceFileID) {
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", fileName);
+					throw new Exception(); 
+				}
 				
-				sourceFileDAO.insertSourceFile(fileName, productName);
-				sourceFileDAO.insertCorpusSet(fileName, productName, version, corpus, totalCoupusCount, lengthScore);
-				sourceFileDAO.insertImportedClasses(fileName, productName, version, corpus.getImportedClasses());
+				int sourceFileVersionID = sourceFileDAO.insertCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
+				if (BaseDAO.INVALID == sourceFileVersionID) {
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", fileName);
+					throw new Exception(); 
+				}
+
+				sourceFileDAO.insertImportedClasses(sourceFileVersionID, corpus.getImportedClasses());
 				nameSet.add(corpus.getJavaFileFullClassName());
 				count++;
 			}
@@ -130,5 +138,4 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 
 		property.setFileCount(count);
 	}
-	
 }

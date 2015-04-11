@@ -276,8 +276,10 @@ public class BugDAOTest {
 		corpus1.setContent(corpusContent1);
 		SourceFileCorpus corpus2 = new SourceFileCorpus();
 		corpus2.setContent(corpusContent2);
-		assertNotEquals("fileName1's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName1, productName, version1, corpus1, totalCorpusCount1, lengthScore1));
-		assertNotEquals("fileName2's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(fileName2, productName, version1, corpus2, totalCorpusCount2, lengthScore2));
+		int sourceFileID = sourceFileDAO.getSourceFileID(fileName1, productName);				
+		assertNotEquals("fileName1's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus1, totalCorpusCount1, lengthScore1));
+		sourceFileID = sourceFileDAO.getSourceFileID(fileName2, productName);
+		assertNotEquals("fileName2's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus2, totalCorpusCount2, lengthScore2));
 		
 		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName1, version1, productName));
 		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName2, version1, productName));

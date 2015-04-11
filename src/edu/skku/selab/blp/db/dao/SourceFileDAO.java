@@ -49,6 +49,10 @@ public class SourceFileDAO extends BaseDAO {
 			e.printStackTrace();
 		}
 		
+		if (INVALID != returnValue) {
+			returnValue = getSourceFileID(fileName, productName);
+		} 
+
 		return returnValue;
 	}
 	
@@ -176,6 +180,28 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		return returnValue;	
 	}
+	
+	public int getSourceFileVersionID(int sourceFileID, String version) {
+		int returnValue = INVALID;
+		String sql = "SELECT SF_VER_ID FROM SF_VER_INFO B " +
+				"WHERE SF_ID = ? AND VER = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, sourceFileID);
+			ps.setString(2, version);
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				returnValue = rs.getInt("SF_VER_ID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;	
+	}
+
 
 	
 	public int getSourceFileVersionID(String fileName, String productName, String version) {
@@ -250,16 +276,14 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		return sourceFileNames;	
 	}
-	
-	public int insertCorpusSet(String fileName, String productName, String version, SourceFileCorpus corpus, int totalCorpusCount, double lengthScore) {
-		HashMap<String, Integer> fileInfo = getSourceFiles(productName);
-		
+
+	public int insertCorpusSet(int sourceFileID, String version, SourceFileCorpus corpus, int totalCorpusCount, double lengthScore) {
 		String sql = "INSERT INTO SF_VER_INFO (SF_ID, VER, COR, CLS_COR, MTH_COR, VAR_COR, CMT_COR, TOT_CNT, LEN_SCORE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, fileInfo.get(fileName));
+			ps.setInt(1, sourceFileID);
 			ps.setString(2, version);
 			ps.setString(3, corpus.getContent());
 			ps.setString(4, corpus.getClassPart());
@@ -274,6 +298,10 @@ public class SourceFileDAO extends BaseDAO {
 			e.printStackTrace();
 		}
 		
+		if (INVALID != returnValue) {
+			returnValue = getSourceFileVersionID(sourceFileID, version);
+		} 
+
 		return returnValue;
 	}
 	
@@ -675,9 +703,7 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 	
-	public int insertImportedClasses(String fileName, String productName, String version, ArrayList<String> importedClasses) {
-		int sourceFileVersionID = this.getSourceFileVersionID(fileName, productName, version);
-		
+	public int insertImportedClasses(int sourceFileVersionID, ArrayList<String> importedClasses) {
 		String sql = "INSERT INTO SF_IMP_INFO (SF_VER_ID, IMP_CLASS) VALUES (?, ?)";
 		int returnValue = INVALID;
 		

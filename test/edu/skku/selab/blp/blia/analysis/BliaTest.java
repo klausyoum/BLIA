@@ -30,6 +30,7 @@ import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
+import edu.skku.selab.blp.evaluation.Evaluator;
 import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
@@ -57,12 +58,12 @@ public class BliaTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String projectName = Property.SWT;
+		String projectName = Property.ASPECTJ;
 		String algorithmName = "BLIA";
-		float alpha = 0.2f;
-		float beta = 0.5f;
-		int pastDate = 15;
-		String repoDir = Property.SWT_REPO_DIR;
+		double alpha = 0.41;
+		double beta = 0.13;
+		int pastDate = 60;
+		String repoDir = Property.ASPECTJ_REPO_DIR;
 		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate, repoDir);
 
 		DbUtil dbUtil = new DbUtil();
@@ -94,6 +95,34 @@ public class BliaTest {
 		blia.analyze(version);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
+		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);
+	}
+	
+	private String getElapsedTimeSting(long startTime) {
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		String elpsedTimeString = (elapsedTime / 1000) + "." + (elapsedTime % 1000);
+		return elpsedTimeString;
+	}
+	
+	@Test
+	public void verifyBLIAPerformance() throws Exception {
+		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+
+		BLIA blia = new BLIA();
+		boolean useStrucrutedInfo = true;
+		
+		// for AspectJ
+		Calendar since = new GregorianCalendar(2002, Calendar.JULY, 1);
+		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 15);
+		
+		System.out.printf("[STARTED] BLIA pre-analysis.\n");
+		long startTime = System.currentTimeMillis();
+		blia.preAnalyze(useStrucrutedInfo, since.getTime(), until.getTime());
+		System.out.printf("[DONE] BLIA pre-analysis.(%s sec)\n", getElapsedTimeSting(startTime));
+		
+		System.out.printf("[STARTED] BLIA analysis.\n");
+		startTime = System.currentTimeMillis();
+		blia.analyze(version);
+		System.out.printf("[DONE] BLIA analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 }
