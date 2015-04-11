@@ -30,6 +30,8 @@ public class Evaluator {
 	public final static String ALG_BLIA = "BLIA";
 	
 	private ExperimentResult experimentResult;
+	private ArrayList<Bug> bugs;
+	private HashMap<String, HashSet<SourceFile>> realFixedFilesMap; 
 	
 	/**
 	 * 
@@ -42,9 +44,22 @@ public class Evaluator {
 		experimentResult.setAlpha(alpha);
 		experimentResult.setBeta(beta);
 		experimentResult.setPastDays(pastDays);
+		bugs = null;
+		realFixedFilesMap = null;
 	}
 	
 	public void evaluate() throws Exception {
+		String productName = experimentResult.getProductName();
+		BugDAO bugDAO = new BugDAO();
+		bugs = bugDAO.getAllBugs(productName, true);
+		
+		realFixedFilesMap = new HashMap<String, HashSet<SourceFile>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			String bugID = bugs.get(i).getID();
+			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			realFixedFilesMap.put(bugID, fixedFiles);
+		}
+		
 		calculateTopN();
 		calculateMRR();
 		calulateMAP();
@@ -71,24 +86,20 @@ public class Evaluator {
 		int top5 = 0;
 		int top10 = 0;
 		
-		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 //		boolean isCounted = false;
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
-			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			HashSet<SourceFile> realFixedFiles = realFixedFilesMap.get(bugID);
 			// Exception handling
-			if (null == fixedFiles) {
+			if (null == realFixedFiles) {
 				continue;
 			}
 
 			HashSet<Integer> fixedFileVersionIDs = new HashSet<Integer>();
-			
-			// For test
 			HashMap<Integer, SourceFile> fixedFileVersionMap = new HashMap<Integer, SourceFile>();
 
-			Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
+			Iterator<SourceFile> fixedFilesIter = realFixedFiles.iterator();
 			while (fixedFilesIter.hasNext()) {
 				SourceFile fixedFile = fixedFilesIter.next();
 				fixedFileVersionIDs.add(fixedFile.getSourceFileVersionID());
@@ -153,14 +164,10 @@ public class Evaluator {
 	
 	private void calculateMRR() throws Exception {
 		double MRR = 0;
-		
-		String productName = experimentResult.getProductName();
-		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 		double sumOfRRank = 0;
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
-			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			HashSet<SourceFile> fixedFiles = realFixedFilesMap.get(bugID);
 			// Exception handling
 			if (null == fixedFiles) {
 				continue;
@@ -197,15 +204,12 @@ public class Evaluator {
 	
 	private void calulateMAP() throws Exception {
 		double MAP = 0;
-		String productName = experimentResult.getProductName();
-		BugDAO bugDAO = new BugDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
 		double sumOfAP = 0;
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			sumOfAP = 0;
 			String bugID = bugs.get(i).getID();
-			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			HashSet<SourceFile> fixedFiles = realFixedFilesMap.get(bugID);
 			// Exception handling
 			if (null == fixedFiles) {
 				continue;

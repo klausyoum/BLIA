@@ -109,7 +109,9 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 					// ONLLY java files added to save computing time and space
 					if (updatedFileName.contains(".java")) {
 						commitInfo.addCommitFile(commitType, updatedFileName);
-						System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
+						
+						// debug code
+//						System.out.printf("ChagngeType: %d, Path: %s\n", commitType, updatedFileName);
 					}
 				}
 				

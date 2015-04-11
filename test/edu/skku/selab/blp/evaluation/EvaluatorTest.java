@@ -187,8 +187,8 @@ public class EvaluatorTest {
 		
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
-		productName = Property.ASPECTJ;
-		productName = Property.ZXING;
+//		productName = Property.ASPECTJ;
+//		productName = Property.ZXING;
 //		productName = Property.ECLIPSE;
 		
 		long startTime = System.currentTimeMillis();
