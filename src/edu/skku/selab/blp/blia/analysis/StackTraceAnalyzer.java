@@ -42,6 +42,17 @@ public class StackTraceAnalyzer {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
+		HashMap<String, HashSet<String>> classNamesMap = new HashMap<String, HashSet<String>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug bug = bugs.get(i);
+			String version = bug.getVersion();
+			
+			if (!classNamesMap.containsKey(version)) {
+				HashSet<String> classNames = sourceFileDAO.getClassNames(productName, version);
+				classNamesMap.put(version, classNames);
+			}
+		}
+		
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);
 			
@@ -54,7 +65,7 @@ public class StackTraceAnalyzer {
 				continue;
 			}
 			
-			HashSet<String> classNames = sourceFileDAO.getClassNames(productName, version);
+			HashSet<String> classNames = classNamesMap.get(version);
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				int currentRank = j + 1;
 				
