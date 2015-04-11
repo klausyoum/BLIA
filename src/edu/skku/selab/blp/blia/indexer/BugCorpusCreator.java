@@ -217,6 +217,11 @@ public class BugCorpusCreator {
 										if (_n.getNodeName().equals("description")) {
 											String content = _n.getTextContent();
 											
+											content = content.replace("&amp;", "&");
+											content = content.replace("&quot;", "\"");
+											content = content.replace("&lt;", "<");
+											content = content.replace("&gt;", ">");
+											
 											// Extract class name before removement of HTML tag
 											if (stackTraceAnalysis) {
 												bug.setStackTraceClasses(extractClassName(content, bug.getID()));

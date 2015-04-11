@@ -124,10 +124,6 @@ public class Bug {
 	}
 	
 	public void setDescription(String description) {
-		description = description.replace("&quot;", "\"");
-		description = description.replace("&lt;", "<");
-		description = description.replace("&gt;", ">");
-		
 		this.description = description;
 	}
 	
