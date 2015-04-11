@@ -28,14 +28,20 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  *
  */
 public class ScmRepoAnalyzer {
+	private ArrayList<Bug> bugs;
 	
+	public ScmRepoAnalyzer() {
+		bugs = null;
+	}
+	
+    public ScmRepoAnalyzer(ArrayList<Bug> bugs) {
+    	this.bugs = bugs;
+    }
+    
 	public void analyze(String version) throws Exception {
 		// Do loop from the oldest bug,
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
-		BugDAO bugDAO = new BugDAO();
-		boolean orderedByFixedDate = false;
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
 		int pastDays = property.getPastDays();
 		
 		CommitDAO commitDAO = new CommitDAO();

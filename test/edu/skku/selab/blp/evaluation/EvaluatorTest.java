@@ -168,7 +168,8 @@ public class EvaluatorTest {
 
 			System.out.printf("[STARTED] BLIA pre-anlaysis.\n");
 			startTime = System.currentTimeMillis();
-			blia.preAnalyze(useStrucrutedInfo, evaluationProperty.getSince().getTime(), evaluationProperty.getUntil().getTime());
+			blia.prepareAnalysisData(useStrucrutedInfo, evaluationProperty.getSince().getTime(), evaluationProperty.getUntil().getTime());
+			blia.preAnalyze();
 			System.out.printf("[DONE] BLIA pre-anlaysis.(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		}
 
@@ -186,8 +187,8 @@ public class EvaluatorTest {
 		
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
-//		productName = Property.ASPECTJ;
-//		productName = Property.ZXING;
+		productName = Property.ASPECTJ;
+		productName = Property.ZXING;
 //		productName = Property.ECLIPSE;
 		
 		long startTime = System.currentTimeMillis();

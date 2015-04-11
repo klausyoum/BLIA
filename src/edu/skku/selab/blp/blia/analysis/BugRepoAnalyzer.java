@@ -28,7 +28,14 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  *
  */
 public class BugRepoAnalyzer {
+	private ArrayList<Bug> bugs;
+	
     public BugRepoAnalyzer() {
+    	bugs = null;
+    }
+    
+    public BugRepoAnalyzer(ArrayList<Bug> orderedBugs) {
+    	bugs = orderedBugs;
     }
 
 	/**
@@ -41,12 +48,8 @@ public class BugRepoAnalyzer {
 	public void analyze() throws Exception {
 		computeSimilarity();
 
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, true);
-		
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);
@@ -104,12 +107,7 @@ public class BugRepoAnalyzer {
 	}
 	
 	public void computeSimilarity() throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		boolean orderedByFixedDate = true;
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
-		
 		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
         for(int i = 0; i < bugs.size(); i++) {

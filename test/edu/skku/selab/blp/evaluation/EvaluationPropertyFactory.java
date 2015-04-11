@@ -43,7 +43,7 @@ public class EvaluationPropertyFactory {
 			break;
 		case Property.ASPECTJ:
 			alpha = 0.41;	// a = 0.41 & b = 0.13 is best maybe // 2015/04/09   
-			beta = 0.13;
+			beta = 0.16;
 			pastDays = 60;
 			repoDir = Property.ASPECTJ_REPO_DIR;
 			

@@ -41,7 +41,7 @@ public class BLIA {
 		return elpsedTimeString;
 	}
 	
-	public void preAnalyze(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
+	public void prepareAnalysisData(boolean useStrucrutedInfo, Date commitSince, Date commitUntil) throws Exception {
 		System.out.printf("[STARTED] Source file corpus creating.\n");
 		long startTime = System.currentTimeMillis();
 		if (!useStrucrutedInfo) {
@@ -89,11 +89,19 @@ public class BLIA {
 		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
 		bugSourceFileVectorCreator.create(version);
 		System.out.printf("[DONE] Bug-Source file vector creating.(%s sec)\n", getElapsedTimeSting(startTime));
-		
+	}
+	
+	public void preAnalyze() throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		BugDAO bugDAO = new BugDAO();
+		boolean orderedByFixedDate = true;
+		ArrayList<Bug> orderedBugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
+
 		// VSM_SCORE
 		System.out.printf("[STARTED] Source file analysis.\n");
-		startTime = System.currentTimeMillis();
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
+		long startTime = System.currentTimeMillis();
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer(orderedBugs);
 		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 		System.out.printf("[DONE] Source file analysis.(%s sec)\n", getElapsedTimeSting(startTime));
@@ -101,21 +109,21 @@ public class BLIA {
 		// SIMI_SCORE
 		System.out.printf("[STARTED] Bug repository analysis.\n");
 		startTime = System.currentTimeMillis();
-		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer(orderedBugs);
 		bugRepoAnalyzer.analyze();
 		System.out.printf("[DONE] Bug repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// STRACE_SCORE
 		System.out.printf("[STARTED] Stack-trace analysis.\n");
 		startTime = System.currentTimeMillis();
-		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer();
+		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer(orderedBugs);
 		stackTraceAnalyzer.analyze();
 		System.out.printf("[DONE] Stack-trace analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// COMM_SCORE
 		System.out.printf("[STARTED] Scm repository analysis.\n");
 		startTime = System.currentTimeMillis();
-		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
+		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer(orderedBugs);
 		scmRepoAnalyzer.analyze(version);
 		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}

@@ -136,7 +136,7 @@ public class BugDAO extends BaseDAO {
 	public ArrayList<Bug> getAllBugs(String productName, boolean orderedByFixedDate) {
 		ArrayList<Bug> bugs = new ArrayList<Bug>();
 		
-		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, VER FROM BUG_INFO " +
+		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO " +
 				"WHERE PROD_NAME = ? ";
 		
 		if (orderedByFixedDate) {
@@ -162,6 +162,9 @@ public class BugDAO extends BaseDAO {
 				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
+				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
+				bugCorpus.setSummaryCorpusNorm(rs.getDouble("SMR_COR_NORM"));
+				bugCorpus.setDecriptionCorpusNorm(rs.getDouble("DESC_COR_NORM"));
 				bug.setCorpus(bugCorpus);
 
 				bug.setTotalCorpusCount(rs.getInt("TOT_CNT"));

@@ -26,15 +26,21 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  */
 public class StackTraceAnalyzer {
 	private final static double DEFAULT_BOOST_SCORE = 0.1;
+	private ArrayList<Bug> bugs;
+	
+	public StackTraceAnalyzer() {
+		bugs = null;
+	}
+	
+    public StackTraceAnalyzer(ArrayList<Bug> bugs) {
+    	this.bugs = bugs;
+    }
 	
 	public void analyze() throws Exception {
-		BugDAO bugDAO = new BugDAO();
+		String productName = Property.getInstance().getProductName();
+		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		
-		// get bugs
-		String productName = Property.getInstance().getProductName();
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);

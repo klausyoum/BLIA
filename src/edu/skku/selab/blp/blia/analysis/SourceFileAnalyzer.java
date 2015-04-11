@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -34,7 +35,26 @@ import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
  *
  */
 public class SourceFileAnalyzer {
-    public SourceFileAnalyzer() {
+	private ArrayList<Bug> bugs;
+	private HashMap<String, Integer> sourceFileVersionIDs;
+	private HashMap<Integer, HashMap<String, AnalysisValue>> sourceFileAllTermMaps;
+	private HashMap<Integer, SourceFileCorpus> sourceFileCorpusMap;
+	private HashMap<Integer, Double> sourceFileLengthScoreMap;
+	
+	public SourceFileAnalyzer() {
+		bugs = null;
+		sourceFileVersionIDs = null;
+		sourceFileAllTermMaps = null;
+		sourceFileCorpusMap = null;
+		sourceFileLengthScoreMap = null;
+	}
+	
+    public SourceFileAnalyzer(ArrayList<Bug> bugs) {
+    	this.bugs = bugs;
+    	sourceFileVersionIDs = null;
+    	sourceFileAllTermMaps = null;
+    	sourceFileCorpusMap = null;
+    	sourceFileLengthScoreMap = null;
     }
 	
 	/**
@@ -43,12 +63,35 @@ public class SourceFileAnalyzer {
 	 * @see edu.skku.selab.blp.analysis.IAnalyzer#analyze()
 	 */
 	public void analyze(String version, boolean useStructuredInfo) throws Exception {
-		BugDAO bugDAO = new BugDAO();
-		HashMap<String, Bug> bugs = bugDAO.getBugs();
-		Iterator<Bug> bugsIter = bugs.values().iterator();
-		while (bugsIter.hasNext()) {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
+		sourceFileAllTermMaps = new HashMap<Integer, HashMap<String, AnalysisValue>>();
+		sourceFileCorpusMap = new HashMap<Integer, SourceFileCorpus>();
+		sourceFileLengthScoreMap = new HashMap<Integer, Double>();
+		
+		Iterator<String> sourceFileVersionIDIter = sourceFileVersionIDs.keySet().iterator();
+		while(sourceFileVersionIDIter.hasNext()) {
+			int sourceFileVersionID = sourceFileVersionIDs.get(sourceFileVersionIDIter.next());
+			
+			HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(sourceFileVersionID);
+			if (sourceFileTermMap == null) {
+				System.err.printf("Wrong source file version ID: %d\n", sourceFileVersionID);
+			}
+			sourceFileAllTermMaps.put(sourceFileVersionID, sourceFileTermMap);
+			
+			SourceFileCorpus corpus = sourceFileDAO.getCorpus(sourceFileVersionID);
+			sourceFileCorpusMap.put(sourceFileVersionID, corpus);
+			
+			double lengthScore = sourceFileDAO.getLengthScore(sourceFileVersionID);
+			sourceFileLengthScoreMap.put(sourceFileVersionID, lengthScore);
+		}
+
+		for (int i = 0; i < bugs.size(); i++) {
 			// calculate term count, IDC, TF and IDF
-			Bug bug = bugsIter.next();
+			Bug bug = bugs.get(i);
 
 			// Compute similarity between Bug report & source files
 			if (useStructuredInfo) {
@@ -59,120 +102,9 @@ public class SourceFileAnalyzer {
 		}
 	}
 	
-//	public void createVector(String version) throws Exception {
-//		BugDAO bugDAO = new BugDAO();
-//		HashMap<String, Bug> bugs = bugDAO.getBugs();
-//		Property property = Property.getInstance();
-//		String productName = property.getProductName();
-//		
-//		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-//		HashMap<String, Integer> sourceFileTermMap = sourceFileDAO.getTermMap(productName);
-//		
-//		SourceFileIndexer sourceFileIndexer = new SourceFileIndexer(); 
-//		Hashtable<String, Integer> inverseDocCountTable = sourceFileIndexer.getInverseDocCountTable(version);
-//		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
-//		
-//		String bugID = "";
-//		int totalTermCount = 0;
-//		int bugTermCount = 0;
-//		int inverseDocCount = 0;
-//		double tf = 0.0;
-//		double idf = 0.0;
-//		double termWeight = 0.0;
-//		String bugTerm = "";
-//		Iterator<String> bugsIter = bugs.keySet().iterator();
-//		while (bugsIter.hasNext()) {
-//			// calculate term count, IDC, TF and IDF
-//			bugID = bugsIter.next();
-//			
-////			if (bugID.equalsIgnoreCase("75739")) {
-//				Bug bug = bugs.get(bugID);
-//				
-//				String bugCorpusContent = bug.getCorpusContent();
-//				
-//				// get term count
-//				String bugTermArray[] = bugCorpusContent.split(" ");
-//				Hashtable<String, Integer> bugTermTable = new Hashtable<String, Integer>();
-//				for (int i = 0; i < bugTermArray.length; i++) {
-//					bugTerm = bugTermArray[i];
-//					if (!bugTerm.trim().equals("")) {
-//						if (bugTermTable.containsKey(bugTerm)) {
-//							Integer count = (Integer) bugTermTable.get(bugTerm);
-//							count = Integer.valueOf(count.intValue() + 1);
-//							bugTermTable.remove(bugTerm);
-//							bugTermTable.put(bugTerm, count);
-//						} else {
-//							bugTermTable.put(bugTerm, Integer.valueOf(1));
-//						}
-//					}
-//				}
-//				
-//				// calculate totalTermCount
-//				Iterator<String> bugTermTableIter = bugTermTable.keySet().iterator();
-//				while (bugTermTableIter.hasNext()) {
-//					bugTerm = bugTermTableIter.next();
-//					bugTermCount = bugTermTable.get(bugTerm);
-//					
-//					if (sourceFileTermMap.containsKey(bugTerm)) {
-//						totalTermCount += bugTermCount;
-//					}
-////						System.out.printf("Corpus: %s, termCount: %d\n", corpus, termCount);
-//				}
-//				
-//				bugDAO.updateTotalTermCount(productName, bugID, totalTermCount);
-////				System.out.printf("totalTermCount: %d\n", totalTermCount);
-//				
-//				double corpusNorm = 0.0D;
-//				double summaryCorpusNorm = 0.0D;
-//				double descriptionCorpusNorm = 0.0D;
-//
-//				HashSet<String> summaryTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getSummaryPart());
-//				HashSet<String> descriptionTermSet = SourceFileVectorCreator.CorpusToSet(bug.getCorpus().getDescriptionPart());
-//
-//				bugTermTableIter = bugTermTable.keySet().iterator();
-//				while (bugTermTableIter.hasNext()) {
-//					bugTerm = bugTermTableIter.next();
-//					if (sourceFileTermMap.containsKey(bugTerm)) {
-//						bugTermCount = bugTermTable.get(bugTerm);
-//						inverseDocCount = inverseDocCountTable.get(bugTerm).intValue();
-//						
-//						// calculate TF, IDF, Vector
-//						tf = getTfValue(bugTermCount, totalTermCount);
-//						idf = getIdfValue(inverseDocCount, fileCount);
-//						termWeight = tf * idf;
-//						double termWeightSquare = termWeight * termWeight;
-//						corpusNorm += termWeightSquare;
-//						
-//						if (summaryTermSet.contains(bugTerm)) {
-//							summaryCorpusNorm += termWeightSquare;
-//						}
-//
-//						if (descriptionTermSet.contains(bugTerm)) {
-//							descriptionCorpusNorm += termWeightSquare;
-//						}
-//						
-//						AnalysisValue bugSfTermWeight = new AnalysisValue(bugID, productName, bugTerm, bugTermCount, inverseDocCount, tf, idf);						
-//						bugDAO.insertBugSfTermWeight(bugSfTermWeight);
-//					}
-//				}
-//
-////				System.out.printf("word: %f\n", word);
-//				corpusNorm = Math.sqrt(corpusNorm);
-//				summaryCorpusNorm = Math.sqrt(summaryCorpusNorm);
-//				descriptionCorpusNorm = Math.sqrt(descriptionCorpusNorm);
-//
-//				bugDAO.updateNormValues(productName, bugID, corpusNorm, summaryCorpusNorm, descriptionCorpusNorm);					
-////			} 	// for testing
-//		}
-//	}
-	
 	private void computeSimilarity(Bug bug, String version) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		HashMap<String, Integer> sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
 		
 		BugDAO bugDAO = new BugDAO();
 		HashMap<String, AnalysisValue> bugSfTermMap = bugDAO.getSfTermMap(bug.getID());
@@ -182,11 +114,7 @@ public class SourceFileAnalyzer {
 			int sourceFileVersionID = sourceFileVersionIDs.get(sourceFileVersionIDIter.next());
 
 			// corpus, analysisValue
-			HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(sourceFileVersionID);
-			if (sourceFileTermMap == null) {
-//				System.err.printf("Wrong source file version ID: %d\n", sourceFileVersionID);
-				continue;
-			}
+			HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileAllTermMaps.get(sourceFileVersionID);
 			
 			double vsmScore = 0.0;
 			Iterator<String> sourceFileTermIter = sourceFileTermMap.keySet().iterator();
@@ -211,7 +139,7 @@ public class SourceFileAnalyzer {
 			double sourceFileNorm = sourceFileDAO.getNormValue(sourceFileVersionID);
 			double bugNorm = bugDAO.getNormValue(bug.getID());
 			vsmScore = (vsmScore / (sourceFileNorm * bugNorm));
-			vsmScore = vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID);
+			vsmScore = vsmScore * sourceFileLengthScoreMap.get(sourceFileVersionID);
 			
 			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
 			integratedAnalysisValue.setBugID(bug.getID());
@@ -222,13 +150,7 @@ public class SourceFileAnalyzer {
 	}
 	
 	private void computeSimilarityWithStructuredInfo(Bug bug, String version) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		HashMap<String, Integer> sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
-		
 		BugDAO bugDAO = new BugDAO();
 		HashMap<String, AnalysisValue> bugSfTermMap = bugDAO.getSfTermMap(bug.getID());
 		
@@ -239,13 +161,9 @@ public class SourceFileAnalyzer {
 
 			double vsmScore = 0.0;
 			// corpus, analysisValue
-			HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(sourceFileVersionID);
-			if (sourceFileTermMap == null) {
-//				System.err.printf("Wrong source file version ID: %d\n", sourceFileVersionID);
-				continue;
-			}
+			HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileAllTermMaps.get(sourceFileVersionID);
 			
-			SourceFileCorpus corpus = sourceFileDAO.getCorpus(sourceFileVersionID);
+			SourceFileCorpus corpus = sourceFileCorpusMap.get(sourceFileVersionID);
 			String[] sourceFileCorpusSet = new String[4];
 			sourceFileCorpusSet[0] = corpus.getClassPart();
 			sourceFileCorpusSet[1] = corpus.getMethodPart();
@@ -332,7 +250,7 @@ public class SourceFileAnalyzer {
 //				}
 //			}
 			
-			vsmScore = vsmScore * sourceFileDAO.getLengthScore(sourceFileVersionID);		
+			vsmScore = vsmScore * sourceFileLengthScoreMap.get(sourceFileVersionID);		
 
 			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
 			integratedAnalysisValue.setBugID(bug.getID());
@@ -341,26 +259,4 @@ public class SourceFileAnalyzer {
 			integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 		}
 	}
-
-//	/**
-//	 * Get term frequency value
-//	 * 
-//	 * @param freq
-//	 * @param totalTermCount
-//	 * @return
-//	 */
-//	private float getTfValue(int freq, int totalTermCount) {
-//		return (float) Math.log(freq) + 1.0F;
-//	}
-//
-//	/**
-//	 * Get inverse document frequency value
-//	 * 
-//	 * @param docCount
-//	 * @param totalCount
-//	 * @return
-//	 */
-//	private float getIdfValue(double docCount, double totalCount) {
-//		return (float) Math.log(totalCount / docCount);
-//	}
 }
