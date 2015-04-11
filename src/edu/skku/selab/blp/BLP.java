@@ -157,14 +157,33 @@ public class BLP {
 				isValid = false;
 			} else {
 				File dir = new File("tmp");
-				if (!dir.exists()) {
-					dir.mkdir();
+				if (dir.exists()) {
+					deleteDirectory(dir);
 				}
+				dir.mkdir();
+				
 				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, pastDate, repoDir, outputFile);
 			}
 		}
 		return isValid;
 	}
+	
+    private static boolean deleteDirectory(File path) {
+        if(!path.exists()) {
+            return false;
+        }
+         
+        File[] files = path.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                deleteDirectory(file);
+            } else {
+                file.delete();
+            }
+        }
+         
+        return path.delete();
+    }
 
 	private static void printProperty() {
 		Property prop = Property.getInstance();

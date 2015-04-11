@@ -7,6 +7,8 @@
  */
 package edu.skku.selab.blp.test.utils;
 
+import java.io.File;
+
 import edu.skku.selab.blp.Property;
 
 /**
@@ -54,8 +56,31 @@ public class TestConfiguration {
 			outputFile = "..\\Results\\" + outputFileName;
 		}
 		
+		File dir = new File(workDir);
+		if (dir.exists()) {
+			deleteDirectory(dir);
+		}
+		dir.mkdir();
+		
 		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
 	}
+	
+    private static boolean deleteDirectory(File path) {
+        if(!path.exists()) {
+            return false;
+        }
+         
+        File[] files = path.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                deleteDirectory(file);
+            } else {
+                file.delete();
+            }
+        }
+         
+        return path.delete();
+    }
 	
 	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays) {
 		setProperty(productName, algorithmName, alpha, beta, pastDays, "");
