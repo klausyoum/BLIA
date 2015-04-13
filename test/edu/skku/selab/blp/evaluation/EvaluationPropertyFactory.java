@@ -42,8 +42,8 @@ public class EvaluationPropertyFactory {
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ASPECTJ:
-			alpha = 0.41;	// a = 0.41 & b = 0.16 is best maybe // 2015/04/11
-			beta = 0.16;
+			alpha = 0.42;	// a = 0.42 & b = 0.14 is best maybe // 2015/04/12
+			beta = 0.14;
 			pastDays = 60;
 			repoDir = Property.ASPECTJ_REPO_DIR;
 			

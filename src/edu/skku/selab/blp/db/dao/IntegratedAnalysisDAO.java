@@ -182,7 +182,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			if (-1 != fixedFileName.lastIndexOf("org.aspectj")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.aspectj"), fixedFileName.length());
 			} else {
-				String log = "Fixed file name that is not source file: " + fixedFileName + "\n";
+				String log = "Commited file name that is not in source file DB: " + fixedFileName + "\n";
 				// debug code
 //				try {
 //					BufferedWriter writer = new BufferedWriter(new FileWriter("notFixedFiles.txt", true));
