@@ -55,6 +55,8 @@ public class BugCorpusCreator {
 //					System.out.println("stemWord: " + stemWord);
 //				}
 				
+				// Do NOT user Stopword.isKeyword() for BugCorpusCreator.
+				// Because bug report is not source code.
 				if (!Stopword.isEnglishStopword(stemWord)) {
 					contentBuf.append(stemWord);
 					contentBuf.append(" ");

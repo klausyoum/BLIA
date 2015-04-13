@@ -51,9 +51,9 @@ public class EvaluationPropertyFactory {
 			// Following bug is the oldest one.
 			//   <bug fixdate="2003-1-14 15:06:00" id="28919" opendate="2002-12-30 16:40:00">
 			// Following bug is the newest one.
-			//   <bug fixdate="2010-5-12 7:04:00" id="150271" opendate="2006-7-11 11:31:00">
+			//     <bug fixdate="2008-12-3 13:57:00" id="145693" opendate="2006-6-7 0:35:00">
 			since = new GregorianCalendar(2002, Calendar.JULY, 1);
-			until = new GregorianCalendar(2010, Calendar.MAY, 15);
+			until = new GregorianCalendar(2008, Calendar.DECEMBER, 15);
 			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ZXING:
