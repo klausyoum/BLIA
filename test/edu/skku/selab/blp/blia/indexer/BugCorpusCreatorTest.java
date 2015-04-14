@@ -57,12 +57,12 @@ public class BugCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String projectName = Property.ECLIPSE;
+		String projectName = Property.ASPECTJ;
 		String algorithmName = "BLIA";
 		double alpha = 0.2f;
 		double beta = 0.5f;
 		int pastDate = 50;
-		String repoDir = Property.ECLIPSE_REPO_DIR;
+		String repoDir = Property.ASPECTJ_REPO_DIR;
 		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate, repoDir);
 
 		DbUtil dbUtil = new DbUtil();

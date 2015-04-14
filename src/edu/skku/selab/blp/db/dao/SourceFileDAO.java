@@ -36,13 +36,14 @@ public class SourceFileDAO extends BaseDAO {
 	}
 	
 	public int insertSourceFile(String fileName, String productName) {
-		String sql = "INSERT INTO SF_INFO (SF_NAME, PROD_NAME) VALUES (?, ?)";
+		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME, PROD_NAME) VALUES (?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
+			ps.setString(2, fileName);
+			ps.setString(3, productName);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -51,6 +52,28 @@ public class SourceFileDAO extends BaseDAO {
 		
 		if (INVALID != returnValue) {
 			returnValue = getSourceFileID(fileName, productName);
+		} 
+
+		return returnValue;
+	}
+	
+	public int insertSourceFile(String fileName, String className, String productName) {
+		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME, PROD_NAME) VALUES (?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, fileName);
+			ps.setString(2, className);
+			ps.setString(3, productName);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (INVALID != returnValue) {
+			returnValue = getSourceFileID(fileName, className, productName);
 		} 
 
 		return returnValue;
@@ -160,6 +183,28 @@ public class SourceFileDAO extends BaseDAO {
 		return versions;	
 	}
 	
+	public String getSourceFilePath(String fileName, String productName) {
+		String sourceFilePath = null;
+		String sql = "SELECT SF_PATH FROM SF_INFO " +
+				"WHERE SF_NAME = ? AND PROD_NAME = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, fileName);
+			ps.setString(2, productName);
+			
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				sourceFilePath = rs.getString("SF_PATH");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFilePath;	
+	}
+	
 	public int getSourceFileID(String fileName, String productName) {
 		int returnValue = INVALID;
 		String sql = "SELECT SF_ID FROM SF_INFO " +
@@ -169,6 +214,28 @@ public class SourceFileDAO extends BaseDAO {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, productName);
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				returnValue = rs.getInt("SF_ID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnValue;	
+	}
+	
+	public int getSourceFileID(String fileName, String className, String productName) {
+		int returnValue = INVALID;
+		String sql = "SELECT SF_ID FROM SF_INFO " +
+				"WHERE SF_NAME = ? AND CLS_NAME = ? AND PROD_NAME = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, fileName);
+			ps.setString(2, className);
+			ps.setString(3, productName);
 			
 			rs = ps.executeQuery();
 			
@@ -202,8 +269,6 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 
-
-	
 	public int getSourceFileVersionID(String fileName, String productName, String version) {
 		int returnValue = INVALID;
 		String sql = "SELECT B.SF_VER_ID FROM SF_INFO A, SF_VER_INFO B " +
@@ -250,9 +315,36 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFileNames;	
 	}
 	
-	public HashSet<String> getClassNames(String productName, String version) {
-		HashSet<String> sourceFileNames = null;
-		String sql = "SELECT A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
+//	public HashSet<String> getClassNames(String productName, String version) {
+//		HashSet<String> sourceFileNames = null;
+//		String sql = "SELECT A.CLS_NAME FROM SF_INFO A, SF_VER_INFO B " +
+//				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
+//		
+//		try {
+//			ps = analysisDbConnection.prepareStatement(sql);
+//			ps.setString(1, productName);
+//			ps.setString(2, version);
+//			
+//			rs = ps.executeQuery();
+//			
+//			while (rs.next()) {
+//				if (null == sourceFileNames) {
+//					sourceFileNames = new HashSet<String>();
+//				}
+//				
+//				String fileName = rs.getString("CLS_NAME");
+//				String className = fileName.substring(0, fileName.lastIndexOf("."));
+//				sourceFileNames.add(className);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return sourceFileNames;	
+//	}
+	
+	public HashMap<String, String> getClassNames(String productName, String version) {
+		HashMap<String, String> sourceFileNames = null;
+		String sql = "SELECT A.CLS_NAME, A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
 				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
@@ -264,12 +356,13 @@ public class SourceFileDAO extends BaseDAO {
 			
 			while (rs.next()) {
 				if (null == sourceFileNames) {
-					sourceFileNames = new HashSet<String>();
+					sourceFileNames = new HashMap<String, String>();
 				}
 				
+				String classNameWithExtension = rs.getString("CLS_NAME");
+				String className = classNameWithExtension.substring(0, classNameWithExtension.lastIndexOf("."));
 				String fileName = rs.getString("SF_NAME");
-				String className = fileName.substring(0, fileName.lastIndexOf("."));
-				sourceFileNames.add(className);
+				sourceFileNames.put(className, fileName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

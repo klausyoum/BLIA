@@ -181,6 +181,74 @@ public class BugDAO extends BaseDAO {
 		}
 		return bugs;	
 	}
+
+	public int getBugCountWithFixedDate(String productName, String fixedDateString) {
+		String sql = "SELECT COUNT(BUG_ID) FROM BUG_INFO " +
+				"WHERE PROD_NAME = ? AND FIXED_DATE = ?";
+		
+		int count = 0;
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, fixedDateString);
+			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				count = rs.getInt(1); 
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return count;	
+	}
+	
+	public ArrayList<Bug> getPreviousFixedBugs(String productName, String fixedDateString, String exceptedBugID) {
+		ArrayList<Bug> bugs = new ArrayList<Bug>();
+		
+		String sql = "SELECT BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO " +
+				"WHERE PROD_NAME = ? AND FIXED_DATE <= ? AND BUG_ID != ? ORDER BY FIXED_DATE";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, productName);
+			ps.setString(2, fixedDateString);
+			ps.setString(3, exceptedBugID);
+			
+			Bug bug = null;
+			String bugID;
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				bug = new Bug();
+				bugID = rs.getString("BUG_ID"); 
+				bug.setID(bugID);
+				bug.setProductName(rs.getString("PROD_NAME"));
+				bug.setOpenDate(rs.getTimestamp("OPEN_DATE"));
+				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
+
+				BugCorpus bugCorpus = new BugCorpus();
+				bugCorpus.setContent(rs.getString("COR"));
+				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
+				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
+				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
+				bugCorpus.setSummaryCorpusNorm(rs.getDouble("SMR_COR_NORM"));
+				bugCorpus.setDecriptionCorpusNorm(rs.getDouble("DESC_COR_NORM"));
+				bug.setCorpus(bugCorpus);
+
+				bug.setTotalCorpusCount(rs.getInt("TOT_CNT"));
+				bug.setVersion(rs.getString("VER"));
+				bugs.add(bug);
+			}
+			
+			for (int i = 0; i < bugs.size(); i++) {
+				bug = bugs.get(i);
+				bug.setStackTraceClasses(getStackTraceClasses(bug.getID()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bugs;	
+	}
 	
 	public Bug getBug(String bugID, String productName) {
 		String sql = "SELECT OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, VER FROM BUG_INFO WHERE BUG_ID = ? AND PROD_NAME = ?";

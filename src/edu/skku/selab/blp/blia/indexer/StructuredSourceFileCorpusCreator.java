@@ -104,29 +104,42 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 			SourceFileCorpus corpus = create(file);
 
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
-				String fileName = corpus.getJavaFileFullClassName();
+				String className = corpus.getJavaFileFullClassName();
 				if (!corpus.getJavaFileFullClassName().endsWith(".java")) {
-					fileName += ".java";
+					className += ".java";
 				}
 				
-				String filePath = file.getAbsolutePath().replace("\\", ".");
-				filePath = filePath.replace("/", ".");
+				String fileName = "";
+				if (productName.contains(Property.ASPECTJ)) {
+					String absolutePath = file.getAbsolutePath();
+					String sourceCodeDirName = Property.getSourceCodeDirName(productName);
+					int index = absolutePath.indexOf(sourceCodeDirName);
+					fileName = absolutePath.substring(index + sourceCodeDirName.length() + 1, absolutePath.length());
+					fileName = fileName.replace("\\", "/");
 				
-				// Wrong file that has invalid package or path 
-				if (!filePath.endsWith(fileName)) {
-//					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
-					continue;
+//					System.out.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
+				} else {
+					fileName = file.getAbsolutePath().replace("\\", ".");
+					fileName = fileName.replace("/", ".");
+					
+					// Wrong file that has invalid package or path
+					if (!fileName.endsWith(className)) {
+						System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", fileName, className);
+						continue;
+					}
+					
+					fileName = className;
 				}
-
-				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, productName);
+				
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, className, productName);
 				if (BaseDAO.INVALID == sourceFileID) {
-					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", fileName);
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", className);
 					throw new Exception(); 
 				}
 				
 				int sourceFileVersionID = sourceFileDAO.insertCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
 				if (BaseDAO.INVALID == sourceFileVersionID) {
-					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", fileName);
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", className);
 					throw new Exception(); 
 				}
 

@@ -38,7 +38,7 @@ public class TestConfiguration {
 		String osName = System.getProperty("os.name");
 		String bugFilePath = "";
 		String bugFileName = getBugFileName(productName);
-		String sourceCodeDirName = getSourceCodeDirName(productName);
+		String sourceCodeDirName = Property.getSourceCodeDirName(productName);
 		String sourceCodePath = "";
 		String workDir = "";
 		String outputFileName = algorithmName + "-" + productName + "-" + Double.toString(alpha) + ".txt"; 
@@ -102,29 +102,5 @@ public class TestConfiguration {
 			bugFileName = "ZXingBugRepository.xml";
 		}
 		return bugFileName;
-	}
-	
-	private static String getSourceCodeDirName(String productName) {
-		String sourceCodeDirName;
-		
-		switch (productName) {
-		case Property.ASPECTJ:
-			sourceCodeDirName = Property.ASPECTJ_SOURCE_DIR_NAME;
-			break;
-		case Property.ECLIPSE:
-			sourceCodeDirName = Property.ECLIPSE_SOURCE_DIR_NAME;
-			break;
-		case Property.SWT:
-			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
-			break;
-		case Property.ZXING:
-			sourceCodeDirName = Property.ZXING_SOURCE_DIR_NAME;
-			break;
-		default:
-			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
-			break;
-		}
-		
-		return sourceCodeDirName;
 	}
 }

@@ -82,10 +82,8 @@ public class SourceFileCorpusCreator {
 
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
-		File afile[];
-		int j = (afile = files).length;
-		for (int i = 0; i < j; i++) {
-			File file = afile[i];
+		for (int i = 0; i < files.length; i++) {
+			File file = files[i];
 			SourceFileCorpus corpus = create(file);
 			if (corpus != null && !nameSet.contains(corpus.getJavaFileFullClassName())) {
 				String fileName = corpus.getJavaFileFullClassName();

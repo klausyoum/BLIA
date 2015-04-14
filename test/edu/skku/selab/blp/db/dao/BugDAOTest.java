@@ -42,7 +42,7 @@ public class BugDAOTest {
 	private String productName = "BLIA";
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";
-	private String fixedDateString3 = "2015-01-27 02:48:00";
+	private String fixedDateString3 = "2014-03-27 07:12:00";
 	private String corpusContent1 = "acc contain constant us defin access";
 	private String corpusContent2 = "element listen event event result";
 	private String corpusContent3 = "event blia result";
@@ -198,6 +198,34 @@ public class BugDAOTest {
 		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug.getStackTraceClasses().get(0));
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug.getVersion());
+		
+		assertTrue(2 == bugDAO.getBugCountWithFixedDate(productName, fixedDateString3));
+		ArrayList<Bug> bugList = bugDAO.getPreviousFixedBugs(productName, fixedDateString3, bugID3);
+		assertTrue(2 == bugList.size());
+		
+		foundBug1 = bugList.get(0);
+		assertEquals("bugID1 is wrong.", bugID1, foundBug1.getID());
+		assertEquals("productName is wrong.", productName, foundBug1.getProductName());
+		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug1.getFixedDateString());
+		bugCorpus = foundBug1.getCorpus();
+		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
+		assertEquals("summaryContent1 is wrong.", summaryContent1, bugCorpus.getSummaryPart());
+		assertEquals("descriptionContent1 is wrong.", descriptionContent1, bugCorpus.getDescriptionPart());
+		assertEquals("stackTraces1 is wrong.", stackTrace1, foundBug1.getStackTraceClasses().get(0));
+		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug1.getStackTraceClasses().get(1));
+		assertEquals("version is wrong.", version, foundBug1.getVersion());
+		
+		foundBug2 = bugList.get(1);
+		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
+		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
+		assertEquals("fixedDateString2 is wrong.", fixedDateString2, foundBug2.getFixedDateString());
+		bugCorpus = foundBug2.getCorpus();
+		assertEquals("corpusContent2 is wrong.", corpusContent2, bugCorpus.getContent());
+		assertEquals("summaryContent2 is wrong.", summaryContent2, bugCorpus.getSummaryPart());
+		assertEquals("descriptionContent2 is wrong.", descriptionContent2, bugCorpus.getDescriptionPart());
+		assertEquals("stackTrace3 is wrong.", stackTrace3, foundBug2.getStackTraceClasses().get(0));
+		assertEquals("stackTrace4 is wrong.", stackTrace4, foundBug2.getStackTraceClasses().get(1));
+		assertEquals("version is wrong.", version, foundBug2.getVersion());
 	}
 
 	@Test

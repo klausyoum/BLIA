@@ -42,13 +42,13 @@ public class StackTraceAnalyzer {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
-		HashMap<String, HashSet<String>> classNamesMap = new HashMap<String, HashSet<String>>();
+		HashMap<String, HashMap<String, String>> classNamesMap = new HashMap<String, HashMap<String, String>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);
 			String version = bug.getVersion();
 			
 			if (!classNamesMap.containsKey(version)) {
-				HashSet<String> classNames = sourceFileDAO.getClassNames(productName, version);
+				HashMap<String, String> classNames = sourceFileDAO.getClassNames(productName, version);
 				classNamesMap.put(version, classNames);
 			}
 		}
@@ -65,16 +65,17 @@ public class StackTraceAnalyzer {
 				continue;
 			}
 			
-			HashSet<String> classNames = classNamesMap.get(version);
+			HashMap<String, String> classNames = classNamesMap.get(version);
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				int currentRank = j + 1;
 				
 				String className = stackTraceClasses.get(j);
-				String fileName = className + ".java";
-				if (!stackTraceAnalysisValues.containsKey(className) && classNames.contains(className)) {
+				String fileName;
+				if (!stackTraceAnalysisValues.containsKey(className) && classNames.containsKey(className)) {
 					IntegratedAnalysisValue stackTraceAnalysisValue = new IntegratedAnalysisValue();
 					stackTraceAnalysisValue.setBugID(bug.getID());
 					
+					fileName = classNames.get(className);
 					int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
 					stackTraceAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
 					
@@ -91,7 +92,7 @@ public class StackTraceAnalyzer {
 			
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				String className = stackTraceClasses.get(j);
-				String fileName = className + ".java";
+				String fileName = classNames.get(className);
 				ArrayList<String> importedClasses = sourceFileDAO.getImportedClasses(productName, version, fileName);
 				
 				if (null == importedClasses) {
@@ -102,7 +103,7 @@ public class StackTraceAnalyzer {
 				// give boostscore to set C		
 				for (int k = 0; k < importedClasses.size(); k++) {
 					if (!stackTraceAnalysisValues.containsKey(className) &&
-							!importedClassAnalysisValues.containsKey(className) && classNames.contains(className)) {
+							!importedClassAnalysisValues.containsKey(className) && classNames.containsKey(className)) {
 						IntegratedAnalysisValue importedClassAnalysisValue = new IntegratedAnalysisValue();
 						importedClassAnalysisValue.setBugID(bug.getID());
 						

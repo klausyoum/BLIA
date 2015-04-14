@@ -288,7 +288,6 @@ public class SourceFileVectorCreator {
 				HashSet<String> variableTermSet = CorpusToSet(sourceFileCorpus.getVariablePart());
 				HashSet<String> commentTermSet = CorpusToSet(sourceFileCorpus.getCommentPart());				
 				
-				
 				Iterator<String> sourceFileTermIter = sourceFileTermMap.keySet().iterator();
 				while (sourceFileTermIter.hasNext()) {
 					String term = sourceFileTermIter.next();

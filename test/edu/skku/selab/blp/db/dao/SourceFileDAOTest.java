@@ -32,6 +32,13 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
 public class SourceFileDAOTest {
 	private String fileName1 = "test_10.java";
 	private String fileName2 = "test_11.java";
+	
+	private String fileNameWithPath1 = "project/src/test_12.java";
+	private String fileNameWithPath2 = "project/src/test_13.java";
+
+	private String className1 = "test_12.java";
+	private String className2 = "test_13.java";
+	
 	private String productName = "BLIA";
 	private String version1 = "v0.1";
 	private String releaseDate1 = "2004-10-18 17:40:00";
@@ -81,11 +88,17 @@ public class SourceFileDAOTest {
 		sourceFileDAO.deleteAllSourceFiles();
 		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1, productName));
 		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2, productName));
-		
+		assertNotEquals("fileNameWithPath1 insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertSourceFile(fileNameWithPath1, className1, productName));
+		assertNotEquals("fileNameWithPath2 insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertSourceFile(fileNameWithPath2, className2, productName));
+
 		HashMap<String, Integer> fileInfo = sourceFileDAO.getSourceFiles(productName);
-		assertEquals("fileInfo size is wrong.", 2, fileInfo.size());
+		assertEquals("fileInfo size is wrong.", 4, fileInfo.size());
 		assertNotNull("fileName1 can't be found.", fileInfo.get(fileName1));
 		assertNotNull("fileName2 can't be found.", fileInfo.get(fileName2));
+		assertNotNull("fileNameWithPath1 can't be found.", fileInfo.get(fileNameWithPath1));
+		assertNotNull("fileNameWithPath2 can't be found.", fileInfo.get(fileNameWithPath2));
 		
 		sourceFileDAO.deleteAllVersions();
 		assertNotEquals("version1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version1, releaseDate1));
@@ -123,10 +136,20 @@ public class SourceFileDAOTest {
 		sourceFileID = sourceFileDAO.getSourceFileID(fileName2, productName);
 		assertNotEquals("fileName2's corpusSet insertion failed!", BaseDAO.INVALID,
 				sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus3, totalCorpusCount3, lengthScore3));
-		
+		sourceFileID = sourceFileDAO.getSourceFileID(fileNameWithPath1, productName);
+		assertNotEquals("fileNameWithPath1's corpusSet insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertCorpusSet(sourceFileID, version2, corpus3, totalCorpusCount3, lengthScore3));
+		sourceFileID = sourceFileDAO.getSourceFileID(fileNameWithPath2, productName);
+		assertNotEquals("fileNameWithPath2's corpusSet insertion failed!", BaseDAO.INVALID,
+				sourceFileDAO.insertCorpusSet(sourceFileID, version2, corpus3, totalCorpusCount3, lengthScore3));		
 		
 		assertEquals("Source file count is WRONG!", 2, sourceFileDAO.getSourceFileCount(productName, version1));
-		assertEquals("Source file count is WRONG!", 1, sourceFileDAO.getSourceFileCount(productName, version2));
+		assertEquals("Source file count is WRONG!", 3, sourceFileDAO.getSourceFileCount(productName, version2));
+		
+		HashMap<String, String> classNames = sourceFileDAO.getClassNames(productName, version2);
+		assertTrue(classNames.containsKey(fileName1.substring(0, fileName1.indexOf(".java"))));
+		assertTrue(classNames.containsKey(className1.substring(0, className1.indexOf(".java"))));
+		assertTrue(classNames.containsKey(className2.substring(0, className2.indexOf(".java"))));
 		
 		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version1);
 		assertEquals("corpusSets size is wrong.", 2, corpusMap.size());

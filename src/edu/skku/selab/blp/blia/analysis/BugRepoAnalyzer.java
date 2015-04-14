@@ -121,12 +121,26 @@ public class BugRepoAnalyzer {
 		BugDAO bugDAO = new BugDAO();
 		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
+		String productName = Property.getInstance().getProductName();
+		
         for(int i = 0; i < bugs.size(); i++) {
-        	String firstBugID = bugs.get(i).getID();
+        	Bug bug = bugs.get(i);
+        	String firstBugID = bug.getID();
         	ArrayList<AnalysisValue> firstBugVector = bugVectors.get(firstBugID);
         	
-            for(int j = 0; j < i; j++) {
-            	String secondBugID = bugs.get(j).getID();
+        	String fixedDateString = bug.getFixedDateString();
+        	ArrayList<Bug> targetBugs = null;
+        	int targetIndex = 0;
+        	if (1 < bugDAO.getBugCountWithFixedDate(productName, fixedDateString)) {
+        		targetBugs = bugDAO.getPreviousFixedBugs(productName, fixedDateString, firstBugID);
+        		targetIndex = targetBugs.size();
+        	} else {
+        		targetBugs = bugs;
+        		targetIndex = i;
+        	}
+        	
+            for(int j = 0; j < targetIndex; j++) {
+            	String secondBugID = targetBugs.get(j).getID();
             	ArrayList<AnalysisValue> secondBugVector = bugVectors.get(secondBugID);
             	
             	double similarityScore = getCosineValue(firstBugVector, secondBugVector);
