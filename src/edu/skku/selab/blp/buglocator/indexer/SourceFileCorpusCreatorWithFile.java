@@ -101,7 +101,7 @@ public class SourceFileCorpusCreatorWithFile {
 		for (int i = 0; i < j; i++) {
 			String word = as[i];
 			String stemWord = Stem.stem(word.toLowerCase());
-			if (!Stopword.isKeyword(word) && !Stopword.isEnglishStopword(word)) {
+			if (!Stopword.isJavaKeyword(word) && !Stopword.isEnglishStopword(word)) {
 				contentBuf.append(stemWord);
 				contentBuf.append(" ");
 			}

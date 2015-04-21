@@ -45,19 +45,19 @@ public class BugCorpusCreator {
 	private String stemContent(String content[]) {
 		StringBuffer contentBuf = new StringBuffer();
 		for (int i = 0; i < content.length; i++) {
-			String word = content[i];
+			String word = content[i].toLowerCase();
 			if (word.length() > 0) {
-				String stemWord = Stem.stem(word.toLowerCase());
+				String stemWord = Stem.stem(word);
 				
 				// debug code
-//				System.out.printf("%d stemWord: %s\n", i, stemWord);
-//				if (stemWord.contains("keys")) {
-//					System.out.println("stemWord: " + stemWord);
-//				}
+//					System.out.printf("%d stemWord: %s\n", i, stemWord);
+//					if (stemWord.contains("keys")) {
+//						System.out.println("stemWord: " + stemWord);
+//					}
 				
 				// Do NOT user Stopword.isKeyword() for BugCorpusCreator.
 				// Because bug report is not source code.
-				if (!Stopword.isEnglishStopword(stemWord)) {
+				if (!Stopword.isEnglishStopword(stemWord) && !Stopword.isProjectKeyword(stemWord)) {
 					contentBuf.append(stemWord);
 					contentBuf.append(" ");
 				}

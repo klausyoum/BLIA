@@ -29,10 +29,10 @@ public class SourceFileCorpusCreator {
 	protected String stemContent(String content[]) {
 		StringBuffer contentBuf = new StringBuffer();
 		for (int i = 0; i < content.length; i++) {
-			String word = content[i];
+			String word = content[i].toLowerCase();
 			if (word.length() > 0) {
-				String stemWord = Stem.stem(word.toLowerCase());
-				if (!Stopword.isKeyword(stemWord) && !Stopword.isEnglishStopword(stemWord)) {
+				String stemWord = Stem.stem(word);
+				if (!Stopword.isJavaKeyword(stemWord) && !Stopword.isProjectKeyword(stemWord) && !Stopword.isEnglishStopword(stemWord)) {
 					contentBuf.append(stemWord);
 					contentBuf.append(" ");
 				}
