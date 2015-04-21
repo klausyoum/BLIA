@@ -7,12 +7,14 @@
  */
 package edu.skku.selab.blp.evaluation;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.SourceFile;
 import edu.skku.selab.blp.db.ExperimentResult;
@@ -86,7 +88,7 @@ public class Evaluator {
 		int top5 = 0;
 		int top10 = 0;
 		
-		BugDAO bugDAO = new BugDAO();
+		FileWriter writer = new FileWriter(Property.OUTPUT_FILE, false);
 //		boolean isCounted = false;
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
@@ -123,25 +125,34 @@ public class Evaluator {
 						top1++;
 						top5++;
 						top10++;
-						System.out.printf("%s %s %d\n",
-								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						
+						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+						writer.write(log);
+//						System.out.printf("%s %s %d\n",
+//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;						
 					} else if (j < 5) {
 						top5++;
 						top10++;
-						System.out.printf("%s %s %d\n",
-								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+						writer.write(log);
+//						System.out.printf("%s %s %d\n",
+//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					} else if (j < 10) {
 						top10++;
-						System.out.printf("%s %s %d\n",
-								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+						writer.write(log);
+//						System.out.printf("%s %s %d\n",
+//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}
 					// debug code
 					else if (j < limitedCount) {
-						System.out.printf("%s %s %d\n",
-								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+						writer.write(log);
+//						System.out.printf("%s %s %d\n",
+//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}
 				}
@@ -157,14 +168,28 @@ public class Evaluator {
 		experimentResult.setTop5Rate((double) top5 / bugCount);
 		experimentResult.setTop10Rate((double) top10 / bugCount);
 		
+
+		String log = "Top1: " + experimentResult.getTop1() + ", " +
+				"Top5: " + experimentResult.getTop5() + ", " +
+				"Top10: " + experimentResult.getTop10() + ", " +
+				"Top1Rate: " + experimentResult.getTop1Rate() + ", " +
+				"Top5Rate: " + experimentResult.getTop5Rate() + ", " +
+				"Top10Rate: " + experimentResult.getTop10Rate() + "\n";
+		writer.write(log);
+
 		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
 				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
 				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
+		
+		writer.flush();
+		writer.close();
 	}
 	
 	private void calculateMRR() throws Exception {
 		double MRR = 0;
 		double sumOfRRank = 0;
+		
+		FileWriter writer = new FileWriter(Property.OUTPUT_FILE, true);
 		for (int i = 0; i < bugs.size(); i++) {
 			String bugID = bugs.get(i).getID();
 			HashSet<SourceFile> fixedFiles = realFixedFilesMap.get(bugID);
@@ -200,12 +225,19 @@ public class Evaluator {
 		experimentResult.setMRR(MRR);
 		
 		System.out.printf("MRR: %f\n", experimentResult.getMRR());
+
+		String log = "MRR: " + experimentResult.getMRR() + "\n";
+		writer.write(log);
+		
+		writer.flush();
+		writer.close();
 	}
 	
 	private void calulateMAP() throws Exception {
 		double MAP = 0;
 		double sumOfAP = 0;
 		
+		FileWriter writer = new FileWriter(Property.OUTPUT_FILE, true);
 		for (int i = 0; i < bugs.size(); i++) {
 			sumOfAP = 0;
 			String bugID = bugs.get(i).getID();
@@ -252,6 +284,12 @@ public class Evaluator {
 		MAP = MAP / bugs.size();
 		experimentResult.setMAP(MAP);
 		
-		System.out.printf("MAP: %f\n", experimentResult.getMAP());
+		System.out.printf("MAP: %f\n", experimentResult.getMAP())
+		;
+		String log = "MAP: " + experimentResult.getMAP() + "\n";
+		writer.write(log);
+		
+		writer.flush();
+		writer.close();
 	}
 }

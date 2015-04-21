@@ -33,6 +33,8 @@ public class Property {
 	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
 	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
 	
+	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
+	
 	private String bugFilePath;
 	private String[] sourceCodeDirList;
 	private String workDir;
