@@ -12,6 +12,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.h2.jdbcx.JdbcConnectionPool;
+
 import edu.skku.selab.blp.Property;
 
 /**
@@ -40,7 +42,9 @@ public class BaseDAO {
 	private static void openEvaluationDbConnection() throws Exception {
 		if (null == evaluationDbConnection) {
 			Class.forName("org.h2.Driver");
-			evaluationDbConnection = DriverManager.getConnection("jdbc:h2:file:./db/evaluation", "sa", "");
+			String connectionURL = "jdbc:h2:file:./db/evaluation";
+			JdbcConnectionPool connectionPool = JdbcConnectionPool.create(connectionURL, "sa", "");
+			evaluationDbConnection = connectionPool.getConnection();
 		}
 	}
 	
@@ -50,7 +54,8 @@ public class BaseDAO {
 		if (null == analysisDbConnection) {
 			Class.forName("org.h2.Driver");
 			String connectionURL = "jdbc:h2:file:./db/" + Property.DEFAULT;
-			analysisDbConnection = DriverManager.getConnection(connectionURL, "sa", "");
+			JdbcConnectionPool connectionPool = JdbcConnectionPool.create(connectionURL, "sa", "");
+			analysisDbConnection = connectionPool.getConnection();
 		}
 	}
 
@@ -60,7 +65,8 @@ public class BaseDAO {
 		if (null == analysisDbConnection) {
 			Class.forName("org.h2.Driver");
 			String connectionURL = "jdbc:h2:file:./db/" + dbName;
-			analysisDbConnection = DriverManager.getConnection(connectionURL, "sa", "");
+			JdbcConnectionPool connectionPool = JdbcConnectionPool.create(connectionURL, "sa", "");
+			analysisDbConnection = connectionPool.getConnection();
 		}
 		
 		openEvaluationDbConnection();

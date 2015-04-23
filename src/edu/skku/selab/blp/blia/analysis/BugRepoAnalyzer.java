@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
@@ -29,6 +30,8 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  */
 public class BugRepoAnalyzer {
 	private ArrayList<Bug> bugs;
+	private HashMap<String, HashSet<SourceFile>> fixedFilesMap;
+	private HashMap<String, HashSet<SimilarBugInfo>> similarBugInfosMap;
 	
     public BugRepoAnalyzer() {
     	bugs = null;
@@ -37,6 +40,97 @@ public class BugRepoAnalyzer {
     public BugRepoAnalyzer(ArrayList<Bug> orderedBugs) {
     	bugs = orderedBugs;
     }
+    
+    private void prepareData() throws Exception {
+		BugDAO bugDAO = new BugDAO();
+		fixedFilesMap = new HashMap<String, HashSet<SourceFile>>(); 
+		similarBugInfosMap = new HashMap<String, HashSet<SimilarBugInfo>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug bug = bugs.get(i);
+			String bugID = bug.getID();
+			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
+			fixedFilesMap.put(bugID, fixedFiles);
+			
+			HashSet<SimilarBugInfo> similarBugInfos = bugDAO.getSimilarBugInfos(bugID);
+			similarBugInfosMap.put(bugID, similarBugInfos);
+		}
+    }
+    
+    private class WorkerThread implements Runnable {
+    	private Bug bug;
+    	
+        public WorkerThread(Bug bug){
+            this.bug = bug;
+        }
+     
+        @Override
+        public void run() {
+			// Compute similarity between Bug report & source files
+        	
+        	try {
+        		calculateSimilarScore(bug);
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        
+        private void calculateSimilarScore(Bug bug) throws Exception {
+    		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();	
+    		
+    		String bugID = bug.getID();
+    		HashMap<Integer, Double> similarScores = new HashMap<Integer, Double>(); 
+    		HashSet<SimilarBugInfo> similarBugInfos = similarBugInfosMap.get(bugID);
+    		if (null != similarBugInfos) {
+    			Iterator<SimilarBugInfo> similarBugInfosIter = similarBugInfos.iterator();
+    			while (similarBugInfosIter.hasNext()) {
+    				SimilarBugInfo similarBugInfo = similarBugInfosIter.next();
+    				
+    				HashSet<SourceFile> fixedFiles = fixedFilesMap.get(similarBugInfo.getSimilarBugID());
+    				if (null != fixedFiles) {
+    					int fixedFilesCount = fixedFiles.size();
+    					double singleValue = similarBugInfo.getSimilarityScore() / fixedFilesCount;
+    					Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
+    					while (fixedFilesIter.hasNext()) {
+    						SourceFile fixedFile = fixedFilesIter.next();
+    						
+    						int sourceFileVersionID = fixedFile.getSourceFileVersionID();
+    						if (null != similarScores.get(sourceFileVersionID)) {
+    							double similarScore = similarScores.get(sourceFileVersionID).doubleValue() + singleValue;
+    							similarScores.remove(sourceFileVersionID);
+    							similarScores.put(sourceFileVersionID, Double.valueOf(similarScore));
+    						} else {
+    							similarScores.put(sourceFileVersionID, Double.valueOf(singleValue));
+    						}
+    					}				
+    				}
+    			}
+    			
+    			Iterator<Integer> similarScoresIter = similarScores.keySet().iterator();
+    			while (similarScoresIter.hasNext()) {
+    				int sourceFileVersionID = similarScoresIter.next();
+    				double similarScore = similarScores.get(sourceFileVersionID).doubleValue();
+    				
+    				IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
+    				integratedAnalysisValue.setBugID(bugID);
+    				integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
+    				integratedAnalysisValue.setSimilarityScore(similarScore);
+
+    				if (similarScore != 0.0) {
+    					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
+    					
+    					if (0 == updatedColumenCount) {
+    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
+    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+    						// remove following line after testing.
+//    						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+    					}
+    				}
+    			}
+    		}
+        }
+
+    }
+    
 
 	/**
 	 * Analyze similarity between a bug report and its previous bug reports. Then write similarity scores to SimiScore.txt
@@ -47,73 +141,17 @@ public class BugRepoAnalyzer {
 	 */
 	public void analyze() throws Exception {
 		computeSimilarity();
+		prepareData();
+		
+		ExecutorService executor = Executors.newFixedThreadPool(10);
 
-		BugDAO bugDAO = new BugDAO();
-		HashMap<String, HashSet<SourceFile>> fixedFilesMap = new HashMap<String, HashSet<SourceFile>>(); 
-		HashMap<String, HashSet<SimilarBugInfo>> similarBugInfosMap = new HashMap<String, HashSet<SimilarBugInfo>>();
 		for (int i = 0; i < bugs.size(); i++) {
-			Bug bug = bugs.get(i);
-			String bugID = bug.getID();
-			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
-			fixedFilesMap.put(bugID, fixedFiles);
-			
-			HashSet<SimilarBugInfo> similarBugInfos = bugDAO.getSimilarBugInfos(bugID);
-			similarBugInfosMap.put(bugID, similarBugInfos);
+			// calculate term count, IDC, TF and IDF
+			Runnable worker = new WorkerThread(bugs.get(i));
+			executor.execute(worker);
 		}
-
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();		
-		for (int i = 0; i < bugs.size(); i++) {
-			Bug bug = bugs.get(i);
-			String bugID = bug.getID();
-			HashMap<Integer, Double> similarScores = new HashMap<Integer, Double>(); 
-			HashSet<SimilarBugInfo> similarBugInfos = similarBugInfosMap.get(bugID);
-			if (null != similarBugInfos) {
-				Iterator<SimilarBugInfo> similarBugInfosIter = similarBugInfos.iterator();
-				while (similarBugInfosIter.hasNext()) {
-					SimilarBugInfo similarBugInfo = similarBugInfosIter.next();
-					
-					HashSet<SourceFile> fixedFiles = fixedFilesMap.get(similarBugInfo.getSimilarBugID());
-					if (null != fixedFiles) {
-						int fixedFilesCount = fixedFiles.size();
-						double singleValue = similarBugInfo.getSimilarityScore() / fixedFilesCount;
-						Iterator<SourceFile> fixedFilesIter = fixedFiles.iterator();
-						while (fixedFilesIter.hasNext()) {
-							SourceFile fixedFile = fixedFilesIter.next();
-							
-							int sourceFileVersionID = fixedFile.getSourceFileVersionID();
-							if (null != similarScores.get(sourceFileVersionID)) {
-								double similarScore = similarScores.get(sourceFileVersionID).doubleValue() + singleValue;
-								similarScores.remove(sourceFileVersionID);
-								similarScores.put(sourceFileVersionID, Double.valueOf(similarScore));
-							} else {
-								similarScores.put(sourceFileVersionID, Double.valueOf(singleValue));
-							}
-						}				
-					}
-				}
-				
-				Iterator<Integer> similarScoresIter = similarScores.keySet().iterator();
-				while (similarScoresIter.hasNext()) {
-					int sourceFileVersionID = similarScoresIter.next();
-					double similarScore = similarScores.get(sourceFileVersionID).doubleValue();
-					
-					IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
-					integratedAnalysisValue.setBugID(bugID);
-					integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
-					integratedAnalysisValue.setSimilarityScore(similarScore);
-
-					if (similarScore != 0.0) {
-						int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
-						
-						if (0 == updatedColumenCount) {
-							System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
-									integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
-							// remove following line after testing.
-//							integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-						}
-					}
-				}
-			}
+		executor.shutdown();
+		while (!executor.isTerminated()) {
 		}
 	}
 	

@@ -9,6 +9,8 @@ package edu.skku.selab.blp.blia.analysis;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,7 +24,9 @@ import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
+import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.test.utils.TestConfiguration;
@@ -52,7 +56,13 @@ public class SourceFileAnalyzerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestConfiguration.setProperty();
+		String projectName = Property.ASPECTJ;
+		String algorithmName = "BLIA";
+		double alpha = 0.41;
+		double beta = 0.13;
+		int pastDate = 60;
+		String repoDir = Property.ASPECTJ_REPO_DIR;
+		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate, repoDir);
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();
@@ -107,9 +117,18 @@ public class SourceFileAnalyzerTest {
 		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
 		bugSourceFileVectorCreator.create(version);
 		
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		boolean useStructuredInformation = false;
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		BugDAO bugDAO = new BugDAO();
+		boolean orderedByFixedDate = true;
+		ArrayList<Bug> orderedBugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
+		
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] SourceFileAnalyzer.analyze()\n");
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer(orderedBugs);
+		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
+		System.out.printf("[DONE] SourceFileAnalyzer.analyze() (Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 	}
 
 

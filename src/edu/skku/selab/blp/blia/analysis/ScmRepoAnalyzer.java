@@ -96,7 +96,6 @@ public class ScmRepoAnalyzer {
 					// remove following line after testing.
 //					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
 				}
-
 			}
 		}
 	}
