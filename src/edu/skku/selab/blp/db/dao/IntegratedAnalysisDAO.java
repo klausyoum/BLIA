@@ -98,14 +98,15 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	}
 	
 	public int updateBLIAScore(IntegratedAnalysisValue integratedAnalysisValue) {
-		String sql = "UPDATE INT_ANALYSIS SET BLIA_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
+		String sql = "UPDATE INT_ANALYSIS SET BLIA_SCORE = ?, BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
-			ps.setString(2, integratedAnalysisValue.getBugID());
-			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
+			ps.setDouble(2, integratedAnalysisValue.getBugLocatorScore());
+			ps.setString(3, integratedAnalysisValue.getBugID());
+			ps.setInt(4, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -198,13 +199,13 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 //			}
 			break;
 		case Property.ECLIPSE:
-			// TODO: check this code is valid for eclipse project
 			if (-1 != fixedFileName.lastIndexOf("org.eclipse")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.eclipse"), fixedFileName.length());
 			} else if (-1 != fixedFileName.lastIndexOf("org.osgi")) {
 				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.osgi"), fixedFileName.length());
-			}
-			else {
+			} else if (-1 != fixedFileName.lastIndexOf("org.apache")) {
+				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.osgi"), fixedFileName.length());
+			} else {
 				System.err.printf("Wrong fixed file that is not source file: %s\n", fixedFileName);
 			}
 			break;

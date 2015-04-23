@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
@@ -27,6 +29,7 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
 public class StackTraceAnalyzer {
 	private final static double DEFAULT_BOOST_SCORE = 0.1;
 	private ArrayList<Bug> bugs;
+	private HashMap<String, HashMap<String, String>> classNamesMap = null;
 	
 	public StackTraceAnalyzer() {
 		bugs = null;
@@ -35,36 +38,39 @@ public class StackTraceAnalyzer {
     public StackTraceAnalyzer(ArrayList<Bug> bugs) {
     	this.bugs = bugs;
     }
-	
-	public void analyze() throws Exception {
-		String productName = Property.getInstance().getProductName();
-		
-		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		
-		HashMap<String, HashMap<String, String>> classNamesMap = new HashMap<String, HashMap<String, String>>();
-		for (int i = 0; i < bugs.size(); i++) {
-			Bug bug = bugs.get(i);
-			String version = bug.getVersion();
-			
-			if (!classNamesMap.containsKey(version)) {
-				HashMap<String, String> classNames = sourceFileDAO.getClassNames(productName, version);
-				classNamesMap.put(version, classNames);
-			}
-		}
-		
-		for (int i = 0; i < bugs.size(); i++) {
-			Bug bug = bugs.get(i);
-			
+    
+    private class WorkerThread implements Runnable {
+    	private Bug bug;
+    	
+        public WorkerThread(Bug bug){
+            this.bug = bug;
+        }
+     
+        @Override
+        public void run() {
+			// Compute similarity between Bug report & source files
+        	
+        	try {
+        		insertDataToDb();
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        
+        private void insertDataToDb() throws Exception {
+    		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+    		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+        	
 			String version = bug.getVersion();
 			HashMap<String, IntegratedAnalysisValue> stackTraceAnalysisValues = new HashMap<String, IntegratedAnalysisValue>();
 			HashMap<String, IntegratedAnalysisValue> importedClassAnalysisValues = new HashMap<String, IntegratedAnalysisValue>();
 			ArrayList<String> stackTraceClasses = bug.getStackTraceClasses();
 			
 			if (null == stackTraceClasses) {
-				continue;
+				return;
 			}
 			
+    		String productName = Property.getInstance().getProductName();
 			HashMap<String, String> classNames = classNamesMap.get(version);
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				int currentRank = j + 1;
@@ -125,6 +131,33 @@ public class StackTraceAnalyzer {
 					integratedAnalysisDAO.updateStackTraceScore(analysisValuesIter.next());
 				}
 			}
+        }
+    }
+	
+	public void analyze() throws Exception {
+		String productName = Property.getInstance().getProductName();
+		
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		
+		classNamesMap = new HashMap<String, HashMap<String, String>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug bug = bugs.get(i);
+			String version = bug.getVersion();
+			
+			if (!classNamesMap.containsKey(version)) {
+				HashMap<String, String> classNames = sourceFileDAO.getClassNames(productName, version);
+				classNamesMap.put(version, classNames);
+			}
+		}
+		
+		ExecutorService executor = Executors.newFixedThreadPool(10);
+		for (int i = 0; i < bugs.size(); i++) {
+			Runnable worker = new WorkerThread(bugs.get(i));
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {
 		}
 	}
 }

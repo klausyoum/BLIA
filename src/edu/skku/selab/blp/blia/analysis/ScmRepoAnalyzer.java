@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +31,8 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  */
 public class ScmRepoAnalyzer {
 	private ArrayList<Bug> bugs;
+	private int pastDays;
+	private ArrayList<CommitInfo> filteredCommitInfos = null;
 	
 	public ScmRepoAnalyzer() {
 		bugs = null;
@@ -36,26 +40,37 @@ public class ScmRepoAnalyzer {
 	
     public ScmRepoAnalyzer(ArrayList<Bug> bugs) {
     	this.bugs = bugs;
+		pastDays = Property.getInstance().getPastDays();
     }
     
-	public void analyze(String version) throws Exception {
-		// Do loop from the oldest bug,
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-		int pastDays = property.getPastDays();
-		
-		CommitDAO commitDAO = new CommitDAO();
-		ArrayList<CommitInfo> filteredCommitInfos = commitDAO.getFilteredCommitInfos(productName);
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		
-		for (int i = 0; i < bugs.size(); i++) {
-			Bug bug = bugs.get(i);
-			
+    private class WorkerThread implements Runnable {
+    	private Bug bug;
+    	private String version;
+    	
+        public WorkerThread(Bug bug, String version) {
+            this.bug = bug;
+            this.version = version;
+        }
+     
+        @Override
+        public void run() {
+			// Compute similarity between Bug report & source files
+        	
+        	try {
+        		insertDataToDb();
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        
+        private void insertDataToDb() throws Exception {
+    		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+    		
 			// <fileName, analysisValue>
 			HashMap<String, IntegratedAnalysisValue> analysisValues = new HashMap<String, IntegratedAnalysisValue>();
 			ArrayList<CommitInfo> relatedCommitInfos = findCommitInfoWithinDays(filteredCommitInfos, bug.getOpenDate(), pastDays);
 			if (null == relatedCommitInfos) {
-				continue;
+				return;
 			}
 			
 			for (int j = 0; j < relatedCommitInfos.size(); j++) {
@@ -97,6 +112,25 @@ public class ScmRepoAnalyzer {
 //					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
 				}
 			}
+        }
+    }
+    
+	public void analyze(String version) throws Exception {
+		// Do loop from the oldest bug,
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		
+		CommitDAO commitDAO = new CommitDAO();
+		filteredCommitInfos = commitDAO.getFilteredCommitInfos(productName);
+
+		ExecutorService executor = Executors.newFixedThreadPool(10);
+		for (int i = 0; i < bugs.size(); i++) {
+			Runnable worker = new WorkerThread(bugs.get(i), version);
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {
 		}
 	}
 	

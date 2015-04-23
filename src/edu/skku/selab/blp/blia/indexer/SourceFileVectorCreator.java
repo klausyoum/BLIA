@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.SourceFileCorpus;
@@ -24,7 +26,11 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  *
  */
 public class SourceFileVectorCreator {
-    
+	private HashMap<String, Integer> totalCorpusLengths = null;
+	private HashMap<String, SourceFileCorpus> sourceFileCorpusMap = null;
+	private int fileCount = 0; 
+	
+
     public SourceFileVectorCreator() {
     }
     
@@ -248,24 +254,33 @@ public class SourceFileVectorCreator {
     	
     	return termSet;
     }
-
-	/* (non-Javadoc)
-	 * @see edu.skku.selab.blia.indexer.IVectorCreator#create()
-	 */
-	public void create(String version) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		HashMap<String, Integer> totalCorpusLengths = sourceFileDAO.getTotalCorpusLengths(productName, version);
-		
-		// Calculate vector
-		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
-		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
-
-		HashMap<String, SourceFileCorpus> sourceFileCorpusMap = sourceFileDAO.getCorpusMap(productName, version);
-		while (fileNameIter.hasNext()) {
-			String fileName = fileNameIter.next();
-			
+    
+    private class WorkerThread implements Runnable {
+    	private String productName;
+    	private String fileName;
+    	private String version;
+    	
+    	
+        public WorkerThread(String productName, String fileName, String version){
+            this.productName = productName;
+            this.fileName = fileName;
+            this.version = version;
+        }
+     
+        @Override
+        public void run() {
+			// Compute similarity between Bug report & source files
+        	
+        	try {
+        		insertDataToDb();
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        
+        private void insertDataToDb() throws Exception {
+        	SourceFileDAO sourceFileDAO = new SourceFileDAO();
+        	
 //			if (fileName.equalsIgnoreCase("org.eclipse.swt.internal.win32.NMCUSTOMDRAW.java")) {
 				Integer totalTermCount = totalCorpusLengths.get(fileName);
 				
@@ -273,7 +288,7 @@ public class SourceFileVectorCreator {
 				if (sourceFileTermMap == null) {
 					// debug code
 					System.out.printf("[SourceFileVectorCreator.create()] The file name that has no valid terms: %s\n", fileName);
-					continue;
+					return;
 				}
 
 				double corpusNorm = 0.0D;
@@ -330,6 +345,32 @@ public class SourceFileVectorCreator {
 //						corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, variableNorm);
 				
 				sourceFileDAO.updateNormValues(productName, fileName, version, corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, commentNorm);
+        }
+    }
+
+
+	/* (non-Javadoc)
+	 * @see edu.skku.selab.blia.indexer.IVectorCreator#create()
+	 */
+	public void create(String version) throws Exception {
+		Property property = Property.getInstance();
+		String productName = property.getProductName();
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		totalCorpusLengths = sourceFileDAO.getTotalCorpusLengths(productName, version);
+		sourceFileCorpusMap = sourceFileDAO.getCorpusMap(productName, version);
+		fileCount = sourceFileDAO.getSourceFileCount(productName, version);
+		
+		// Calculate vector
+		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
+		ExecutorService executor = Executors.newFixedThreadPool(10);
+		while (fileNameIter.hasNext()) {
+			String fileName = fileNameIter.next();
+			Runnable worker = new WorkerThread(productName, fileName, version);
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {
 		}
 	}
 	

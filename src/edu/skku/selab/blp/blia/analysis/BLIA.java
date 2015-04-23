@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
@@ -34,6 +36,10 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  */
 public class BLIA {
 	private final String version = SourceFileDAO.DEFAULT_VERSION_STRING;
+	private ArrayList<Bug> bugs = null;
+	private double alpha = 0;
+	private double beta = 0;
+	private HashMap<String, HashMap<Integer, IntegratedAnalysisValue>> integratedAnalysisValuesMap = null; 
 
 	private String getElapsedTimeSting(long startTime) {
 		long elapsedTime = System.currentTimeMillis() - startTime;
@@ -96,12 +102,12 @@ public class BLIA {
 		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		boolean orderedByFixedDate = true;
-		ArrayList<Bug> orderedBugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
+		bugs = bugDAO.getAllBugs(productName, orderedByFixedDate);
 
 		// VSM_SCORE
 		System.out.printf("[STARTED] Source file analysis.\n");
 		long startTime = System.currentTimeMillis();
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer(orderedBugs);
+		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer(bugs);
 		boolean useStructuredInformation = true;
 		sourceFileAnalyzer.analyze(version, useStructuredInformation);
 		System.out.printf("[DONE] Source file analysis.(%s sec)\n", getElapsedTimeSting(startTime));
@@ -109,66 +115,94 @@ public class BLIA {
 		// SIMI_SCORE
 		System.out.printf("[STARTED] Bug repository analysis.\n");
 		startTime = System.currentTimeMillis();
-		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer(orderedBugs);
+		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer(bugs);
 		bugRepoAnalyzer.analyze();
 		System.out.printf("[DONE] Bug repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// STRACE_SCORE
 		System.out.printf("[STARTED] Stack-trace analysis.\n");
 		startTime = System.currentTimeMillis();
-		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer(orderedBugs);
+		StackTraceAnalyzer stackTraceAnalyzer = new StackTraceAnalyzer(bugs);
 		stackTraceAnalyzer.analyze();
 		System.out.printf("[DONE] Stack-trace analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 		
 		// COMM_SCORE
 		System.out.printf("[STARTED] Scm repository analysis.\n");
 		startTime = System.currentTimeMillis();
-		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer(orderedBugs);
+		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer(bugs);
 		scmRepoAnalyzer.analyze(version);
 		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 	
-	public void analyze(String version) throws Exception {
-		String productName = Property.getInstance().getProductName();
-		BugDAO bugDAO = new BugDAO();
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		
-		ArrayList<Bug> bugs = bugDAO.getAllBugs(productName, false);
-		
-		Property property = Property.getInstance();
-		double alpha = property.getAlpha();
-		double beta = property.getBeta();
-		
-		for (int i = 0; i < bugs.size(); i++) {
-			String bugID = bugs.get(i).getID();
-			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+    private class WorkerThread implements Runnable {
+    	private String bugID;
+    	
+        public WorkerThread(String bugID){
+            this.bugID = bugID;
+        }
+     
+        @Override
+        public void run() {
+			// Compute similarity between Bug report & source files
+        	
+        	try {
+        		insertDataToDb();
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+        
+        private void insertDataToDb() throws Exception {
+			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
 			// AmaLgam doesn't use normalize
 			normalize(integratedAnalysisValues);
-			
 			combine(integratedAnalysisValues, alpha, beta);
+			
+    		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
 				
 				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-				int updatedColumenCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
-				if (0 == updatedColumenCount) {
-					System.err.printf("[ERROR] BLIA.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
-							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
-
-					// remove following line after testing.
-//					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-				}
-				
-				updatedColumenCount = integratedAnalysisDAO.updateBugLocatorScore(integratedAnalysisValue);
-				if (0 == updatedColumenCount) {
-					System.err.printf("[ERROR] BLIA.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
+				int updatedColumnCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
+				if (0 == updatedColumnCount) {
+					System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
 							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
 
 					// remove following line after testing.
 //					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
 			}
+        }
+    }
+	
+	public void analyze(String version) throws Exception {
+		String productName = Property.getInstance().getProductName();
+		
+		if (null == bugs) {
+			BugDAO bugDAO = new BugDAO();
+			bugs = bugDAO.getAllBugs(productName, false);			
+		}
+		
+		Property property = Property.getInstance();
+		alpha = property.getAlpha();
+		beta = property.getBeta();
+		
+		integratedAnalysisValuesMap = new HashMap<String, HashMap<Integer, IntegratedAnalysisValue>>();
+		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+		for (int i = 0; i < bugs.size(); i++) {
+			String bugID = bugs.get(i).getID();
+			integratedAnalysisValuesMap.put(bugID, integratedAnalysisDAO.getAnalysisValues(bugID));
+		}
+		
+		ExecutorService executor = Executors.newFixedThreadPool(10);
+		for (int i = 0; i < bugs.size(); i++) {
+			Runnable worker = new WorkerThread(bugs.get(i).getID());
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {
 		}
 	}
 	

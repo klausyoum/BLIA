@@ -182,16 +182,16 @@ public class EvaluatorTest {
 	
 	@Test
 	public void verifyEvaluateBLIAOnce() throws Exception {
-		boolean preAnalyze = true;
+		boolean preAnalyze = false;
 		boolean useStrucrutedInfo = true;
 		
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
-//		productName = Property.ASPECTJ;
-//		productName = Property.ZXING;
-//		productName = Property.ECLIPSE;
+		productName = Property.ASPECTJ;
+		productName = Property.ZXING;
+		productName = Property.ECLIPSE;
 		
-		long startTime = System.currentTimeMillis();
+		long totalStartTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation once.\n");
 		
 		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
@@ -202,11 +202,15 @@ public class EvaluatorTest {
 		if (useStrucrutedInfo) {
 			algorithmDescription += " with structured info";
 		}
+		
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] Evaluator.evaluate().\n");
 		Evaluator evaluator = new Evaluator(productName, Evaluator.ALG_BLIA, algorithmDescription,
 				evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
 		evaluator.evaluate();
+		System.out.printf("[DONE] Evaluator.evaluate().(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		
-		System.out.printf("[DONE] BLIA Evaluation once(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] BLIA Evaluation once(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(totalStartTime));
 	}
 	
 	@Test
@@ -218,7 +222,7 @@ public class EvaluatorTest {
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
 		productName = Property.ASPECTJ;
-		productName = Property.ZXING;
+//		productName = Property.ZXING;
 //		productName = Property.ECLIPSE;
 
 		long startTime = System.currentTimeMillis();
@@ -226,8 +230,8 @@ public class EvaluatorTest {
 		
 		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
 		
-		for (double alpha = 0.4; alpha < 0.5; alpha += 0.1) {
-			for (double beta = 0.0; beta < 1.0; beta += 0.1) {
+		for (double alpha = 0.4; alpha < 0.5; alpha += 0.01) {
+			for (double beta = 0.0; beta <= 0.4; beta += 0.01) {
 				evaluationProerpty.setAlpha(alpha);
 				evaluationProerpty.setBeta(beta);
 				runBLIA(useStrucrutedInfo, preAnalyze, evaluationProerpty);

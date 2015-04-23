@@ -70,8 +70,8 @@ public class EvaluationPropertyFactory {
 		case Property.ECLIPSE:
 			// TODO: find optimized alpha, beta value
 			alpha = 0.3;  
-			beta = 0.2;
-			pastDays = 15;
+			beta = 0.1;
+			pastDays = 60;
 			repoDir = Property.ECLIPSE_REPO_DIR;
 
 			// for ecplise project ONLY
