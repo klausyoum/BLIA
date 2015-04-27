@@ -91,7 +91,7 @@ public class SourceFileAnalyzer {
 			sourceFileLengthScoreMap.put(sourceFileVersionID, lengthScore);
 		}
 		
-		ExecutorService executor = Executors.newFixedThreadPool(10);
+		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 
 		for (int i = 0; i < bugs.size(); i++) {
 			// calculate term count, IDC, TF and IDF

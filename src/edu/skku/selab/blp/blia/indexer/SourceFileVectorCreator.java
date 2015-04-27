@@ -362,7 +362,7 @@ public class SourceFileVectorCreator {
 		
 		// Calculate vector
 		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
-		ExecutorService executor = Executors.newFixedThreadPool(10);
+		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		while (fileNameIter.hasNext()) {
 			String fileName = fileNameIter.next();
 			Runnable worker = new WorkerThread(productName, fileName, version);

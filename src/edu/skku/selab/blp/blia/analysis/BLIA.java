@@ -40,7 +40,8 @@ public class BLIA {
 	private double alpha = 0;
 	private double beta = 0;
 	private HashMap<String, HashMap<Integer, IntegratedAnalysisValue>> integratedAnalysisValuesMap = null; 
-
+	private static Integer completeBugIdCount = 0;
+	
 	private String getElapsedTimeSting(long startTime) {
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		String elpsedTimeString = (elapsedTime / 1000) + "." + (elapsedTime % 1000);
@@ -153,12 +154,13 @@ public class BLIA {
         }
         
         private void insertDataToDb() throws Exception {
-			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
+        	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+    		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+//			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
 			// AmaLgam doesn't use normalize
 			normalize(integratedAnalysisValues);
 			combine(integratedAnalysisValues, alpha, beta);
 			
-    		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -173,7 +175,36 @@ public class BLIA {
 //					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
 			}
+			
+			synchronized (completeBugIdCount) {
+				completeBugIdCount++;
+				System.out.printf("Current completed calculation bug ID count: %d\n", completeBugIdCount);
+			}
         }
+    }
+    
+    private void calculateBLIAScore(String bugID) throws Exception {
+//		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
+    	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+		// AmaLgam doesn't use normalize
+		normalize(integratedAnalysisValues);
+		combine(integratedAnalysisValues, alpha, beta);
+		
+		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+		while (integratedAnalysisValuesIter.hasNext()) {
+			int sourceFileVersionID = integratedAnalysisValuesIter.next();
+			
+			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+			int updatedColumnCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
+			if (0 == updatedColumnCount) {
+				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
+						integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+
+				// remove following line after testing.
+//				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+			}
+		}
     }
 	
 	public void analyze(String version) throws Exception {
@@ -188,22 +219,35 @@ public class BLIA {
 		alpha = property.getAlpha();
 		beta = property.getBeta();
 		
-		integratedAnalysisValuesMap = new HashMap<String, HashMap<Integer, IntegratedAnalysisValue>>();
-		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		for (int i = 0; i < bugs.size(); i++) {
-			String bugID = bugs.get(i).getID();
-			integratedAnalysisValuesMap.put(bugID, integratedAnalysisDAO.getAnalysisValues(bugID));
-		}
+//		integratedAnalysisValuesMap = new HashMap<String, HashMap<Integer, IntegratedAnalysisValue>>();
+//		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+//		for (int i = 0; i < bugs.size(); i++) {
+//			String bugID = bugs.get(i).getID();
+//			System.out.printf("[getAnalysisValues()] [%d] Bug ID: %s\n", i, bugID);
+//			// DB closed because of out of memory!!!
+//			
+//			try {
+//				integratedAnalysisValuesMap.put(bugID, integratedAnalysisDAO.getAnalysisValues(bugID));
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 		
+		System.out.printf("[STARTED] BLIA.anlayze()\n");
+//		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		ExecutorService executor = Executors.newFixedThreadPool(10);
 		for (int i = 0; i < bugs.size(); i++) {
+//			String bugID = bugs.get(i).getID();
+//			System.out.printf("[getAnalysisValues()] [%d] Bug ID: %s\n", i, bugID);
+//			calculateBLIAScore(bugID);
 			Runnable worker = new WorkerThread(bugs.get(i).getID());
 			executor.execute(worker);
 		}
-		
 		executor.shutdown();
 		while (!executor.isTerminated()) {
 		}
+		
+		System.out.printf("[DONE] BLIA.anlayze()\n");
 	}
 	
 	/**

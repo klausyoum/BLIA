@@ -62,14 +62,14 @@ public class BaseDAO {
 
 	
 	public static void openConnection(String dbName) throws Exception {
+		openEvaluationDbConnection();
+		
 		if (null == analysisDbConnection) {
 			Class.forName("org.h2.Driver");
 			String connectionURL = "jdbc:h2:file:./db/" + dbName;
 			JdbcConnectionPool connectionPool = JdbcConnectionPool.create(connectionURL, "sa", "");
 			analysisDbConnection = connectionPool.getConnection();
 		}
-		
-		openEvaluationDbConnection();
 	}
 	public static void closeConnection() throws Exception {
 		if (null != analysisDbConnection) {

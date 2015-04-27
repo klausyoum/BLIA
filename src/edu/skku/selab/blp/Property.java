@@ -35,6 +35,8 @@ public class Property {
 	
 	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
+	final static public int THREAD_COUNT = 1;
+	
 	private String bugFilePath;
 	private String[] sourceCodeDirList;
 	private String workDir;

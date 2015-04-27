@@ -249,9 +249,13 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
-				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
-				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
+//		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
+//				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
+//				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
+
+		String sql = "SELECT A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
+				"FROM INT_ANALYSIS A " +
+				"WHERE A.BUG_ID = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
@@ -266,8 +270,8 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				
 				resultValue = new IntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
-				resultValue.setFileName(rs.getString("SF_NAME"));
-				resultValue.setProductName(rs.getString("PROD_NAME"));
+//				resultValue.setFileName(rs.getString("SF_NAME"));
+//				resultValue.setProductName(rs.getString("PROD_NAME"));
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
 				resultValue.setVsmScore(rs.getDouble("VSM_SCORE"));
 				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));

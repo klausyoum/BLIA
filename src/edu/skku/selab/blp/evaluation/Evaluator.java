@@ -271,7 +271,7 @@ public class Evaluator {
 	private void calculateMetrics() throws Exception {
 		writer = new FileWriter(Property.OUTPUT_FILE, false);
 		
-		ExecutorService executor = Executors.newFixedThreadPool(10);
+		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 //		boolean isCounted = false;
 		for (int i = 0; i < bugs.size(); i++) {
 			Runnable worker = new WorkerThread(bugs.get(i).getID());

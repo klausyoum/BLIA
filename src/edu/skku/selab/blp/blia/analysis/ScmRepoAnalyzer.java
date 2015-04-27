@@ -123,7 +123,7 @@ public class ScmRepoAnalyzer {
 		CommitDAO commitDAO = new CommitDAO();
 		filteredCommitInfos = commitDAO.getFilteredCommitInfos(productName);
 
-		ExecutorService executor = Executors.newFixedThreadPool(10);
+		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		for (int i = 0; i < bugs.size(); i++) {
 			Runnable worker = new WorkerThread(bugs.get(i), version);
 			executor.execute(worker);

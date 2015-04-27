@@ -60,7 +60,14 @@ public class TestConfiguration {
 		if (dir.exists()) {
 			deleteDirectory(dir);
 		}
-		dir.mkdir();
+		
+		if (false == dir.mkdir()) {
+			System.err.println(workDir + " can't be created!");
+			
+			if (false == dir.mkdir()) {
+				System.err.println(workDir + " can't be created again");
+			}
+		}
 		
 		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
 	}
