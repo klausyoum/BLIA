@@ -137,7 +137,8 @@ public class BugCorpusCreator {
 //				bugDAO.insertCorpus(corpusArray[i], productName);
 //			}
 			
-			bugDAO.insertBug(bug);
+//			bugDAO.insertBug(bug);
+			bugDAO.insertStructuredBug(bug);
 			
 			TreeSet<String> fixedFiles = bug.getFixedFiles();
 			Iterator<String> fixedFilesIter = fixedFiles.iterator();

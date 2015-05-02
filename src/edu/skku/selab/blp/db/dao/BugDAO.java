@@ -41,7 +41,7 @@ public class BugDAO extends BaseDAO {
 		// releaseDate format : "2004-10-18 17:40:00"
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bug.getID());
+			ps.setInt(1, Integer.parseInt(bug.getID()));
 			ps.setString(2, bug.getProductName());
 			ps.setString(3, bug.getOpenDateString());
 			ps.setString(4, bug.getFixedDateString());
@@ -51,6 +51,43 @@ public class BugDAO extends BaseDAO {
 			ps.setString(7, bugCorpus.getDescriptionPart());
 			ps.setInt(8, bug.getTotalCorpusCount());
 			ps.setString(9, bug.getVersion());
+			
+			returnValue = ps.executeUpdate();
+			
+			ArrayList<String> stackTraceClasses = bug.getStackTraceClasses();
+			if (null != stackTraceClasses) {
+				for (int i = 0; i < stackTraceClasses.size(); i++) {
+					insertStackTraceClass(bug.getID(), stackTraceClasses.get(i));				
+				}
+			}
+		} catch (JdbcSQLException e) {
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
+		return returnValue;
+	}
+	
+	public int insertStructuredBug(Bug bug) {
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, SMR_COR, DESC_COR, TOT_CNT, VER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		// releaseDate format : "2004-10-18 17:40:00"
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, Integer.parseInt(bug.getID()));
+			ps.setString(2, bug.getProductName());
+			ps.setString(3, bug.getOpenDateString());
+			ps.setString(4, bug.getFixedDateString());
+			BugCorpus bugCorpus = bug.getCorpus();
+			ps.setString(5, bugCorpus.getSummaryPart());
+			ps.setString(6, bugCorpus.getDescriptionPart());
+			ps.setInt(7, bug.getTotalCorpusCount());
+			ps.setString(8, bug.getVersion());
 			
 			returnValue = ps.executeUpdate();
 			
@@ -100,7 +137,7 @@ public class BugDAO extends BaseDAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				bug = new Bug();
-				bugID = rs.getString("BUG_ID"); 
+				bugID = Integer.toString(rs.getInt("BUG_ID"));
 				bug.setID(bugID);
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setOpenDate(rs.getTimestamp("OPEN_DATE"));
@@ -152,7 +189,7 @@ public class BugDAO extends BaseDAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				bug = new Bug();
-				bugID = rs.getString("BUG_ID"); 
+				bugID = Integer.toString(rs.getInt("BUG_ID"));
 				bug.setID(bugID);
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setOpenDate(rs.getTimestamp("OPEN_DATE"));
@@ -213,14 +250,14 @@ public class BugDAO extends BaseDAO {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, productName);
 			ps.setString(2, fixedDateString);
-			ps.setString(3, exceptedBugID);
+			ps.setInt(3, Integer.parseInt(exceptedBugID));
 			
 			Bug bug = null;
 			String bugID;
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				bug = new Bug();
-				bugID = rs.getString("BUG_ID"); 
+				bugID = Integer.toString(rs.getInt("BUG_ID"));
 				bug.setID(bugID);
 				bug.setProductName(rs.getString("PROD_NAME"));
 				bug.setOpenDate(rs.getTimestamp("OPEN_DATE"));
@@ -256,7 +293,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
@@ -352,7 +389,7 @@ public class BugDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				corpusMap.put(rs.getString("BUG_ID"), rs.getString("COR"));
+				corpusMap.put(Integer.toString(rs.getInt("BUG_ID")), rs.getString("COR"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -375,7 +412,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -471,7 +508,7 @@ public class BugDAO extends BaseDAO {
 		HashMap<String, AnalysisValue> sourceFileTermMap = null;
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -498,7 +535,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setString(2, className);
 			
 			returnValue = ps.executeUpdate();
@@ -539,7 +576,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -567,7 +604,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugSfTermWeight.getName());
+			ps.setInt(1, Integer.parseInt(bugSfTermWeight.getName()));
 			ps.setInt(2, termID);
 			ps.setInt(3, bugSfTermWeight.getTermCount());
 			ps.setInt(4, bugSfTermWeight.getInvDocCount());
@@ -608,7 +645,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setString(2, productName);
 			ps.setString(3, term);
 			ps.setString(4, productName);
@@ -665,7 +702,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, analysisValue.getName());
+			ps.setInt(1, Integer.parseInt(analysisValue.getName()));
 			ps.setInt(2, termID);
 			ps.setDouble(3, analysisValue.getTermWeight());
 			
@@ -702,7 +739,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setString(2, productName);
 			ps.setString(3, term);
 			
@@ -734,7 +771,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -771,7 +808,7 @@ public class BugDAO extends BaseDAO {
 			int fixedFunctionID = INVALID;
 
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
 			
@@ -793,7 +830,7 @@ public class BugDAO extends BaseDAO {
 			int fixedFunctionID = INVALID;
 
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
 			
@@ -816,7 +853,7 @@ public class BugDAO extends BaseDAO {
 			int fixedFunctionID = INVALID;
 
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setInt(2, fixedSourceFileID);
 			ps.setInt(3, fixedFunctionID);
 			
@@ -852,7 +889,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -912,7 +949,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			ps.setString(2, similarBugID);
 			ps.setDouble(3, similarityScore);
 			
@@ -947,7 +984,7 @@ public class BugDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -957,7 +994,7 @@ public class BugDAO extends BaseDAO {
 				}
 
 				SimilarBugInfo similarBugInfo = new SimilarBugInfo();
-				similarBugInfo.setSimilarBugID(rs.getString("SIMI_BUG_ID"));
+				similarBugInfo.setSimilarBugID(Integer.toString(rs.getInt("SIMI_BUG_ID")));
 				similarBugInfo.setSimilarityScore(rs.getDouble("SIMI_BUG_SCORE"));
 
 				similarBugInfos.add(similarBugInfo);
@@ -977,7 +1014,7 @@ public class BugDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, totalTermCount);
-			ps.setString(2, bugID);
+			ps.setInt(2, Integer.parseInt(bugID));
 			ps.setString(3, productName);
 			
 			returnValue = ps.executeUpdate();
@@ -999,7 +1036,7 @@ public class BugDAO extends BaseDAO {
 			ps.setDouble(2, summaryCorpusNorm);
 			ps.setDouble(3, descriptionCorpusNorm);
 			
-			ps.setString(4, bugID);
+			ps.setInt(4, Integer.parseInt(bugID));
 			ps.setString(5, productName);
 			
 			returnValue = ps.executeUpdate();

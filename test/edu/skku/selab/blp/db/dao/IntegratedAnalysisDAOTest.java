@@ -100,7 +100,7 @@ public class IntegratedAnalysisDAOTest {
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
-		String bugID1 = "BLIA-101";
+		String bugID1 = "101";
 		String productName = "BLIA";
 		String fileName1 = "test_10.java";
 		double vsmScore = 0.321;
@@ -134,8 +134,6 @@ public class IntegratedAnalysisDAOTest {
 		IntegratedAnalysisValue analysisValue = analysisValues.get(sourceFileVersionID); 
 		assertNotNull("analysisValue can't be found.", analysisValue);
 		assertEquals("Bug ID is NOT same!", bugID1, analysisValue.getBugID());
-		assertEquals("File Name is NOT same!", fileName1, analysisValue.getFileName());
-		assertEquals("ProductName is NOT same!", productName, analysisValue.getProductName());
 		
 		assertEquals("VSM Score is NOT same!", vsmScore, analysisValue.getVsmScore(), delta);
 		assertEquals("similarityScore is NOT same!", similarityScore, analysisValue.getSimilarityScore(), delta);

@@ -61,7 +61,9 @@ public class SourceFileCorpus {
 	}
 
 	public String getContent() {
-		return content;
+//		return content;
+		String content = getClassPart() + " " + getMethodPart() + " " + getVariablePart() + " " + getCommentPart();
+		return content.trim();
 	}
 
 	public void setContent(String content) {

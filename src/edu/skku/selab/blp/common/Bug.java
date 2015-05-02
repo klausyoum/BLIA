@@ -143,7 +143,8 @@ public class Bug {
 	 * @return the corpus
 	 */
 	public String getCorpusContent() {
-		return bugCorpus.getContent();
+//		return bugCorpus.getContent();
+		return bugCorpus.getSummaryPart() + " " + bugCorpus.getDescriptionPart();
 	}
 
 	/**

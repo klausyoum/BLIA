@@ -44,7 +44,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			}
 			
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, integratedAnalysisValue.getBugID());
+			ps.setInt(1, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(2, sourceFileVersionID);
 			ps.setDouble(3, integratedAnalysisValue.getVsmScore());
 			ps.setDouble(4, integratedAnalysisValue.getSimilarityScore());
@@ -68,7 +68,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getSimilarityScore());
-			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -86,7 +86,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBugLocatorScore());
-			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -101,11 +101,12 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		String sql = "UPDATE INT_ANALYSIS SET BLIA_SCORE = ?, BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
+//		System.out.printf("Bug ID: %s, SourceFileVerID: %d\n", integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
 			ps.setDouble(2, integratedAnalysisValue.getBugLocatorScore());
-			ps.setString(3, integratedAnalysisValue.getBugID());
+			ps.setInt(3, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(4, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -123,7 +124,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getStackTraceScore());
-			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -161,7 +162,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getCommitLogScore());
-			ps.setString(2, integratedAnalysisValue.getBugID());
+			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -259,7 +260,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -304,7 +305,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -337,10 +338,16 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		ArrayList<IntegratedAnalysisValue> bliaRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
-				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
-				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BLIA_SCORE != 0" +
+//		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
+//				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
+//				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BLIA_SCORE != 0" +
+//				"ORDER BY A.BLIA_SCORE DESC ";
+
+		String sql = "SELECT A.SF_VER_ID, A.BLIA_SCORE "+
+				"FROM INT_ANALYSIS A " +
+				"WHERE A.BUG_ID = ? AND A.BLIA_SCORE != 0 " +
 				"ORDER BY A.BLIA_SCORE DESC ";
+
 		
 		if (limit != 0) {
 			sql += "LIMIT " + limit;
@@ -348,7 +355,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, bugID);
+			ps.setInt(1, Integer.parseInt(bugID));
 			
 			rs = ps.executeQuery();
 			
@@ -359,14 +366,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				
 				resultValue = new IntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
-				resultValue.setFileName(rs.getString("SF_NAME"));
-				resultValue.setProductName(rs.getString("PROD_NAME"));
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
-				resultValue.setVsmScore(rs.getDouble("VSM_SCORE"));
-				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
-				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
-				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
-				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
 				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
 				
 				bliaRankedValues.add(resultValue);

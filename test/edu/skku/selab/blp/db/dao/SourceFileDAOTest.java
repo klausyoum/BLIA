@@ -111,15 +111,21 @@ public class SourceFileDAOTest {
 		assertEquals("releaseDate2 is NOT same!", releaseDate2, simpleDateFormat.format(versions.get(version2)));
 		
 		sourceFileDAO.deleteAllCorpuses();
-		String corpusContent1 = "acc contain constant us defin access";
-		String corpusContent2 = "element listen event event result";
-		String corpusContent3 = "blia constant defin";
+		String classCorpusContent1 = "acc contain";
+		String methodCorpusContent1 = "constant us defin access";
+		String classCorpusContent2 = "class object";
+		String methodCorpusContent2 = "constant wow us defin access";
+		String classCorpusContent3 = "blia";
+		String methodCorpusContent3 = "happy chanllenge constant us defin access";
 		SourceFileCorpus corpus1 = new SourceFileCorpus();
-		corpus1.setContent(corpusContent1);
+		corpus1.setClassPart(classCorpusContent1);
+		corpus1.setMethodPart(methodCorpusContent1);
 		SourceFileCorpus corpus2 = new SourceFileCorpus();
-		corpus2.setContent(corpusContent2);
+		corpus2.setClassPart(classCorpusContent2);
+		corpus2.setMethodPart(methodCorpusContent2);
 		SourceFileCorpus corpus3 = new SourceFileCorpus();
-		corpus3.setContent(corpusContent3);
+		corpus3.setClassPart(classCorpusContent3);
+		corpus3.setMethodPart(methodCorpusContent3);
 		
 		
 		int totalCorpusCount1 = 5;
@@ -153,8 +159,8 @@ public class SourceFileDAOTest {
 		
 		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version1);
 		assertEquals("corpusSets size is wrong.", 2, corpusMap.size());
-		assertEquals("corpusSet1 is NOT same!", corpusContent1, corpusMap.get(fileName1).getContent());
-		assertEquals("corpusSet1 is NOT same!", corpusContent3, corpusMap.get(fileName2).getContent());
+		assertEquals("corpusSet1 is NOT same!", classCorpusContent1 + " " + methodCorpusContent1, corpusMap.get(fileName1).getContent());
+		assertEquals("corpusSet1 is NOT same!", classCorpusContent3 + " " + methodCorpusContent3, corpusMap.get(fileName2).getContent());
 		
 		HashMap<String, Double> lengthScores = sourceFileDAO.getLengthScores(productName, version1);
 		assertEquals("lengthScores size is wrong.", 2, lengthScores.size());

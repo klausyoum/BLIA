@@ -36,9 +36,9 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  *
  */
 public class BugDAOTest {
-	private String bugID1 = "BLIA-101";
-	private String bugID2 = "BLIA-102";
-	private String bugID3 = "BLIA-103";
+	private String bugID1 = "101";
+	private String bugID2 = "102";
+	private String bugID3 = "103";
 	private String productName = "BLIA";
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";

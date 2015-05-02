@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -181,6 +183,8 @@ public class SourceFileAnalyzer {
     		BugDAO bugDAO = new BugDAO();
     		HashMap<String, AnalysisValue> bugSfTermMap = bugDAO.getSfTermMap(bug.getID());
     		
+    		TreeSet<Double> vsmScoreSet = new TreeSet<Double>();
+    		LinkedList<IntegratedAnalysisValue> integratedAnalysisValueList = new LinkedList<IntegratedAnalysisValue>();
     		Iterator<String> sourceFileVersionIDIter = sourceFileVersionIDs.keySet().iterator();
     		while(sourceFileVersionIDIter.hasNext()) {
     			String sourceFileName = sourceFileVersionIDIter.next();
@@ -277,13 +281,34 @@ public class SourceFileAnalyzer {
 //    				}
 //    			}
     			
-    			vsmScore = vsmScore * sourceFileLengthScoreMap.get(sourceFileVersionID);		
-
-    			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
-    			integratedAnalysisValue.setBugID(bug.getID());
-    			integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
-    			integratedAnalysisValue.setVsmScore(vsmScore);
-    			integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+    			vsmScore = vsmScore * sourceFileLengthScoreMap.get(sourceFileVersionID);
+    			
+    			if (vsmScore > 0) {
+	    			IntegratedAnalysisValue integratedAnalysisValue = new IntegratedAnalysisValue();
+	    			integratedAnalysisValue.setBugID(bug.getID());
+	    			integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
+	    			integratedAnalysisValue.setVsmScore(vsmScore);
+	    			
+	    			vsmScoreSet.add(vsmScore);
+	    			integratedAnalysisValueList.add(integratedAnalysisValue);
+    			}
+    		}
+    		
+    		double limitVsmScore = 0;
+    		if (vsmScoreSet.size() > Property.LIMIT_CANDIDATE_SIZE) {
+    			limitVsmScore = (Double) (vsmScoreSet.descendingSet().toArray()[Property.LIMIT_CANDIDATE_SIZE -1]);
+    		}
+    		
+    		int count = 0;
+    		for (IntegratedAnalysisValue integratedAnalysisValue:integratedAnalysisValueList) {
+    			if (count < Property.LIMIT_CANDIDATE_SIZE) {
+    				if (integratedAnalysisValue.getVsmScore() >= limitVsmScore) {
+    					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+    					count++;
+    				}
+    			} else {
+    				break;
+    			}
     		}
     	}
     }

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -105,6 +107,9 @@ public class BugRepoAnalyzer {
     				}
     			}
     			
+    	   		TreeSet<Double> simiScoreSet = new TreeSet<Double>();
+        		LinkedList<IntegratedAnalysisValue> integratedAnalysisValueList = new LinkedList<IntegratedAnalysisValue>();
+    			
     			Iterator<Integer> similarScoresIter = similarScores.keySet().iterator();
     			while (similarScoresIter.hasNext()) {
     				int sourceFileVersionID = similarScoresIter.next();
@@ -115,15 +120,31 @@ public class BugRepoAnalyzer {
     				integratedAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
     				integratedAnalysisValue.setSimilarityScore(similarScore);
 
-    				if (similarScore != 0.0) {
-    					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
-    					
-    					if (0 == updatedColumenCount) {
-    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
-    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
-    						// remove following line after testing.
-//    						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-    					}
+    				simiScoreSet.add(similarScore);
+    				integratedAnalysisValueList.add(integratedAnalysisValue);
+    				
+    			}
+    			
+        		double limitSimiScore = 0;
+        		if (simiScoreSet.size() > Property.LIMIT_CANDIDATE_SIZE) {
+        			limitSimiScore = (Double) (simiScoreSet.descendingSet().toArray()[Property.LIMIT_CANDIDATE_SIZE -1]);
+        		}
+        		
+        		int count = 0;
+        		for (IntegratedAnalysisValue integratedAnalysisValue:integratedAnalysisValueList) {
+        			if (count < Property.LIMIT_CANDIDATE_SIZE) {
+        				if (integratedAnalysisValue.getVsmScore() >= limitSimiScore) {
+	    					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
+	    					
+	    					if (0 == updatedColumenCount) {
+	    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
+	    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+	    						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+	    					}
+	    					count++;
+        				} else {
+        					break;
+        				}
     				}
     			}
     		}

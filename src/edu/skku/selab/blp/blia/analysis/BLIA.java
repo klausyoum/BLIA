@@ -29,6 +29,7 @@ import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
+import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -154,6 +155,8 @@ public class BLIA {
         }
         
         private void insertDataToDb() throws Exception {
+			long startTime = System.currentTimeMillis();
+
         	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
     		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
 //			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
@@ -161,6 +164,8 @@ public class BLIA {
 			normalize(integratedAnalysisValues);
 			combine(integratedAnalysisValues, alpha, beta);
 			
+			int sourceFileCount = integratedAnalysisValues.keySet().size();
+			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -175,10 +180,10 @@ public class BLIA {
 //					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 				}
 			}
-			
+
 			synchronized (completeBugIdCount) {
 				completeBugIdCount++;
-				System.out.printf("Current completed calculation bug ID count: %d\n", completeBugIdCount);
+				System.out.printf("[Thread()] [%d] Bug ID: %s (%s sec)\n", completeBugIdCount, bugID, TestConfiguration.getElapsedTimeSting(startTime));
 			}
         }
     }
@@ -186,17 +191,25 @@ public class BLIA {
     private void calculateBLIAScore(String bugID) throws Exception {
 //		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
     	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+    	
+//    	System.out.printf("Before integratedAnalysisDAO.getAnalysisValues() \n");
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+//		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
 		// AmaLgam doesn't use normalize
 		normalize(integratedAnalysisValues);
 		combine(integratedAnalysisValues, alpha, beta);
 		
+		int sourceFileCount = integratedAnalysisValues.keySet().size();
+		System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
+		int count = 0;
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
 			
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+//			System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
 			int updatedColumnCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
+//			System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
 			if (0 == updatedColumnCount) {
 				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
 						integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
@@ -235,17 +248,18 @@ public class BLIA {
 		
 		System.out.printf("[STARTED] BLIA.anlayze()\n");
 //		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
-		ExecutorService executor = Executors.newFixedThreadPool(10);
+//		ExecutorService executor = Executors.newFixedThreadPool(4);
 		for (int i = 0; i < bugs.size(); i++) {
-//			String bugID = bugs.get(i).getID();
-//			System.out.printf("[getAnalysisValues()] [%d] Bug ID: %s\n", i, bugID);
-//			calculateBLIAScore(bugID);
-			Runnable worker = new WorkerThread(bugs.get(i).getID());
-			executor.execute(worker);
+			long startTime = System.currentTimeMillis();
+			String bugID = bugs.get(i).getID();
+			calculateBLIAScore(bugID);
+			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %s (%s sec)\n", i, bugID, TestConfiguration.getElapsedTimeSting(startTime));
+//			Runnable worker = new WorkerThread(bugs.get(i).getID());
+//			executor.execute(worker);
 		}
-		executor.shutdown();
-		while (!executor.isTerminated()) {
-		}
+//		executor.shutdown();
+//		while (!executor.isTerminated()) {
+//		}
 		
 		System.out.printf("[DONE] BLIA.anlayze()\n");
 	}

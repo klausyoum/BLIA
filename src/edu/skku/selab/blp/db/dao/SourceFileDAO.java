@@ -369,6 +369,33 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		return sourceFileNames;	
 	}
+	
+	public int insertStructuredCorpusSet(int sourceFileID, String version, SourceFileCorpus corpus, int totalCorpusCount, double lengthScore) {
+		String sql = "INSERT INTO SF_VER_INFO (SF_ID, VER, CLS_COR, MTH_COR, VAR_COR, CMT_COR, TOT_CNT, LEN_SCORE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, sourceFileID);
+			ps.setString(2, version);
+			ps.setString(3, corpus.getClassPart());
+			ps.setString(4, corpus.getMethodPart());
+			ps.setString(5, corpus.getVariablePart());
+			ps.setString(6, corpus.getCommentPart());
+			ps.setInt(7, totalCorpusCount);
+			ps.setDouble(8, lengthScore);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (INVALID != returnValue) {
+			returnValue = getSourceFileVersionID(sourceFileID, version);
+		} 
+
+		return returnValue;
+	}
 
 	public int insertCorpusSet(int sourceFileID, String version, SourceFileCorpus corpus, int totalCorpusCount, double lengthScore) {
 		String sql = "INSERT INTO SF_VER_INFO (SF_ID, VER, COR, CLS_COR, MTH_COR, VAR_COR, CMT_COR, TOT_CNT, LEN_SCORE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";

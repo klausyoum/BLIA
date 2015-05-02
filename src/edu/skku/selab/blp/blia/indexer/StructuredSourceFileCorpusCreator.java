@@ -137,7 +137,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					throw new Exception(); 
 				}
 				
-				int sourceFileVersionID = sourceFileDAO.insertCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
+				int sourceFileVersionID = sourceFileDAO.insertStructuredCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
 				if (BaseDAO.INVALID == sourceFileVersionID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", className);
 					throw new Exception(); 

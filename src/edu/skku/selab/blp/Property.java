@@ -35,7 +35,8 @@ public class Property {
 	
 	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
-	final static public int THREAD_COUNT = 1;
+	final static public int THREAD_COUNT = 10;
+	final static public int LIMIT_CANDIDATE_SIZE = 500;
 	
 	private String bugFilePath;
 	private String[] sourceCodeDirList;
@@ -219,26 +220,29 @@ public class Property {
 			}
 			break;
 		case Property.ZXING:
-			this.sourceCodeDirList = new String[8];
-			if (osName.equals("Mac OS X")) {
-				this.sourceCodeDirList[0] = sourceCodeDir + "/android/src";
-				this.sourceCodeDirList[1] = sourceCodeDir + "/android-integration/src";
-				this.sourceCodeDirList[2] = sourceCodeDir + "/core/src";
-				this.sourceCodeDirList[3] = sourceCodeDir + "/javame/src";
-				this.sourceCodeDirList[4] = sourceCodeDir + "/javase/src";
-				this.sourceCodeDirList[5] = sourceCodeDir + "/rim/src";
-				this.sourceCodeDirList[6] = sourceCodeDir + "/zxing.appspot.com/generator/src";
-				this.sourceCodeDirList[7] = sourceCodeDir + "/zxingorg/src";
-			} else {
-				this.sourceCodeDirList[0] = sourceCodeDir + "\\android\\src";
-				this.sourceCodeDirList[1] = sourceCodeDir + "\\android-integration\\src";
-				this.sourceCodeDirList[2] = sourceCodeDir + "\\core\\src";
-				this.sourceCodeDirList[3] = sourceCodeDir + "\\javame\\src";
-				this.sourceCodeDirList[4] = sourceCodeDir + "\\javase\\src";
-				this.sourceCodeDirList[5] = sourceCodeDir + "\\rim\\src";
-				this.sourceCodeDirList[6] = sourceCodeDir + "\\zxing.appspot.com\\generator\\src";
-				this.sourceCodeDirList[7] = sourceCodeDir + "\\zxingorg\\src";
-			}
+//			this.sourceCodeDirList = new String[8];
+			this.sourceCodeDirList = new String[1];
+			this.sourceCodeDirList[0] = sourceCodeDir;
+			
+//			if (osName.equals("Mac OS X")) {
+//				this.sourceCodeDirList[0] = sourceCodeDir + "/android/src";
+//				this.sourceCodeDirList[1] = sourceCodeDir + "/android-integration/src";
+//				this.sourceCodeDirList[2] = sourceCodeDir + "/core/src";
+//				this.sourceCodeDirList[3] = sourceCodeDir + "/javame/src";
+//				this.sourceCodeDirList[4] = sourceCodeDir + "/javase/src";
+//				this.sourceCodeDirList[5] = sourceCodeDir + "/rim/src";
+//				this.sourceCodeDirList[6] = sourceCodeDir + "/zxing.appspot.com/generator/src";
+//				this.sourceCodeDirList[7] = sourceCodeDir + "/zxingorg/src";
+//			} else {
+//				this.sourceCodeDirList[0] = sourceCodeDir + "\\android\\src";
+//				this.sourceCodeDirList[1] = sourceCodeDir + "\\android-integration\\src";
+//				this.sourceCodeDirList[2] = sourceCodeDir + "\\core\\src";
+//				this.sourceCodeDirList[3] = sourceCodeDir + "\\javame\\src";
+//				this.sourceCodeDirList[4] = sourceCodeDir + "\\javase\\src";
+//				this.sourceCodeDirList[5] = sourceCodeDir + "\\rim\\src";
+//				this.sourceCodeDirList[6] = sourceCodeDir + "\\zxing.appspot.com\\generator\\src";
+//				this.sourceCodeDirList[7] = sourceCodeDir + "\\zxingorg\\src";
+//			}
 			break;
 		default:
 			break;
