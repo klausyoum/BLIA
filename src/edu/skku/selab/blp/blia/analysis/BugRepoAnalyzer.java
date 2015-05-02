@@ -32,8 +32,8 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
  */
 public class BugRepoAnalyzer {
 	private ArrayList<Bug> bugs;
-	private HashMap<String, HashSet<SourceFile>> fixedFilesMap;
-	private HashMap<String, HashSet<SimilarBugInfo>> similarBugInfosMap;
+	private HashMap<Integer, HashSet<SourceFile>> fixedFilesMap;
+	private HashMap<Integer, HashSet<SimilarBugInfo>> similarBugInfosMap;
 	
     public BugRepoAnalyzer() {
     	bugs = null;
@@ -45,11 +45,11 @@ public class BugRepoAnalyzer {
     
     private void prepareData() throws Exception {
 		BugDAO bugDAO = new BugDAO();
-		fixedFilesMap = new HashMap<String, HashSet<SourceFile>>(); 
-		similarBugInfosMap = new HashMap<String, HashSet<SimilarBugInfo>>();
+		fixedFilesMap = new HashMap<Integer, HashSet<SourceFile>>(); 
+		similarBugInfosMap = new HashMap<Integer, HashSet<SimilarBugInfo>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			Bug bug = bugs.get(i);
-			String bugID = bug.getID();
+			int bugID = bug.getID();
 			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
 			fixedFilesMap.put(bugID, fixedFiles);
 			
@@ -79,7 +79,7 @@ public class BugRepoAnalyzer {
         private void calculateSimilarScore(Bug bug) throws Exception {
     		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();	
     		
-    		String bugID = bug.getID();
+    		int bugID = bug.getID();
     		HashMap<Integer, Double> similarScores = new HashMap<Integer, Double>(); 
     		HashSet<SimilarBugInfo> similarBugInfos = similarBugInfosMap.get(bugID);
     		if (null != similarBugInfos) {
@@ -178,13 +178,13 @@ public class BugRepoAnalyzer {
 	
 	public void computeSimilarity() throws Exception {
 		BugDAO bugDAO = new BugDAO();
-		HashMap<String, ArrayList<AnalysisValue>> bugVectors = getVectors();
+		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
 		String productName = Property.getInstance().getProductName();
 		
         for(int i = 0; i < bugs.size(); i++) {
         	Bug bug = bugs.get(i);
-        	String firstBugID = bug.getID();
+        	int firstBugID = bug.getID();
         	ArrayList<AnalysisValue> firstBugVector = bugVectors.get(firstBugID);
         	
         	String fixedDateString = bug.getFixedDateString();
@@ -199,7 +199,7 @@ public class BugRepoAnalyzer {
         	}
         	
             for(int j = 0; j < targetIndex; j++) {
-            	String secondBugID = targetBugs.get(j).getID();
+            	int secondBugID = targetBugs.get(j).getID();
             	ArrayList<AnalysisValue> secondBugVector = bugVectors.get(secondBugID);
             	
             	double similarityScore = getCosineValue(firstBugVector, secondBugVector);
@@ -260,11 +260,11 @@ public class BugRepoAnalyzer {
 	 * @return <bug ID, <Corpus ID, AnalysisValue>> 
 	 * @throws IOException
 	 */
-	public HashMap<String, ArrayList<AnalysisValue>> getVectors() throws Exception {
+	public HashMap<Integer, ArrayList<AnalysisValue>> getVectors() throws Exception {
 		BugDAO bugDAO = new BugDAO();
-		HashMap<String, ArrayList<AnalysisValue>> bugVectors = new HashMap<String, ArrayList<AnalysisValue>>();
+		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = new HashMap<Integer, ArrayList<AnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
-			String bugID = bugs.get(i).getID();
+			int bugID = bugs.get(i).getID();
 			bugVectors.put(bugID, bugDAO.getBugTermWeightList(bugID));			
 		}
 		

@@ -35,8 +35,8 @@ public class Evaluator {
 	
 	private ExperimentResult experimentResult;
 	private ArrayList<Bug> bugs = null;
-	private HashMap<String, HashSet<SourceFile>> realFixedFilesMap = null;;
-	private HashMap<String, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
+	private HashMap<Integer, HashSet<SourceFile>> realFixedFilesMap = null;;
+	private HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
 	private FileWriter writer = null; 
 	
 	private int top1 = 0;
@@ -68,10 +68,10 @@ public class Evaluator {
 		BugDAO bugDAO = new BugDAO();
 		bugs = bugDAO.getAllBugs(productName, true);
 		
-		realFixedFilesMap = new HashMap<String, HashSet<SourceFile>>();
-		rankedValuesMap = new HashMap<String, ArrayList<IntegratedAnalysisValue>>();
+		realFixedFilesMap = new HashMap<Integer, HashSet<SourceFile>>();
+		rankedValuesMap = new HashMap<Integer, ArrayList<IntegratedAnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
-			String bugID = bugs.get(i).getID();
+			int bugID = bugs.get(i).getID();
 			HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID);
 			realFixedFilesMap.put(bugID, fixedFiles);
 			rankedValuesMap.put(bugID, getRankedValues(bugID, 0));
@@ -84,7 +84,7 @@ public class Evaluator {
 		experimentResultDAO.insertExperimentResult(experimentResult);
 	}
 	
-	private ArrayList<IntegratedAnalysisValue> getRankedValues(String bugID, int limit) throws Exception {
+	private ArrayList<IntegratedAnalysisValue> getRankedValues(int bugID, int limit) throws Exception {
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		ArrayList<IntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
@@ -97,9 +97,9 @@ public class Evaluator {
 	}
 	
     private class WorkerThread implements Runnable {
-    	private String bugID;
+    	private int bugID;
     	
-        public WorkerThread(String bugID) {
+        public WorkerThread(int bugID) {
             this.bugID = bugID;
         }
      
@@ -140,7 +140,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j++) {
@@ -155,7 +155,7 @@ public class Evaluator {
 						
 						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
 						writer.write(log);
-//						System.out.printf("%s %s %d\n",
+//						System.out.printf("%d %s %d\n",
 //								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;						
 					} else if (j < 5) {
@@ -165,7 +165,7 @@ public class Evaluator {
 						}
 						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
 						writer.write(log);
-//						System.out.printf("%s %s %d\n",
+//						System.out.printf("%d %s %d\n",
 //								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					} else if (j < 10) {
@@ -174,7 +174,7 @@ public class Evaluator {
 						}
 						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
 						writer.write(log);
-//						System.out.printf("%s %s %d\n",
+//						System.out.printf("%d %s %d\n",
 //								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}
@@ -182,7 +182,7 @@ public class Evaluator {
 					else if (j < limitedCount) {
 						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
 						writer.write(log);
-//						System.out.printf("%s %s %d\n",
+//						System.out.printf("%d %s %d\n",
 //								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
 						break;
 					}
@@ -206,7 +206,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
@@ -242,7 +242,7 @@ public class Evaluator {
 			int numberOfPositiveInstances = 0;
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %s\n", bugID);
+				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {

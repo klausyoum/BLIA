@@ -47,7 +47,7 @@ public class BugTest {
 
 	@Test
 	public void verifyConstructor() {
-		String ID = "29769";
+		int ID = 29769;
 		String productName = "BLIA";
 		String openDate = "2003-01-19 11:42:00";
 		String fixDate = "2003-01-24 21:17:00";

@@ -49,7 +49,7 @@ public class BugLocator {
 		double alpha = Property.getInstance().getAlpha();
 		
 		for (int i = 0; i < bugs.size(); i++) {
-			String bugID = bugs.get(i).getID();
+			int bugID = bugs.get(i).getID();
 			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
 			normalize(integratedAnalysisValues);
 			combine(integratedAnalysisValues, alpha);

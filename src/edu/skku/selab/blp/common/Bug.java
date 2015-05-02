@@ -19,7 +19,7 @@ import java.util.TreeSet;
  */
 public class Bug {
 
-    private String ID;
+    private int ID;
     private String productName;
 	private String fixedDateStringNotModified;
 	private Date openDate;
@@ -33,7 +33,7 @@ public class Bug {
     private ArrayList<String> stackTraceClasses;
     
     public Bug() {
-    	this.ID = "";
+    	this.ID = 0;
     	this.productName = "";
     	this.openDate = new Date(System.currentTimeMillis());
     	this.fixedDate = new Date(System.currentTimeMillis());
@@ -46,7 +46,7 @@ public class Bug {
     	this.stackTraceClasses = new ArrayList<String>();
     }
     
-    public Bug(String ID, String productName, String openDateString, String fixedDateString, String summary, String description, String version, TreeSet<String> fixedFiles) {
+    public Bug(int ID, String productName, String openDateString, String fixedDateString, String summary, String description, String version, TreeSet<String> fixedFiles) {
     	this.ID = ID;
     	this.productName = productName;
     	setOpenDate(openDateString);
@@ -60,11 +60,11 @@ public class Bug {
     	this.stackTraceClasses = new ArrayList<String>();
     }
 
-    public String getID() {
+    public int getID() {
 		return ID;
 	}
     
-	public void setID(String ID) {
+	public void setID(int ID) {
 		this.ID = ID;
 	}
 

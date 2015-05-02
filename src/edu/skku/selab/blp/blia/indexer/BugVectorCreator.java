@@ -100,7 +100,7 @@ public class BugVectorCreator implements IVectorCreator {
 		reader = new BufferedReader(new FileReader((new StringBuilder(String.valueOf(workDir))).append("BugVector.txt").toString()));
 		while ((line = reader.readLine()) != null) {
 			String values[] = line.split(";");
-			String bugID = values[0].split("\\.")[0];
+			int bugID = Integer.parseInt(values[0].split("\\.")[0]);
 			
 			if (values.length != 1) {
 				HashMap<Integer, Double> bugTermVectors = getVectors(values[1].trim(), bugWordIndexMap);
@@ -109,7 +109,7 @@ public class BugVectorCreator implements IVectorCreator {
 				while (corpusVectorsIter.hasNext()) {
 					int bugTermID =  corpusVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
-					analysisValue.setName(bugID);
+					analysisValue.setID(bugID);
 					analysisValue.setTermID(bugTermID);
 					analysisValue.setTermWeight(bugTermVectors.get(bugTermID).doubleValue());
 					bugDAO.insertBugTermWeight(analysisValue);

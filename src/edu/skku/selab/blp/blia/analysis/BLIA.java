@@ -137,9 +137,9 @@ public class BLIA {
 	}
 	
     private class WorkerThread implements Runnable {
-    	private String bugID;
+    	private int bugID;
     	
-        public WorkerThread(String bugID){
+        public WorkerThread(int bugID){
             this.bugID = bugID;
         }
      
@@ -188,7 +188,7 @@ public class BLIA {
         }
     }
     
-    private void calculateBLIAScore(String bugID) throws Exception {
+    private void calculateBLIAScore(int bugID) throws Exception {
 //		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
     	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
     	
@@ -251,9 +251,9 @@ public class BLIA {
 //		ExecutorService executor = Executors.newFixedThreadPool(4);
 		for (int i = 0; i < bugs.size(); i++) {
 			long startTime = System.currentTimeMillis();
-			String bugID = bugs.get(i).getID();
+			int bugID = bugs.get(i).getID();
 			calculateBLIAScore(bugID);
-			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %s (%s sec)\n", i, bugID, TestConfiguration.getElapsedTimeSting(startTime));
+			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, TestConfiguration.getElapsedTimeSting(startTime));
 //			Runnable worker = new WorkerThread(bugs.get(i).getID());
 //			executor.execute(worker);
 		}

@@ -139,7 +139,7 @@ public class BugCorpusCreatorWithFile {
 						String openDateString = bugNode.getAttributes().getNamedItem("opendate").getNodeValue();
 						String fixDateString = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
 						Bug bug = new Bug();
-						bug.setID(bugId);
+						bug.setID(Integer.parseInt(bugId));
 						bug.setOpenDate(openDateString);
 						bug.setFixedDate(simpleDateFormat.parse(fixDateString));
 						for (Node node = bugNode.getFirstChild(); node != null; node = node.getNextSibling()) {

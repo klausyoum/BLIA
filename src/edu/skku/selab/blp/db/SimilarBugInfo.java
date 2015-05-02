@@ -12,28 +12,28 @@ package edu.skku.selab.blp.db;
  *
  */
 public class SimilarBugInfo {
-	private String similarBugID;
+	private int similarBugID;
 	private double similarityScore;
 
 	/**
 	 * 
 	 */
 	public SimilarBugInfo() {
-		setSimilarBugID("");
+		setSimilarBugID(0);
 		setSimilarityScore(0.0);
 	}
 
 	/**
 	 * @return the bugID
 	 */
-	public String getSimilarBugID() {
+	public int getSimilarBugID() {
 		return similarBugID;
 	}
 
 	/**
 	 * @param bugID the bugID to set
 	 */
-	public void setSimilarBugID(String bugID) {
+	public void setSimilarBugID(int bugID) {
 		this.similarBugID = bugID;
 	}
 

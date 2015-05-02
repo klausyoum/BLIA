@@ -44,7 +44,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			}
 			
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(1, integratedAnalysisValue.getBugID());
 			ps.setInt(2, sourceFileVersionID);
 			ps.setDouble(3, integratedAnalysisValue.getVsmScore());
 			ps.setDouble(4, integratedAnalysisValue.getSimilarityScore());
@@ -68,7 +68,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getSimilarityScore());
-			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -86,7 +86,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBugLocatorScore());
-			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -101,12 +101,12 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		String sql = "UPDATE INT_ANALYSIS SET BLIA_SCORE = ?, BL_SCORE = ? WHERE BUG_ID = ? AND SF_VER_ID = ?";
 		int returnValue = INVALID;
 		
-//		System.out.printf("Bug ID: %s, SourceFileVerID: %d\n", integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+//		System.out.printf("Bug ID: %d, SourceFileVerID: %d\n", integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
 			ps.setDouble(2, integratedAnalysisValue.getBugLocatorScore());
-			ps.setInt(3, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(3, integratedAnalysisValue.getBugID());
 			ps.setInt(4, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -124,7 +124,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getStackTraceScore());
-			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -162,7 +162,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedAnalysisValue.getCommitLogScore());
-			ps.setInt(2, Integer.parseInt(integratedAnalysisValue.getBugID()));
+			ps.setInt(2, integratedAnalysisValue.getBugID());
 			ps.setInt(3, integratedAnalysisValue.getSourceFileVersionID());
 			
 			returnValue = ps.executeUpdate();
@@ -246,7 +246,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<Integer, IntegratedAnalysisValue> getAnalysisValues(String bugID) {
+	public HashMap<Integer, IntegratedAnalysisValue> getAnalysisValues(int bugID) {
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
@@ -260,7 +260,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, Integer.parseInt(bugID));
+			ps.setInt(1, bugID);
 			
 			rs = ps.executeQuery();
 			
@@ -290,7 +290,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return integratedAnalysisValues;
 	}
 	
-	public ArrayList<IntegratedAnalysisValue> getBugLocatorRankedValues(String bugID, int limit) {
+	public ArrayList<IntegratedAnalysisValue> getBugLocatorRankedValues(int bugID, int limit) {
 		ArrayList<IntegratedAnalysisValue> bugLocatorRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
@@ -305,7 +305,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, Integer.parseInt(bugID));
+			ps.setInt(1, bugID);
 			
 			rs = ps.executeQuery();
 			
@@ -334,7 +334,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return bugLocatorRankedValues;
 	}
 	
-	public ArrayList<IntegratedAnalysisValue> getBLIARankedValues(String bugID, int limit) {
+	public ArrayList<IntegratedAnalysisValue> getBLIARankedValues(int bugID, int limit) {
 		ArrayList<IntegratedAnalysisValue> bliaRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
@@ -355,7 +355,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, Integer.parseInt(bugID));
+			ps.setInt(1, bugID);
 			
 			rs = ps.executeQuery();
 			

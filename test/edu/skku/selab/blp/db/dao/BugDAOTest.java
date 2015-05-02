@@ -36,9 +36,9 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  *
  */
 public class BugDAOTest {
-	private String bugID1 = "101";
-	private String bugID2 = "102";
-	private String bugID3 = "103";
+	private int bugID1 = 101;
+	private int bugID2 = 102;
+	private int bugID3 = 103;
 	private String productName = "BLIA";
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";
@@ -161,7 +161,7 @@ public class BugDAOTest {
 	@Test
 	public void verifyGetBug() throws Exception {
 		BugDAO bugDAO = new BugDAO();
-		HashMap<String, Bug> bugs = bugDAO.getBugs();
+		HashMap<Integer, Bug> bugs = bugDAO.getBugs();
 		
 		Bug foundBug1 = bugs.get(bugID1);
 		Bug foundBug2 = bugs.get(bugID2);
@@ -251,7 +251,7 @@ public class BugDAOTest {
 		assertNotEquals("BugSfAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugSfTermWeight(analysisValue));
 		
 		AnalysisValue termWeight = bugDAO.getBugSfTermWeight(bugID1, productName, term1);
-		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, termWeight.getName());
+		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, termWeight.getID());
 		assertEquals("productName of AnalysisValue is wrong.", productName, termWeight.getProductName());
 		assertEquals("term1 of AnalysisValue is wrong.", term1, termWeight.getTerm());
 		assertEquals("termCount of AnalysisValue is wrong.", termCount, termWeight.getTermCount());
@@ -272,7 +272,7 @@ public class BugDAOTest {
 		assertNotEquals("BugAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTermWeight(analysisValue));
 		
 		AnalysisValue returnValue = bugDAO.getBugTermWeight(bugID1, productName, term1);
-		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getName());
+		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getID());
 		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
 		assertEquals("term1 of AnalysisValue is wrong.", term1, returnValue.getTerm());
 		assertEquals("termWeight of AnalysisValue is wrong.", termWeight, returnValue.getTermWeight(), delta);
@@ -347,18 +347,18 @@ public class BugDAOTest {
 		Iterator<SimilarBugInfo> iter2 = similarBugInfos.iterator();
 		
 		SimilarBugInfo similarBugInfo = iter2.next();
-		if (bugID2.equalsIgnoreCase(similarBugInfo.getSimilarBugID())) {
+		if (bugID2 == similarBugInfo.getSimilarBugID()) {
 			assertEquals("similarityScore1 is wrong.", similarityScore1, similarBugInfo.getSimilarityScore(), delta);			
-		} else if (bugID3.equalsIgnoreCase(similarBugInfo.getSimilarBugID())) {
+		} else if (bugID3 == similarBugInfo.getSimilarBugID()) {
 			assertEquals("similarityScore2 is wrong.", similarityScore2, similarBugInfo.getSimilarityScore(), delta);
 		} else {
 			fail("SimilarBugInfo is wrong.");
 		}
 		
 		similarBugInfo = iter2.next();
-		if (bugID2.equalsIgnoreCase(similarBugInfo.getSimilarBugID())) {
+		if (bugID2 == similarBugInfo.getSimilarBugID()) {
 			assertEquals("similarityScore1 is wrong.", similarityScore1, similarBugInfo.getSimilarityScore(), delta);			
-		} else if (bugID3.equalsIgnoreCase(similarBugInfo.getSimilarBugID())) {
+		} else if (bugID3 == similarBugInfo.getSimilarBugID()) {
 			assertEquals("similarityScore2 is wrong.", similarityScore2, similarBugInfo.getSimilarityScore(), delta);
 		} else {
 			fail("SimilarBugInfo is wrong.");

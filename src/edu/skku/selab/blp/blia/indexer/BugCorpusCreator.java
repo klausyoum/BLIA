@@ -149,7 +149,7 @@ public class BugCorpusCreator {
 		}
 	}
 	
-    public ArrayList<String> extractClassName(String content, String bugID) {
+    public ArrayList<String> extractClassName(String content, int bugID) {
 //        String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*\\(([a-zA-Z_][a-zA-Z0-9_\\-]*\\.java:[0-9]*|(?i)native method|(?i)unknown source)\\))";
         String pattern = "(([a-zA-Z0-9_\\-$]*\\.)*[a-zA-Z_<][a-zA-Z0-9_\\-$>]*" +
         		"[a-zA-Z_<(][a-zA-Z0-9_\\-$>);/\\[]*" +
@@ -167,7 +167,7 @@ public class BugCorpusCreator {
         		fileName = methodName.substring(0, methodName.lastIndexOf("$"));
         	} else {
         		if (-1 == methodName.lastIndexOf(".")) {
-        			System.err.printf("[BugCorpusCreator.extractClassName()] BugID: %s, Wrong stack trace: %s\n", bugID, foundLine);
+        			System.err.printf("[BugCorpusCreator.extractClassName()] BugID: %d, Wrong stack trace: %s\n", bugID, foundLine);
         		} else {
         			fileName = methodName.substring(0, methodName.lastIndexOf("."));
         		}
@@ -194,7 +194,7 @@ public class BugCorpusCreator {
 				for (int i = 0; i < bugRepository.getLength(); i++) {
 					Node bugNode = bugRepository.item(i);
 					if (bugNode.getNodeType() == 1) {
-						String bugId = bugNode.getAttributes().getNamedItem("id").getNodeValue();
+						int bugId = Integer.parseInt(bugNode.getAttributes().getNamedItem("id").getNodeValue());
 						
 						// debug code
 //						if (bugId.contains("80830")) {
@@ -262,7 +262,7 @@ public class BugCorpusCreator {
 //												}
 
 												// debug code
-//												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %s, Fixed file name: %s\n", bug.getID(), fileName);
+//												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fileName);
 											}
 											bug.addFixedFile(fileName);
 										}

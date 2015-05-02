@@ -144,7 +144,7 @@ public class BugVectorCreatorWithFile implements IVectorCreator {
 				while (bugTermVectorsIter.hasNext()) {
 					int bugTermID =  bugTermVectorsIter.next();
 					AnalysisValue analysisValue = new AnalysisValue();
-					analysisValue.setName(bugID);
+					analysisValue.setID(Integer.parseInt(bugID));
 					analysisValue.setTermID(bugTermID);
 					analysisValue.setTermWeight(bugTermVectors.get(bugTermID).doubleValue());
 					bugDAO.insertBugTermWeight(analysisValue);

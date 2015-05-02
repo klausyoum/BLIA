@@ -12,7 +12,7 @@ package edu.skku.selab.blp.db;
  *
  */
 public class IntegratedAnalysisValue {
-	private String bugID;
+	private int bugID;
 	private String fileName;
 	private String version;
 	private int sourceFileVersionID;
@@ -28,7 +28,7 @@ public class IntegratedAnalysisValue {
 	 * 
 	 */
 	public IntegratedAnalysisValue() {
-		bugID = "";
+		bugID = 0;
 		fileName = "";
 		version = "";
 		sourceFileVersionID = -1;
@@ -44,14 +44,14 @@ public class IntegratedAnalysisValue {
 	/**
 	 * @return the bugID
 	 */
-	public String getBugID() {
+	public int getBugID() {
 		return bugID;
 	}
 
 	/**
 	 * @param bugID the bugID to set
 	 */
-	public void setBugID(String bugID) {
+	public void setBugID(int bugID) {
 		this.bugID = bugID;
 	}
 

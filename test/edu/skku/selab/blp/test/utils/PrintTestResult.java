@@ -89,7 +89,7 @@ public class PrintTestResult {
 		BugDAO bugDAO = new BugDAO();
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
-		HashMap<String, Bug> allBugs = bugDAO.getBugs();
+		HashMap<Integer, Bug> allBugs = bugDAO.getBugs();
 		FileWriter resultWriter = new FileWriter("ExperimentResult.txt");
 		
 		Iterator<Bug> bugIter = allBugs.values().iterator();

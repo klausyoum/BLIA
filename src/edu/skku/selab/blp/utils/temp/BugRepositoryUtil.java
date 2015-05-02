@@ -54,14 +54,14 @@ public class BugRepositoryUtil {
 
 		ArrayList<Bug> bugsOfBRTracer = bugRepositoryUtil.parseXMLOfBRTracer();
 		ArrayList<Bug> bugsOfIbugs = bugRepositoryUtil.parseXMLOfIbugs();
-		HashMap<String, Bug> bugIDs = new HashMap<String, Bug>();
+		HashMap<Integer, Bug> bugIDs = new HashMap<Integer, Bug>();
 		
 		for (int i = 0; i < bugsOfIbugs.size(); i++) {
 			bugIDs.put(bugsOfIbugs.get(i).getID(), bugsOfIbugs.get(i));
 		}
 		
 		for (int i = 0; i < bugsOfBRTracer.size(); i++) {
-			String bugID = bugsOfBRTracer.get(i).getID();
+			int bugID = bugsOfBRTracer.get(i).getID();
 			Bug foundBug = bugIDs.get(bugID); 
 			if (null != foundBug) {
 				String oldDescription = bugsOfBRTracer.get(i).getDescription(); 
@@ -90,7 +90,7 @@ public class BugRepositoryUtil {
 				for (int i = 0; i < bugRepository.getLength(); i++) {
 					Node bugNode = bugRepository.item(i);
 					if (bugNode.getNodeType() == 1) {
-						String bugId = bugNode.getAttributes().getNamedItem("id").getNodeValue();
+						int bugId = Integer.parseInt(bugNode.getAttributes().getNamedItem("id").getNodeValue());
 						String openDateString = bugNode.getAttributes().getNamedItem("opendate").getNodeValue();
 						String fixDateString = bugNode.getAttributes().getNamedItem("fixdate").getNodeValue();
 						Bug bug = new Bug();
@@ -153,7 +153,7 @@ public class BugRepositoryUtil {
 				for (int i = 0; i < bugRepository.getLength(); i++) {
 					Node bugNode = bugRepository.item(i);
 					if (bugNode.getNodeType() == 1) {
-						String bugId = bugNode.getAttributes().getNamedItem("id").getNodeValue();
+						int bugId = Integer.parseInt(bugNode.getAttributes().getNamedItem("id").getNodeValue());
 
 						Bug bug = new Bug();
 						bug.setID(bugId);
@@ -191,7 +191,7 @@ public class BugRepositoryUtil {
 			for (int i = 0; i < bugs.size(); i++) {
 				Bug bug = bugs.get(i);
 				Element bugElement = doc.createElement("bug");
-				bugElement.setAttribute("id", bug.getID());
+				bugElement.setAttribute("id", Integer.toString(bug.getID()));
 				bugElement.setAttribute("opendate", bug.getOpenDateString());
 				bugElement.setAttribute("fixdate", bug.getFixedDateStringNotModified());
 				{

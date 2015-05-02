@@ -12,6 +12,7 @@ package edu.skku.selab.blp.db;
  *
  */
 public class AnalysisValue {
+	private int ID;
 	protected String name;
 	protected String version;
 	protected String productName;
@@ -27,6 +28,7 @@ public class AnalysisValue {
 	final private int INIT_VALUE = -1;
 
 	public AnalysisValue() {
+		setID(0);
 		name = "";
 		version = "";
 		productName = "";
@@ -41,6 +43,7 @@ public class AnalysisValue {
 	}
 	
 	public AnalysisValue(String name, String productName, String term, double termWeight) {
+		setID(0);
 		setName(name);
 		version = "";
 		setProductName(productName);
@@ -53,7 +56,22 @@ public class AnalysisValue {
 		setTermWeight(termWeight);
 	}
 	
+	public AnalysisValue(int ID, String productName, String term, double termWeight) {
+		setID(ID);
+		setName("");
+		version = "";
+		setProductName(productName);
+		setTerm(term);
+		setTermID(INIT_VALUE);
+		termCount = INIT_VALUE;
+		invDocCount = INIT_VALUE;
+		tf = INIT_VALUE;
+		idf = INIT_VALUE;
+		setTermWeight(termWeight);
+	}
+	
 	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf) {
+		setID(0);
 		setName(name);
 		version = "";
 		setProductName(productName);
@@ -66,8 +84,37 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 	
+	public AnalysisValue(int ID, String productName, String term, int termCount, int invDocCount, double tf, double idf) {
+		setID(ID);
+		setName("");
+		version = "";
+		setProductName(productName);
+		setTerm(term);
+		setTermID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(tf);
+		setIdf(idf);
+		setTermWeight(INIT_VALUE);
+	}
+	
 	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
+		setID(0);
 		setName(name);
+		version = "";
+		setProductName(productName);
+		setTerm(term);
+		setTermID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(tf);
+		setIdf(idf);
+		setTermWeight(termWeight);
+	}
+	
+	public AnalysisValue(int ID, String productName, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
+		setID(ID);
+		setName("");
 		version = "";
 		setProductName(productName);
 		setTerm(term);
@@ -83,7 +130,23 @@ public class AnalysisValue {
 	 * 
 	 */
 	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount) {
+		setID(0);
 		setName(name);
+		setVersion(version);
+		setProductName(productName);
+		setTerm(term);
+		setSourceFileVersionID(INIT_VALUE);
+		setTermID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(INIT_VALUE);
+		setIdf(INIT_VALUE);
+		setTermWeight(INIT_VALUE);
+	}
+	
+	public AnalysisValue(int ID, String productName, String version, String term, int termCount, int invDocCount) {
+		setID(ID);
+		setName("");
 		setVersion(version);
 		setProductName(productName);
 		setTerm(term);
@@ -100,6 +163,7 @@ public class AnalysisValue {
 	 * 
 	 */
 	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount, double tf, double idf) {
+		setID(0);
 		setName(name);
 		setVersion(version);
 		setProductName(productName);
@@ -113,6 +177,21 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 
+	public AnalysisValue(int ID, String productName, String version, String term, int termCount, int invDocCount, double tf, double idf) {
+		setID(ID);
+		setName("");
+		setVersion(version);
+		setProductName(productName);
+		setTerm(term);
+		setSourceFileVersionID(INIT_VALUE);
+		setTermID(INIT_VALUE);
+		setTermCount(termCount);
+		setInvDocCount(invDocCount);
+		setTf(tf);
+		setIdf(idf);
+		setTermWeight(INIT_VALUE);
+	}
+	
 	/**
 	 * @return the name
 	 */
@@ -265,5 +344,19 @@ public class AnalysisValue {
 	 */
 	public void setTermWeight(double termWeight) {
 		this.termWeight = termWeight;
+	}
+
+	/**
+	 * @return the iD
+	 */
+	public int getID() {
+		return ID;
+	}
+
+	/**
+	 * @param iD the iD to set
+	 */
+	public void setID(int iD) {
+		ID = iD;
 	}
 }

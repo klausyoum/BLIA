@@ -25,7 +25,7 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
 public class BugSourceFileVectorCreator {
 	public void create(String version) throws Exception {
 		BugDAO bugDAO = new BugDAO();
-		HashMap<String, Bug> bugs = bugDAO.getBugs();
+		HashMap<Integer, Bug> bugs = bugDAO.getBugs();
 		Property property = Property.getInstance();
 		String productName = property.getProductName();
 		
@@ -36,7 +36,7 @@ public class BugSourceFileVectorCreator {
 		Hashtable<String, Integer> inverseDocCountTable = sourceFileVectorCreator.getInverseDocCountTable(version);
 		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
 		
-		String bugID = "";
+		int bugID = 0;
 		int totalTermCount = 0;
 		int bugTermCount = 0;
 		int inverseDocCount = 0;
@@ -44,7 +44,7 @@ public class BugSourceFileVectorCreator {
 		double idf = 0.0;
 		double termWeight = 0.0;
 		String bugTerm = "";
-		Iterator<String> bugsIter = bugs.keySet().iterator();
+		Iterator<Integer> bugsIter = bugs.keySet().iterator();
 		while (bugsIter.hasNext()) {
 			// calculate term count, IDC, TF and IDF
 			bugID = bugsIter.next();

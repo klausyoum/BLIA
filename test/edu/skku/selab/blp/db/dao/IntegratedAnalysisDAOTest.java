@@ -100,7 +100,7 @@ public class IntegratedAnalysisDAOTest {
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
 		
 		integratedAnalysisDAO.deleteAllIntegratedAnalysisInfos();
-		String bugID1 = "101";
+		int bugID1 = 101;
 		String productName = "BLIA";
 		String fileName1 = "test_10.java";
 		double vsmScore = 0.321;
