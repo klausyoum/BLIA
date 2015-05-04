@@ -92,7 +92,7 @@ public class BliaTest {
 		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
 		blia.prepareAnalysisData(useStrucrutedInfo, since.getTime(), until.getTime());
 		blia.preAnalyze();
-		blia.analyze(version);
+		blia.analyze(version, true);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
 		System.out.printf("Elapsed time of BLIA: %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);
@@ -123,7 +123,7 @@ public class BliaTest {
 		
 		System.out.printf("[STARTED] BLIA analysis.\n");
 		startTime = System.currentTimeMillis();
-		blia.analyze(version);
+		blia.analyze(version, true);
 		System.out.printf("[DONE] BLIA analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 }

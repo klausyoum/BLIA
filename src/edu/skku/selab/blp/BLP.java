@@ -10,6 +10,7 @@ package edu.skku.selab.blp;
 import java.io.File;
 
 
+
 import edu.skku.selab.blp.buglocator.analysis.BugLocatorWithFile;
 
 /**
@@ -162,7 +163,10 @@ public class BLP {
 				}
 				dir.mkdir();
 				
-				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(), alpha, beta, pastDate, repoDir, outputFile);
+				double candidateLimitRate = 1.0;
+				int candidateLimitSize = Integer.MAX_VALUE;
+				Property.createInstance(productName, bugFileDir, sourceCodeDir, dir.getAbsolutePath(),
+						alpha, beta, pastDate, repoDir, outputFile, candidateLimitRate, candidateLimitSize);
 			}
 		}
 		return isValid;

@@ -147,11 +147,14 @@ public class EvaluatorTest {
 		evaluator1.evaluate();
 	}
 	
-	private void runBLIA(boolean useStrucrutedInfo, boolean prepareAnalysisData, boolean preAnalyze, boolean analyze, EvaluationProperty evaluationProperty) throws Exception {
+	private void runBLIA(boolean useStrucrutedInfo, boolean prepareAnalysisData, boolean preAnalyze, boolean analyze,
+			boolean includeStackTrace, EvaluationProperty evaluationProperty) throws Exception {
 		String algorithmName = Evaluator.ALG_BLIA;
 		TestConfiguration.setProperty(evaluationProperty.getProductName(),
 				algorithmName, evaluationProperty.getAlpha(), evaluationProperty.getBeta(),
-				evaluationProperty.getPastDays(), evaluationProperty.getRepoDir());
+				evaluationProperty.getPastDays(), evaluationProperty.getRepoDir(),
+				evaluationProperty.getCandidateLimitRate(),
+				evaluationProperty.getCandidateLimitSize());
 		
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
 		long startTime = System.currentTimeMillis();
@@ -189,7 +192,7 @@ public class EvaluatorTest {
 		if (analyze) {
 			System.out.printf("[STARTED] BLIA anlaysis.\n");
 			startTime = System.currentTimeMillis();
-			blia.analyze(version);
+			blia.analyze(version, includeStackTrace);
 			System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
 		}
 	}
@@ -199,9 +202,10 @@ public class EvaluatorTest {
 	public void verifyEvaluateBLIAOnce() throws Exception {
 		boolean useStrucrutedInfo = true;
 		
-		boolean prepareAnalysisData = true;
-		boolean preAnalyze = true;
+		boolean prepareAnalysisData = false;
+		boolean preAnalyze = false;
 		boolean analyze = true;
+		boolean includeStackTrace = true;
 		
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
@@ -213,13 +217,17 @@ public class EvaluatorTest {
 		System.out.printf("[STARTED] BLIA Evaluation once.\n");
 		
 		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
-		runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, evaluationProerpty);
+		runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, evaluationProerpty);
 		
 		if (analyze) {
 			String algorithmDescription = "[BLIA] alpha: " + evaluationProerpty.getAlpha() +
 					", beta: " + evaluationProerpty.getBeta() + ", pastDays: " + evaluationProerpty.getPastDays();
 			if (useStrucrutedInfo) {
+//				algorithmDescription += " without project keyword";
 				algorithmDescription += " with structured info";
+			}
+			if (!includeStackTrace) {
+				algorithmDescription += " without Stack-Trace analysis";
 			}
 			
 			long startTime = System.currentTimeMillis();
@@ -234,30 +242,31 @@ public class EvaluatorTest {
 	}
 	
 	@Test
-	public void verifyEvaluateBLIARepeatedly() throws Exception {
+	public void verifyEvaluateBLIAWithChangingAlphaAndBeta() throws Exception {
 		// Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
 		boolean useStrucrutedInfo = true;
 		
 		boolean prepareAnalysisData = false;
 		boolean preAnalyze = false;
 		boolean analyze = true;
+		boolean includeStackTrace = true;
 		
 		// Change target project for experiment if you want
 		String productName = Property.SWT;
-//		productName = Property.ASPECTJ;
+		productName = Property.ASPECTJ;
 //		productName = Property.ZXING;
-		productName = Property.ECLIPSE;
+//		productName = Property.ECLIPSE;
 
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
 		
 		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
 		
-		for (double alpha = 0.1; alpha <= 0.5; alpha += 0.1) {
-			for (double beta = 0.0; beta <= 0.4; beta += 0.1) {
+		for (double alpha = 0.0; alpha <= 0.9; alpha += 0.1) {
+			for (double beta = 0.0; beta <= 0.9; beta += 0.1) {
 				evaluationProerpty.setAlpha(alpha);
 				evaluationProerpty.setBeta(beta);
-				runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, evaluationProerpty);
+				runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, evaluationProerpty);
 
 				if (analyze) {
 					String algorithmDescription = "[BLIA] alpha: " + evaluationProerpty.getAlpha() +
@@ -265,6 +274,10 @@ public class EvaluatorTest {
 					if (useStrucrutedInfo) {
 						algorithmDescription += " with structured info";
 					}
+					if (!includeStackTrace) {
+						algorithmDescription += " without Stack-Trace analysis";
+					}
+					
 					Evaluator evaluator = new Evaluator(productName, Evaluator.ALG_BLIA, algorithmDescription,
 							evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
 					evaluator.evaluate();
@@ -273,5 +286,147 @@ public class EvaluatorTest {
 		}
 		
 		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
-	}	
+	}
+	
+	@Test
+	public void verifyEvaluateBLIAWithChangingPastDays() throws Exception {
+		// Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
+		boolean useStrucrutedInfo = true;
+		
+		boolean prepareAnalysisData = false;
+		boolean preAnalyze = true; // DO NOT change preAnalyze for this experiment, because changing pastDays needs pre-analysis. 
+		boolean analyze = true;
+		boolean includeStackTrace = true;
+		
+		// Change target project for experiment if you want
+		String productName = Property.SWT;
+//		productName = Property.ASPECTJ;
+//		productName = Property.ZXING;
+//		productName = Property.ECLIPSE;
+
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
+		
+		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
+		
+		int[] pastDays = {120}; //15, 30, 60, 90, 120};
+		
+		for (int i = 0; i < pastDays.length; i++) {
+			evaluationProerpty.setPastDays(pastDays[i]);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, evaluationProerpty);
+
+			if (analyze) {
+				String algorithmDescription = "[BLIA] alpha: " + evaluationProerpty.getAlpha() +
+						", beta: " + evaluationProerpty.getBeta() + ", pastDays: " + evaluationProerpty.getPastDays();
+				if (useStrucrutedInfo) {
+					algorithmDescription += " with structured info";
+				}
+				if (!includeStackTrace) {
+					algorithmDescription += " without Stack-Trace analysis";
+				}
+				
+				Evaluator evaluator = new Evaluator(productName, Evaluator.ALG_BLIA, algorithmDescription,
+						evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
+				evaluator.evaluate();
+			}
+		}
+		
+		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+	}
+	
+	@Test
+	public void verifyEvaluateBLIAWithChangingCandidateLimitSize() throws Exception {
+		// Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
+		boolean useStrucrutedInfo = true;
+		
+		// DO NOT change prepareAnalysisData for this experiment, because changing candidateLimitSize needs prepareAnalysisData. 
+		boolean prepareAnalysisData = true;
+		boolean preAnalyze = true;
+		boolean analyze = true;
+		boolean includeStackTrace = true;
+		
+		// Change target project for experiment if you want
+		String productName = Property.SWT;
+		productName = Property.ASPECTJ;
+//		productName = Property.ZXING;
+//		productName = Property.ECLIPSE;
+
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
+		
+		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
+		
+		int[] candidateLimitSize = {Integer.MAX_VALUE, 500, 100, 50, 30};
+		
+		for (int i = 0; i < candidateLimitSize.length; i++) {
+			evaluationProerpty.setCandidateLimitSize(candidateLimitSize[i]);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, evaluationProerpty);
+
+			if (analyze) {
+				String algorithmDescription = "[BLIA] alpha: " + evaluationProerpty.getAlpha() +
+						", beta: " + evaluationProerpty.getBeta() + ", pastDays: " + evaluationProerpty.getPastDays();
+				algorithmDescription += ", candidateLimitSize: " + candidateLimitSize[i];
+				if (useStrucrutedInfo) {
+					algorithmDescription += " with structured info";
+				}
+				if (!includeStackTrace) {
+					algorithmDescription += " without Stack-Trace analysis";
+				}
+				
+				Evaluator evaluator = new Evaluator(productName, Evaluator.ALG_BLIA, algorithmDescription,
+						evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
+				evaluator.evaluate();
+			}
+		}
+		
+		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+	}
+	
+	@Test
+	public void verifyEvaluateBLIAWithChangingCandidateLimitRate() throws Exception {
+		// Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
+		boolean useStrucrutedInfo = true;
+		
+		// DO NOT change prepareAnalysisData for this experiment, because changing candidateLimitSize needs prepareAnalysisData. 
+		boolean prepareAnalysisData = true;
+		boolean preAnalyze = true;
+		boolean analyze = true;
+		boolean includeStackTrace = true;
+		
+		// Change target project for experiment if you want
+		String productName = Property.SWT;
+//		productName = Property.ASPECTJ;
+//		productName = Property.ZXING;
+//		productName = Property.ECLIPSE;
+
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
+		
+		EvaluationProperty evaluationProerpty = EvaluationPropertyFactory.getEvaluationProperty(productName);
+		
+		double[] candidateLimitRate = {1.0, 0.5, 0.2, 0.1, 0.05};
+		
+		for (int i = 0; i < candidateLimitRate.length; i++) {
+			evaluationProerpty.setCandidateLimitRate(candidateLimitRate[i]);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, evaluationProerpty);
+
+			if (analyze) {
+				String algorithmDescription = "[BLIA] alpha: " + evaluationProerpty.getAlpha() +
+						", beta: " + evaluationProerpty.getBeta() + ", pastDays: " + evaluationProerpty.getPastDays();
+				algorithmDescription += ", candidateLimitRate: " + candidateLimitRate[i];
+				if (useStrucrutedInfo) {
+					algorithmDescription += " with structured info";
+				}
+				if (!includeStackTrace) {
+					algorithmDescription += " without Stack-Trace analysis";
+				}
+				
+				Evaluator evaluator = new Evaluator(productName, Evaluator.ALG_BLIA, algorithmDescription,
+						evaluationProerpty.getAlpha(), evaluationProerpty.getBeta(), evaluationProerpty.getPastDays());
+				evaluator.evaluate();
+			}
+		}
+		
+		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+	}
 }

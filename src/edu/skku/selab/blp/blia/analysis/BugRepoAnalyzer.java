@@ -126,25 +126,27 @@ public class BugRepoAnalyzer {
     			}
     			
         		double limitSimiScore = 0;
-        		if (simiScoreSet.size() > Property.LIMIT_CANDIDATE_SIZE) {
-        			limitSimiScore = (Double) (simiScoreSet.descendingSet().toArray()[Property.LIMIT_CANDIDATE_SIZE -1]);
+        		int candidateLimitSize = Integer.MAX_VALUE;
+        		if (Property.getInstance().getCandidateLimitSize() != Integer.MAX_VALUE) {
+        			candidateLimitSize = Property.getInstance().getCandidateLimitSize();
+        		} else if (Property.getInstance().getCandidateLimitRate() != 1.0) {
+        			candidateLimitSize = (int) (Property.getInstance().getFileCount() * Property.getInstance().getCandidateLimitRate());
         		}
         		
-        		int count = 0;
+        		if (simiScoreSet.size() > candidateLimitSize) {
+        			limitSimiScore = (Double) (simiScoreSet.descendingSet().toArray()[candidateLimitSize -1]);
+        		}
+        		
         		for (IntegratedAnalysisValue integratedAnalysisValue:integratedAnalysisValueList) {
-        			if (count < Property.LIMIT_CANDIDATE_SIZE) {
-        				if (integratedAnalysisValue.getVsmScore() >= limitSimiScore) {
-	    					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
-	    					
-	    					if (0 == updatedColumenCount) {
-	    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
-	    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
-	    						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-	    					}
-	    					count++;
-        				} else {
-        					break;
-        				}
+    				if (integratedAnalysisValue.getVsmScore() >= limitSimiScore) {
+    					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
+    					
+    					if (0 == updatedColumenCount) {
+    						// TODO: remove following error message after testing.
+//    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
+//    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+    						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+    					}
     				}
     			}
     		}

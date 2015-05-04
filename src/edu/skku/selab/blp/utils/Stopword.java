@@ -29,6 +29,9 @@ public class Stopword
     
     public static boolean isProjectKeyword(String word)
     {
+    	// for experiment
+//    	return false;
+    	
         boolean isProjectKeyword = PROJECT_KEYWORDS_STOP_WORD_SET.contains(word);
         return isProjectKeyword;
     }
@@ -79,7 +82,7 @@ public class Stopword
         
         String projectKeywords[] = {
                 "args", "method", "main", "param",
-                "aspectj", "swt", "eclipse", "string", "java", "org", "javadoc"
+                "aspectj", "swt", "eclipse", "zxing", "string", "java", "org", "javadoc"
                 };
         
         PROJECT_KEYWORDS_STOP_WORD_SET = new TreeSet();

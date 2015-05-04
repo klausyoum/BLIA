@@ -36,7 +36,6 @@ public class Property {
 	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
 	final static public int THREAD_COUNT = 10;
-	final static public int LIMIT_CANDIDATE_SIZE = 500;
 	
 	private String bugFilePath;
 	private String[] sourceCodeDirList;
@@ -54,6 +53,8 @@ public class Property {
 	private String productName;
 	private int pastDays;
 	private String repoDir;
+	private int candidateLimitSize = Integer.MAX_VALUE;
+	private double candidateLimitRate = 1.0;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -105,25 +106,36 @@ public class Property {
 		return properties.getProperty(key);
 	}
 
-	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir, double alpha, double beta, int pastDays, String repoDir, String outputFile) {
+	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir,
+			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
 		if (null == p) {
-			p = new Property(productName, bugFilePath, sourceCodeDir, workDir, alpha, beta, pastDays, repoDir, outputFile);
+			p = new Property(productName, bugFilePath, sourceCodeDir, workDir,
+					alpha, beta, pastDays, repoDir, outputFile, candidateLimitRate,  candidateLimitSize);
 		} else {
 			p.setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-					beta, pastDays, repoDir, outputFile);
+					beta, pastDays, repoDir, outputFile, candidateLimitRate, candidateLimitSize);
 		}
-		
 	}
-
+	
 	public static Property getInstance() {
 		return p;
 	}
 	
-	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir, double alpha, double beta, int pastDays, String repoDir, String outputFile) {
+	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir,
+			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
+		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
+				beta, pastDays, repoDir, outputFile, candidateLimitRate, candidateLimitSize);
+	}
+
+	private void setValues(String productName, String bugFilePath,
+			String sourceCodeDir, String workDir, double alpha, double beta,
+			int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
+		setCandidateLimitRate(candidateLimitRate);
+		setCandidateLimitSize(candidateLimitSize);
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
 				beta, pastDays, repoDir, outputFile);
 	}
-
+	
 	private void setValues(String productName, String bugFilePath,
 			String sourceCodeDir, String workDir, double alpha, double beta,
 			int pastDays, String repoDir, String outputFile) {
@@ -351,5 +363,30 @@ public class Property {
 		}
 		
 		return sourceCodeDirName;
+	}
+
+	/**
+	 * @return the candidateLimitSize
+	 */
+	public int getCandidateLimitSize() {
+		return candidateLimitSize;
+	}
+	
+	public void setCandidateLimitSize(int candidateLimitSize) {
+		this.candidateLimitSize = candidateLimitSize;
+	}
+
+	/**
+	 * @return the candidateLimitRate
+	 */
+	public double getCandidateLimitRate() {
+		return candidateLimitRate;
+	}
+
+	/**
+	 * @param candidateLimitRate the candidateLimitRate to set
+	 */
+	public void setCandidateLimitRate(double candidateLimitRate) {
+		this.candidateLimitRate = candidateLimitRate;
 	}
 }

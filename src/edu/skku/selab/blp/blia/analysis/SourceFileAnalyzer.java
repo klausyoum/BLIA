@@ -295,21 +295,28 @@ public class SourceFileAnalyzer {
     		}
     		
     		double limitVsmScore = 0;
-    		if (vsmScoreSet.size() > Property.LIMIT_CANDIDATE_SIZE) {
-    			limitVsmScore = (Double) (vsmScoreSet.descendingSet().toArray()[Property.LIMIT_CANDIDATE_SIZE -1]);
+    		int candidateLimitSize = Integer.MAX_VALUE;
+    		
+    		if (Property.getInstance().getCandidateLimitSize() != Integer.MAX_VALUE) {
+    			candidateLimitSize = Property.getInstance().getCandidateLimitSize();
+    		} else if (Property.getInstance().getCandidateLimitRate() != 1.0) {
+    			candidateLimitSize = (int) (Property.getInstance().getFileCount() * Property.getInstance().getCandidateLimitRate());
+    		}
+
+    		if (vsmScoreSet.size() > candidateLimitSize) {
+    			System.out.printf(">>> candidateLimitSize: %d\n", candidateLimitSize);
+    			limitVsmScore = (Double) (vsmScoreSet.descendingSet().toArray()[candidateLimitSize -1]);
     		}
     		
-    		int count = 0;
+//    		System.out.printf(">>> limitVsmScore: %f\n", limitVsmScore);
+//    		int count = 0; // for test
     		for (IntegratedAnalysisValue integratedAnalysisValue:integratedAnalysisValueList) {
-    			if (count < Property.LIMIT_CANDIDATE_SIZE) {
-    				if (integratedAnalysisValue.getVsmScore() >= limitVsmScore) {
-    					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-    					count++;
-    				}
-    			} else {
-    				break;
-    			}
+				if (integratedAnalysisValue.getVsmScore() >= limitVsmScore) {
+					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+//					count++;
+				}
     		}
+//    		System.out.printf(">>> vsmScoreSet.size(): %d, Count: %d\n", vsmScoreSet.size(), count);
     	}
     }
 }

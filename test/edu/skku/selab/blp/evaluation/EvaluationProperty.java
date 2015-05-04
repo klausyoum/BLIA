@@ -24,8 +24,11 @@ public class EvaluationProperty {
 	private String repoDir;
 	private Calendar since;
 	private Calendar until;
+	private double candidateLimitRate; 
+	private int candidateLimitSize;
 	
-	public EvaluationProperty(String productName, double alpha, double beta, int pastDays, String repoDir, Calendar since, Calendar until) {
+	public EvaluationProperty(String productName, double alpha, double beta, int pastDays,
+			String repoDir, Calendar since, Calendar until, double candidateLimitRate, int candidateLimitSize) {
 		setProductName(productName);
 		setAlpha(alpha);
 		setBeta(beta);
@@ -33,6 +36,8 @@ public class EvaluationProperty {
 		setRepoDir(repoDir);
 		setSince(since);
 		setUntil(until);
+		setCandidateLimitRate(candidateLimitRate);
+		setCandidateLimitSize(candidateLimitSize);
 	}
 	
 	/**
@@ -130,5 +135,33 @@ public class EvaluationProperty {
 	 */
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+
+	/**
+	 * @return the candidateLimitSize
+	 */
+	public int getCandidateLimitSize() {
+		return candidateLimitSize;
+	}
+
+	/**
+	 * @param candidateLimitSize the candidateLimitSize to set
+	 */
+	public void setCandidateLimitSize(int candidateLimitSize) {
+		this.candidateLimitSize = candidateLimitSize;
+	}
+
+	/**
+	 * @return the candidateLimitRate
+	 */
+	public double getCandidateLimitRate() {
+		return candidateLimitRate;
+	}
+
+	/**
+	 * @param candidateLimitRate the candidateLimitRate to set
+	 */
+	public void setCandidateLimitRate(double candidateLimitRate) {
+		this.candidateLimitRate = candidateLimitRate;
 	}
 }

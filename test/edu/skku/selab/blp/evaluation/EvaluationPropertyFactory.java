@@ -20,17 +20,19 @@ public class EvaluationPropertyFactory {
 	public static EvaluationProperty getEvaluationProperty(String productName) {
 		EvaluationProperty evaluationProperty = null;
 		
-		double alpha;   
-		double beta;
-		int pastDays;
-		String repoDir;
-		Calendar since;
-		Calendar until;
+		double alpha = 0;   
+		double beta = 0;
+		int pastDays = 0;
+		String repoDir = "";
+		Calendar since = null;
+		Calendar until = null;
+		double candidateLimitRate = 1.0;
+		int candidateLimitSize = Integer.MAX_VALUE;
 		
 		switch(productName) {
-		case Property.SWT:
-			alpha = 0.24;  
-			beta = 0.1;
+		case Property.SWT:	// a = 0.24 & b = 0.1 is best maybe // 2015/04/20
+			alpha = 0.2;
+			beta = 0;
 			pastDays = 15;
 			repoDir = Property.SWT_REPO_DIR;
 			
@@ -39,12 +41,11 @@ public class EvaluationPropertyFactory {
 			//   <bug id="14654" opendate="2002-04-25 13:35:00" fixdate="2007-04-09 11:23:00">
 			since = new GregorianCalendar(2002, Calendar.APRIL, 1);
 			until = new GregorianCalendar(2010, Calendar.MAY, 1);
-			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ASPECTJ:
-			alpha = 0.4;	// a = 0.4 & b = 0.11 is best maybe // 2015/04/20
-			beta = 0.11;
-			pastDays = 60;
+			alpha = 0.2;	// a = 0.4 & b = 0.11 is best maybe // 2015/04/20
+			beta = 0.3;
+			pastDays = 90;
 			repoDir = Property.ASPECTJ_REPO_DIR;
 			
 			// for aspectj project ONLY
@@ -54,23 +55,21 @@ public class EvaluationPropertyFactory {
 			//     <bug fixdate="2008-12-3 13:57:00" id="145693" opendate="2006-6-7 0:35:00">
 			since = new GregorianCalendar(2002, Calendar.JULY, 1);
 			until = new GregorianCalendar(2008, Calendar.DECEMBER, 15);
-			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ZXING:
-			alpha = 0.15;  
-			beta = 0.5;
+			alpha = 0.2;  
+			beta = 0.2;
 			pastDays = 15;
 			repoDir = Property.ZXING_REPO_DIR;
 
 			// for zxing project ONLY
 			since = new GregorianCalendar(2010, Calendar.MARCH, 1);
 			until = new GregorianCalendar(2010, Calendar.SEPTEMBER, 30);
-			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		case Property.ECLIPSE:
 			// TODO: find optimized alpha, beta value
-			alpha = 0.3;  
-			beta = 0.1;
+			alpha = 0.2;  
+			beta = 0.2;
 			pastDays = 60;
 			repoDir = Property.ECLIPSE_REPO_DIR;
 
@@ -78,12 +77,13 @@ public class EvaluationPropertyFactory {
 			//   <bug id="76098" opendate="2004-10-12 12:29:00" fixdate="2004-10-12 17:56:00">
 			since = new GregorianCalendar(2004, Calendar.AUGUST, 1);
 			until = new GregorianCalendar(2011, Calendar.MARCH, 31);
-			evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays, repoDir, since, until);
 			break;
 		default :
 			break;
 		}
-		
+
+		evaluationProperty = new EvaluationProperty(productName, alpha, beta, pastDays,
+				repoDir, since, until, candidateLimitRate, candidateLimitSize);
 		return evaluationProperty;
 	}
 }

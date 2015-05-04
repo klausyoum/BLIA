@@ -31,10 +31,20 @@ public class TestConfiguration {
 	}
 	
 	public static void setProperty() {
-		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE);
+		int candidateLimitSize = Integer.MAX_VALUE;
+		setProperty(DEFAULT_ALPHA, DEFAULT_BETA, DEFAULT_PAST_DATE, candidateLimitSize);
+	}
+
+	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays,
+			String repoDir) {
+		double candidateLimitRate = 1.0;
+		int candidateLimitSize = Integer.MAX_VALUE;
+		setProperty(productName, algorithmName, alpha, beta, pastDays,
+				repoDir, candidateLimitRate, candidateLimitSize);
 	}
 	
-	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays, String repoDir) {
+	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays,
+			String repoDir, double candidateLimitRate, int candidateLimitSize) {
 		String osName = System.getProperty("os.name");
 		String bugFilePath = "";
 		String bugFileName = getBugFileName(productName);
@@ -69,7 +79,8 @@ public class TestConfiguration {
 			}
 		}
 		
-		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays, repoDir, outputFile);
+		Property.createInstance(productName, bugFilePath, sourceCodePath, workDir, alpha, beta, pastDays,
+				repoDir, outputFile, candidateLimitRate, candidateLimitSize);
 	}
 	
     private static boolean deleteDirectory(File path) {
@@ -88,13 +99,27 @@ public class TestConfiguration {
          
         return path.delete();
     }
-	
-	public static void setProperty(String productName, String algorithmName, double alpha, double beta, int pastDays) {
-		setProperty(productName, algorithmName, alpha, beta, pastDays, "");
+    
+	public static void setProperty(String productName, String algorithmName,
+			double alpha, double beta, int pastDays) {
+		double candidateLimitRate = 1.0;
+		int candidateLimitSize = Integer.MAX_VALUE;
+		setProperty(productName, algorithmName, alpha, beta, pastDays, "", candidateLimitRate, candidateLimitSize);
 	}
 	
+	public static void setProperty(String productName, String algorithmName,
+			double alpha, double beta, int pastDays, int candidateLimitSize) {
+		double candidateLimitRate = 1.0;
+		setProperty(productName, algorithmName, alpha, beta, pastDays, "", candidateLimitRate, candidateLimitSize);
+	}
+
 	public static void setProperty(double alpha, double beta, int pastDays) {
-		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays);
+		int candidateLimitSize = Integer.MAX_VALUE;
+		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays, candidateLimitSize);
+	}
+
+	public static void setProperty(double alpha, double beta, int pastDays, int candidateLimitSize) {
+		setProperty(DEFAULT_PROJECT, DEFAULT_ALGORITHM, alpha, beta, pastDays, candidateLimitSize);
 	}
 	
 	private static String getBugFileName(String productName) {

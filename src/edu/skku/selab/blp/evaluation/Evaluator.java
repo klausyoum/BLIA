@@ -39,14 +39,13 @@ public class Evaluator {
 	private HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
 	private FileWriter writer = null; 
 	
+	private Integer syncLock = 0;
 	private int top1 = 0;
 	private int top5 = 0;
 	private int top10 = 0;
 	
-	private double MRR = 0;
-	private double sumOfRRank = 0;
-	
-	private double MAP = 0;
+	private Double sumOfRRank = 0.0;
+	private Double MAP = 0.0;
 	
 	/**
 	 * 
@@ -146,45 +145,43 @@ public class Evaluator {
 			for (int j = 0; j < rankedValues.size(); j++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {
-					if (j < 1) {
-						synchronized(this) {
+					synchronized(syncLock) {
+						if (j < 1) {
 							top1++;
 							top5++;
 							top10++;
-						}
 						
-						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
-						writer.write(log);
-//						System.out.printf("%d %s %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
-						break;						
-					} else if (j < 5) {
-						synchronized(this) {
+							String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+							writer.write(log);
+	//						System.out.printf("%d %s %d\n",
+	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+							break;						
+						} else if (j < 5) {
 							top5++;
 							top10++;
-						}
-						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
-						writer.write(log);
-//						System.out.printf("%d %s %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
-						break;
-					} else if (j < 10) {
-						synchronized(this) {
+							
+							String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+							writer.write(log);
+	//						System.out.printf("%d %s %d\n",
+	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+							break;
+						} else if (j < 10) {
 							top10++;
+
+							String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+							writer.write(log);
+	//						System.out.printf("%d %s %d\n",
+	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+							break;
 						}
-						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
-						writer.write(log);
-//						System.out.printf("%d %s %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
-						break;
-					}
-					// debug code
-					else if (j < limitedCount) {
-						String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
-						writer.write(log);
-//						System.out.printf("%d %s %d\n",
-//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
-						break;
+						// debug code
+						else if (j < limitedCount) {
+							String log = bugID + " " + fixedFileVersionMap.get(sourceFileVersionID).getName() + " " + (j + 1) + "\n";
+							writer.write(log);
+	//						System.out.printf("%d %s %d\n",
+	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+							break;
+						}
 					}
 				}
 			}
@@ -214,7 +211,7 @@ public class Evaluator {
 				
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {
 //					System.out.printf("BugID: %s, Rank: %d\n", bugID, j + 1);
-					synchronized(this) {
+					synchronized(sumOfRRank) {
 						sumOfRRank += (1.0 / (j + 1));
 					}
 					break;
@@ -262,7 +259,7 @@ public class Evaluator {
 				}
 			}
 			
-			synchronized(this) {
+			synchronized(MAP) {
 				MAP += sumOfAP;
 			}
         }
@@ -303,7 +300,7 @@ public class Evaluator {
 		writer.write(log);
 		
 ////////////////////////////////////////////////////////////////////////////
-		MRR = sumOfRRank / bugs.size();
+		double MRR = sumOfRRank / bugs.size();
 		experimentResult.setMRR(MRR);
 		
 		System.out.printf("MRR: %f\n", experimentResult.getMRR());

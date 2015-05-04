@@ -138,9 +138,11 @@ public class BLIA {
 	
     private class WorkerThread implements Runnable {
     	private int bugID;
+    	private boolean includeStackTrace;
     	
-        public WorkerThread(int bugID){
+        public WorkerThread(int bugID, boolean includeStackTrace){
             this.bugID = bugID;
+            this.includeStackTrace = includeStackTrace;
         }
      
         @Override
@@ -162,7 +164,7 @@ public class BLIA {
 //			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
 			// AmaLgam doesn't use normalize
 			normalize(integratedAnalysisValues);
-			combine(integratedAnalysisValues, alpha, beta);
+			combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
 			
 			int sourceFileCount = integratedAnalysisValues.keySet().size();
 			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
@@ -188,16 +190,20 @@ public class BLIA {
         }
     }
     
-    private void calculateBLIAScore(int bugID) throws Exception {
+    private void calculateBLIAScore(int bugID, boolean includeStackTrace) throws Exception {
 //		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
     	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
     	
 //    	System.out.printf("Before integratedAnalysisDAO.getAnalysisValues() \n");
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+		if (null == integratedAnalysisValues) {
+			return;
+		}
+		
 //		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
 		// AmaLgam doesn't use normalize
 		normalize(integratedAnalysisValues);
-		combine(integratedAnalysisValues, alpha, beta);
+		combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
 		
 		int sourceFileCount = integratedAnalysisValues.keySet().size();
 		System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
@@ -220,7 +226,7 @@ public class BLIA {
 		}
     }
 	
-	public void analyze(String version) throws Exception {
+	public void analyze(String version, boolean includeStackTrace) throws Exception {
 		String productName = Property.getInstance().getProductName();
 		
 		if (null == bugs) {
@@ -252,7 +258,7 @@ public class BLIA {
 		for (int i = 0; i < bugs.size(); i++) {
 			long startTime = System.currentTimeMillis();
 			int bugID = bugs.get(i).getID();
-			calculateBLIAScore(bugID);
+			calculateBLIAScore(bugID, includeStackTrace);
 			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, TestConfiguration.getElapsedTimeSting(startTime));
 //			Runnable worker = new WorkerThread(bugs.get(i).getID());
 //			executor.execute(worker);
@@ -270,7 +276,8 @@ public class BLIA {
 	 * @param alpha
 	 * @param beta
 	 */
-	private void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha, double beta) {
+	private void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha, double beta,
+			boolean includeStackTrace) {
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -284,8 +291,12 @@ public class BLIA {
 			double bugLocatorScore = (1 - alpha) * (vsmScore) + alpha * similarityScore;
 			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
 			
-			double bliaScore = bugLocatorScore + stackTraceScore;
-			if (bugLocatorScore > 0) {
+			double bliaScore = bugLocatorScore;
+			if (includeStackTrace) {
+				bliaScore += stackTraceScore;
+			}
+			
+			if (bliaScore > 0) {
 				bliaScore = (1 - beta) * bliaScore + beta * commitLogScore;
 			} else {
 				bliaScore = 0;
