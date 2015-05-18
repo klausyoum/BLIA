@@ -78,6 +78,17 @@ public class EvaluationPropertyFactory {
 			since = new GregorianCalendar(2004, Calendar.AUGUST, 1);
 			until = new GregorianCalendar(2011, Calendar.MARCH, 31);
 			break;
+		case Property.JODA_TIME:
+			
+			alpha = 0.2;
+			beta = 0.2;
+			pastDays = 15;
+			repoDir = Property.JODA_TIME_REPO_DIR;
+			
+			since = new GregorianCalendar(2014, Calendar.JANUARY, 1);
+			until = new GregorianCalendar(2014, Calendar.DECEMBER, 31);
+			break;
+			
 		default :
 			break;
 		}

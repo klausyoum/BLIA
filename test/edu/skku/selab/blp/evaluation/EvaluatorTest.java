@@ -202,16 +202,17 @@ public class EvaluatorTest {
 	public void verifyEvaluateBLIAOnce() throws Exception {
 		boolean useStrucrutedInfo = true;
 		
-		boolean prepareAnalysisData = false;
-		boolean preAnalyze = false;
+		boolean prepareAnalysisData = true;
+		boolean preAnalyze = true;
 		boolean analyze = true;
 		boolean includeStackTrace = true;
 		
 		// Change target project for experiment if you want
-		String productName = Property.SWT;
-//		productName = Property.ASPECTJ;
-//		productName = Property.ZXING;
-//		productName = Property.ECLIPSE;
+//		String productName = Property.SWT;
+//		String productName = Property.ASPECTJ;
+//		String productName = Property.ZXING;
+//		String productName = Property.ECLIPSE;
+		String productName = Property.JODA_TIME;
 		
 		long totalStartTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation once.\n");

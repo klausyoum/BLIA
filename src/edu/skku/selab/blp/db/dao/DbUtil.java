@@ -238,6 +238,7 @@ public class DbUtil {
 //				Property.ECLIPSE,
 				Property.SWT,
 				Property.ZXING,
+				Property.JODA_TIME,
 				Property.DEFAULT};
 		
 		for (int i = 0; i < projectName.length; i++) {

@@ -18,8 +18,9 @@ public class Property {
 	final static public String ECLIPSE = "eclipse";
 	final static public String SWT = "swt";
 	final static public String ZXING = "zxing";
+	final static public String JODA_TIME = "joda";
 	final static public String DEFAULT = "default";
-	
+    	
 //	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-1_6_3";
 	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-1_5_3_final";
 //	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-brtracer";
@@ -27,11 +28,20 @@ public class Property {
 //	final static public String SWT_SOURCE_DIR_NAME = "swt-3.1";	// from BugLocator
 	final static public String SWT_SOURCE_DIR_NAME = "swt-3.659";
 	final static public String ZXING_SOURCE_DIR_NAME = "ZXing-1.6";
+	final static public String JODA_TIME_DIR_NAME = "joda_time-2.6";
+
 	
-	final static public String ASPECTJ_REPO_DIR = Property.readProperty("ASPECTJ_REPO_DIR");
-	final static public String ECLIPSE_REPO_DIR = Property.readProperty("ECLIPSE_REPO_DIR");
-	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
-	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
+//	final static public String ASPECTJ_REPO_DIR = Property.readProperty("ASPECTJ_REPO_DIR");
+//	final static public String ECLIPSE_REPO_DIR = Property.readProperty("ECLIPSE_REPO_DIR");
+//	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
+//	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
+
+	final static public String ASPECTJ_REPO_DIR = "/Users/ahnjun/Documents/LAB/repo/org.aspectj/.git";
+	final static public String ECLIPSE_REPO_DIR = "/Users/ahnjun/Documents/LAB/repo/eclipse.platform/.git";
+	final static public String SWT_REPO_DIR = "/Users/ahnjun/Documents/LAB/repo/eclipse.platform.swt/.git";
+	final static public String ZXING_REPO_DIR = "/Users/ahnjun/Documents/LAB/repo/zxing/.git";
+	final static public String JODA_TIME_REPO_DIR = "/Users/ahnjun/Documents/LAB/repo/joda-time/.git";
+
 	
 	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
@@ -256,6 +266,12 @@ public class Property {
 //				this.sourceCodeDirList[7] = sourceCodeDir + "\\zxingorg\\src";
 //			}
 			break;
+
+		case Property.JODA_TIME:
+			this.sourceCodeDirList = new String[1];
+			this.sourceCodeDirList[0] = sourceCodeDir + "/src/main";
+			break;
+			
 		default:
 			break;
 		}
@@ -357,6 +373,9 @@ public class Property {
 		case Property.ZXING:
 			sourceCodeDirName = Property.ZXING_SOURCE_DIR_NAME;
 			break;
+		case Property.JODA_TIME:
+			sourceCodeDirName = Property.JODA_TIME_DIR_NAME;
+			break;		
 		default:
 			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
 			break;

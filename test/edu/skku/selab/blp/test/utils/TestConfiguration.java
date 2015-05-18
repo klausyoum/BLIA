@@ -132,6 +132,8 @@ public class TestConfiguration {
 			bugFileName = "SWTBugRepository.xml";
 		} else if (productName.equalsIgnoreCase(Property.ZXING)) {
 			bugFileName = "ZXingBugRepository.xml";
+		} else if (productName.equalsIgnoreCase(Property.JODA_TIME)){
+			bugFileName = "JodatimeBugRepository.xml";
 		}
 		return bugFileName;
 	}
