@@ -10,4 +10,5 @@ Developers generally trace the location of buggy source files based on contents 
 BLIA is a statically integrated analysis approach of IR-based bug localization by utilizing texts and stack traces in bug reports, structured information of source files, and source code change histories. We developed our technique based on above analyzable factors from the process for handling bug reports and from previous approaches. It is a prototyping tool for research on locating the suspicious source code files that need to be fixed in order to fix a bug.
 
 Researchers who are interested in our approach to improve IR-based bug localization can access all datasets, results and our BLIA tool at the following link:
+
 https://github.com/klausyoum/BLIA
