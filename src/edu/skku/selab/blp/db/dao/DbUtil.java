@@ -7,9 +7,6 @@
  */
 package edu.skku.selab.blp.db.dao;
 
-import java.sql.Connection;
-
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -23,14 +20,18 @@ public class DbUtil {
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
 	
+	public void openConnetion() throws Exception {
+		String dbName = BaseDAO.DEFAULT_DB_NAME;
+		BaseDAO.openConnection(dbName);
+	}
+	
 	public void openConnetion(String dbName) throws Exception {
 		BaseDAO.openConnection(dbName);
 	}
 	
-	public void openConnetion() throws Exception {
-		BaseDAO.openConnection();
+	public void openEvaluationDbConnection() throws Exception {
+		BaseDAO.openEvaluationDbConnection();
 	}
-
 	
 	public void closeConnection() throws Exception {
 		BaseDAO.closeConnection();
@@ -231,29 +232,30 @@ public class DbUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		DbUtil dbUtil = new DbUtil();
+		Property prop = Property.loadInstance();
 		
-		String projectName[] = {
+		DbUtil dbUtil = new DbUtil();
+		String productName[] = {
 				Property.ASPECTJ,
-//				Property.ECLIPSE,
+				Property.ECLIPSE,
 				Property.SWT,
 				Property.ZXING,
-				Property.DEFAULT};
+				BaseDAO.DEFAULT_DB_NAME};
 		
-		for (int i = 0; i < projectName.length; i++) {
-			dbUtil.openConnetion(projectName[i]);
+		for (int i = 0; i < productName.length; i++) {
+			dbUtil.openConnetion(productName[i]);
 
 			dbUtil.dropAllAnalysisTables();
 			dbUtil.createAllAnalysisTables();
 
+			prop.setProductName(productName[i]);
 			dbUtil.initializeAllData();
 
 			dbUtil.closeConnection();
 		}
-
 		
 		// Uncomment if ONLY Experiment result data reset is needed.
-		dbUtil.openConnetion();
+		dbUtil.openEvaluationDbConnection();
 
 //		dbUtil.dropEvaluationTable();
 //		dbUtil.createEvaluationTable();

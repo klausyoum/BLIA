@@ -127,9 +127,7 @@ public class BugRepoAnalyzer {
     			
         		double limitSimiScore = 0;
         		int candidateLimitSize = Integer.MAX_VALUE;
-        		if (Property.getInstance().getCandidateLimitSize() != Integer.MAX_VALUE) {
-        			candidateLimitSize = Property.getInstance().getCandidateLimitSize();
-        		} else if (Property.getInstance().getCandidateLimitRate() != 1.0) {
+        		if (Property.getInstance().getCandidateLimitRate() != 1.0) {
         			candidateLimitSize = (int) (Property.getInstance().getFileCount() * Property.getInstance().getCandidateLimitRate());
         		}
         		
@@ -142,9 +140,6 @@ public class BugRepoAnalyzer {
     					int updatedColumenCount = integratedAnalysisDAO.updateSimilarScore(integratedAnalysisValue);
     					
     					if (0 == updatedColumenCount) {
-    						// TODO: remove following error message after testing.
-//    						System.err.printf("[ERROR] BugRepoAnalyzer.analyze(): Similar score update failed! BugID: %s, sourceFileVersionID: %d\n",
-//    								integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
     						integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
     					}
     				}

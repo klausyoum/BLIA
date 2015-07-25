@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.TreeSet;
 

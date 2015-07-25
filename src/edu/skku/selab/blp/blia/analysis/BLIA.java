@@ -7,14 +7,11 @@
  */
 package edu.skku.selab.blp.blia.analysis;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
@@ -27,9 +24,10 @@ import edu.skku.selab.blp.blia.indexer.StructuredSourceFileCorpusCreator;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
+import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
+import edu.skku.selab.blp.utils.Util;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -40,8 +38,11 @@ public class BLIA {
 	private ArrayList<Bug> bugs = null;
 	private double alpha = 0;
 	private double beta = 0;
-	private HashMap<String, HashMap<Integer, IntegratedAnalysisValue>> integratedAnalysisValuesMap = null; 
 	private static Integer completeBugIdCount = 0;
+	
+	public BLIA() {
+		prepareWorkingDir();
+	}
 	
 	private String getElapsedTimeSting(long startTime) {
 		long elapsedTime = System.currentTimeMillis() - startTime;
@@ -166,8 +167,9 @@ public class BLIA {
 			normalize(integratedAnalysisValues);
 			combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
 			
+			@SuppressWarnings("unused")
 			int sourceFileCount = integratedAnalysisValues.keySet().size();
-			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
+//			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 			while (integratedAnalysisValuesIter.hasNext()) {
 				int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -185,7 +187,7 @@ public class BLIA {
 
 			synchronized (completeBugIdCount) {
 				completeBugIdCount++;
-				System.out.printf("[Thread()] [%d] Bug ID: %s (%s sec)\n", completeBugIdCount, bugID, TestConfiguration.getElapsedTimeSting(startTime));
+				System.out.printf("[Thread()] [%d] Bug ID: %s (%s sec)\n", completeBugIdCount, bugID, Util.getElapsedTimeSting(startTime));
 			}
         }
     }
@@ -205,9 +207,10 @@ public class BLIA {
 		normalize(integratedAnalysisValues);
 		combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
 		
+		@SuppressWarnings("unused")
 		int sourceFileCount = integratedAnalysisValues.keySet().size();
-		System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
-		int count = 0;
+//		System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
+//		int count = 0;
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
@@ -259,7 +262,7 @@ public class BLIA {
 			long startTime = System.currentTimeMillis();
 			int bugID = bugs.get(i).getID();
 			calculateBLIAScore(bugID, includeStackTrace);
-			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, TestConfiguration.getElapsedTimeSting(startTime));
+			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
 //			Runnable worker = new WorkerThread(bugs.get(i).getID());
 //			executor.execute(worker);
 		}
@@ -394,5 +397,72 @@ public class BLIA {
 			integratedAnalysisValue.setSimilarityScore(normalizedSimiScore);
 //			integratedAnalysisValue.setCommitLogScore(normalizedCommitLogScore);
 		}
+	}
+	
+    private boolean deleteDirectory(File path) {
+        if(!path.exists()) {
+            return false;
+        }
+         
+        File[] files = path.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                deleteDirectory(file);
+            } else {
+                file.delete();
+            }
+        }
+         
+        return path.delete();
+    }
+	
+	private void prepareWorkingDir() {
+		Property prop = Property.getInstance();
+		String workDir = prop.getWorkDir();
+		
+		File dir = new File(workDir);
+		if (dir.exists()) {
+			deleteDirectory(dir);
+		}
+		
+		if (false == dir.mkdir()) {
+			System.err.println(workDir + " can't be created!");
+			
+			if (false == dir.mkdir()) {
+				System.err.println(workDir + " can't be created again");
+			}
+		}
+	}
+	
+	public void run() throws Exception {
+		Property prop = Property.getInstance();
+		prepareWorkingDir();
+				
+		long startTime = System.currentTimeMillis();
+		BLIA blia = new BLIA();
+		
+		boolean useStrucrutedInfo = true;
+		boolean includeStackTrace = true;	
+
+		DbUtil dbUtil = new DbUtil();
+		String dbName = prop.getProductName();
+		dbUtil.openConnetion(dbName);
+		boolean commitDataIncluded = true;
+		dbUtil.initializeAllData(commitDataIncluded);
+		dbUtil.closeConnection();
+
+		startTime = System.currentTimeMillis();	
+		System.out.printf("[STARTED] BLIA prepareAnalysisData().\n");
+		blia.prepareAnalysisData(useStrucrutedInfo, prop.getSince().getTime(), prop.getUntil().getTime());
+		System.out.printf("[DONE] BLIA prepareAnalysisData().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
+			
+		System.out.printf("[STARTED] BLIA pre-anlaysis.\n");
+		blia.preAnalyze();
+		System.out.printf("[DONE] BLIA pre-anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
+		
+		System.out.printf("[STARTED] BLIA anlaysis.\n");
+		startTime = System.currentTimeMillis();
+		blia.analyze(version, includeStackTrace);
+		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 }

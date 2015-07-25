@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class SourceFileCorpus {
 	private String javaFileFullClassName;
 	private String javaFilePath;
+	@SuppressWarnings("unused")
 	private String content;
 	private String classPart;
 	private String methodPart;

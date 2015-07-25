@@ -7,8 +7,6 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,9 +16,7 @@ import org.junit.Test;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -47,7 +43,10 @@ public class BugVectorCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestConfiguration.setProperty();
+		Property prop = Property.loadInstance(Property.ZXING);
+		prop.setAlpha(0.2f);
+		prop.setBeta(0.3f);
+		prop.setPastDays(15);
 		
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();

@@ -30,7 +30,8 @@ public class ExperimentResult {
 	private double beta;
 	private int pastDays;
 	private Date experimentDate;
-
+	private double candidateRate;
+	
 	/**
 	 * 
 	 */
@@ -50,6 +51,7 @@ public class ExperimentResult {
 		beta = 0.0;
 		pastDays = 0;
 		setExperimentDate(new Date(System.currentTimeMillis()));
+		candidateRate = 0;
 	}
 
 	/**
@@ -282,6 +284,20 @@ public class ExperimentResult {
 	 */
 	public void setPastDays(int pastDays) {
 		this.pastDays = pastDays;
+	}
+
+	/**
+	 * @return the candidateRate
+	 */
+	public double getCandidateRate() {
+		return candidateRate;
+	}
+
+	/**
+	 * @param candidateRate the candidateRate to set
+	 */
+	public void setCandidateRate(double candidateRate) {
+		this.candidateRate = candidateRate;
 	}
 
 }

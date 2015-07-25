@@ -9,7 +9,6 @@ package edu.skku.selab.blp.blia.analysis;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +16,6 @@ import java.util.concurrent.Executors;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 

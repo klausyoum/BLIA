@@ -294,7 +294,7 @@ public class BugDAOTest {
 		String version2 = "v0.2";
 		String releaseDate2 = "2014-02-12 07:12:00";
 		assertNotEquals("version1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version1, releaseDate1));
-		assertNotEquals("version2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version2, releaseDate1));
+		assertNotEquals("version2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertVersion(version2, releaseDate2));
 		
 		int totalCorpusCount1 = 5;
 		int totalCorpusCount2 = 34;

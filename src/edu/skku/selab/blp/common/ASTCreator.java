@@ -41,6 +41,7 @@ public class ASTCreator {
 				contentBuffer.append((new StringBuilder(String.valueOf(line)))
 						.append("\r\n").toString());
 			content = contentBuffer.toString();
+			reader.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

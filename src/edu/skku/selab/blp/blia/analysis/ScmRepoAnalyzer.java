@@ -14,14 +14,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.CommitInfo;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 
@@ -103,15 +100,13 @@ public class ScmRepoAnalyzer {
 			Iterator<IntegratedAnalysisValue> analysisValueIter = analysisValues.values().iterator();
 			while (analysisValueIter.hasNext()) {
 				IntegratedAnalysisValue analysisValue = analysisValueIter.next();
-				int updatedColumenCount = integratedAnalysisDAO.updateCommitLogScore(analysisValue);
-				
-				if (0 == updatedColumenCount) {
-					// TODO: remove following error message after testing.
+				integratedAnalysisDAO.updateCommitLogScore(analysisValue);
+
+				// DEBUG code
+//				if (0 == updatedColumenCount) {
 //					System.err.printf("[ERROR] ScmRepoAnalyzer.analyze(): CommitLog score update failed! BugID: %s, sourceFileVersionID: %d\n",
 //							analysisValue.getBugID(), analysisValue.getSourceFileVersionID());
-					// remove following line after testing.
-//					integratedAnalysisDAO.insertAnalysisVaule(analysisValue);
-				}
+//				}
 			}
         }
     }

@@ -7,8 +7,6 @@
  */
 package edu.skku.selab.blp.db.dao;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -181,23 +179,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 
 		switch (productName) {
 		case Property.ASPECTJ:
-			
 			fixedFileName = javaFileName;
-			// TODO: remove after these codes after testing
-//			if (-1 != fixedFileName.lastIndexOf("org.aspectj")) {
-//				fixedFileName = fixedFileName.substring(fixedFileName.lastIndexOf("org.aspectj"), fixedFileName.length());
-//			} else {
-//				String log = "Commited file name that is not in source file DB: " + fixedFileName + "\n";
-//				// debug code
-////				try {
-////					BufferedWriter writer = new BufferedWriter(new FileWriter("notFixedFiles.txt", true));
-////					writer.write(log);
-////					writer.close();
-////				} catch(Exception ex) {
-////					
-////				}
-//				System.out.print(log);
-//			}
 			break;
 		case Property.ECLIPSE:
 			if (-1 != fixedFileName.lastIndexOf("org.eclipse")) {

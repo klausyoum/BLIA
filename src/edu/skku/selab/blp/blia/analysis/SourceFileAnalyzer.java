@@ -7,17 +7,11 @@
  */
 package edu.skku.selab.blp.blia.analysis;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,11 +22,9 @@ import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -297,14 +289,12 @@ public class SourceFileAnalyzer {
     		double limitVsmScore = 0;
     		int candidateLimitSize = Integer.MAX_VALUE;
     		
-    		if (Property.getInstance().getCandidateLimitSize() != Integer.MAX_VALUE) {
-    			candidateLimitSize = Property.getInstance().getCandidateLimitSize();
-    		} else if (Property.getInstance().getCandidateLimitRate() != 1.0) {
+    		if (Property.getInstance().getCandidateLimitRate() != 1.0) {
     			candidateLimitSize = (int) (Property.getInstance().getFileCount() * Property.getInstance().getCandidateLimitRate());
     		}
 
     		if (vsmScoreSet.size() > candidateLimitSize) {
-    			System.out.printf(">>> candidateLimitSize: %d\n", candidateLimitSize);
+//    			System.out.printf(">>> candidateLimitSize: %d\n", candidateLimitSize);
     			limitVsmScore = (Double) (vsmScoreSet.descendingSet().toArray()[candidateLimitSize -1]);
     		}
     		

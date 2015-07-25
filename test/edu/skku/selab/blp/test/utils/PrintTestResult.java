@@ -1,10 +1,10 @@
 package edu.skku.selab.blp.test.utils;
+
 import static org.junit.Assert.*;
 
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;

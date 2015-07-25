@@ -9,7 +9,6 @@ package edu.skku.selab.blp.db.dao;
 
 import static org.junit.Assert.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.After;

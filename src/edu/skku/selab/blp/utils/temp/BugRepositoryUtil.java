@@ -9,15 +9,10 @@ package edu.skku.selab.blp.utils.temp;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.TreeSet;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,13 +22,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
@@ -64,7 +57,7 @@ public class BugRepositoryUtil {
 			int bugID = bugsOfBRTracer.get(i).getID();
 			Bug foundBug = bugIDs.get(bugID); 
 			if (null != foundBug) {
-				String oldDescription = bugsOfBRTracer.get(i).getDescription(); 
+//				String oldDescription = bugsOfBRTracer.get(i).getDescription(); 
 				bugsOfBRTracer.get(i).setDescription(foundBug.getDescription());
 				
 //				System.out.printf("Old: %s\n", oldDescription);
@@ -78,7 +71,6 @@ public class BugRepositoryUtil {
 	private ArrayList<Bug> parseXMLOfBRTracer() {
 		ArrayList<Bug> list = new ArrayList<Bug>();
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		try {
 			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();

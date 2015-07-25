@@ -7,8 +7,6 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,11 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.evaluation.Evaluator;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -47,12 +42,14 @@ public class StructuredSourceFileCorpusCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String productName = Property.ASPECTJ;
-		String algorithmName = Evaluator.ALG_BLIA;
 		double alpha = 0.2;
 		double beta = 0.2;
 		int pastDays = 20;
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays);
+		
+		Property prop = Property.loadInstance(Property.ZXING);
+		prop.setAlpha(alpha);
+		prop.setBeta(beta);
+		prop.setPastDays(pastDays);
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();

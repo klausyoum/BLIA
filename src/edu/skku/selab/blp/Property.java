@@ -10,6 +10,11 @@ package edu.skku.selab.blp;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Properties;
 
 
@@ -18,42 +23,30 @@ public class Property {
 	final static public String ECLIPSE = "eclipse";
 	final static public String SWT = "swt";
 	final static public String ZXING = "zxing";
-	final static public String DEFAULT = "default";
 	
-//	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-1_6_3";
-	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-1_5_3_final";
-//	final static public String ASPECTJ_SOURCE_DIR_NAME = "org.aspectj-brtracer";
-	final static public String ECLIPSE_SOURCE_DIR_NAME = "eclipse-3.1";
-//	final static public String SWT_SOURCE_DIR_NAME = "swt-3.1";	// from BugLocator
-	final static public String SWT_SOURCE_DIR_NAME = "swt-3.659";
-	final static public String ZXING_SOURCE_DIR_NAME = "ZXing-1.6";
+	final static public int THREAD_COUNT = Integer.parseInt(Property.readProperty("THREAD_COUNT"));
+	final static private String WORK_DIR = Property.readProperty("WORK_DIR");
+	final static private String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
-	final static public String ASPECTJ_REPO_DIR = Property.readProperty("ASPECTJ_REPO_DIR");
-	final static public String ECLIPSE_REPO_DIR = Property.readProperty("ECLIPSE_REPO_DIR");
-	final static public String SWT_REPO_DIR = Property.readProperty("SWT_REPO_DIR");
-	final static public String ZXING_REPO_DIR = Property.readProperty("ZXING_REPO_DIR");
-	
-	final static public String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
-	
-	final static public int THREAD_COUNT = 10;
-	
+	private String targetProduct;
 	private String bugFilePath;
+	private String sourceCodeDir;
 	private String[] sourceCodeDirList;
-	private String workDir;
+
 	private int fileCount;
 	private int wordCount;
 	private int bugReportCount;
 	private int bugTermCount;
 	private double alpha;
 	private double beta;
-	private String outputFile;
 	private String separator = System.getProperty("file.separator");
 	private String lineSeparator = System.getProperty("line.separator");
 	private static Property p = null;
 	private String productName;
 	private int pastDays;
+	private Calendar since = null;
+	private Calendar until = null;
 	private String repoDir;
-	private int candidateLimitSize = Integer.MAX_VALUE;
 	private double candidateLimitRate = 1.0;
 
 	public int getBugTermCount() {
@@ -93,7 +86,7 @@ public class Property {
 	}
 
 	public String getWorkDir() {
-		return workDir;
+		return WORK_DIR;
 	}
 	
 	private static String readProperty(String key) {
@@ -105,16 +98,54 @@ public class Property {
 
 		return properties.getProperty(key);
 	}
-
+	
 	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir,
-			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
+			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		if (null == p) {
 			p = new Property(productName, bugFilePath, sourceCodeDir, workDir,
-					alpha, beta, pastDays, repoDir, outputFile, candidateLimitRate,  candidateLimitSize);
+					alpha, beta, pastDays, repoDir, outputFile, candidateLimitRate);
 		} else {
 			p.setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-					beta, pastDays, repoDir, outputFile, candidateLimitRate, candidateLimitSize);
+					beta, pastDays, repoDir, outputFile, candidateLimitRate);
 		}
+	}
+	
+	private Property() {
+		// Do nothing
+	}
+	
+	public static Property loadInstance(String targetProduct) throws Exception {
+		if (null == p) {
+			p = new Property();
+		}
+		
+		targetProduct = targetProduct.toUpperCase();
+		
+		String productName = Property.readProperty(targetProduct + "_" + "PRODUCT");
+		String sourceCodeDir = Property.readProperty(targetProduct + "_" + "SOURCE_DIR");
+		double alpha = Double.parseDouble(Property.readProperty(targetProduct + "_" + "ALPHA"));
+		double beta = Double.parseDouble(Property.readProperty(targetProduct + "_" + "BETA"));
+		int pastDays = Integer.parseInt(Property.readProperty(targetProduct + "_" + "PAST_DAYS"));
+		String repoDir = Property.readProperty(targetProduct + "_" + "REPO_DIR");
+		String bugFilePath = Property.readProperty(targetProduct + "_" + "BUG_REPO_FILE");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date sinceDate = dateFormat.parse(Property.readProperty(targetProduct + "_" + "COMMIT_SINCE"));
+		Calendar since = new GregorianCalendar();
+		since.setTime(sinceDate);
+		Date untilDate = dateFormat.parse(Property.readProperty(targetProduct + "_" + "COMMIT_UNTIL"));
+		Calendar until = new GregorianCalendar();
+		until.setTime(untilDate);
+		double candidateLimitRate = Double.parseDouble(Property.readProperty(targetProduct + "_" + "CANDIDATE_LIMIT_RATE"));
+
+		p.setValues(productName, sourceCodeDir, alpha, beta, pastDays, repoDir,
+				bugFilePath, since, until, candidateLimitRate);
+		
+		return p;
+	}
+	
+	public static Property loadInstance() throws Exception {
+		String targetProduct = Property.readProperty("TARGET_PRODUCT");
+		return loadInstance(targetProduct);
 	}
 	
 	public static Property getInstance() {
@@ -122,143 +153,66 @@ public class Property {
 	}
 	
 	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir,
-			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
+			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-				beta, pastDays, repoDir, outputFile, candidateLimitRate, candidateLimitSize);
+				beta, pastDays, repoDir, outputFile, candidateLimitRate);
 	}
 
 	private void setValues(String productName, String bugFilePath,
 			String sourceCodeDir, String workDir, double alpha, double beta,
-			int pastDays, String repoDir, String outputFile, double candidateLimitRate, int candidateLimitSize) {
+			int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		setCandidateLimitRate(candidateLimitRate);
-		setCandidateLimitSize(candidateLimitSize);
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
 				beta, pastDays, repoDir, outputFile);
+	}
+	
+	private void setValues(String productName, String sourceCodeDir,
+			double alpha, double beta, int pastDays, String repoDir,
+			String bugFilePath, Calendar since, Calendar until, double candidateLimitRate) {
+		
+		setProductName(productName);
+		setSourceCodeDir(sourceCodeDir)
+;		sourceCodeDirList = new String[1];
+		sourceCodeDirList[0] = sourceCodeDir;
+		setAlpha(alpha);
+		setBeta(beta);
+		setPastDays(pastDays);
+		setRepoDir(repoDir);
+		setBugFilePath(bugFilePath);
+		setSince(since);
+		setUntil(until);
+		setCandidateLimitRate(candidateLimitRate);
+	}
+	
+	public void printValues() {
+		System.out.printf("WORK_DIR: %s\n", Property.WORK_DIR);
+		System.out.printf("THREAD_COUNT: %d\n", Property.THREAD_COUNT);
+		System.out.printf("OUTPUT_FILE: %s\n\n", Property.OUTPUT_FILE);
+		
+		System.out.printf("Product name: %s\n", getProductName());
+		System.out.printf("Source code dir: %s\n", getSourceCodeDir());
+		System.out.printf("Alpha: %f\n", getAlpha());
+		System.out.printf("Beta: %f\n", getBeta());
+		System.out.printf("Past days: %s\n", getPastDays());
+		System.out.printf("Repo dir: %s\n", getRepoDir());
+		System.out.printf("Bug file path: %s\n", getBugFilePath());
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		System.out.printf("Since: %s\n", dateFormat.format(getSince().getTime()));
+		System.out.printf("Until: %s\n", dateFormat.format(getUntil().getTime()));
+		System.out.printf("candidateLimitRate: %f\n", getCandidateLimitRate());
 	}
 	
 	private void setValues(String productName, String bugFilePath,
 			String sourceCodeDir, String workDir, double alpha, double beta,
 			int pastDays, String repoDir, String outputFile) {
-		this.setProductName(productName);
-		this.bugFilePath = bugFilePath;
-		this.workDir = workDir;
-		this.setAlpha(alpha);
-		this.setBeta(beta);
-		this.setPastDays(pastDays);
-		this.setRepoDir(repoDir);
-		this.outputFile = outputFile;
-		
-		String osName = System.getProperty("os.name");
-		switch (productName) {
-		case Property.ASPECTJ:
-			this.sourceCodeDirList = new String[1];
-//			this.sourceCodeDirList = new String[21];
-			if (osName.equals("Mac OS X")) {
-				this.sourceCodeDirList[0] = sourceCodeDir;
-				
-//				this.sourceCodeDirList[0] = sourceCodeDir + "/ajbrowser/src";
-//				this.sourceCodeDirList[1] = sourceCodeDir + "/ajde/src";
-//				this.sourceCodeDirList[2] = sourceCodeDir + "/ajdoc/src";	// for v1.5.3
-//				this.sourceCodeDirList[3] = sourceCodeDir + "/asm/src";
-//				this.sourceCodeDirList[4] = sourceCodeDir + "/aspectj5rt/java5-src";
-//				this.sourceCodeDirList[5] = sourceCodeDir + "/aspectj-attic/ajdoc-src";
-//				this.sourceCodeDirList[6] = sourceCodeDir + "/bcel-builder/src";
-//				this.sourceCodeDirList[7] = sourceCodeDir + "/bridge/src";
-//				this.sourceCodeDirList[8] = sourceCodeDir + "/build/src";
-//				this.sourceCodeDirList[9] = sourceCodeDir + "/loadtime/src";
-//				this.sourceCodeDirList[10] = sourceCodeDir + "/loadtime5/java5-src";
-//				this.sourceCodeDirList[11] = sourceCodeDir + "/org.aspectj.ajdt.core/src";
-//				this.sourceCodeDirList[12] = sourceCodeDir + "/org.aspectj.lib/src";
-//				this.sourceCodeDirList[13] = sourceCodeDir + "/runtime/src";
-//				this.sourceCodeDirList[14] = sourceCodeDir + "/taskdefs/src";
-//				this.sourceCodeDirList[15] = sourceCodeDir + "/util/src";
-//				this.sourceCodeDirList[16] = sourceCodeDir + "/weaver/src";
-//				this.sourceCodeDirList[17] = sourceCodeDir + "/weaver5/java5-src";
-//				this.sourceCodeDirList[18] = sourceCodeDir + "/testing/src";
-//				this.sourceCodeDirList[19] = sourceCodeDir + "/testing/newsrc";
-////				this.sourceCodeDirList[20] = sourceCodeDir + "/tests/src";
-//				this.sourceCodeDirList[20] = sourceCodeDir + "/tests";
-
-//				this.sourceCodeDirList[21] = sourceCodeDir + "/ajde.core/src";	// for v1.6.3
-//				this.sourceCodeDirList[22] = sourceCodeDir + "/org.aspectj.matcher/src";	// for v1.6.3
-//				this.sourceCodeDirList[23] = sourceCodeDir + "/tests";	// test code
-			} else {
-				this.sourceCodeDirList[0] = sourceCodeDir;
-				
-//				this.sourceCodeDirList[0] = sourceCodeDir + "\\ajbrowser\\src";
-//				this.sourceCodeDirList[1] = sourceCodeDir + "\\ajde\\src";
-//				this.sourceCodeDirList[2] = sourceCodeDir + "\\ajdoc\\src";	// for v1.5.3
-//				this.sourceCodeDirList[3] = sourceCodeDir + "\\asm\\src";
-//				this.sourceCodeDirList[4] = sourceCodeDir + "\\aspectj5rt\\java5-src";
-//				this.sourceCodeDirList[5] = sourceCodeDir + "\\aspectj-attic\\ajdoc-src";
-//				this.sourceCodeDirList[6] = sourceCodeDir + "\\bcel-builder\\src";
-//				this.sourceCodeDirList[7] = sourceCodeDir + "\\bridge\\src";
-//				this.sourceCodeDirList[8] = sourceCodeDir + "\\build\\src";
-//				this.sourceCodeDirList[9] = sourceCodeDir + "\\loadtime\\src";
-//				this.sourceCodeDirList[10] = sourceCodeDir + "\\loadtime5\\java5-src";
-//				this.sourceCodeDirList[11] = sourceCodeDir + "\\org.aspectj.ajdt.core\\src";
-//				this.sourceCodeDirList[12] = sourceCodeDir + "\\org.aspectj.lib\\src";
-//				this.sourceCodeDirList[13] = sourceCodeDir + "\\runtime\\src";
-//				this.sourceCodeDirList[14] = sourceCodeDir + "\\taskdefs\\src";
-//				this.sourceCodeDirList[15] = sourceCodeDir + "\\util\\src";
-//				this.sourceCodeDirList[16] = sourceCodeDir + "\\weaver\\src";
-//				this.sourceCodeDirList[17] = sourceCodeDir + "\\weaver5\\java5-src";
-//				this.sourceCodeDirList[18] = sourceCodeDir + "\\testing\\src";
-//				this.sourceCodeDirList[19] = sourceCodeDir + "\\testing\\newsrc";
-////				this.sourceCodeDirList[20] = sourceCodeDir + "\\tests\\src";
-//				this.sourceCodeDirList[20] = sourceCodeDir + "\\tests";
-				
-//				this.sourceCodeDirList[21] = sourceCodeDir + "\\ajde.core\\ssrc";	// for v1.6.3
-//				this.sourceCodeDirList[22] = sourceCodeDir + "\\org.aspectj.matcher\\src";	// for v1.6.3				
-//				this.sourceCodeDirList[23] = sourceCodeDir + "\\tests";	// test code
-			}
-			break;
-		case Property.ECLIPSE:
-			this.sourceCodeDirList = new String[1];
-			this.sourceCodeDirList[0] = sourceCodeDir;
-			
-//			if (osName.equals("Mac OS X")) {
-//				this.sourceCodeDirList[0] = sourceCodeDir + "/plugins/org.eclipse.swt";
-//			} else {
-//				this.sourceCodeDirList[0] = sourceCodeDir + "\\plugins\\org.eclipse.swt";
-//			}
-			break;
-		case Property.SWT:
-			this.sourceCodeDirList = new String[1];
-			if (osName.equals("Mac OS X")) {
-				this.sourceCodeDirList[0] = sourceCodeDir + "/src";
-			} else {
-				this.sourceCodeDirList[0] = sourceCodeDir + "\\src";
-			}
-			break;
-		case Property.ZXING:
-//			this.sourceCodeDirList = new String[8];
-			this.sourceCodeDirList = new String[1];
-			this.sourceCodeDirList[0] = sourceCodeDir;
-			
-//			if (osName.equals("Mac OS X")) {
-//				this.sourceCodeDirList[0] = sourceCodeDir + "/android/src";
-//				this.sourceCodeDirList[1] = sourceCodeDir + "/android-integration/src";
-//				this.sourceCodeDirList[2] = sourceCodeDir + "/core/src";
-//				this.sourceCodeDirList[3] = sourceCodeDir + "/javame/src";
-//				this.sourceCodeDirList[4] = sourceCodeDir + "/javase/src";
-//				this.sourceCodeDirList[5] = sourceCodeDir + "/rim/src";
-//				this.sourceCodeDirList[6] = sourceCodeDir + "/zxing.appspot.com/generator/src";
-//				this.sourceCodeDirList[7] = sourceCodeDir + "/zxingorg/src";
-//			} else {
-//				this.sourceCodeDirList[0] = sourceCodeDir + "\\android\\src";
-//				this.sourceCodeDirList[1] = sourceCodeDir + "\\android-integration\\src";
-//				this.sourceCodeDirList[2] = sourceCodeDir + "\\core\\src";
-//				this.sourceCodeDirList[3] = sourceCodeDir + "\\javame\\src";
-//				this.sourceCodeDirList[4] = sourceCodeDir + "\\javase\\src";
-//				this.sourceCodeDirList[5] = sourceCodeDir + "\\rim\\src";
-//				this.sourceCodeDirList[6] = sourceCodeDir + "\\zxing.appspot.com\\generator\\src";
-//				this.sourceCodeDirList[7] = sourceCodeDir + "\\zxingorg\\src";
-//			}
-			break;
-		default:
-			break;
-		}
+		setProductName(productName);
+		setBugFilePath(bugFilePath);
+		sourceCodeDirList = new String[1];
+		sourceCodeDirList[0] = sourceCodeDir;
+		setAlpha(alpha);
+		setBeta(beta);
+		setPastDays(pastDays);
+		setRepoDir(repoDir);
 	}
 	
 	public double getAlpha() {
@@ -270,7 +224,7 @@ public class Property {
 	}
 
 	public String getOutputFile() {
-		return outputFile;
+		return OUTPUT_FILE;
 	}
 
 	public String getBugFilePath() {
@@ -341,41 +295,6 @@ public class Property {
 		this.repoDir = repoDir;
 	}
 	
-	public static String getSourceCodeDirName(String productName) {
-		String sourceCodeDirName;
-		
-		switch (productName) {
-		case Property.ASPECTJ:
-			sourceCodeDirName = Property.ASPECTJ_SOURCE_DIR_NAME;
-			break;
-		case Property.ECLIPSE:
-			sourceCodeDirName = Property.ECLIPSE_SOURCE_DIR_NAME;
-			break;
-		case Property.SWT:
-			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
-			break;
-		case Property.ZXING:
-			sourceCodeDirName = Property.ZXING_SOURCE_DIR_NAME;
-			break;
-		default:
-			sourceCodeDirName = Property.SWT_SOURCE_DIR_NAME;
-			break;
-		}
-		
-		return sourceCodeDirName;
-	}
-
-	/**
-	 * @return the candidateLimitSize
-	 */
-	public int getCandidateLimitSize() {
-		return candidateLimitSize;
-	}
-	
-	public void setCandidateLimitSize(int candidateLimitSize) {
-		this.candidateLimitSize = candidateLimitSize;
-	}
-
 	/**
 	 * @return the candidateLimitRate
 	 */
@@ -388,5 +307,68 @@ public class Property {
 	 */
 	public void setCandidateLimitRate(double candidateLimitRate) {
 		this.candidateLimitRate = candidateLimitRate;
+	}
+
+	/**
+	 * @return the since
+	 */
+	public Calendar getSince() {
+		return since;
+	}
+
+	/**
+	 * @param since the since to set
+	 */
+	public void setSince(Calendar since) {
+		this.since = since;
+	}
+
+	/**
+	 * @return the until
+	 */
+	public Calendar getUntil() {
+		return until;
+	}
+
+	/**
+	 * @param until the until to set
+	 */
+	public void setUntil(Calendar until) {
+		this.until = until;
+	}
+
+	/**
+	 * @return the targetProduct
+	 */
+	public String getTargetProduct() {
+		return targetProduct;
+	}
+
+	/**
+	 * @param targetProduct the targetProduct to set
+	 */
+	public void setTargetProduct(String targetProduct) {
+		this.targetProduct = targetProduct;
+	}
+
+	/**
+	 * @return the sourceCodeDir
+	 */
+	public String getSourceCodeDir() {
+		return sourceCodeDir;
+	}
+
+	/**
+	 * @param sourceCodeDir the sourceCodeDir to set
+	 */
+	public void setSourceCodeDir(String sourceCodeDir) {
+		this.sourceCodeDir = sourceCodeDir;
+	}
+
+	/**
+	 * @param bugFilePath the bugFilePath to set
+	 */
+	public void setBugFilePath(String bugFilePath) {
+		this.bugFilePath = bugFilePath;
 	}
 }

@@ -10,9 +10,6 @@ package edu.skku.selab.blp.utils;
 
 import java.util.TreeSet;
 
-// Referenced classes of package utils:
-//            Stem
-
 public class Stopword
 {
 
@@ -43,24 +40,12 @@ public class Stopword
         return isEnglishStopword;
     }
 
-    private static final TreeSet JAVA_KEYWORDS_STOP_WORD_SET;
-    private static final TreeSet PROJECT_KEYWORDS_STOP_WORD_SET;
-    private static final TreeSet ENG_STOP_WORDS_SET;
+    private static final TreeSet<String> JAVA_KEYWORDS_STOP_WORD_SET;
+    private static final TreeSet<String> PROJECT_KEYWORDS_STOP_WORD_SET;
+    private static final TreeSet<String> ENG_STOP_WORDS_SET;
 
     static 
     {
-    	// BugLocator's keywords
-//        String keywords[] = {
-//            "abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", 
-//            "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected", "throw", 
-//            "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient", 
-//            "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", 
-//            "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
-//            "org", "eclipse", "swt", "string", "main", "args", "null", "this", "extends", "true", 
-//            "false"
-//        };
-        
-    	
     	// References
     	// http://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
     	// http://en.wikipedia.org/wiki/List_of_Java_keywords#Reserved_words_for_literal_values
@@ -72,7 +57,7 @@ public class Stopword
                 "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while", 
                 "false", "true", "null" };
         
-        JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet();
+        JAVA_KEYWORDS_STOP_WORD_SET = new TreeSet<String>();
         for(int i = 0; i < javaKeywords.length; i++)
         {
             String word = javaKeywords[i].trim().toLowerCase();
@@ -85,7 +70,7 @@ public class Stopword
                 "aspectj", "swt", "eclipse", "zxing", "string", "java", "org", "javadoc"
                 };
         
-        PROJECT_KEYWORDS_STOP_WORD_SET = new TreeSet();
+        PROJECT_KEYWORDS_STOP_WORD_SET = new TreeSet<String>();
         for(int i = 0; i < projectKeywords.length; i++)
         {
             String word = projectKeywords[i].trim().toLowerCase();
@@ -151,15 +136,14 @@ public class Stopword
             "whoever", "whole", "whom", "whose", "why", "will", "willing", "wish", "with", "within", 
             "without", "won't", "wonder", "would", "would", "wouldn't", "x", "y", "yes", "yet", 
             "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves", "z", 
-            "zero" // , "quot" <- Original BugLocator inlcuded
+            "zero"
         };
-        ENG_STOP_WORDS_SET = new TreeSet();
+        ENG_STOP_WORDS_SET = new TreeSet<String>();
         for(int i = 0; i < EngStopWord.length; i++)
         {
             String word = EngStopWord[i].toLowerCase().trim();
             word = Stem.stem(word);
             ENG_STOP_WORDS_SET.add(word);
         }
-
     }
 }

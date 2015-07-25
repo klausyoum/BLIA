@@ -30,10 +30,8 @@ import edu.skku.selab.blp.blia.indexer.GitCommitLogCollector;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.db.CommitInfo;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -60,7 +58,10 @@ public class ScmRepoAnalyzerTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		TestConfiguration.setProperty();
+		Property prop = Property.loadInstance(Property.SWT);
+		prop.setAlpha(0.2f);
+		prop.setBeta(0.3f);
+		prop.setPastDays(15);
 		
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();
@@ -145,56 +146,5 @@ public class ScmRepoAnalyzerTest {
 
 		Double commitLogScore = (Double) calculateCommitLogScoreMethod.invoke(scmRepoAnalyzer, commitDate, openDate, pastDays);
 		assertEquals(commitLogScore.doubleValue(), 0.009, 0.0001);
-	}
-	
-	@Test
-	public void verifyAnalyze() throws Exception {
-		long startTime = System.currentTimeMillis();
-		
-		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
-		// Following function is needed to set file count for Property.getFileCount() and fixed files information at BugRepoAnalyzer
-		SourceFileCorpusCreator sourceFileCorpusCreator = new SourceFileCorpusCreator();
-		sourceFileCorpusCreator.create(version);
-		
-		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
-		sourceFileVectorCreator.createIndex(version);
-		sourceFileVectorCreator.create(version);
-		
-		BugCorpusCreator bugCorpusCreator = new BugCorpusCreator();
-		boolean stackTraceAnalysis = true;
-		bugCorpusCreator.create(stackTraceAnalysis);
-		
-		BugSourceFileVectorCreator bugSourceFileVectorCreator = new BugSourceFileVectorCreator(); 
-		bugSourceFileVectorCreator.create(version);
-		
-		SourceFileAnalyzer sourceFileAnalyzer = new SourceFileAnalyzer();
-		boolean useStructuredInformation = false;
-		sourceFileAnalyzer.analyze(version, useStructuredInformation);
-		
-		BugVectorCreator bugVectorCreator = new BugVectorCreator();
-		bugVectorCreator.create();
-		
-		BugRepoAnalyzer bugRepoAnalyzer = new BugRepoAnalyzer();
-//		bugRepoAnalyzer.computeSimilarity();
-		bugRepoAnalyzer.analyze();
-
-		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time1 of ScmRepoAnalyzer.analyze(): %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
-
-		String repoDir = "D:\\workspace\\eclipse.platform.swt\\.git";
-		String productName = Property.getInstance().getProductName();
-		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
-		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
-		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
-		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
-
-		elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time2 of ScmRepoAnalyzer.analyze(): %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
-		
-		ScmRepoAnalyzer scmRepoAnalyzer = new ScmRepoAnalyzer();
-		scmRepoAnalyzer.analyze(version);
-		
-		elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time3 of ScmRepoAnalyzer.analyze(): %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 	}
 }

@@ -7,25 +7,18 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
-import edu.skku.selab.blp.buglocator.indexer.SourceFileCorpusCreatorWithFile;
-import edu.skku.selab.blp.buglocator.indexer.SourceFileIndexerWithFile;
-import edu.skku.selab.blp.buglocator.indexer.SourceFileVectorCreatorWithFile;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
+import edu.skku.selab.blp.utils.Util;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -52,13 +45,14 @@ public class SourceFileVectorCreatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String projectName = Property.ASPECTJ;
-		String algorithmName = "BLIA";
 		double alpha = 0.41;
 		double beta = 0.13;
-		int pastDate = 60;
-		String repoDir = Property.ASPECTJ_REPO_DIR;
-		TestConfiguration.setProperty(projectName, algorithmName, alpha, beta, pastDate, repoDir);
+		int pastDays = 60;
+		
+		Property prop = Property.loadInstance(Property.ZXING);
+		prop.setAlpha(alpha);
+		prop.setBeta(beta);
+		prop.setPastDays(pastDays);
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();
@@ -93,23 +87,23 @@ public class SourceFileVectorCreatorTest {
 		System.out.printf("[STARTED] StructuredSourceFileCorpusCreator.create()\n");
 		StructuredSourceFileCorpusCreator sourceFileCorpusCreator = new StructuredSourceFileCorpusCreator();
 		sourceFileCorpusCreator.create(version);
-		System.out.printf("[DONE] StructuredSourceFileCorpusCreator.create().(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] StructuredSourceFileCorpusCreator.create().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 		
 		startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] SourceFileVectorCreator.createIndex()\n");
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator();
 		sourceFileVectorCreator.createIndex(version);
-		System.out.printf("[DONE] SourceFileVectorCreator.createIndex().(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] SourceFileVectorCreator.createIndex().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 
 		startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] SourceFileVectorCreator.computeLengthScore()\n");
 		sourceFileVectorCreator.computeLengthScore(version);
-		System.out.printf("[DONE] SourceFileVectorCreator.computeLengthScore().(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] SourceFileVectorCreator.computeLengthScore().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 		
 		startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] SourceFileVectorCreator.create()\n");
 		sourceFileVectorCreator.create(version);
-		System.out.printf("[DONE] SourceFileVectorCreator.create().(Total %s sec)\n", TestConfiguration.getElapsedTimeSting(startTime));
+		System.out.printf("[DONE] SourceFileVectorCreator.create().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 	
 	@Test

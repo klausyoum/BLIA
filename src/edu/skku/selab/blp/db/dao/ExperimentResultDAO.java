@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.db.dao;
 
 import edu.skku.selab.blp.db.ExperimentResult;
-import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)

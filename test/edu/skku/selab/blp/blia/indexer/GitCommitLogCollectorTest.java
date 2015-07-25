@@ -7,10 +7,7 @@
  */
 package edu.skku.selab.blp.blia.indexer;
 
-import static org.junit.Assert.*;
-
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.junit.After;
@@ -20,9 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
-import edu.skku.selab.blp.test.utils.TestConfiguration;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -49,19 +44,14 @@ public class GitCommitLogCollectorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String productName = Property.ASPECTJ;
-		String repoDir = Property.ASPECTJ_REPO_DIR;
-		
-//		String productName = Property.ECLIPSE;
-//		String repoDir = Property.ECLIPSE_REPO_DIR;
-		
-		String algorithmName = TestConfiguration.BLIA_ALGORITHM;
 		double alpha = 0.2;
 		double beta = 0.3;
 		int pastDays = 15;
-
 		
-		TestConfiguration.setProperty(productName, algorithmName, alpha, beta, pastDays, repoDir); 
+		Property prop = Property.loadInstance(Property.ZXING);
+		prop.setAlpha(alpha);
+		prop.setBeta(beta);
+		prop.setPastDays(pastDays);
 		
 		DbUtil dbUtil = new DbUtil();
 		String dbName = Property.getInstance().getProductName();

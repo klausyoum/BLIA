@@ -8,8 +8,6 @@
 
 package edu.skku.selab.blp.utils;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;

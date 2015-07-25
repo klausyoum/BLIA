@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -18,8 +17,6 @@ import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
 import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
-import edu.skku.selab.blp.utils.Stem;
-import edu.skku.selab.blp.utils.Stopword;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -109,27 +106,15 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					className += ".java";
 				}
 				
-				String fileName = "";
-				if (productName.contains(Property.ASPECTJ)) {
-					String absolutePath = file.getAbsolutePath();
-					String sourceCodeDirName = Property.getSourceCodeDirName(productName);
-					int index = absolutePath.indexOf(sourceCodeDirName);
-					fileName = absolutePath.substring(index + sourceCodeDirName.length() + 1, absolutePath.length());
-					fileName = fileName.replace("\\", "/");
+				String fileName = file.getAbsolutePath().replace("\\", ".");
+				fileName = fileName.replace("/", ".");
 				
-//					System.out.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
-				} else {
-					fileName = file.getAbsolutePath().replace("\\", ".");
-					fileName = fileName.replace("/", ".");
-					
-					// Wrong file that has invalid package or path
-					if (!fileName.endsWith(className)) {
-						System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", fileName, className);
-						continue;
-					}
-					
-					fileName = className;
+				// Wrong file that has invalid package or path
+				if (!fileName.endsWith(className)) {
+					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", fileName, className);
+					continue;
 				}
+				fileName = className;
 				
 				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, className, productName);
 				if (BaseDAO.INVALID == sourceFileID) {

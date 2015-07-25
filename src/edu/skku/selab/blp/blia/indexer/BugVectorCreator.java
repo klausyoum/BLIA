@@ -30,21 +30,16 @@ import edu.udo.cs.wvtool.wordlist.WVTWordList;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
-import edu.skku.selab.blp.indexer.IVectorCreator;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class BugVectorCreator implements IVectorCreator {
+public class BugVectorCreator {
 	private static final String HOME_FOLDER = (new StringBuilder(String.valueOf(Property.getInstance().getWorkDir()))).append(Property.getInstance().getSeparator()).toString();
     private static final String BUG_CORPUS_FOLDER = (new StringBuilder("BugCorpus")).append(Property.getInstance().getSeparator()).toString();
 	
 	
-	/* (non-Javadoc)
-	 * @see edu.skku.selab.blia.indexer.IVectorCreator#create()
-	 */
-	@Override
 	public void create() throws Exception {
 		Property property = Property.getInstance();
 		

@@ -254,13 +254,6 @@ public class BugCorpusCreator {
 											if (fileName.contains(checkingString)) {
 												fileName = fileName.substring(checkingString.length(), fileName.length());
 
-												// TODO: check this code then remove it after testing complete.
-//												fileName = fileName.replace('/', '.');
-//												int index = fileName.lastIndexOf("org.");
-//												if (index > 0) {
-//													fileName = fileName.substring(index, fileName.length());
-//												}
-
 												// debug code
 //												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fileName);
 											}

@@ -9,7 +9,6 @@ package edu.skku.selab.blp.db.dao;
 
 import static org.junit.Assert.*;
 
-import java.util.Date;
 import java.util.HashMap;
 
 import org.junit.After;

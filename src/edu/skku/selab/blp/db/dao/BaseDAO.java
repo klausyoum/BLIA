@@ -8,7 +8,6 @@
 package edu.skku.selab.blp.db.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -26,20 +25,21 @@ public class BaseDAO {
 	protected PreparedStatement ps = null;
 	protected ResultSet rs = null;
 	
-	final public static int INVALID = -1;	
+	final public static int INVALID = -1;
+	final static String DEFAULT_DB_NAME = "sample";
 	
 	public BaseDAO() throws Exception {
-		String dbName = Property.DEFAULT;	// default DB name
-		
 		Property property = Property.getInstance(); 
-		if (null != property) {
+		
+		String dbName = BaseDAO.DEFAULT_DB_NAME;
+		if (property != null) {
 			dbName = property.getProductName();
 		}
-		
+
 		openConnection(dbName);
 	}
 
-	private static void openEvaluationDbConnection() throws Exception {
+	public static void openEvaluationDbConnection() throws Exception {
 		if (null == evaluationDbConnection) {
 			Class.forName("org.h2.Driver");
 			String connectionURL = "jdbc:h2:file:./db/evaluation";
@@ -47,19 +47,6 @@ public class BaseDAO {
 			evaluationDbConnection = connectionPool.getConnection();
 		}
 	}
-	
-	public static void openConnection() throws Exception {
-		openEvaluationDbConnection();
-		
-		if (null == analysisDbConnection) {
-			Class.forName("org.h2.Driver");
-			String connectionURL = "jdbc:h2:file:./db/" + Property.DEFAULT;
-			JdbcConnectionPool connectionPool = JdbcConnectionPool.create(connectionURL, "sa", "");
-			analysisDbConnection = connectionPool.getConnection();
-		}
-	}
-
-
 	
 	public static void openConnection(String dbName) throws Exception {
 		openEvaluationDbConnection();

@@ -12,6 +12,12 @@ import java.io.*;
 
 class PorterStemmer
 {
+    private char b[];
+    private int i;
+    private int j;
+    private int k;
+    private int k0;
+    private boolean dirty;
 
     public PorterStemmer()
     {
@@ -585,13 +591,4 @@ class PorterStemmer
             }
 
     }
-
-    private char b[];
-    private int i;
-    private int j;
-    private int k;
-    private int k0;
-    private boolean dirty;
-    private static final int INC = 50;
-    private static final int EXTRA = 1;
 }

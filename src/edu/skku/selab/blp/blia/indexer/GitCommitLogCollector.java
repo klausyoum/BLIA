@@ -8,14 +8,11 @@
 package edu.skku.selab.blp.blia.indexer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.lib.ObjectReader;

@@ -24,6 +24,7 @@ import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.ExperimentResultDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
+import edu.skku.selab.blp.utils.Util;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -62,7 +63,18 @@ public class Evaluator {
 		realFixedFilesMap = null;
 	}
 	
+	/**
+	 * 
+	 */
+	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays, double candidateRate) {
+		this(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+		experimentResult.setCandidateRate(candidateRate);
+	}
+	
 	public void evaluate() throws Exception {
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] Evaluator.evaluate().\n");
+		
 		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
 		bugs = bugDAO.getAllBugs(productName, true);
@@ -81,6 +93,8 @@ public class Evaluator {
 		experimentResult.setExperimentDate(new Date(System.currentTimeMillis()));
 		ExperimentResultDAO experimentResultDAO = new ExperimentResultDAO();
 		experimentResultDAO.insertExperimentResult(experimentResult);
+		
+		System.out.printf("[DONE] Evaluator.evaluate().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 	
 	private ArrayList<IntegratedAnalysisValue> getRankedValues(int bugID, int limit) throws Exception {
@@ -266,7 +280,14 @@ public class Evaluator {
     }
 	
 	private void calculateMetrics() throws Exception {
-		writer = new FileWriter(Property.OUTPUT_FILE, false);
+		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
+				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
+				experimentResult.getPastDays()); 
+		if (experimentResult.getCandidateRate() > 0.0) {
+			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
+		}
+		outputFileName += ".txt";
+		writer = new FileWriter(outputFileName, false);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 //		boolean isCounted = false;
