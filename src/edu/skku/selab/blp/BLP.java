@@ -8,7 +8,6 @@
 package edu.skku.selab.blp;
 
 import edu.skku.selab.blp.blia.analysis.BLIA;
-import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.evaluation.Evaluator;
 
