@@ -7,9 +7,6 @@
  */
 package edu.skku.selab.blp.blia.analysis;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,7 +15,6 @@ import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.dao.DbUtil;
-import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)

@@ -137,7 +137,8 @@ public class BLIA {
 		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 	
-    private class WorkerThread implements Runnable {
+    @SuppressWarnings("unused")
+	private class WorkerThread implements Runnable {
     	private int bugID;
     	private boolean includeStackTrace;
     	
@@ -167,7 +168,6 @@ public class BLIA {
 			normalize(integratedAnalysisValues);
 			combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
 			
-			@SuppressWarnings("unused")
 			int sourceFileCount = integratedAnalysisValues.keySet().size();
 //			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
 			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();

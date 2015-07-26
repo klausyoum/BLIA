@@ -23,15 +23,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.blia.indexer.BugCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.BugSourceFileVectorCreator;
-import edu.skku.selab.blp.blia.indexer.BugVectorCreator;
-import edu.skku.selab.blp.blia.indexer.GitCommitLogCollector;
-import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
-import edu.skku.selab.blp.blia.indexer.SourceFileVectorCreator;
 import edu.skku.selab.blp.db.CommitInfo;
 import edu.skku.selab.blp.db.dao.DbUtil;
-import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)

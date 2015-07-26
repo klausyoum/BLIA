@@ -6,7 +6,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import edu.skku.selab.blp.PropertyTest;
 import edu.skku.selab.blp.common.BugTest;
-import edu.skku.selab.blp.evaluation.EvaluatorTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
