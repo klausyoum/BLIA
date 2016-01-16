@@ -4970,11 +4970,11 @@ to aid problem diagnosis. The content and conditions under which the dump is
 produced should be configurable by the user but the facility should be enabled 
 by default for exceptions. Consequently its inclusion should have negligible 
 impact on compiler performance and footprint. The file should be attached to 
-bug reports to give a complete and objective description of the user&#146;s 
+bug reports to give a complete and objective description of the user's 
 environment and support problem resolution where a testcase cannot be provided.
 
 One approach is to write a uniquely name file (using date &amp; time) in the 
-current directory e.g &#147;ajcore.20040818.105200.txt&#148; which should be human 
+current directory e.g &quot;ajcore.20040818.105200.txt&quot; which should be human 
 readable (it can be zipped if large) to allow the user to potentially diagnose 
 their own problems or remove potentially sensitive data before submission. It 
 should contain basic information such as AspectJ version, system properties 
@@ -6373,18 +6373,18 @@ definitions, then we should short-circuit the implementation of weaveClass()
 so that byte-code is not unnecessarily passed to the weaver. This is 
 especially important under OSGi where there may be hundreds of class bundles, 
 each with their own class loader only some of which are being woven. We can 
-use the existing &#147;enabled&#148; flag.
+use the existing &quot;enabled&quot; flag.
 2.	As previously discussed on aspectj-dev the META-INF directory is 
 considered private in OSGi and is therefore an inappropriate location for 
 aop.xml files declaring shared aspects. I therefore propose a System property 
 to set the a resource names for finding aop.xml files which would default 
-to &#147;META-INF/aop.xml&#148; e.g. -Dorg.aspectj.weaver.loadtime.configuration=META-
+to &quot;META-INF/aop.xml&quot; e.g. -Dorg.aspectj.weaver.loadtime.configuration=META-
 INF/aop.xml;org/aspectj/aop.xml.
 3.	We should not be catching Throwable  in Aj. Instead we should catch 
 known exceptions e.g. BCException and issue messages while letting other 
 runtime exceptions pass back to the class loader. A user provided 
 IMessageHandler implementation can decide under what circumstances to abort. 
-Alternatively if Aj is considered to be a &#147;safe&#148; interface for weaving agents 
+Alternatively if Aj is considered to be a &quot;safe&quot; interface for weaving agents 
 e.g. JVMTI then the dump logic it contains should be moved to the 
 WeavingAdaptor so that it can be used directly from a class loader.</description>
     </buginformation>
@@ -8385,7 +8385,7 @@ file.encoding.pkg=sun.io</description>
       <summary>Inconsistent Implementations of ReferenceType.getDeclaredMethods()</summary>
       <description>I am running into a problem in load-time weaving when I use reflection delegates because the weaver is generating an incorrect bridge method when I perform an inter-type declaration on Struts.ActionServlet for the init method. On investigation, the BCEL world is recognizing this as an overriding method, because its version of getDeclaredMethods is returning the declared methods for all ancestor superclasses. However, the reflection world is returning only the declared methods for this one class. It therefore appears that the weaver expects getDeclaredMethods to return all of them (making the name quite misleading). I think previously the method was being implemented inconsistently between 1.5 reflection and &lt;1.5 reflection delegates. But it looks like it needs to be handled consistently to include all superclass methods.
 
-However, I don&#146;t know what other places (e.g., the MAP) are really expecting getDeclaredMethods and its siblings to behave like Java reflection's version&#133;
+However, I don't know what other places (e.g., the MAP) are really expecting getDeclaredMethods and its siblings to behave like Java reflection's version&#133;
 
 I started work on adding a getAllDeclaredMethods method to ReferenceType and delegates, as an alternative to provide the weaver the ability to check method overriding as in this case, but it's a little bit involved and I wanted to flag the issue first.
 
@@ -11039,7 +11039,7 @@ Moritz Post</description>
   <bug fixdate="2006-4-26 8:11:00" id="138540" opendate="2006-4-25 20:18:00">
     <buginformation>
       <summary>Patch to add support for -Xset: options</summary>
-      <description>I needed to add X="set:activateLightweightDelegates=false&#148; to my ant build configuration, to troubleshoot the out of memory permgen condition. However, the ant task support doesn't currently support adding the new -Xset style options Andy added.
+      <description>I needed to add X="set:activateLightweightDelegates=false&quot; to my ant build configuration, to troubleshoot the out of memory permgen condition. However, the ant task support doesn't currently support adding the new -Xset style options Andy added.
 
 Here is a small patch to pass any -Xset: options through, that worked for me.</description>
     </buginformation>
@@ -12406,7 +12406,7 @@ public class HibernateEntityDAO&lt;interfaceT extends SecurityEntity, concreteT 
  
 The exception is happening because the parameter.classBound member is not of type Signature.ClassTypeSignature, but an instance of Signature.TypeVariableSignature.
 
-The loop variable i is 1, and parameter.identifier is &#147;concreteT&#148;, so it looks like it's the signature of the second type parameter (concreteT) that is tripping up the weaver.</description>
+The loop variable i is 1, and parameter.identifier is &quot;concreteT&quot;, so it looks like it's the signature of the second type parameter (concreteT) that is tripping up the weaver.</description>
     </buginformation>
     <fixedFiles>
       <file>org.aspectj/modules/tests/bugs153/pr148409/Blurgh.java</file>
