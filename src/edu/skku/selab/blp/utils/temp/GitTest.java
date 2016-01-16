@@ -28,9 +28,6 @@ public class GitTest {
 		  .findGitDir() // scan up the file system tree
 		  .build();
 		
-		
-		
-		
 		Git git = new Git(repository);
 		Iterable<RevCommit> commits = git.log().all().call();
 		
