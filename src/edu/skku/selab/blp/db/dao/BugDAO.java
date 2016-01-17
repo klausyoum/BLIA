@@ -17,6 +17,7 @@ import org.h2.jdbc.JdbcSQLException;
 
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
+import edu.skku.selab.blp.common.Comment;
 import edu.skku.selab.blp.common.SourceFile;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.SimilarBugInfo;
@@ -54,6 +55,13 @@ public class BugDAO extends BaseDAO {
 			
 			returnValue = ps.executeUpdate();
 			
+			ArrayList<Comment> comments = bug.getComments();
+			if (null != comments) {
+				for (int i = 0; i < comments.size(); i++) {
+					insertComment(bug.getID(), comments.get(i));				
+				}
+			}
+			
 			ArrayList<String> stackTraceClasses = bug.getStackTraceClasses();
 			if (null != stackTraceClasses) {
 				for (int i = 0; i < stackTraceClasses.size(); i++) {
@@ -73,7 +81,8 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertStructuredBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, SMR_COR, DESC_COR, TOT_CNT, VER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, PROD_NAME, OPEN_DATE, FIXED_DATE, SMR_COR, DESC_COR, TOT_CNT, VER)" +
+					 " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		// releaseDate format : "2004-10-18 17:40:00"
@@ -142,7 +151,6 @@ public class BugDAO extends BaseDAO {
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 				
 				BugCorpus bugCorpus = new BugCorpus();
-				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
 				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
@@ -192,7 +200,6 @@ public class BugDAO extends BaseDAO {
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 
 				BugCorpus bugCorpus = new BugCorpus();
-				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
 				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
@@ -258,7 +265,6 @@ public class BugDAO extends BaseDAO {
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 
 				BugCorpus bugCorpus = new BugCorpus();
-				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
 				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
@@ -299,7 +305,6 @@ public class BugDAO extends BaseDAO {
 				bug.setFixedDate(rs.getTimestamp("FIXED_DATE"));
 
 				BugCorpus bugCorpus = new BugCorpus();
-				bugCorpus.setContent(rs.getString("COR"));
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
 				bug.setCorpus(bugCorpus);
@@ -1039,5 +1044,76 @@ public class BugDAO extends BaseDAO {
 		}
 		
 		return returnValue;
+	}
+	
+	public int insertComment(int bugID, Comment comment) {
+		String sql = "INSERT INTO BUG_CMT_INFO (BUG_ID, CMD_ID, ATHR, CMT_DATE, CMT_COR) VALUES (?, ?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugID);
+			ps.setInt(2, comment.getID());
+			ps.setString(3, comment.getAuthor());
+			ps.setString(4, comment.getCommentedDateString());
+			ps.setString(5, comment.getCommentCorpus());
+			
+			returnValue = ps.executeUpdate();
+		} catch (JdbcSQLException e) {
+			e.printStackTrace();
+			
+			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int deleteAllComments() {
+		String sql = "DELETE FROM BUG_CMT_INFO";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+
+	public ArrayList<Comment> getComments(int bugID) {
+		ArrayList<Comment> comments = null;
+
+		String sql = "SELECT CMT_ID, ATHR, CMT_DATE, CMT_COR "+
+				"FROM BUG_CMT_INFO " +
+				"WHERE BUG_ID = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == comments) {
+					comments = new ArrayList<Comment>();
+				}
+				
+				Comment comment = new Comment(rs.getInt("CMT_ID"), rs.getTimestamp("CMT_DATE"),
+						rs.getString("ATHR"), rs.getString("CMT_COR"));
+				comments.add(comment);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return comments;
 	}
 }

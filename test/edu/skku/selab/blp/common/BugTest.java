@@ -62,6 +62,17 @@ public class BugTest {
 		
 		Bug bug = new Bug(ID, productName, openDate, fixDate, summary, description, version, fixedFiles);
 		
+		int commentID = 1;
+		String author = "BLIA Plus";
+		String commentedDate = "2016-01-16 23:16:16 EDT";
+		String commentedDateForVerfication = "2016-01-16 23:16:16";
+		String commentCorpus = "coment corpus";
+		
+		Comment comment = new Comment(commentID, commentedDate, author, commentCorpus);
+		bug.addComment(comment);
+		
+		assertEquals("Comment count is invalid.", 1, bug.getComments().size());
+		
 		assertEquals("ID is NOT equal.", ID, bug.getID());
 		assertEquals("openDate is NOT equal.", openDate, bug.getOpenDateString());
 		assertEquals("fixDate is NOT equal.", fixDate, bug.getFixedDateString());
@@ -69,6 +80,13 @@ public class BugTest {
 		assertEquals("description is NOT equal.", description, bug.getDescription());
 		assertEquals("version is NOT equal.", version, bug.getVersion());
 		assertEquals("fixedFiles is NOT equal.", fixedFiles, bug.getFixedFiles());
+		
+		Comment returnedComment = bug.getComment(0);
+		
+		assertEquals("ID is NOT equal.", comment.getID(), returnedComment.getID());
+		assertEquals("author is NOT equal.", comment.getAuthor(), returnedComment.getAuthor());
+		assertEquals("commentedDate is NOT equal.", commentedDateForVerfication, returnedComment.getCommentedDateString());
+		assertEquals("commentCorpus is NOT equal.", comment.getCommentCorpus(), returnedComment.getCommentCorpus());
 	}
 
 }

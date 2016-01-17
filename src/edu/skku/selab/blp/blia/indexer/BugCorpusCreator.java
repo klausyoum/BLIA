@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
+import edu.skku.selab.blp.common.Comment;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Splitter;
@@ -83,7 +84,7 @@ public class BugCorpusCreator {
 		File file = new File(dirPath);
 		if (!file.exists())
 			file.mkdir();
-
+		
 		BugDAO bugDAO = new BugDAO();
 		Bug bug;
 		Iterator<Bug> bugIter = list.iterator();
@@ -98,16 +99,7 @@ public class BugCorpusCreator {
 //			}
 			
 			BugCorpus bugCorpus = new BugCorpus();
-			
-			String content = (new StringBuilder(String.valueOf(bug.getSummary())))
-					.append(" ").append(bug.getDescription()).toString();
-//			String splitWords[] = Splitter.splitNatureLanguage(content);
-			String splitWords[] = Splitter.splitNatureLanguageEx(content);
-			String contentCorpus = stemContent(splitWords);
-			bugCorpus.setContent(contentCorpus);
-			// debug code
-//			System.out.println("contentCorpus: " + contentCorpus);
-			
+
 //			String summaryPart = stemContent(Splitter.splitNatureLanguage(bug.getSummary()));
 			String summaryPart = stemContent(Splitter.splitNatureLanguageEx(bug.getSummary()));
 			bugCorpus.setSummaryPart(summaryPart);
@@ -119,17 +111,25 @@ public class BugCorpusCreator {
 			bugCorpus.setDescriptionPart(descriptionPart);
 			// debug code
 //			System.out.println("descriptionPart: " + descriptionPart);
+			
+			/////////////////////////////////////////////////
+			// comments extension included.
+			String descriptionPartEx = descriptionPart + " " + bug.getAllCommentsCorpus();
+			bugCorpus.setDescriptionPartEx(descriptionPartEx);
+			// debug code
+//			System.out.println("descriptionPartEx: " + descriptionPartEx);
 
 			bug.setCorpus(bugCorpus);
 			
 			// To write bug corpus to file for compatibility
+			// comments extended!
 			FileWriter writer = new FileWriter((new StringBuilder(
 					String.valueOf(dirPath))).append(bug.getID())
 					.append(".txt").toString());
-			writer.write(bugCorpus.getContent().trim());
+			writer.write(bugCorpus.getContentEx().trim());
 			writer.flush();
 			writer.close();
-
+			
 			// DO NOT insert corpus here~!
 			// Creating BugCorpus willl be done at BugVectorCreator
 //			String[] corpusArray = corpuses.toString().split(" ");
@@ -177,6 +177,29 @@ public class BugCorpusCreator {
         }
         return stackTraceClasses;
     }
+    
+    private String parseContent(Bug bug, String content, boolean stackTraceAnalysis) {
+		content = content.replace("&amp;", "&");
+		content = content.replace("&quot;", "\"");
+		content = content.replace("&lt;", "<");
+		content = content.replace("&gt;", ">");
+		
+		// Extract class name before removing of HTML tag
+		if (stackTraceAnalysis) {
+			bug.addStackTraceClasses(extractClassName(content, bug.getID()));
+		}
+		
+		// to remove HTML tag
+    	String[] words = content.split("(?i)\\<[^\\>]*\\>");
+    	String result = "";
+    	for (int k = 0; k < words.length; k++) {
+    		if (words[k].length() > 0) {
+    			result += words[k];
+    		}
+    	}
+    	result = result.trim();
+    	return result;
+    }
 
 	private ArrayList<Bug> parseXML(boolean stackTraceAnalysis) {
 		ArrayList<Bug> list = new ArrayList<Bug>();
@@ -219,27 +242,25 @@ public class BugCorpusCreator {
 										}
 										if (_n.getNodeName().equals("description")) {
 											String content = _n.getTextContent();
-											
-											content = content.replace("&amp;", "&");
-											content = content.replace("&quot;", "\"");
-											content = content.replace("&lt;", "<");
-											content = content.replace("&gt;", ">");
-											
-											// Extract class name before removement of HTML tag
-											if (stackTraceAnalysis) {
-												bug.setStackTraceClasses(extractClassName(content, bug.getID()));
-											}
-											
-											// to remove HTML tag
-				                        	String[] words = content.split("(?i)\\<[^\\>]*\\>");
-				                        	String description = "";
-				                        	for (int k = 0; k < words.length; k++) {
-				                        		if (words[k].length() > 0) {
-				                        			description += words[k];
-				                        		}
-				                        	}
-				                        	description = description.trim();
+											String description = parseContent(bug, content, stackTraceAnalysis);
 											bug.setDescription(description);
+										}
+										if (_n.getNodeName().equals("comments")) {
+											NodeList commentsNode = _n.getChildNodes();
+											for (int k = 0; k < commentsNode.getLength(); k++) {
+												Node commentNode = commentsNode.item(k);
+												if (commentNode.getNodeName().equals("comment")) {
+													int commentId = Integer.parseInt(commentNode.getAttributes().getNamedItem("id").getNodeValue());
+													String commentedDateString = commentNode.getAttributes().getNamedItem("date").getNodeValue();
+													String author = commentNode.getAttributes().getNamedItem("author").getNodeValue();
+													String content = commentNode.getTextContent();
+													String commentString = parseContent(bug, content, stackTraceAnalysis);
+													String splitWords[] = Splitter.splitNatureLanguageEx(commentString);
+													String commentCorpus = stemContent(splitWords);
+													Comment comment = new Comment(commentId, commentedDateString, author, commentCorpus);
+													bug.addComment(comment);
+												}
+											}
 										}
 									}
 								}
@@ -253,9 +274,15 @@ public class BugCorpusCreator {
 											String checkingString = "org.aspectj/modules/"; 
 											if (fileName.contains(checkingString)) {
 												fileName = fileName.substring(checkingString.length(), fileName.length());
-
+												
+//												int pathIndex = fileName.indexOf("/src/");
+//												if (-1 != pathIndex) {
+//													fileName = fileName.substring(pathIndex + 5, fileName.length());
+//													fileName = fileName.replace('/', '.');
+//												}
+						
 												// debug code
-//												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fileName);
+												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fileName);
 											}
 											bug.addFixedFile(fileName);
 										}

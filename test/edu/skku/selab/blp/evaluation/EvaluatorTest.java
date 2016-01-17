@@ -127,7 +127,7 @@ public class EvaluatorTest {
 				algorithmDescription += " without Stack-Trace analysis";
 			}
 			
-			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA, algorithmDescription,
+			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
 					prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 			evaluator.evaluate();
 		}
@@ -166,7 +166,7 @@ public class EvaluatorTest {
 						algorithmDescription += " without Stack-Trace analysis";
 					}
 					
-					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA, algorithmDescription,
+					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
 							prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluator.evaluate();
 				}
@@ -206,7 +206,7 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
 			}
@@ -248,7 +248,7 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
 			}
