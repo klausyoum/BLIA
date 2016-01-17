@@ -106,15 +106,27 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					className += ".java";
 				}
 				
-				String fileName = file.getAbsolutePath().replace("\\", ".");
-				fileName = fileName.replace("/", ".");
+				String fileName = "";
+				if (productName.contains(Property.ASPECTJ)) {
+					String absolutePath = file.getAbsolutePath();
+					String sourceCodeDirName = property.getSourceCodeDir();
+					int index = absolutePath.indexOf(sourceCodeDirName);
+					fileName = absolutePath.substring(index + sourceCodeDirName.length() + 1, absolutePath.length());
+					fileName = fileName.replace("\\", "/");
 				
-				// Wrong file that has invalid package or path
-				if (!fileName.endsWith(className)) {
-					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", fileName, className);
-					continue;
+//					System.out.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", filePath, fileName);
+				} else {
+					fileName = file.getAbsolutePath().replace("\\", ".");
+					fileName = fileName.replace("/", ".");
+					
+					// Wrong file that has invalid package or path
+					if (!fileName.endsWith(className)) {
+						System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s, %s\n", fileName, className);
+						continue;
+					}
+					
+					fileName = className;
 				}
-				fileName = className;
 				
 				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, className, productName);
 				if (BaseDAO.INVALID == sourceFileID) {
@@ -122,7 +134,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					throw new Exception(); 
 				}
 				
-				int sourceFileVersionID = sourceFileDAO.insertStructuredCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
+				int sourceFileVersionID = sourceFileDAO.insertCorpusSet(sourceFileID, version, corpus, totalCoupusCount, lengthScore);
 				if (BaseDAO.INVALID == sourceFileVersionID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", className);
 					throw new Exception(); 
