@@ -1361,58 +1361,31 @@ Kind Status Priority Description Resource In Folder
  Location
 Error   Internal compiler error
 java.lang.NullPointerException
- at org.aspectj.weaver.patterns.CflowPointcut.concretize1
-(CflowPointcut.java:126)
- at org.aspectj.weaver.patterns.ReferencePointcut.concretize1
-(ReferencePointcut.java:270)
- at org.aspectj.weaver.patterns.AndPointcut.concretize1
-(AndPointcut.java:88)
- at org.aspectj.weaver.patterns.AndPointcut.concretize1
-(AndPointcut.java:88)
- at org.aspectj.weaver.patterns.AndPointcut.concretize1
-(AndPointcut.java:88)
- at org.aspectj.weaver.patterns.ReferencePointcut.concretize1
-(ReferencePointcut.java:270)
- at org.aspectj.weaver.patterns.AndPointcut.concretize1
-(AndPointcut.java:88)
+ at org.aspectj.weaver.patterns.CflowPointcut.concretize1(CflowPointcut.java:126)
+ at org.aspectj.weaver.patterns.ReferencePointcut.concretize1(ReferencePointcut.java:270)
+ at org.aspectj.weaver.patterns.AndPointcut.concretize1(AndPointcut.java:88)
+ at org.aspectj.weaver.patterns.AndPointcut.concretize1(AndPointcut.java:88)
+ at org.aspectj.weaver.patterns.AndPointcut.concretize1(AndPointcut.java:88)
+ at org.aspectj.weaver.patterns.ReferencePointcut.concretize1(ReferencePointcut.java:270)
+ at org.aspectj.weaver.patterns.AndPointcut.concretize1(AndPointcut.java:88)
  at org.aspectj.weaver.patterns.Pointcut.concretize(Pointcut.java:127)
  at org.aspectj.weaver.patterns.Pointcut.concretize(Pointcut.java:120)
  at org.aspectj.weaver.Advice.concretize(Advice.java:216)
- at org.aspectj.weaver.CrosscuttingMembers.addShadowMunger
-(CrosscuttingMembers.java:78)
- at org.aspectj.weaver.CrosscuttingMembers.addShadowMungers
-(CrosscuttingMembers.java:72)
- at org.aspectj.weaver.ResolvedTypeX.collectCrosscuttingMembers
-(ResolvedTypeX.java:328)
- at org.aspectj.weaver.CrosscuttingMembersSet.addOrReplaceAspect
-(CrosscuttingMembersSet.java:50)
- at 
-org.aspectj.ajdt.internal.compiler.ast.AspectDeclaration.buildInterTypeAndPerCl
-ause(AspectDeclaration.java:747)
- at 
-org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.buildInterTypeAnd
-PerClause(AjLookupEnvironment.java:120)
- at 
-org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.buildInterTypeAnd
-PerClause(AjLookupEnvironment.java:136)
- at 
-org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.completeTypeBindi
-ngs(AjLookupEnvironment.java:87)
- at org.eclipse.jdt.internal.compiler.Compiler.beginToCompile
-(Compiler.java:310)
- at org.eclipse.jdt.internal.compiler.Compiler.compile
-(Compiler.java:324)
- at 
-org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation
-(AjBuildManager.java:372)
- at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild
-(AjBuildManager.java:133)
- at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild
-(AjBuildManager.java:78)
- at org.aspectj.ajde.internal.CompilerAdapter.compile
-(CompilerAdapter.java:117)
- at org.aspectj.ajde.internal.AspectJBuildManager$CompilerThread.run
-(AspectJBuildManager.java:164)
+ at org.aspectj.weaver.CrosscuttingMembers.addShadowMunger(CrosscuttingMembers.java:78)
+ at org.aspectj.weaver.CrosscuttingMembers.addShadowMungers(CrosscuttingMembers.java:72)
+ at org.aspectj.weaver.ResolvedTypeX.collectCrosscuttingMembers(ResolvedTypeX.java:328)
+ at org.aspectj.weaver.CrosscuttingMembersSet.addOrReplaceAspect(CrosscuttingMembersSet.java:50)
+ at org.aspectj.ajdt.internal.compiler.ast.AspectDeclaration.buildInterTypeAndPerClause(AspectDeclaration.java:747)
+ at org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.buildInterTypeAndPerClause(AjLookupEnvironment.java:120)
+ at org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.buildInterTypeAndPerClause(AjLookupEnvironment.java:136)
+ at org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.completeTypeBindings(AjLookupEnvironment.java:87)
+ at org.eclipse.jdt.internal.compiler.Compiler.beginToCompile(Compiler.java:310)
+ at org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:324)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation(AjBuildManager.java:372)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:133)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:78)
+ at org.aspectj.ajde.internal.CompilerAdapter.compile(CompilerAdapter.java:117)
+ at org.aspectj.ajde.internal.AspectJBuildManager$CompilerThread.run(AspectJBuildManager.java:164)
  ClaimForm.java
  ClaimsSample/src/com/newaspects/claimsSample/ui/controller </comment>
         <comment id="2" date="2003-08-07 04:41:57 EDT" author="Andrew Clement">I *think* the NPE that Ron mentions is a dup of another bug Jim fixed recently 
@@ -12118,36 +12091,21 @@ contents of an AJ project &quot;Bug&quot; with 2 source files that reproduce the
 E:\Bug&gt;ajc -emacssym @.generated.lst
 E:\Bug\a\b\d\NPE.aj [error] Internal compiler error
 java.lang.NullPointerException
-        at org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory.makeResolved
-Member(EclipseFactory.java:224)
-        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.getPointcu
-tDeclaration(AsmHierarchyBuilder.java:384)
-        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.addUsesPoi
-ntcutRelationsForNode(AsmHierarchyBuilder.java:369)
-        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.visit(AsmH
-ierarchyBuilder.java:343)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.MethodDeclaration.t
-raverse(MethodDeclaration.java:167)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.tra
-verse(TypeDeclaration.java:1133)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDecl
-aration.traverse(CompilationUnitDeclaration.java:314)
-        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.internalBu
-ild(AsmHierarchyBuilder.java:141)
-        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.buildStruc
-tureForCompilationUnit(AsmHierarchyBuilder.java:81)
-        at org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory.finishedComp
-ilationUnit(EclipseFactory.java:354)
-        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.afterProcessing(
-AjCompilerAdapter.java:139)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compil
-er.java:373)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilat
-ion(AjBuildManager.java:682)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuild
-Manager.java:168)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBu
-ildManager.java:102)
+        at org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory.makeResolvedMember(EclipseFactory.java:224)
+        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.getPointcutDeclaration(AsmHierarchyBuilder.java:384)
+        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.addUsesPointcutRelationsForNode(AsmHierarchyBuilder.java:369)
+        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.visit(AsmHierarchyBuilder.java:343)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.MethodDeclaration.traverse(MethodDeclaration.java:167)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.traverse(TypeDeclaration.java:1133)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration.traverse(CompilationUnitDeclaration.java:314)
+        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.internalBuild(AsmHierarchyBuilder.java:141)
+        at org.aspectj.ajdt.internal.core.builder.AsmHierarchyBuilder.buildStructureForCompilationUnit(AsmHierarchyBuilder.java:81)
+        at org.aspectj.ajdt.internal.compiler.lookup.EclipseFactory.finishedCompilationUnit(EclipseFactory.java:354)
+        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.afterProcessing(AjCompilerAdapter.java:139)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:373)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation(AjBuildManager.java:682)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:168)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:102)
         at org.aspectj.ajdt.ajc.AjdtCommand.doCommand(AjdtCommand.java:109)
         at org.aspectj.ajdt.ajc.AjdtCommand.runCommand(AjdtCommand.java:60)
         at org.aspectj.tools.ajc.Main.run(Main.java:291)
@@ -14224,57 +14182,28 @@ the Bad type popup...
 org.aspectj.weaver.BCException: Bad type signature: &lt;missing&gt;
  at org.aspectj.weaver.TypeX.signatureToName(TypeX.java:821)
  at org.aspectj.weaver.TypeX.getName(TypeX.java:329)
- at org.aspectj.weaver.bcel.BcelWorld.resolveObjectType
-(BcelWorld.java:221)
+ at org.aspectj.weaver.bcel.BcelWorld.resolveObjectType(BcelWorld.java:221)
  at org.aspectj.weaver.World.resolveObjectType(World.java:160)
  at org.aspectj.weaver.World.resolve(World.java:132)
- at 
-org.aspectj.weaver.patterns.ExactAnnotationTypePattern.resolveBindings
-(ExactAnnotationTypePattern.java:148)
- at org.aspectj.weaver.patterns.AnnotationPointcut.resolveBindings
-(AnnotationPointcut.java:162)
- at org.aspectj.weaver.patterns.NotPointcut.resolveBindings
-(NotPointcut.java:106)
- at org.aspectj.weaver.patterns.AndPointcut.resolveBindings
-(AndPointcut.java:112)
+ at org.aspectj.weaver.patterns.ExactAnnotationTypePattern.resolveBindings(ExactAnnotationTypePattern.java:148)
+ at org.aspectj.weaver.patterns.AnnotationPointcut.resolveBindings(AnnotationPointcut.java:162)
+ at org.aspectj.weaver.patterns.NotPointcut.resolveBindings(NotPointcut.java:106)
+ at org.aspectj.weaver.patterns.AndPointcut.resolveBindings(AndPointcut.java:112)
  at org.aspectj.weaver.patterns.Pointcut.resolve(Pointcut.java:231)
- at 
-org.aspectj.ajdt.internal.compiler.ast.PointcutDesignator.finishResolveTypes
-(PointcutDesignator.java:82)
- at 
-org.aspectj.ajdt.internal.compiler.ast.PointcutDeclaration.resolveStatements
-(PointcutDeclaration.java:164)
- at 
-org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.res
-olve(AbstractMethodDeclaration.java:397)
- at 
-org.aspectj.ajdt.internal.compiler.ast.PointcutDeclaration.resolvePointcut
-(PointcutDeclaration.java:145)
- at 
-org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.resolvePointcutDe
-clarations(AjLookupEnvironment.java:283)
- at 
-org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.completeTypeBindi
-ngs(AjLookupEnvironment.java:179)
- at 
-org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.beginToCompile
-(Compiler.java:302)
- at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile
-(Compiler.java:316)
- at 
-org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation
-(AjBuildManager.java:727)
- at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild
-(AjBuildManager.java:206)
- at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild
-(AjBuildManager.java:166)
- at 
-org.aspectj.ajdt.internal.core.builder.AjBuildManager.incrementalBuild
-(AjBuildManager.java:147)
- at org.aspectj.ajde.internal.CompilerAdapter.compile
-(CompilerAdapter.java:116)
- at org.aspectj.ajde.internal.AspectJBuildManager$CompilerThread.run
-(AspectJBuildManager.java:191)</comment>
+ at org.aspectj.ajdt.internal.compiler.ast.PointcutDesignator.finishResolveTypes(PointcutDesignator.java:82)
+ at org.aspectj.ajdt.internal.compiler.ast.PointcutDeclaration.resolveStatements(PointcutDeclaration.java:164)
+ at org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration.resolve(AbstractMethodDeclaration.java:397)
+ at org.aspectj.ajdt.internal.compiler.ast.PointcutDeclaration.resolvePointcut(PointcutDeclaration.java:145)
+ at org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.resolvePointcutDeclarations(AjLookupEnvironment.java:283)
+ at org.aspectj.ajdt.internal.compiler.lookup.AjLookupEnvironment.completeTypeBindings(AjLookupEnvironment.java:179)
+ at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.beginToCompile(Compiler.java:302)
+ at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:316)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation(AjBuildManager.java:727)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:206)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:166)
+ at org.aspectj.ajdt.internal.core.builder.AjBuildManager.incrementalBuild(AjBuildManager.java:147)
+ at org.aspectj.ajde.internal.CompilerAdapter.compile(CompilerAdapter.java:116)
+ at org.aspectj.ajde.internal.AspectJBuildManager$CompilerThread.run(AspectJBuildManager.java:191)</comment>
         <comment id="4" date="2005-07-14 08:50:37 EDT" author="Matt Chapman">I'm passing over to AspectJ because the main problem here is the BCException
 from the compiler (which I can reproduce with the attached project). The
 ClassCastException from AJDT (which I couldn't reproduce) may or may not be
@@ -14896,42 +14825,18 @@ When I compile Base.java it works. When I compile Sub.java I see this
 exception.
 
 java.lang.NullPointerException
-        at 
-org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVi
-sitor.validateAspectDeclaration(ValidateAtAspectJAnnotationsVisitor.java:243)
-        at 
-org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVi
-sitor.checkTypeDeclaration(ValidateAtAspectJAnnotationsVisitor.java:119)
-        at 
-org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVi
-sitor.visit(ValidateAtAspectJAnnotationsVisitor.java:107)
-        at 
-org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.tra
-verse(TypeDeclaration.java:1145)
-        at 
-org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDecl
-aration.traverse(CompilationUnitDeclaration.java:339)
-        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.beforeAnalysing
-(
-AjCompilerAdapter.java:154)
-        at 
-org.aspectj.ajdt.internal.compiler.CompilerAdapter.ajc$before$org_asp
-ectj_ajdt_internal_compiler_CompilerAdapter$7$db78446d(CompilerAdapter.aj:101)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.process
-(Compil
-er.java:517)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile
-(Compil
-er.java:329)
-        at 
-org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilat
-ion(AjBuildManager.java:759)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild
-(AjBuild
-Manager.java:225)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild
-(AjBu
-ildManager.java:151)
+        at org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVisitor.validateAspectDeclaration(ValidateAtAspectJAnnotationsVisitor.java:243)
+        at org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVisitor.checkTypeDeclaration(ValidateAtAspectJAnnotationsVisitor.java:119)
+        at org.aspectj.ajdt.internal.compiler.ast.ValidateAtAspectJAnnotationsVisitor.visit(ValidateAtAspectJAnnotationsVisitor.java:107)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeDeclaration.traverse(TypeDeclaration.java:1145)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration.traverse(CompilationUnitDeclaration.java:339)
+        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.beforeAnalysing(AjCompilerAdapter.java:154)
+        at org.aspectj.ajdt.internal.compiler.CompilerAdapter.ajc$before$org_aspectj_ajdt_internal_compiler_CompilerAdapter$7$db78446d(CompilerAdapter.aj:101)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.process(Compiler.java:517)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:329)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation(AjBuildManager.java:759)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:225)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:151)
         at org.aspectj.ajdt.ajc.AjdtCommand.doCommand(AjdtCommand.java:112)
         at org.aspectj.ajdt.ajc.AjdtCommand.runCommand(AjdtCommand.java:60)
         at org.aspectj.tools.ajc.Main.run(Main.java:326)
@@ -22124,28 +22029,17 @@ when weaving
 when batch building BuildConfig[null] #Files=1
 -1
 java.lang.ArrayIndexOutOfBoundsException: -1
-        at org.aspectj.weaver.ReferenceType.determineThoseTypesToUse(ReferenceTy
-pe.java:473)
-        at org.aspectj.weaver.ReferenceType.getDeclaredInterfaces(ReferenceType.
-java:419)
-        at org.aspectj.weaver.bcel.BcelWeaver.weaveParentsFor(BcelWeaver.java:12
-15)
+        at org.aspectj.weaver.ReferenceType.determineThoseTypesToUse(ReferenceType.java:473)
+        at org.aspectj.weaver.ReferenceType.getDeclaredInterfaces(ReferenceType.java:419)
+        at org.aspectj.weaver.bcel.BcelWeaver.weaveParentsFor(BcelWeaver.java:1215)
         at org.aspectj.weaver.bcel.BcelWeaver.weave(BcelWeaver.java:1058)
-        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.weave(AjCompiler
-Adapter.java:312)
-        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.afterCompiling(A
-jCompilerAdapter.java:184)
-        at org.aspectj.ajdt.internal.compiler.CompilerAdapter.ajc$afterReturning
-$org_aspectj_ajdt_internal_compiler_CompilerAdapter$2$f9cc9ca0(CompilerAdapter.a
-j:70)
-        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compil
-er.java:367)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilat
-ion(AjBuildManager.java:843)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuild
-Manager.java:243)
-        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBu
-ildManager.java:163)
+        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.weave(AjCompilerAdapter.java:312)
+        at org.aspectj.ajdt.internal.compiler.AjCompilerAdapter.afterCompiling(AjCompilerAdapter.java:184)
+        at org.aspectj.ajdt.internal.compiler.CompilerAdapter.ajc$afterReturning$org_aspectj_ajdt_internal_compiler_CompilerAdapter$2$f9cc9ca0(CompilerAdapter.aj:70)
+        at org.aspectj.org.eclipse.jdt.internal.compiler.Compiler.compile(Compiler.java:367)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.performCompilation(AjBuildManager.java:843)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.doBuild(AjBuildManager.java:243)
+        at org.aspectj.ajdt.internal.core.builder.AjBuildManager.batchBuild(AjBuildManager.java:163)
         at org.aspectj.ajdt.ajc.AjdtCommand.doCommand(AjdtCommand.java:112)
         at org.aspectj.ajdt.ajc.AjdtCommand.runCommand(AjdtCommand.java:60)
         at org.aspectj.tools.ajc.Main.run(Main.java:356)
@@ -26664,78 +26558,46 @@ Java stack information for the threads listed above:
         at java.util.logging.Logger.entering(Logger.java:842)
         at org.aspectj.weaver.tools.Jdk14Trace.enter(Jdk14Trace.java:30)
         at org.aspectj.weaver.loadtime.Aj.preProcess(Aj.java:67)
-        at org.aspectj.weaver.loadtime.ClassPreProcessorAgentAdapter.transform(C
-lassPreProcessorAgentAdapter.java:55)
-        at sun.instrument.TransformerManager.transform(TransformerManager.java:1
-22)
-        at sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java
-:155)
+        at org.aspectj.weaver.loadtime.ClassPreProcessorAgentAdapter.transform(ClassPreProcessorAgentAdapter.java:55)
+        at sun.instrument.TransformerManager.transform(TransformerManager.java:122)
+        at sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:155)
         at java.lang.ClassLoader.defineClass1(Native Method)
         at java.lang.ClassLoader.defineClass(ClassLoader.java:620)
-        at oracle.classloader.PolicyClassLoader.defineClass(PolicyClassLoader.ja
-va:2224)
-        at oracle.classloader.PolicyClassLoader.findLocalClass(PolicyClassLoader
-.java:1457)
-        at oracle.classloader.SearchPolicy$FindLocal.getClass(SearchPolicy.java:
-167)
+        at oracle.classloader.PolicyClassLoader.defineClass(PolicyClassLoader.java:2224)
+        at oracle.classloader.PolicyClassLoader.findLocalClass(PolicyClassLoader.java:1457)
+        at oracle.classloader.SearchPolicy$FindLocal.getClass(SearchPolicy.java:167)
         at oracle.classloader.SearchSequence.getClass(SearchSequence.java:119)
-        at oracle.classloader.PolicyClassLoader.internalLoadClass(PolicyClassLoa
-der.java:1660)
+        at oracle.classloader.PolicyClassLoader.internalLoadClass(PolicyClassLoader.java:1660)
         - locked &lt;0x05c0c0e8&gt; (a oracle.classloader.PolicyClassLoader)
-        at oracle.classloader.PolicyClassLoader.loadClass(PolicyClassLoader.java
-:1621)
-        at oracle.classloader.PolicyClassLoader.loadClass(PolicyClassLoader.java
-:1606)
+        at oracle.classloader.PolicyClassLoader.loadClass(PolicyClassLoader.java:1621)
+        at oracle.classloader.PolicyClassLoader.loadClass(PolicyClassLoader.java:1606)
         at java.lang.ClassLoader.loadClassInternal(ClassLoader.java:319)
         - locked &lt;0x05c0c0e8&gt; (a oracle.classloader.PolicyClassLoader)
-        at org.springframework.web.servlet.view.ResourceBundleViewResolver.initF
-actory(ResourceBundleViewResolver.java:190)
-        - locked &lt;0x063d7690&gt; (a org.springframework.web.servlet.view.ResourceBu
-ndleViewResolver)
-        at org.springframework.web.servlet.view.ResourceBundleViewResolver.loadV
-iew(ResourceBundleViewResolver.java:148)
-        at org.springframework.web.servlet.view.AbstractCachingViewResolver.crea
-teView(AbstractCachingViewResolver.java:141)
-        at org.springframework.web.servlet.view.AbstractCachingViewResolver.reso
-lveViewName(AbstractCachingViewResolver.java:79)
-        at org.springframework.web.servlet.DispatcherServlet.resolveViewName(Dis
-patcherServlet.java:983)
-        at org.springframework.web.servlet.DispatcherServlet.render(DispatcherSe
-rvlet.java:942)
-        at org.springframework.web.servlet.DispatcherServlet.doDispatch(Dispatch
-erServlet.java:738)
-        at org.springframework.web.servlet.DispatcherServlet.doService(Dispatche
-rServlet.java:658)
-        at org.springframework.web.servlet.FrameworkServlet.processRequest(Frame
-workServlet.java:392)
-        at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServl
-et.java:347)
+        at org.springframework.web.servlet.view.ResourceBundleViewResolver.initFactory(ResourceBundleViewResolver.java:190)
+        - locked &lt;0x063d7690&gt; (a org.springframework.web.servlet.view.ResourceBundleViewResolver)
+        at org.springframework.web.servlet.view.ResourceBundleViewResolver.loadView(ResourceBundleViewResolver.java:148)
+        at org.springframework.web.servlet.view.AbstractCachingViewResolver.createView(AbstractCachingViewResolver.java:141)
+        at org.springframework.web.servlet.view.AbstractCachingViewResolver.resolveViewName(AbstractCachingViewResolver.java:79)
+        at org.springframework.web.servlet.DispatcherServlet.resolveViewName(DispatcherServlet.java:983)
+        at org.springframework.web.servlet.DispatcherServlet.render(DispatcherServlet.java:942)
+        at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:738)
+        at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:658)
+        at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:392)
+        at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:347)
         at javax.servlet.http.HttpServlet.service(HttpServlet.java:743)
         at javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
-        at com.evermind.server.http.ServletRequestDispatcher.invoke(ServletReque
-stDispatcher.java:719)
-        at com.evermind.server.http.ServletRequestDispatcher.forwardInternal(Ser
-vletRequestDispatcher.java:376)
-        at com.evermind.server.http.HttpRequestHandler.doProcessRequest(HttpRequ
-estHandler.java:870)
-        at com.evermind.server.http.HttpRequestHandler.processRequest(HttpReques
-tHandler.java:451)
-        at com.evermind.server.http.HttpRequestHandler.serveOneRequest(HttpReque
-stHandler.java:218)
-        at com.evermind.server.http.HttpRequestHandler.run(HttpRequestHandler.ja
-va:119)
-        at com.evermind.server.http.HttpRequestHandler.run(HttpRequestHandler.ja
-va:112)
-        at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSo
-cketReadHandler.java:260)
-        at oracle.oc4j.network.ServerSocketAcceptHandler.procClientSocket(Server
-SocketAcceptHandler.java:230)
-        at oracle.oc4j.network.ServerSocketAcceptHandler.access$800(ServerSocket
-AcceptHandler.java:33)
-        at oracle.oc4j.network.ServerSocketAcceptHandler$AcceptHandlerHorse.run(
-ServerSocketAcceptHandler.java:831)
-        at com.evermind.util.ReleasableResourcePooledExecutor$MyWorker.run(Relea
-sableResourcePooledExecutor.java:298)
+        at com.evermind.server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:719)
+        at com.evermind.server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:376)
+        at com.evermind.server.http.HttpRequestHandler.doProcessRequest(HttpRequestHandler.java:870)
+        at com.evermind.server.http.HttpRequestHandler.processRequest(HttpRequestHandler.java:451)
+        at com.evermind.server.http.HttpRequestHandler.serveOneRequest(HttpRequestHandler.java:218)
+        at com.evermind.server.http.HttpRequestHandler.run(HttpRequestHandler.java:119)
+        at com.evermind.server.http.HttpRequestHandler.run(HttpRequestHandler.java:112)
+        at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSocketReadHandler.java:260)
+        at oracle.oc4j.network.ServerSocketAcceptHandler.procClientSocket(ServerSocketAcceptHandler.java:230)
+        at oracle.oc4j.network.ServerSocketAcceptHandler.access$800(ServerSocketAcceptHandler.java:33)
+        at oracle.oc4j.network.ServerSocketAcceptHandler$AcceptHandlerHorse.run(ServerSocketAcceptHandler.java:831)
+        at com.evermind.util.ReleasableResourcePooledExecutor$MyWorker.run(ReleasableResourcePooledExecutor.java:298)
         at java.lang.Thread.run(Thread.java:595)
 &quot;Thread-14&quot;:
         at oracle.classloader.PolicyClassLoader.toString(PolicyClassLoader.java:
@@ -26759,25 +26621,17 @@ sableResourcePooledExecutor.java:298)
         at java.util.logging.Logger.entering(Logger.java:870)
         at org.aspectj.weaver.tools.Jdk14Trace.enter(Jdk14Trace.java:32)
         at org.aspectj.weaver.loadtime.Aj.preProcess(Aj.java:67)
-        at org.aspectj.weaver.loadtime.ClassPreProcessorAgentAdapter.transform(C
-lassPreProcessorAgentAdapter.java:55)
-        at sun.instrument.TransformerManager.transform(TransformerManager.java:1
-22)
-        at sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java
-:155)
+        at org.aspectj.weaver.loadtime.ClassPreProcessorAgentAdapter.transform(ClassPreProcessorAgentAdapter.java:55)
+        at sun.instrument.TransformerManager.transform(TransformerManager.java:122)
+        at sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:155)
         at sun.misc.Unsafe.defineClass(Native Method)
         at sun.reflect.ClassDefiner.defineClass(ClassDefiner.java:45)
-        at sun.reflect.MethodAccessorGenerator$1.run(MethodAccessorGenerator.jav
-a:381)
+        at sun.reflect.MethodAccessorGenerator$1.run(MethodAccessorGenerator.java:381)
         at java.security.AccessController.doPrivileged(Native Method)
-        at sun.reflect.MethodAccessorGenerator.generate(MethodAccessorGenerator.
-java:377)
-        at sun.reflect.MethodAccessorGenerator.generateSerializationConstructor(
-MethodAccessorGenerator.java:95)
-        at sun.reflect.ReflectionFactory.newConstructorForSerialization(Reflecti
-onFactory.java:313)
-        at java.io.ObjectStreamClass.getSerializableConstructor(ObjectStreamClas
-s.java:1272)
+        at sun.reflect.MethodAccessorGenerator.generate(MethodAccessorGenerator.java:377)
+        at sun.reflect.MethodAccessorGenerator.generateSerializationConstructor(MethodAccessorGenerator.java:95)
+        at sun.reflect.ReflectionFactory.newConstructorForSerialization(ReflectionFactory.java:313)
+        at java.io.ObjectStreamClass.getSerializableConstructor(ObjectStreamClass.java:1272)
         at java.io.ObjectStreamClass.access$1400(ObjectStreamClass.java:47)
         at java.io.ObjectStreamClass$2.run(ObjectStreamClass.java:393)
         at java.security.AccessController.doPrivileged(Native Method)
@@ -26789,28 +26643,19 @@ s.java:1272)
         at sun.rmi.server.UnicastRef.marshalValue(UnicastRef.java:258)
         at sun.rmi.server.UnicastRef.invoke(UnicastRef.java:117)
         at com.sun.jmx.remote.internal.PRef.invoke(Unknown Source)
-        at javax.management.remote.rmi.RMIConnectionImpl_Stub.invoke(Unknown Sou
-rce)
-        at javax.management.remote.rmi.RMIConnector$RemoteMBeanServerConnection.
-invoke(RMIConnector.java:969)
+        at javax.management.remote.rmi.RMIConnectionImpl_Stub.invoke(Unknown Source)
+        at javax.management.remote.rmi.RMIConnector$RemoteMBeanServerConnection.invoke(RMIConnector.java:969)
         at javax.management.MBeanServerInvocationHandler.invoke(MBeanServerInvoc
 ationHandler.java:201)
         at $Proxy5.listOperations(Unknown Source)
-        at glassbox.client.remote.AbstractAgentClientProvider$2.doCommand(Abstra
-ctAgentClientProvider.java:111)
-        at glassbox.client.remote.AbstractAgentClientProvider$RemoteCommand.exec
-ute(AbstractAgentClientProvider.java:64)
-        at glassbox.client.remote.AbstractAgentClientProvider.doRemoteCommand(Ab
-stractAgentClientProvider.java:171)
-        at glassbox.client.remote.AbstractAgentClientProvider.selectOperations(A
-bstractAgentClientProvider.java:109)
-        at glassbox.client.helper.OperationHelper.updateListOfOperations(Operati
-onHelper.java:152)
-        at glassbox.client.helper.OperationHelper.updateListOfOperations(Operati
-onHelper.java:146)
+        at glassbox.client.remote.AbstractAgentClientProvider$2.doCommand(AbstractAgentClientProvider.java:111)
+        at glassbox.client.remote.AbstractAgentClientProvider$RemoteCommand.execute(AbstractAgentClientProvider.java:64)
+        at glassbox.client.remote.AbstractAgentClientProvider.doRemoteCommand(AbstractAgentClientProvider.java:171)
+        at glassbox.client.remote.AbstractAgentClientProvider.selectOperations(AbstractAgentClientProvider.java:109)
+        at glassbox.client.helper.OperationHelper.updateListOfOperations(OperationHelper.java:152)
+        at glassbox.client.helper.OperationHelper.updateListOfOperations(OperationHelper.java:146)
         - locked &lt;0x05e95e08&gt; (a glassbox.client.helper.OperationHelper)
-        at glassbox.client.helper.OperationHelper$OperationBuilder.run(Operation
-Helper.java:118)
+        at glassbox.client.helper.OperationHelper$OperationBuilder.run(OperationHelper.java:118)
 
 Found 1 deadlock.</comment>
         <comment id="2" date="2006-08-24 21:16:57 EDT" author="Ron Bodkin">Created attachment 48664 [details]

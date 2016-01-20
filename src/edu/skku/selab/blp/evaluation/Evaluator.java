@@ -33,6 +33,7 @@ import edu.skku.selab.blp.utils.Util;
 public class Evaluator {
 	public final static String ALG_BUG_LOCATOR = "BugLocator";
 	public final static String ALG_BLIA = "BLIA";
+	public final static String ALG_BLIA_PLUS = "BLIA+";
 	
 	private ExperimentResult experimentResult;
 	private ArrayList<Bug> bugs = null;
@@ -102,7 +103,7 @@ public class Evaluator {
 		ArrayList<IntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
-		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA)) {
+		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_PLUS)) {
 			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
 		}
 		

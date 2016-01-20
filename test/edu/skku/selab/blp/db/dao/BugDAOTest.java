@@ -107,7 +107,6 @@ public class BugDAOTest {
 		Date fixedDate1 = simpleDateFormat.parse(fixedDateString1);
 		bug1.setFixedDate(fixedDate1);
 		BugCorpus bugCorpus1 = new BugCorpus();
-		bugCorpus1.setContent(corpusContent1);
 		bugCorpus1.setSummaryPart(summaryContent1);
 		bugCorpus1.setDescriptionPart(descriptionContent1);
 		bug1.setCorpus(bugCorpus1);
@@ -122,7 +121,6 @@ public class BugDAOTest {
 		bug2.setProductName(productName);
 		bug2.setFixedDate(fixedDateString2);
 		BugCorpus bugCorpus2 = new BugCorpus();
-		bugCorpus2.setContent(corpusContent2);
 		bugCorpus2.setSummaryPart(summaryContent2);
 		bugCorpus2.setDescriptionPart(descriptionContent2);
 		bug2.setCorpus(bugCorpus2);
@@ -137,7 +135,6 @@ public class BugDAOTest {
 		bug3.setProductName(productName);
 		bug3.setFixedDate(fixedDateString3);
 		BugCorpus bugCorpus3 = new BugCorpus();
-		bugCorpus3.setContent(corpusContent3);
 		bugCorpus3.setSummaryPart(summaryContent3);
 		bugCorpus3.setDescriptionPart(descriptionContent3);
 		bug3.setCorpus(bugCorpus3);

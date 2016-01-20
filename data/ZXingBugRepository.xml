@@ -4,12 +4,10 @@
   <bug id="364" opendate="2010-03-30 04:03:07" fixdate="2010-04-01 03:04:39">
     <buginformation>
       <summary>Crashes on Highscreen Zeus</summary>
-      <description>What steps will reproduce the problem?
-1. When BarcodeScanner runs, it dead with NullPointerException
+      <description>1. When BarcodeScanner runs, it dead with NullPointerException
 2.
 3.
 
-What is the expected output? What do you see instead?
 V/CameraManager( 2138): Calculated framing rect: Rect(50, 0 - 350, 240)
 W/dalvikvm( 2138): threadid=17: thread exiting with uncaught exception
 (group=0x4001da28)
@@ -31,13 +29,12 @@ com.google.zxing.client.android.DecodeThread.run(DecodeThread.java:106)
 I/Process ( 1009): Sending signal. PID: 2138 SIG: 3
 
 
-What version of the product are you using? On what operating system?
 version 48, Android 1.6 (on 1.5 it also crash)
 
-Please provide any additional information below.
 Well, as I see, problem is in capturing video from camera. If you say me, I
 can build test app, or something else</description>
-      <comment id="1" date="2010-03-30 22:16:11" author="sro...@gmail.com">This looks like a device bug as it is not correctly advertising its preview  
+      <comments>
+        <comment id="1" date="2010-03-30 22:16:11" author="sro...@gmail.com">This looks like a device bug as it is not correctly advertising its preview  
 format. Can you run the app &quot;ZXing
 Test&quot; from the market? it will send us more information on the device.
 
@@ -50,16 +47,16 @@ about a fix.
 Marking not-a-bug until we know otherwise since the output here shows the  
 device is not implementing the
 platform correctly.</comment>
-      <comment id="2" date="2010-03-30 23:29:34" author="dswit...@google.com">Even if the device returns the wrong (or no) values we shouldn't crash. We  
+        <comment id="2" date="2010-03-30 23:29:34" author="dswit...@google.com">Even if the device returns the wrong (or no) values we shouldn't crash. We  
 should put up a dialog explaining that
 this device is not compatible with the Android camera spec.</comment>
-      <comment id="3" date="2010-03-31 12:59:55" author="d.klykvin">Well, &quot;Take test photos&quot; works ok. &quot;Scan product&quot; or &quot;Scan anything&quot;  
+        <comment id="3" date="2010-03-31 12:59:55" author="d.klykvin">Well, &quot;Take test photos&quot; works ok. &quot;Scan product&quot; or &quot;Scan anything&quot;  
 crashes with
 IllegalArgumentException
 I sent you mail to zxing-external@ (Version Incremental:  
 eng.rmcc.20100328.045021 ,
 etc). Say me, if you need more information</comment>
-      <comment id="4" date="2010-03-31 01:27:32" author="sro...@gmail.com">Yep you're right Daniel -- just got the camera parameters report and it's  
+        <comment id="4" date="2010-03-31 01:27:32" author="sro...@gmail.com">Yep you're right Daniel -- just got the camera parameters report and it's  
 another geeksphone. I'm going to
 'blacklist' it like we do the Pulse.
 
@@ -70,9 +67,9 @@ warned the user it might not work.
 Yes, we got the message fine. The other functions invoke BS, and yes the  
 device isn't behaving as expected so the
 app stops.</comment>
-      <comment id="5" date="2010-03-31 01:43:20" author="d.klykvin">Someone upload version that work: http://slil.ru/28711898
+        <comment id="5" date="2010-03-31 01:43:20" author="d.klykvin">Someone upload version that work: http://slil.ru/28711898
 Maybe you can look at it, and modify your version?</comment>
-      <comment id="6" date="2010-03-31 03:26:49" author="sro...@gmail.com">Yes I think the device actually uses YUV420, which is the required default,  
+        <comment id="6" date="2010-03-31 03:26:49" author="sro...@gmail.com">Yes I think the device actually uses YUV420, which is the required default,  
 so just skipping this check happens to
 work on this device. It's not clear that works on other devices. So yes I  
 understand the hack that works here, and
@@ -81,24 +78,24 @@ yourself
 
 But really the manufacturer needs to fix this, so I'd contact them as well  
 and ask what's up.</comment>
-      <comment id="7" date="2010-03-31 03:50:35" author="d.klykvin">Well, it's geeksphone firmware, but phone named Highscreen Zeus. I'll try  
+        <comment id="7" date="2010-03-31 03:50:35" author="d.klykvin">Well, it's geeksphone firmware, but phone named Highscreen Zeus. I'll try  
 to ask
 support email and put it in this issue.
 Maybe you can add list of devices (such as Zeus or Pulse), where you can  
 skip check?
 So people can download your app from AppStore, and don't google for working  
 version?</comment>
-      <comment id="8" date="2010-03-31 06:09:15" author="d.klykvin">I'll comment check for previewFormat, but it don't work (
+        <comment id="8" date="2010-03-31 06:09:15" author="d.klykvin">I'll comment check for previewFormat, but it don't work (
 Now BarcodeScanner infinitely try to autofocus. It can't capture code from  
 paper and
 monitor, even if my hands don't shake.
 
 Maybe I can try something else? Disable autofocus, etc</comment>
-      <comment id="9" date="2010-03-31 07:32:51" author="sro...@gmail.com">Continuous auto-focus is normal, but not scanning is not normal. If you  
+        <comment id="9" date="2010-03-31 07:32:51" author="sro...@gmail.com">Continuous auto-focus is normal, but not scanning is not normal. If you  
 have a clear, steady, well lit QR code and
 it's not scanning then something else is surely wrong. Maybe the data  
 format is not YUV420 then? not sure.</comment>
-      <comment id="10" date="2010-03-31 09:54:44" author="ricardo.cerqueira">Hi;
+        <comment id="10" date="2010-03-31 09:54:44" author="ricardo.cerqueira">Hi;
 
 I maintain a ROM for those devices (GP ONE/Highscreen Zeus/Commtiva Z1/etc)  
 and
@@ -121,29 +118,30 @@ I fixed this simply by adding the full screen dimensions to the list of
 supported
 preview sizes in the driver; without that, I got the same behaviour as  
 d.klykvin.</comment>
-      <comment id="11" date="2010-03-31 15:25:19" author="sro...@gmail.com">That's good to know, but would it not be simpler to add a preview-size  
+        <comment id="11" date="2010-03-31 15:25:19" author="sro...@gmail.com">That's good to know, but would it not be simpler to add a preview-size  
 parameter to the list of parameters the
 camera returns? (Or are you saying this is not possible at the ROM level?)
 
 You are right that it takes a wild guess at the end if it doesn't know  
 better, and guesses the screen size, and that
 is probably wrong in some cases - like this one.</comment>
-      <comment id="12" date="2010-03-31 22:41:46" author="ricardo.cerqueira">Er, I did, you're mixing 2 separate issues.
+        <comment id="12" date="2010-03-31 22:41:46" author="ricardo.cerqueira">Er, I did, you're mixing 2 separate issues.
 
 Issue 1: lack of preview size, causes crash on start.
 Issue 2: mismatched resolution, causes never-ending auto-focus and  
 inability to scan.</comment>
-      <comment id="13" date="2010-04-01 12:54:06" author="sro...@gmail.com">If preview-size is set, there ought not be no mismatched resolution. It  
+        <comment id="13" date="2010-04-01 12:54:06" author="sro...@gmail.com">If preview-size is set, there ought not be no mismatched resolution. It  
 will use this size, and not 'guess' that it's
 the same as the screen size.</comment>
-      <comment id="14" date="2010-04-01 06:18:01" author="ricardo.cerqueira">My bad, I hadn't had my coffee...
+        <comment id="14" date="2010-04-01 06:18:01" author="ricardo.cerqueira">My bad, I hadn't had my coffee...
 You're partly right: the camera provides "preview-size", but your code  
 actually
 expects a list in preview-size-values, which should also be present but  
 isn't.</comment>
-      <comment id="15" date="2010-04-01 19:03:59" author="sro...@gmail.com">Oops yes I meant the preview-size-values parameter. we used to look for  
+        <comment id="15" date="2010-04-01 19:03:59" author="sro...@gmail.com">Oops yes I meant the preview-size-values parameter. we used to look for  
 preview-size but want to actually
 select the size closest to the screen size so changed that.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.HelpActivity.java</file>
@@ -159,12 +157,14 @@ Picture looks twice bigger, than it should be. It's impossible to scan any
 codes.
 
 Rolled back to 3.2, until fixed.</description>
-      <comment id="1" date="2010-04-15 23:53:28" author="sro...@gmail.com">I can give you a build that may address this if you'll get me your email  
+      <comments>
+        <comment id="1" date="2010-04-15 23:53:28" author="sro...@gmail.com">I can give you a build that may address this if you'll get me your email  
 address separately.</comment>
-      <comment id="2" date="2010-04-15 23:57:34" author="megahobby">Will be glad to help with testing. vit...@rcdesign.ru</comment>
-      <comment id="3" date="2010-04-16 01:58:29" author="megahobby">Debug package, you've sent, is ok at spica.</comment>
-      <comment id="4" date="2010-04-16 20:01:15" author="megahobby">I committed my fix to SVN, a change which also ought resolve an issue on  
+        <comment id="2" date="2010-04-15 23:57:34" author="megahobby">Will be glad to help with testing. vit...@rcdesign.ru</comment>
+        <comment id="3" date="2010-04-16 01:58:29" author="megahobby">Debug package, you've sent, is ok at spica.</comment>
+        <comment id="4" date="2010-04-16 20:01:15" author="megahobby">I committed my fix to SVN, a change which also ought resolve an issue on  
 the Moment + Android 2.1</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.camera.CameraConfigurationManager.java</file>
@@ -189,10 +189,11 @@ They are decoded successfully with FineReader OCR engine, but we'd like to
 avoid that solution for barcode detection since it taxes the CPU heavily.
 
 Apart from that, ZXING is a wonderful project, thanks for your work!</description>
-      <comment id="1" date="2010-03-10 18:07:25" author="fct.dev">Forgot to add, the JRE we are using is Sun's 1.5.0_15. Tell so if you need  
+      <comments>
+        <comment id="1" date="2010-03-10 18:07:25" author="fct.dev">Forgot to add, the JRE we are using is Sun's 1.5.0_15. Tell so if you need  
 more
 information.</comment>
-      <comment id="2" date="2010-03-10 18:48:53" author="sro...@gmail.com">There are two issues.
+        <comment id="2" date="2010-03-10 18:48:53" author="sro...@gmail.com">There are two issues.
 
 In both, there are 2 barcodes in the image, which doesn't quite work, since  
 it will
@@ -220,7 +221,7 @@ straightforward scan of the barcode, like in image 2?
 Since I think this explains the output, I'm marking as 'not a bug' but we  
 can continue
 discussion in any event.</comment>
-      <comment id="3" date="2010-03-10 19:38:06" author="fct.dev">The ones in image 1 are a copy of those in image 2 stretched to resemble  
+        <comment id="3" date="2010-03-10 19:38:06" author="fct.dev">The ones in image 1 are a copy of those in image 2 stretched to resemble  
 what might
 have been the final output, using Paint. Sorry, disregard that one, not even
 FineReader detects the barcodes.
@@ -245,7 +246,7 @@ be a priority. Still, QR and Code39 detection have proven quite reliable
 for our project.
 
 Thanks for your help.</comment>
-      <comment id="4" date="2010-03-10 20:13:40" author="sro...@gmail.com">After reading the code (didn't write it originally) I see it makes the  
+        <comment id="4" date="2010-03-10 20:13:40" author="sro...@gmail.com">After reading the code (didn't write it originally) I see it makes the  
 assumption that
 the barcode is in the center of the image, which stops it from being  
 recognized. I
@@ -260,12 +261,12 @@ I personally
 have time to investigate further on these but you're welcome to dig in to  
 the code and
 try to determine what the issue is.</comment>
-      <comment id="5" date="2010-03-10 21:16:02" author="sro...@gmail.com">Also, if you are able to use QR codes instead, that would be much easier to  
+        <comment id="5" date="2010-03-10 21:16:02" author="sro...@gmail.com">Also, if you are able to use QR codes instead, that would be much easier to  
 decode.
 
 You can also use this library first, and in the cases it doesn't decode,  
 use the other one.</comment>
-      <comment id="6" date="2010-03-10 22:13:43" author="fct.dev">I'm also pro QR codes, but we have hardware readers used for Code39 which  
+        <comment id="6" date="2010-03-10 22:13:43" author="fct.dev">I'm also pro QR codes, but we have hardware readers used for Code39 which  
 support PDF417.
 
 I've looked at the problem in the debugger and it seems like the detector  
@@ -283,11 +284,11 @@ improve the
 detector.
 
 Thanks again.</comment>
-      <comment id="7" date="2010-03-11 05:38:32" author="sro...@gmail.com">I don't see any obvious issues with how it samples. I'll leave it sitting  
+        <comment id="7" date="2010-03-11 05:38:32" author="sro...@gmail.com">I don't see any obvious issues with how it samples. I'll leave it sitting  
 around for a while.</comment>
-      <comment id="8" date="2010-04-03 08:53:23" author="sro...@gmail.com">Issue 368 has been merged into this issue.</comment>
-      <comment id="9" date="2010-04-03 18:03:12" author="sro...@gmail.com">Issue 366 has been merged into this issue.</comment>
-      <comment id="10" date="2010-04-05 03:15:28" author="wajeehu">Hi, i am attaching an image which decodes into the following text.
+        <comment id="8" date="2010-04-03 08:53:23" author="sro...@gmail.com">Issue 368 has been merged into this issue.</comment>
+        <comment id="9" date="2010-04-03 18:03:12" author="sro...@gmail.com">Issue 366 has been merged into this issue.</comment>
+        <comment id="10" date="2010-04-05 03:15:28" author="wajeehu">Hi, i am attaching an image which decodes into the following text.
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAA
 GAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -314,7 +315,7 @@ format.
 Regards,
 Wajeeh
 </comment>
-      <comment id="11" date="2010-04-06 12:08:41" author="wajeehu">Hi,
+        <comment id="11" date="2010-04-06 12:08:41" author="wajeehu">Hi,
 
 we are evaluating zxing's pdf417 decoding capabilities, and so far we have  
 not been
@@ -325,15 +326,15 @@ thanks.
 
 Regards,
 Wajeeh Ullah</comment>
-      <comment id="12" date="2010-04-06 01:23:37" author="sro...@gmail.com">I doubt it will decode images like the one you posted, but it will decode  
+        <comment id="12" date="2010-04-06 01:23:37" author="sro...@gmail.com">I doubt it will decode images like the one you posted, but it will decode  
 things like the images linked earlier in
 this thread. I think you'll need to work on improving the detector if you  
 really want it to work on images like that.</comment>
-      <comment id="13" date="2010-04-06 16:46:08" author="fct.dev">wajeehu, from my tests, using the GlobalHistogramBinarizer instead of the
+        <comment id="13" date="2010-04-06 16:46:08" author="fct.dev">wajeehu, from my tests, using the GlobalHistogramBinarizer instead of the
 HybridBinarizer improves the detection rate with PDF417. But it still fails  
 in many
 cases where FineReader succeeds. Hope it helps.</comment>
-      <comment id="14" date="2010-04-06 17:12:04" author="wajeehu">Thanks fct.dev, i tried with GlobalHistogramBinarizer but im getting better  
+        <comment id="14" date="2010-04-06 17:12:04" author="wajeehu">Thanks fct.dev, i tried with GlobalHistogramBinarizer but im getting better  
 results
 using HybridBinarizer. i tried decoding an image (also attached here ). i  
 got the
@@ -370,10 +371,10 @@ byte[] =&gt; 65 74 55 48 48 48 48 48 48 48 49 53 48 85 65 65 65 65 65 67 65 70
 
 Text Result =&gt;
 AJ70000000150UAAAAACAFCEBIFAL00T23T31031000000 - E /  + À</comment>
-      <comment id="15" date="2010-04-06 17:16:08" author="wajeehu">i cant attach the image as it says  &quot;Issue attachment storage quota  
+        <comment id="15" date="2010-04-06 17:16:08" author="wajeehu">i cant attach the image as it says  &quot;Issue attachment storage quota  
 exceeded.&quot; :)</comment>
-      <comment id="16" date="2010-04-06 18:14:21" author="sro...@gmail.com">Issue 375 has been merged into this issue.</comment>
-      <comment id="17" date="2010-04-12 22:25:51" author="jwi...@baycomp.com">The issue is that there is a bug in
+        <comment id="16" date="2010-04-06 18:14:21" author="sro...@gmail.com">Issue 375 has been merged into this issue.</comment>
+        <comment id="17" date="2010-04-12 22:25:51" author="jwi...@baycomp.com">The issue is that there is a bug in
 com.google.zxing.pdf417.decoder.numericCompaction so that it does not  
 decode numeric
 data properly.  Specifically, as currently written it doesn't decode when  
@@ -418,12 +419,12 @@ result) {
      return codeIndex;
 
    }</comment>
-      <comment id="18" date="2010-04-12 23:56:17" author="sro...@gmail.com">Thanks, I can commit this fix. Which is a test image that works only after  
+        <comment id="18" date="2010-04-12 23:56:17" author="sro...@gmail.com">Thanks, I can commit this fix. Which is a test image that works only after  
 this change, so I can add a unit test?</comment>
-      <comment id="19" date="2010-04-13 01:38:53" author="sro...@gmail.com">One bit I don't understand is: codeIndex &lt; codeWords[0] instead of  
+        <comment id="19" date="2010-04-13 01:38:53" author="sro...@gmail.com">One bit I don't understand is: codeIndex &lt; codeWords[0] instead of  
 codeIndex &lt; codeWords.length  -- index is
 an offset into the array right?</comment>
-      <comment id="20" date="2010-04-13 02:21:38" author="jwi...@baycomp.com">Oops.  I see that I have an artifact from previous testing:
+        <comment id="20" date="2010-04-13 02:21:38" author="jwi...@baycomp.com">Oops.  I see that I have an artifact from previous testing:
 BYTE_COMPACTION_MODE_LATCH in the final if test should be
 NUMERIC_COMPACTION_MODE_LATCH
 
@@ -441,7 +442,7 @@ decodeBase900toBase10 is
 not called for the &quot;final&quot; grouping; the original code would only work when  
 the data
 starts and ends with NUMERIC_COMPACTION_MODE_LATCH.</comment>
-      <comment id="21" date="2010-04-13 06:44:44" author="sro...@gmail.com">You know this code better than I do at this point -- may not be able to  
+        <comment id="21" date="2010-04-13 06:44:44" author="sro...@gmail.com">You know this code better than I do at this point -- may not be able to  
 construct a test case on my own but am
 willing to take your word for it. if you're an active user and this is  
 improving the result, good. Also I wonder if
@@ -450,7 +451,7 @@ that same curious large empty if
 statement, which I suspect is intended to include the two lines that follow  
 as its body (as your change does). I'm
 inclined to fix that, not even knowing more about this</comment>
-      <comment id="22" date="2010-04-13 22:25:06" author="jwi...@baycomp.com">You're right.  There was an additional problem of a misplaced closing  
+        <comment id="22" date="2010-04-13 22:25:06" author="jwi...@baycomp.com">You're right.  There was an additional problem of a misplaced closing  
 bracket in
 the &quot;large if&quot; statement in numericCompaction, so that the body of the ifs  
 only
@@ -461,12 +462,12 @@ statement and not the
 statement, as well.  This same bug appears twice in byteCompaction, and  
 should be
 fixed.</comment>
-      <comment id="23" date="2010-04-20 01:25:56" author="sro...@gmail.com">Here's my latest patch (now can attach since our quota has been increased)  
+        <comment id="23" date="2010-04-20 01:25:56" author="sro...@gmail.com">Here's my latest patch (now can attach since our quota has been increased)  
 -- is this roughly what you have in
 mind? It passes whatever tests we have and I'd be willing to commit if one  
 more glance doesn't reveal an obvious
 issue.</comment>
-      <comment id="24" date="2010-04-20 02:05:54" author="jwi...@baycomp.com">Not quite.  The &quot;end = true;&quot; statement needs to be inside all the if  
+        <comment id="24" date="2010-04-20 02:05:54" author="jwi...@baycomp.com">Not quite.  The &quot;end = true;&quot; statement needs to be inside all the if  
 blocks in
 byteCompaction and numericCompaction.  What's going on, is that the code at  
 the
@@ -475,9 +476,10 @@ current index is indicating a termination of the previous decompression
 compaction") method, the index is backing up so the code will be re-read by  
 the
 caller to invoke the correct decompression routine.</comment>
-      <comment id="25" date="2010-04-20 05:58:45" author="sro...@gmail.com">OK committed the fix, thank you, and credit you in AUTHORS. This may be as  
+        <comment id="25" date="2010-04-20 05:58:45" author="sro...@gmail.com">OK committed the fix, thank you, and credit you in AUTHORS. This may be as  
 close to a fix as this issue will see
 so resolving it.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.pdf417.decoder.DecodedBitStreamParser.java</file>
@@ -486,27 +488,24 @@ so resolving it.</comment>
   <bug id="411" opendate="2010-05-19 08:05:08" fixdate="2010-05-19 11:05:59">
     <buginformation>
       <summary>IllegalArgumentException; message=Both dimensions must be greater than 0</summary>
-      <description>What steps will reproduce the problem? 
-1. 
+      <description>1. 
 2. 
 3. 
 
-What is the expected output? What do you see instead? 
 
-
-What version of the product are you using? On what operating system? 
+ 
 Latest checked out on May 18th on Windows &amp; Linux 
-
-Please provide any additional information below. 
+ 
 
 Code attached 
 Images where the error occured
 </description>
-      <comment id="1" date="2010-05-20 12:49:39" author="beanster.v">Complete code
+      <comments>
+        <comment id="1" date="2010-05-20 12:49:39" author="beanster.v">Complete code
 </comment>
-      <comment id="2" date="2010-05-20 12:55:56" author="beanster.v">public static Collection&lt;Result&gt; scanBarcodes(LuminanceSource source) is the
+        <comment id="2" date="2010-05-20 12:55:56" author="beanster.v">public static Collection&lt;Result&gt; scanBarcodes(LuminanceSource source) is the
 function that generates the error.</comment>
-      <comment id="3" date="2010-05-20 01:12:54" author="sro...@gmail.com">Thanks, I'll look into this more. Should be easy to avoid this.
+        <comment id="3" date="2010-05-20 01:12:54" author="sro...@gmail.com">Thanks, I'll look into this more. Should be easy to avoid this.
 
 java.lang.IllegalArgumentException: Both dimensions must be greater than 0
         com.google.zxing.common.BitMatrix.&lt;init&gt;(BitMatrix.java:49)
@@ -521,7 +520,8 @@ com.google.zxing.MultiFormatReader.decodeInternal(MultiFormatReader.java:156)
         javax.servlet.http.HttpServlet.service(HttpServlet.java:617)
         javax.servlet.http.HttpServlet.service(HttpServlet.java:717)
         com.google.zxing.web.DoSFilter.doFilter(DoSFilter.java:72) </comment>
-      <comment id="4" date="2010-05-20 03:37:07" author="sro...@gmail.com">Should be fixed in SVN now</comment>
+        <comment id="4" date="2010-05-20 03:37:07" author="sro...@gmail.com">Should be fixed in SVN now</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.qrcode.QRCodeReader.java</file>
@@ -530,38 +530,36 @@ com.google.zxing.MultiFormatReader.decodeInternal(MultiFormatReader.java:156)
   <bug id="412" opendate="2010-05-19 14:05:00" fixdate="2010-05-21 06:05:44">
     <buginformation>
       <summary>ArithmeticException; message=/ by zero</summary>
-      <description>What steps will reproduce the problem? 
-1. Use the following function from code attached with the image attached 
+      <description>1. Use the following function from code attached with the image attached 
 2. public static Collection&lt;Result&gt; scanBarcodes(LuminanceSource source) 
 3. see the catch ArithmeticException, that is where the exception occurs 
+ 
 
-What is the expected output? What do you see instead? 
-
-
-What version of the product are you using? On what operating system? 
+ 
 Checked out as of May 18th, 2010 
-
-Please provide any additional information below. 
+ 
 
 Code and the image file attached</description>
-      <comment id="1" date="2010-05-20 18:13:37" author="sro...@gmail.com">Also easy to fix.
+      <comments>
+        <comment id="1" date="2010-05-20 18:13:37" author="sro...@gmail.com">Also easy to fix.
 
 You're running into corner-cases in the &quot;pure barcode&quot; mode. This maybe not  
 surprising
 since these images aren't a pure barcode, let alone contain a barcode!
 
 Why are you using pure barcode mode though? This shouldn't be needed.</comment>
-      <comment id="2" date="2010-05-20 19:55:16" author="sro...@gmail.com"></comment>
-      <comment id="3" date="2010-05-21 22:00:04" author="beanster.v">I am using the scanning in batch mode. Only the separator pages would have  
+        <comment id="2" date="2010-05-20 19:55:16" author="sro...@gmail.com"></comment>
+        <comment id="3" date="2010-05-21 22:00:04" author="beanster.v">I am using the scanning in batch mode. Only the separator pages would have  
 barcodes.
 Majority of the pages that I scan do not have any barcode.</comment>
-      <comment id="4" date="2010-05-21 22:04:11" author="beanster.v">BTW. Thank you for fixing those issues so quick.</comment>
-      <comment id="5" date="2010-05-21 22:40:17" author="sro...@gmail.com">If they're scans, even if the pages are really clean scans, you may not want
+        <comment id="4" date="2010-05-21 22:04:11" author="beanster.v">BTW. Thank you for fixing those issues so quick.</comment>
+        <comment id="5" date="2010-05-21 22:40:17" author="sro...@gmail.com">If they're scans, even if the pages are really clean scans, you may not want
 PURE_BARCODE. It gets thrown off easily if it's not actually a pure,  
 exactly oriented
 image. I would just set TRY_HARDER. But hey if you tried it and it worked  
 better, go
 ahead. </comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.qrcode.QRCodeReader.java</file>
@@ -570,8 +568,7 @@ ahead. </comment>
   <bug id="407" opendate="2010-05-17 20:05:08" fixdate="2010-05-27 01:05:54">
     <buginformation>
       <summary>Update broke app on my Incredible?</summary>
-      <description>What steps will reproduce the problem? 
-1. Open app 
+      <description>1. Open app 
 2. Won't scan a barcode other than QRCode 
 
 What is the expected output? Used to scan everything up close 
@@ -583,8 +580,7 @@ What version of the product are you using? 51
 
 On what operating system? HTC Sense Android 2.1 
 
-
-Please provide any additional information below. 
+ 
 
 Before the 51 update, I could scan any barcode at a close distance. I 
 noticed a new behavior with v51 - when I open the app it automatically 
@@ -599,7 +595,8 @@ I'm not technical when it comes to programming apps, but I wanted to let
 you know that I haven't been able to use this app on my HTC Incredible 
 since upgrading to the 51 version, and think the zoom or focus is the 
 problem.</description>
-      <comment id="1" date="2010-05-18 16:10:55" author="fjt999">Similar problem on MyTouch3G, android 1.6 stock T-Mobile version. App  
+      <comments>
+        <comment id="1" date="2010-05-18 16:10:55" author="fjt999">Similar problem on MyTouch3G, android 1.6 stock T-Mobile version. App  
 worked great
 until last update now auto-focus keeps trying to focus on barcode (QR on  
 screen from
@@ -608,13 +605,13 @@ into the
 app's menu and change a setting (enable or disable 1D codes for example) it  
 will then
 scan and read the barcode. Problem seems independent of code being scanned.</comment>
-      <comment id="2" date="2010-05-18 18:19:16" author="sro...@gmail.com">This seems specific to new, Sense-based devices -- have heard this in  
+        <comment id="2" date="2010-05-18 18:19:16" author="sro...@gmail.com">This seems specific to new, Sense-based devices -- have heard this in  
 regards the
 MyTouch too. For example the N1 is fine, and a Hero with 1.5 is fine.
 I think we have a workaround so anyone willing to try a new build can  
 contact me off-
 list. </comment>
-      <comment id="3" date="2010-05-19 12:23:16" author="r...@google.com">Update to 3.3 broke most QR scanning on my Droid (2.1).  It continuously  
+        <comment id="3" date="2010-05-19 12:23:16" author="r...@google.com">Update to 3.3 broke most QR scanning on my Droid (2.1).  It continuously  
 zooms in and out.  It's in focus at
 times, and even puts green highlights on the big corner squares, but seems  
 hung in an infinite loop.  This
@@ -625,8 +622,8 @@ did work on a BTWD poster at Google HQ,
 though.
 
 There are lots of comments about the problem in the Android Market reviews.</comment>
-      <comment id="4" date="2010-05-20 23:47:26" author="sro...@gmail.com">Issue 413 has been merged into this issue.</comment>
-      <comment id="5" date="2010-05-27 16:18:57" author="dgingrich">Similar issue reported on reddit
+        <comment id="4" date="2010-05-20 23:47:26" author="sro...@gmail.com">Issue 413 has been merged into this issue.</comment>
+        <comment id="5" date="2010-05-27 16:18:57" author="dgingrich">Similar issue reported on reddit
 (http://www.reddit.com/r/Android/comments/c8gl3/barcode_scanner_doesnt_work_on_cyanogenmod_v507/).
 
 My fix (which worked for others) was to go into Settings and not change  
@@ -638,12 +635,13 @@ Phone: HTC Dream/G1 rooted
 Barcode Scanner: v51
 Mod: CyanogenMod-5.0.7-DS
 Build number: EPE54B</comment>
-      <comment id="6" date="2010-05-27 17:29:35" author="sro...@gmail.com">It's not actually related. It's a race condition in restarting the scanning  
+        <comment id="6" date="2010-05-27 17:29:35" author="sro...@gmail.com">It's not actually related. It's a race condition in restarting the scanning  
 activity. Anything which restarts it spins
 the roulette wheel again.
 
 Marking fixed since 3.3.1 beta is up and appears to fix this on all  
 affected devices.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.HelpActivity.java</file>
@@ -653,7 +651,9 @@ affected devices.</comment>
     <buginformation>
       <summary>UTC is not GMT + 1</summary>
       <description>com.google.zxing.web.generator.client.TimeZoneList lines 44 and 45 currently read: new TimeZoneInfo(&quot;GMT&quot;, &quot;Greenwich Mean Time&quot;, &quot;GMT&quot;, 0 * ONE_HOUR + 0 * THIRTY_MIN), // 0 new TimeZoneInfo(&quot;UTC&quot;, &quot;Universal Coordinated Time&quot;, &quot;GMT&quot;, 1 * ONE_HOUR + 0 * THIRTY_MIN), The second line is incorrect as UTC is (as the &quot;relative&quot; field correctly indicates) equivalent to GMT at this level of precision.</description>
-      <comment id="1" date="2010-06-04 07:04:56" author="sro...@gmail.com">Cool, fixed.</comment>
+      <comments>
+        <comment id="1" date="2010-06-04 07:04:56" author="sro...@gmail.com">Cool, fixed.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.web.generator.client.TimeZoneList.java</file>
@@ -662,8 +662,7 @@ affected devices.</comment>
   <bug id="363" opendate="2010-03-26 07:03:54" fixdate="2010-06-21 06:06:11">
     <buginformation>
       <summary>App stops scanning barcodes if power button is pressed while barcode information is displayed</summary>
-      <description>What steps will reproduce the problem?
-1. Scan a QR address code
+      <description>1. Scan a QR address code
 2. While the &quot;Found contact info&quot; dialog is visible, tap the power button
 to put the phone in standby mode (NOTE: apologies; I don't know the
 technical term for the mode but I'm referring to &quot;the mode where you can
@@ -675,17 +674,15 @@ info dialog is not visible.
 5. Attempt to scan a barcode; the barcode will not scan. It is as if the
 program thinks the dialog is still open, but the dialog is not visible.
 
-What is the expected output? What do you see instead?
 
 When the phone awakens from standby and I log in, I expect to be returned
 to the barcode dialog screen that was previously visible.
 
-What version of the product are you using? On what operating system?
 Barcode Scanner v3.21, Nexus One, Kernel 2.6.29-01117-g4bc62c2
-
-Please provide any additional information below.</description>
-      <comment id="1" date="2010-03-26 23:25:49" author="dswit...@google.com">Good bug, thanks!</comment>
-      <comment id="2" date="2010-03-27 03:01:41" author="sro...@gmail.com">Most of what you describe is by design, though we could change it. In  
+</description>
+      <comments>
+        <comment id="1" date="2010-03-26 23:25:49" author="dswit...@google.com">Good bug, thanks!</comment>
+        <comment id="2" date="2010-03-27 03:01:41" author="sro...@gmail.com">Most of what you describe is by design, though we could change it. In  
 general the
 app always returns you to the scanning screen when it comes back, from  
 sleep or
@@ -702,12 +699,13 @@ Intent that shows scan results. Daniel thoughts?
 I wasn't able to reproduce the rest of this though, I was able to scan and  
 rescan the
 same code after waking, without trouble. I'm on a Hero.</comment>
-      <comment id="3" date="2010-03-27 04:46:11" author="dswit...@google.com">I did repro this on Nexus. What happens is you go back to the scanning  
+        <comment id="3" date="2010-03-27 04:46:11" author="dswit...@google.com">I did repro this on Nexus. What happens is you go back to the scanning  
 screen but autofocus isn't running and
 image processing does not appear to be running. This is a genuine bug.</comment>
-      <comment id="4" date="2010-06-21 08:09:21" author="sro...@gmail.com">The core issue here is part 5 from the OP. Daniel do you think your last  
+        <comment id="4" date="2010-06-21 08:09:21" author="sro...@gmail.com">The core issue here is part 5 from the OP. Daniel do you think your last  
 change for Acer fixed this one?</comment>
-      <comment id="5" date="2010-06-21 22:59:41" author="dswit...@google.com">Yup this is exactly the case I fixed.</comment>
+        <comment id="5" date="2010-06-21 22:59:41" author="dswit...@google.com">Yup this is exactly the case I fixed.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.CaptureActivity.java</file>
@@ -716,8 +714,7 @@ change for Acer fixed this one?</comment>
   <bug id="475" opendate="2010-07-17 01:07:12" fixdate="2010-07-17 03:07:47">
     <buginformation>
       <summary>Incorrect comment in Intent Class</summary>
-      <description>What steps will reproduce the problem?
-The source code for the Intents class in the Android app has the following  
+      <description>The source code for the Intents class in the Android app has the following  
 comment in WifiConnect:
 
    public static final class WifiConnect {
@@ -728,16 +725,15 @@ provided.
          public static final String ACTION  
 = &quot;com.google.zxing.client.android.WIFI_CONNECT&quot;;
 
-What is the expected output? What do you see instead?
 
 A comment that is about Wifi not book search
 
-What version of the product are you using? On what operating system?
 
 Latest SVN
-
-Please provide any additional information below.</description>
-      <comment id="1" date="2010-07-17 19:40:32" author="sro...@gmail.com">Sure, fixed.</comment>
+</description>
+      <comments>
+        <comment id="1" date="2010-07-17 19:40:32" author="sro...@gmail.com">Sure, fixed.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.Intents.java</file>
@@ -759,7 +755,8 @@ HybridBinarizer (source));
        return re.toString ();
      )
      return result.getText ();</description>
-      <comment id="1" date="2010-07-07 17:34:17" author="sro...@gmail.com">Use the TRY_HARDER hint and it decodes fine. You can see this working by  
+      <comments>
+        <comment id="1" date="2010-07-07 17:34:17" author="sro...@gmail.com">Use the TRY_HARDER hint and it decodes fine. You can see this working by  
 uploading to http://zxing.org/w/decode.jspx. It says:
 
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;xfa:data  
@@ -784,8 +781,8 @@ xmlns:xfa=&quot;http://www.xfa.org/schema/xfa-data/1.0/&quot; &gt;&lt;root &gt;&
 &gt;&lt;question27 &gt;333&lt;/question27 &gt;&lt;question28 &gt;ﾑ�ｼﾑ��ｼﾐｸ&lt;/question28  
 &gt;&lt;question29 &gt;333.00000000&lt;/question29 &gt;&lt;question30 /&gt;&lt;question31  
 /&gt;&lt;question32 /&gt;&lt;question33 /&gt;&lt;question34 /&gt;&lt;question35 /&gt;&lt;/data &gt;&lt;/root  
-&gt;&lt;/xfa:data &gt; &lt;/comment&gt;
-      <comment id="2" date="2010-07-07 19:08:04" author="panason2010">I'm trying to identify a site
+&gt;&lt;/xfa:data &gt; </comment>
+        <comment id="2" date="2010-07-07 19:08:04" author="panason2010">I'm trying to identify a site
 
 HTTP Status 500 -
 
@@ -813,8 +810,8 @@ note The full stack trace of the root cause is available in the Apache
 Tomcat/6.0.26 logs.
 
 Apache Tomcat/6.0.26</comment>
-      <comment id="3" date="2010-07-07 19:11:33" author="panason2010">What do you mean &quot;Use the TRY_HARDER hint&quot; ?</comment>
-      <comment id="4" date="2010-07-07 20:35:20" author="sro...@gmail.com">The error looks like something fixed a while ago. I think I just need to  
+        <comment id="3" date="2010-07-07 19:11:33" author="panason2010">What do you mean &quot;Use the TRY_HARDER hint&quot; ?</comment>
+        <comment id="4" date="2010-07-07 20:35:20" author="sro...@gmail.com">The error looks like something fixed a while ago. I think I just need to  
 update the web site's code.
 
 See DecodeHintType. You want to use something like:
@@ -823,35 +820,35 @@ Hashtable hints = new Hashtable();
 hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
 
 and then pass this hints object to the decode method.</comment>
-      <comment id="5" date="2010-07-07 21:11:04" author="panason2010">I did as you said and probyval raspoznovat many times.
+        <comment id="5" date="2010-07-07 21:11:04" author="panason2010">I did as you said and probyval raspoznovat many times.
 Anyway, on large code does not work stably
 notretsognize-not recognized
 retsognize-Read
 </comment>
-      <comment id="6" date="2010-07-07 23:28:13" author="sro...@gmail.com">Yes these are going to be hard to read. I don't think its realistic to use  
+        <comment id="6" date="2010-07-07 23:28:13" author="sro...@gmail.com">Yes these are going to be hard to read. I don't think its realistic to use  
 QR codes with that much teext.</comment>
-      <comment id="7" date="2010-07-09 14:45:45" author="panason2010">I need to recognition of large codes (more than 2000 characters), and he  
+        <comment id="7" date="2010-07-09 14:45:45" author="panason2010">I need to recognition of large codes (more than 2000 characters), and he  
 made them in AdobeLiveCycle. Recommend the optimum size of the code (the  
 parameters of creation of the CD code), for better recognition by means of  
 your library. Thank you in advance.</comment>
-      <comment id="8" date="2010-07-09 17:34:40" author="sro...@gmail.com">I would stick to a couple hundred characters, ideally.
+        <comment id="8" date="2010-07-09 17:34:40" author="sro...@gmail.com">I would stick to a couple hundred characters, ideally.
 I notice that the data inside it is very verbose XML. You probably want to  
 choose a more compact representation. The same data is probably only a  
 couple hundred bytes.
 You could also compress the data, and modify the encoder to accept a byte  
 array directly. The decoder would likewise need to access the raw byte[]  
 content rather than String.</comment>
-      <comment id="9" date="2010-07-14 18:54:46" author="panason2010">Could you provide will make both with the help of your library to encode  
+        <comment id="9" date="2010-07-14 18:54:46" author="panason2010">Could you provide will make both with the help of your library to encode  
 and decode the byte array</comment>
-      <comment id="10" date="2010-07-14 19:29:19" author="sro...@gmail.com">Sorry what is your question?</comment>
-      <comment id="11" date="2010-07-14 19:35:27" author="panason2010">Sorry for my English))
+        <comment id="10" date="2010-07-14 19:29:19" author="sro...@gmail.com">Sorry what is your question?</comment>
+        <comment id="11" date="2010-07-14 19:35:27" author="panason2010">Sorry for my English))
 How to convert byte[] -> QRcode and back, using your library?</comment>
-      <comment id="12" date="2010-07-14 20:23:25" author="sro...@gmail.com">You need to modify the encoder to accept a byte[] directly, rather than a  
+        <comment id="12" date="2010-07-14 20:23:25" author="sro...@gmail.com">You need to modify the encoder to accept a byte[] directly, rather than a  
 String. You can find the point where it has already converted the String to  
 byte[], and instead inject a byte[] directly.
 
 The decoder can likewise be modified.</comment>
-      <comment id="13" date="2010-07-14 21:38:18" author="jeanclau...@free.fr">I have the same kind of problem, I use zxing for J2SE to generate file, but  
+        <comment id="13" date="2010-07-14 21:38:18" author="jeanclau...@free.fr">I have the same kind of problem, I use zxing for J2SE to generate file, but  
 in some strange case, it's not able to decode back it's own generated file.  
 I have attached a java test file which was tested with trunk version.
 For the same coded Text, the problem occurs when image's resolution is  
@@ -859,20 +856,20 @@ increased.
 
 I hope it could help
 </comment>
-      <comment id="14" date="2010-07-14 22:19:13" author="sro...@gmail.com">You need to use PURE_BARCODE hint to reliably decode images like this. The  
+        <comment id="14" date="2010-07-14 22:19:13" author="sro...@gmail.com">You need to use PURE_BARCODE hint to reliably decode images like this. The  
 library is expecting something more like a photo.</comment>
-      <comment id="15" date="2010-07-15 12:06:32" author="jeanclau...@free.fr">I have tryed with hint PURE_BARCODE (in StringToImage.java), this time  
+        <comment id="15" date="2010-07-15 12:06:32" author="jeanclau...@free.fr">I have tryed with hint PURE_BARCODE (in StringToImage.java), this time  
 test(0) and test(928) are not working.
 Hint just moves the problem to an other image resolution.
 How is possible that perfect image can not be decoded ?
 Called 'perfect' because it's not scanned image but image generated by  
 zxing.</comment>
-      <comment id="16" date="2010-07-15 02:51:10" author="sro...@gmail.com">Can you post an image that is not decoding? I am surprised if PURE_BARCODE  
+        <comment id="16" date="2010-07-15 02:51:10" author="sro...@gmail.com">Can you post an image that is not decoding? I am surprised if PURE_BARCODE  
 doesn't work.
 The answer is that a pure image has a lot more regions that look like a  
 finder pattern, so many many more chances for a false positive in that  
 phase.</comment>
-      <comment id="17" date="2010-07-15 05:10:03" author="jeanclau...@free.fr">I have attached some files which should not work.
+        <comment id="17" date="2010-07-15 05:10:03" author="jeanclau...@free.fr">I have attached some files which should not work.
 out_test_0.png =&gt; ChecksumException
 out_test_57.png  =&gt; ChecksumException
 out_test_1207.png  =&gt; NotFoundException
@@ -880,7 +877,7 @@ out_test_1207.png  =&gt; NotFoundException
 I have changed my StringToImage.java file to use QRCodeReader (and not  
 MultiFormatReader)
 </comment>
-      <comment id="18" date="2010-07-15 05:53:35" author="sro...@gmail.com">The first two are indeed a corner-case problem. I just fixed it.
+        <comment id="18" date="2010-07-15 05:53:35" author="sro...@gmail.com">The first two are indeed a corner-case problem. I just fixed it.
 The last one is very strange. It seems like the PNG isn't read correctly,  
 since white pixels appear near the top-left corner where there should be  
 none and it's thrown off. I have no idea what's going on there to be honest.
@@ -888,7 +885,7 @@ It's not a problem with the decoder per se since you can read any of these
 off the screen correctly. The latter may be some strange image parsing  
 problem. As it's a real corner case I am not sure I personally would  
 investigate it further.</comment>
-      <comment id="19" date="2010-07-15 6:43:27" author="jeanclau...@free.fr">I have taken new trunk version and it solves problem for previous test0 and  
+        <comment id="19" date="2010-07-15 6:43:27" author="jeanclau...@free.fr">I have taken new trunk version and it solves problem for previous test0 and  
 test57.
 But some strange thing still happens.
 So, I have put more file which are not working, particularly test_1102  
@@ -897,10 +894,10 @@ QRCodeReader.extractPureBits(QRCodeReader.java:137)
 
 The other files generate ChecksumException.
 </comment>
-      <comment id="20" date="2010-07-15 16:31:29" author="sro...@gmail.com">Yeah like I said, you're welcome to investigate more, though it almost  
+        <comment id="20" date="2010-07-15 16:31:29" author="sro...@gmail.com">Yeah like I said, you're welcome to investigate more, though it almost  
 looked like a problem in the image reader to me. Very strange. I myself  
 probably won't look into this more.</comment>
-      <comment id="21" date="2010-07-30 04:44:17" author="jeanclau...@free.fr">I have read the source code and i have found the bug!
+        <comment id="21" date="2010-07-30 04:44:17" author="jeanclau...@free.fr">I have read the source code and i have found the bug!
 In HybridBinarizer class, in threshold8x8Block function, the code (pixel &lt;  
 threshold) must be replaced by (pixel &lt;= threshold)    (less or EQUALS)
 Why. because when a large full black aerea is analysed, threshold is  
@@ -908,32 +905,32 @@ calculted to zero but threshold8x8Block never set black into matrix as 0 is
 not 'less than' 0 .It should be 'less than or equals'. I have tested it  
 with my test case, it works better, otherwise full black area are  
 considered as white.</comment>
-      <comment id="22" date="2010-07-30 04:52:31" author="sro...@gmail.com">I see what you are saying, but isn't this just creating the opposite "bug"?  
+        <comment id="22" date="2010-07-30 04:52:31" author="sro...@gmail.com">I see what you are saying, but isn't this just creating the opposite "bug"?  
 Imagine what happens in an all white region. Either way you have such an  
 issue, and it is an issue. The question is which way is better in practical  
 situations. Try the change, then run the unit tests again to see how many  
 more or fewer images pass.</comment>
-      <comment id="23" date="2010-07-30 05:01:40" author="jeanclau...@free.fr">In White region, there is already a check which says,
+        <comment id="23" date="2010-07-30 05:01:40" author="jeanclau...@free.fr">In White region, there is already a check which says,
   int average = (max - min &gt; 24) ? (sum &gt;&gt; 6) : (min &gt;&gt; 1);
 So in white region average is 255&gt;&gt;1 =&gt; 128 So it will work because (pixel  
 &gt; threshold) is never true for 128=&lt;255 =&gt; So matrix is not set to black.  
 That's ok for me</comment>
-      <comment id="24" date="2010-07-30 05:05:47" author="jeanclau...@free.fr">In White region, there is already a check which says,
+        <comment id="24" date="2010-07-30 05:05:47" author="jeanclau...@free.fr">In White region, there is already a check which says,
   int average = (max - min &gt;&gt; 24) ? (sum &gt;&gt; 6) : (min &gt;&gt; 1);
 So in white region average is 255&gt;&gt;1 =&gt; 128 So it will work because (pixel  
 &gt; threshold) is never true for 255=&gt;128 =&gt; So matrix is not set to black.  
 
 That's ok for me</comment>
-      <comment id="25" date="2010-07-30 05:10:04" author="jeanclau...@free.fr">In White region, there is already a check which says,
+        <comment id="25" date="2010-07-30 05:10:04" author="jeanclau...@free.fr">In White region, there is already a check which says,
   int average = (max - min &gt; 24) ? (sum &gt;&gt; 6) : (min &gt;&gt; 1);
 So in white region average is 255&gt;&gt;1 ---&gt; 127 So it will work because  
 (pixel &lt; threshold) is never true for 255&gt;=127 =&gt; So matrix is not set to  
 black. That's ok for me</comment>
-      <comment id="26" date="2010-07-30 13:28:51" author="sro...@gmail.com"></comment>
-      <comment id="27" date="2010-07-30 14:57:17" author="panason2010">Your changes have not yielded significant improvements. All the codes that  
+        <comment id="26" date="2010-07-30 13:28:51" author="sro...@gmail.com"></comment>
+        <comment id="27" date="2010-07-30 14:57:17" author="panason2010">Your changes have not yielded significant improvements. All the codes that  
 I sent you, also not recognized. Tell me whether to recognize effect zoom in
 &quot;Windows Picture and fax Viewer&quot;?</comment>
-      <comment id="28" date="2010-07-30 15:34:39" author="jeanclau...@free.fr">Hello Panason, i tried to decoded your picture code.jpg, it was not working.
+        <comment id="28" date="2010-07-30 15:34:39" author="jeanclau...@free.fr">Hello Panason, i tried to decoded your picture code.jpg, it was not working.
 In my point of view, I'm not sure that code is managing small rotation of  
 picture.
 Your picture is not well horizontal, and it's large picture. Maybe ?
@@ -946,7 +943,7 @@ In source comments, corner are expected in 3 modules in size .
      // should be
 The question is: Does source code rotate image to get a perfect horizontal?  
 (for me not) but i have to read source code...</comment>
-      <comment id="29" date="2010-07-31 03:15:42" author="jeanclau...@free.fr">IF code.jpg is a bit rotated, it can be managed and decoded. The result is  
+        <comment id="29" date="2010-07-31 03:15:42" author="jeanclau...@free.fr">IF code.jpg is a bit rotated, it can be managed and decoded. The result is  
 a long string :
 
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
@@ -959,20 +956,20 @@ a long string :
 &gt; 4&lt;/id
 &gt; &lt;email
 &gt; apanasovic........</comment>
-      <comment id="30" date="2010-07-31 05:02:10" author="sro...@gmail.com">This change makes loads of other images fail unfortunately. I think it's  
+        <comment id="30" date="2010-07-31 05:02:10" author="sro...@gmail.com">This change makes loads of other images fail unfortunately. I think it's  
 there for a reason.
 But if it works for you, you can use that modification locally for your own  
 app of course.
 
 Rotation is not the reason there is an issue here.</comment>
-      <comment id="31" date="2010-07-31 05:18:41" author="smpar...@smparkes.net">Do you mean the "pixel &lt; threshold" vs "pixel &lt;= threshold" change, Sean? I  
+        <comment id="31" date="2010-07-31 05:18:41" author="smpar...@smparkes.net">Do you mean the "pixel &lt; threshold" vs "pixel &lt;= threshold" change, Sean? I  
 stumbled upon the same idea a while ago when dealing with pure data images  
 (was trying to avoid knowing which I had ahead of time). Without that  
 change, the hybrid binarizer drills white holes in black regions like the  
 alignment patterns.
 
 Guess I need to get the tests running under CI ...</comment>
-      <comment id="32" date="2010-07-31 18:03:44" author="jeanclau...@free.fr">If previous modification is a problem for some kind of your testcases, an  
+        <comment id="32" date="2010-07-31 18:03:44" author="jeanclau...@free.fr">If previous modification is a problem for some kind of your testcases, an  
 other more secured way consists in improving the average formula in case of  
 black area.
 for the moment its:
@@ -993,8 +990,9 @@ The last one  with  (max&gt;0 ? min &gt;&gt; 1 : 1) is working for me and should
 annoy other kind of pictures because the change is used only when max=0.
 This case it's for very very very black zone. It's good for pure_barcode.  
 But it's not helping for not PURE which may have the same problem.</comment>
-      <comment id="33" date="2010-08-01 12:11:44" author="sro...@gmail.com">OK I'll commit this. It doesn't seem to affect unit tests. The logic makes  
+        <comment id="33" date="2010-08-01 12:11:44" author="sro...@gmail.com">OK I'll commit this. It doesn't seem to affect unit tests. The logic makes  
 sense; this change is a pretty conservative step.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.common.HybridBinarizer.java</file>
@@ -1003,13 +1001,10 @@ sense; this change is a pretty conservative step.</comment>
   <bug id="512" opendate="2010-08-10 22:08:21" fixdate="2010-08-11 06:08:53">
     <buginformation>
       <summary>ITFWriter throws ArrayIndexOutOfBoundsException</summary>
-      <description>What steps will reproduce the problem?
-
-MultiFormatWriter w = new MultiFormatWriter();
+      <description>MultiFormatWriter w = new MultiFormatWriter();
 BitMatrix bm = w.encode(&quot;213432546576878&quot;, BarcodeFormat.ITF, 200, 25);
 
 
-What is the expected output? What do you see instead?
 
 Stack trace:
 java.lang.ArrayIndexOutOfBoundsException: 6
@@ -1022,12 +1017,10 @@ com.google.zxing.MultiFormatWriter.encode(MultiFormatWriter.java:62)
 com.google.zxing.MultiFormatWriter.encode(MultiFormatWriter.java:40)
 
 
-What version of the product are you using? On what operating system?
 
 rev 1516 from svn tree
 
 
-Please provide any additional information below.
 
 The following code cannot be correct, since ITFReader.PATTERNS inner array  
 is always 5 entries in the second dimension.
@@ -1043,7 +1036,9 @@ was the following instead the intention?
          encoding[j*2] = ITFReader.PATTERNS[one][j];
          encoding[j*2 + 1] = ITFReader.PATTERNS[two][j];
        }</description>
-      <comment id="1" date="2010-08-11 22:47:30" author="sro...@gmail.com"></comment>
+      <comments>
+        <comment id="1" date="2010-08-11 22:47:30" author="sro...@gmail.com"></comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.oned.ITFWriter.java</file>
@@ -1079,14 +1074,16 @@ The change doesn't do much for the test set; it picks up four (which I
 assume are 11.gif in it's various rotations). With this change, even single  
 pixel-per-module codes can be decoded, so I added a down-sampled version of  
 16.gif to the test set.</description>
-      <comment id="1" date="2010-08-12 05:15:30" author="dswit...@gmail.com"></comment>
-      <comment id="2" date="2010-08-13 03:57:07" author="sro...@gmail.com">I can commit this, but it doesn't affect the number of images that pass  
+      <comments>
+        <comment id="1" date="2010-08-12 05:15:30" author="dswit...@gmail.com"></comment>
+        <comment id="2" date="2010-08-13 03:57:07" author="sro...@gmail.com">I can commit this, but it doesn't affect the number of images that pass  
 when I run the tests. #11 does not decode. Any ideas?</comment>
-      <comment id="3" date="2010-08-13 04:05:24" author="smpar...@smparkes.net">To see more successes, you'd need 508. Without 508, it'll never find three  
+        <comment id="3" date="2010-08-13 04:05:24" author="smpar...@smparkes.net">To see more successes, you'd need 508. Without 508, it'll never find three  
 finders in 11.</comment>
-      <comment id="4" date="2010-08-13 04:16:42" author="smpar...@smparkes.net">I should put an &quot;I think&quot; around that. I don't know that I tested that  
+        <comment id="4" date="2010-08-13 04:16:42" author="smpar...@smparkes.net">I should put an &quot;I think&quot; around that. I don't know that I tested that  
 exact case, but I am pretty sure ...</comment>
-      <comment id="5" date="2010-08-13 05:23:14" author="sro...@gmail.com">OK yes I see that now.</comment>
+        <comment id="5" date="2010-08-13 05:23:14" author="sro...@gmail.com">OK yes I see that now.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.qrcode.QRCodeBlackBox2TestCase.java</file>
@@ -1097,8 +1094,10 @@ exact case, but I am pretty sure ...</comment>
     <buginformation>
       <summary>Handle boundary conditions in HybridBinarizer a little better</summary>
       <description>c.f. http://groups.google.com/group/zxing/browse_thread/thread/d410251c3daa73c8 There's actually a comment for this in HB.java, that the last 7 pixels are dropped. This is kind of a boundary case, but given that my (mythical?) users don't really know how to frame codes, I thought I'd look at it. It's actually an easy (and elegant?) fix: when there's a fractional block on the right or bottom, simply compute it using the final 8 pixels. This overlaps with the previous block, but that should be fine. I wouldn't expect any computational impact with this, unless I'm missing something ...</description>
-      <comment id="1" date="2010-08-12 12:25:45" author="dswit...@google.com">Issue 509 has been merged into this issue.</comment>
-      <comment id="2" date="2010-08-13 05:31:45" author="sro...@gmail.com">Sounds good, committed with 511</comment>
+      <comments>
+        <comment id="1" date="2010-08-12 12:25:45" author="dswit...@google.com">Issue 509 has been merged into this issue.</comment>
+        <comment id="2" date="2010-08-13 05:31:45" author="sro...@gmail.com">Sounds good, committed with 511</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.common.HybridBinarizer.java</file>
@@ -1118,17 +1117,19 @@ false/partial positives. The new cases are ones where there's already a
 failure coming from the same image at a different angle (so it's not  
 surprising that now that the images are not getting cropped, they are also  
 getting incorrectly decoded?)</description>
-      <comment id="1" date="2010-08-06 01:59:21" author="sro...@gmail.com">
+      <comments>
+        <comment id="1" date="2010-08-06 01:59:21" author="sro...@gmail.com">
 The rotation is right but the resulting image boundary is wrong, is that  
 the issue? OK will have a look when I'm back.</comment>
-      <comment id="2" date="2010-08-06 02:07:55" author="smpar...@smparkes.net">
+        <comment id="2" date="2010-08-06 02:07:55" author="smpar...@smparkes.net">
 Yeah, sorry. Poor choice of words. It's just that the new image has to be  
 of a different size and that also means that there has to be translation to  
 move the old center to the new center. The patch will actually handle  
 non-90 degree rotations and produce an image of the necessary size and  
 placement. That generality is currently not used, but the general case is  
 easier to code than the special cases.</comment>
-      <comment id="3" date="2010-08-15 04:12:17" author="sro...@gmail.com">Looks great, will commit.</comment>
+        <comment id="3" date="2010-08-15 04:12:17" author="sro...@gmail.com">Looks great, will commit.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.common.AbstractBlackBoxTestCase.java</file>
@@ -1141,38 +1142,36 @@ easier to code than the special cases.</comment>
   <bug id="507" opendate="2010-08-10 12:08:17" fixdate="2010-08-15 07:08:20">
     <buginformation>
       <summary>Company field in generator seems not to work</summary>
-      <description>What steps will reproduce the problem? 
-1.go to http://zxing.appspot.com/generator/ 
+      <description>1.go to http://zxing.appspot.com/generator/ 
 2.try to generate vcard (contact information) 
 3.the company field seems not to work 
-
-What is the expected output? What do you see instead? 
+ 
 a qr code with company information ;) no info seems to be taken, in the url   
 http://chart.apis.google.com/chart?... is the company info also not shown 
-
-What version of the product are you using? On what operating system? 
+ 
 chrome 5.0.375.125 on MacOS10.6.4 
-
-Please provide any additional information below. 
+ 
 Some of the tested readers on iphone os 4 has problems with german umlauts   
 (eg ä, ö and so on) but I think that's another problem and not important to   
 you... </description>
-      <comment id="1" date="2010-08-11 14:16:53" author="sro...@gmail.com">There is no vCard support and MECARD does not encode company info. Yeah the  
+      <comments>
+        <comment id="1" date="2010-08-11 14:16:53" author="sro...@gmail.com">There is no vCard support and MECARD does not encode company info. Yeah the  
 field really shouldn't be there. I'll delete it but no real plans to update  
 this.</comment>
-      <comment id="2" date="2010-08-11 16:23:38" author="ralf.enders">Thanks for the quick response ;) vcard was wrong but many readers seems to  
+        <comment id="2" date="2010-08-11 16:23:38" author="ralf.enders">Thanks for the quick response ;) vcard was wrong but many readers seems to  
 support ORG in a mecard, but...</comment>
-      <comment id="3" date="2010-08-11 22:55:30" author="sro...@gmail.com">It's not valid, no.</comment>
-      <comment id="4" date="2010-08-15 22:56:48" author="rico.vaccaro">I was able to add mecard ORG: support.
+        <comment id="3" date="2010-08-11 22:55:30" author="sro...@gmail.com">It's not valid, no.</comment>
+        <comment id="4" date="2010-08-15 22:56:48" author="rico.vaccaro">I was able to add mecard ORG: support.
 
 The attached files show the changes. Please keep in mind that I made these  
 changes on version zxing 1.4
 </comment>
-      <comment id="5" date="2010-08-15 23:12:01" author="sro...@gmail.com">Right, it's not that it would be hard to add that. It's that it's not valid.</comment>
-      <comment id="6" date="2011-11-14 05:38:37" author="srowen">At last I figured out how to update the GAE/GWT-based encoder. I added  
+        <comment id="5" date="2010-08-15 23:12:01" author="sro...@gmail.com">Right, it's not that it would be hard to add that. It's that it's not valid.</comment>
+        <comment id="6" date="2011-11-14 05:38:37" author="srowen">At last I figured out how to update the GAE/GWT-based encoder. I added  
 ability to use vCard encoding, and let the MECARD encoding specify a  
 non-standard ORG field. So, this should have an effect now, at least as far  
 as the encoder goes.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.web.generator.client.ContactInfoGenerator.java</file>
@@ -1191,8 +1190,10 @@ successive alignment positions.  I think the 74 is a typo and
 should be
 
   new Version(23, new int[]{6, 30, 54, 78, 102},</description>
-      <comment id="1" date="2010-08-17 05:20:13" author="sro...@gmail.com">Good eye. Indeed that is the correct value from Table E.1. I'll commit a  
+      <comments>
+        <comment id="1" date="2010-08-17 05:20:13" author="sro...@gmail.com">Good eye. Indeed that is the correct value from Table E.1. I'll commit a  
 fix now.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.qrcode.decoder.Version.java</file>
@@ -1207,9 +1208,11 @@ because the bottom and top values get inverted (due to the image bounds)
 leading to a negative (or very large, in C++ unsigneds) height.
 
 I think it should have a simlar check but wanted to do a sanity check.</description>
-      <comment id="1" date="2010-08-23 12:19:12" author="sro...@gmail.com">Probably so, do you have a patch in mind?</comment>
-      <comment id="2" date="2010-08-26 12:43:55" author="smpar...@smparkes.net">Very simple. I'll apply if there no objections.</comment>
-      <comment id="3" date="2010-08-31 12:47:53" author="smpar...@smparkes.net"></comment>
+      <comments>
+        <comment id="1" date="2010-08-23 12:19:12" author="sro...@gmail.com">Probably so, do you have a patch in mind?</comment>
+        <comment id="2" date="2010-08-26 12:43:55" author="smpar...@smparkes.net">Very simple. I'll apply if there no objections.</comment>
+        <comment id="3" date="2010-08-31 12:47:53" author="smpar...@smparkes.net"></comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.qrcode.detector.Detector.java</file>
@@ -1218,28 +1221,25 @@ I think it should have a simlar check but wanted to do a sanity check.</descript
   <bug id="537" opendate="2010-09-01 00:09:16" fixdate="2010-09-01 03:09:44">
     <buginformation>
       <summary>Barcode is not scanned correclty</summary>
-      <description>What steps will reproduce the problem?
-1. Scan the attached barcode
+      <description>1. Scan the attached barcode
 
-What is the expected output? What do you see instead?
 Type ean13 is correctly identified correctly. But the barcode number is  
 incorrect.
 Correct number would be: 030000769023
 Actual result: 30000769023
 
-What version of the product are you using? On what operating system?
 Android, 3.4 (Market Version)
-
-Please provide any additional information below.</description>
-      <comment id="1" date="2010-09-01 17:03:53" author="sro...@gmail.com">The barcode itself is actually *both* a UPC-A code and EAN-13. EAN-13 is  
+</description>
+      <comments>
+        <comment id="1" date="2010-09-01 17:03:53" author="sro...@gmail.com">The barcode itself is actually *both* a UPC-A code and EAN-13. EAN-13 is  
 actually a clever superset of UPC-A, designed that way to enable backward  
 compatibility. The scanner simply picks UPC-A here. The only way to  
 differentiate is that there are actually 13 digits printed below. It is  
 EAN-13, so calling it UPC-A is technically off, but I don't think we're  
 going to go to the trouble of disambiguating just for this.</comment>
-      <comment id="2" date="2010-09-01 17:15:03" author="Simon.Moser">I did try to force EAN-13 by passing it as SCAN_FORMATS but still  
+        <comment id="2" date="2010-09-01 17:15:03" author="Simon.Moser">I did try to force EAN-13 by passing it as SCAN_FORMATS but still  
 30000769023 is the result.</comment>
-      <comment id="3" date="2010-09-01 18:38:17" author="sro...@gmail.com">Ah I think you have a point here. Internally, when scanning for UPC-A and  
+        <comment id="3" date="2010-09-01 18:38:17" author="sro...@gmail.com">Ah I think you have a point here. Internally, when scanning for UPC-A and  
 EAN-13, only one decoder (for EAN-13) is deployed since EAN-13 is a  
 superset. If it finds a barcode starting with 0 it construes it as UPC-A.  
 That's a nice trick, but, is not correct when UPC-A is not allowed as a  
@@ -1247,7 +1247,8 @@ barcode format. In this case it should just return the 13-digit value.
 
 I can fix that I'm pretty sure. It will still come back as UPC-A if  
 scanning for both, but, will come back as EAN-13 if UPC-A is not allowed.</comment>
-      <comment id="4" date="2010-09-01 19:27:15" author="sro...@gmail.com"></comment>
+        <comment id="4" date="2010-09-01 19:27:15" author="sro...@gmail.com"></comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.oned.EAN13BlackBox1TestCase.java</file>
@@ -1257,40 +1258,37 @@ scanning for both, but, will come back as EAN-13 if UPC-A is not allowed.</comme
   <bug id="548" opendate="2010-09-09 16:09:50" fixdate="2010-09-11 08:09:05">
     <buginformation>
       <summary>RIM app Crashing!. JVM Exception: ConnectionClosed exception.</summary>
-      <description>What steps will reproduce the problem?
-1.run ZxingUiApplication inside zxlib 1.5 package.
+      <description>1.run ZxingUiApplication inside zxlib 1.5 package.
 2.goto snap.
 3.take a picture of a QR-code (image obtained from "simulate camera image"  
 in the simulator)
 
-What is the expected output? What do you see instead?
 
 the expected output is the app decoding correctly and showing the url. what  
 happens is the JVM Exception 104: ConnectionClosed Exception. can't go  
 anywhere from here..
 
-What version of the product are you using? On what operating system?
 
 zxing 1.5. on Blackberry 9800 simulator. Windows XP (on top of Oracle  
 Vbox... for what is worth, all the other apps i have simulated with this  
 system did not presented any problems).
 
-Please provide any additional information below.
 
 maybe is this a problem with the sd-card not being present?. or is it the  
 library decoding the picture having a bug??
 
 thanks for any help.</description>
-      <comment id="1" date="2010-09-10 08:56:14" author="sro...@gmail.com">Sounds like a problem simply opening the web page: &quot;connection closed&quot;.  
+      <comments>
+        <comment id="1" date="2010-09-10 08:56:14" author="sro...@gmail.com">Sounds like a problem simply opening the web page: &quot;connection closed&quot;.  
 That's not related to the app. It's not supported anyway.</comment>
-      <comment id="2" date="2010-09-10 09:04:00" author="a.fradiani">i'll check with other code images in that case. (i'm also trying now to run  
+        <comment id="2" date="2010-09-10 09:04:00" author="a.fradiani">i'll check with other code images in that case. (i'm also trying now to run  
 the app on the 8530 simulator.)
 
 what exactly is not supported?.</comment>
-      <comment id="3" date="2010-09-10 17:22:37" author="sro...@gmail.com">Nobody hass worked on the BlackBerry client, and don't think there's a plan  
+        <comment id="3" date="2010-09-10 17:22:37" author="sro...@gmail.com">Nobody hass worked on the BlackBerry client, and don't think there's a plan  
 to, so I don't know what it's status is regarding newer phones / OS /  
 emulator.</comment>
-      <comment id="4" date="2010-09-10 18:50:21" author="morgan.jacquet">The error is in com.google.zxing.client.rim =&gt; ZxingLMMainScreen.java :
+        <comment id="4" date="2010-09-10 18:50:21" author="morgan.jacquet">The error is in com.google.zxing.client.rim =&gt; ZxingLMMainScreen.java :
 
 In the run() method :
 file.delete() is called after file.close() in the "finally" block.
@@ -1300,12 +1298,13 @@ So, call delete() before close().
 Hope it helps :)
 
 This bug is fixed in another issue.</comment>
-      <comment id="5" date="2010-09-10 18:53:58" author="morgan.jacquet">Update : Have a look @ issue 126 :)</comment>
-      <comment id="6" date="2010-09-10 21:45:14" author="sro...@gmail.com">I see, this works differently than the Java File/FileInputStream, where  
+        <comment id="5" date="2010-09-10 18:53:58" author="morgan.jacquet">Update : Have a look @ issue 126 :)</comment>
+        <comment id="6" date="2010-09-10 21:45:14" author="sro...@gmail.com">I see, this works differently than the Java File/FileInputStream, where  
 you'd have to close() the stream then delete() the file. I switched these  
 around and you can try again now.</comment>
-      <comment id="7" date="2010-09-12 02:16:14" author="a.fradiani">Fixed!. changed the 'file.delete()' call as you said.
+        <comment id="7" date="2010-09-12 02:16:14" author="a.fradiani">Fixed!. changed the 'file.delete()' call as you said.
 Thanks for the help!.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.rim.ZXingLMMainScreen.java</file>
@@ -1314,23 +1313,20 @@ Thanks for the help!.</comment>
   <bug id="376" opendate="2010-04-06 19:04:21" fixdate="2010-09-26 23:09:40">
     <buginformation>
       <summary>Zoom on Android 2.1 not working</summary>
-      <description>What steps will reproduce the problem?
-1. Install latest Market version
+      <description>1. Install latest Market version
 2. Start app
 3. Not zoomed in
 
-What is the expected output? What do you see instead?
 Supposed to start at zoom 2.
 
-What version of the product are you using? On what operating system?
 Version 48 for android
 
-Please provide any additional information below.
 I've run tests with the camera, and it appears it does not let you set an
 initial zoom, it always starts at 0. In my tests, starting a side thread
 with a sleep of 100 millis that sets the zoom seems to correct the issue.
 Could also be solved by simply providing zoom controls on the main view.</description>
-      <comment id="1" date="2010-04-07 16:42:22" author="sro...@gmail.com">Gonna need to know what device you are using, and for you to use the ZXing  
+      <comments>
+        <comment id="1" date="2010-04-07 16:42:22" author="sro...@gmail.com">Gonna need to know what device you are using, and for you to use the ZXing  
 Test app in the market to send
 us a dump of its camera parameters.
 
@@ -1343,7 +1339,7 @@ another one if your device has yet another way to do this.
 When the world is 99% on Android 2.x we can move as well. I'm sure that the  
 real API for this, which i assume
 you're using, does in fact work on the device.</comment>
-      <comment id="2" date="2010-04-07 16:53:35" author="viperwolf">Don't think 2.1 has any new canera api. When I said Oom control I ment a  
+        <comment id="2" date="2010-04-07 16:53:35" author="viperwolf">Don't think 2.1 has any new canera api. When I said Oom control I ment a  
 screen widget so I could
 change zoom manualy. The params.set(&quot;zoom&quot;, 2) works, but only after camera  
 has finished its first
@@ -1353,7 +1349,7 @@ helped.
 I'm using Motorola Droid, got the 2.1 update few days ago. Never tried on  
 2.0, first time using app. Will
 try your test app in a few hours when I'm actually awake.</comment>
-      <comment id="3" date="2010-04-07 17:05:50" author="sro...@gmail.com">Hmm you could be right. There are new explicit params for focus, effects,  
+        <comment id="3" date="2010-04-07 17:05:50" author="sro...@gmail.com">Hmm you could be right. There are new explicit params for focus, effects,  
 flash, white balance in 2.x but I
 don't see zoom. I had assumed there was. In any event, yes the &quot;zoom&quot; param  
 is already being set.
@@ -1371,7 +1367,7 @@ conveniently the max zoom on the Hero, my personal device).
 I'll make a change in the next 15 minutes or so to respect that value. Once  
 that second change is in maybe
 you are in a position to download/build from SVN and try it?</comment>
-      <comment id="4" date="2010-04-07 22:35:09" author="viperwolf">Checked out from SVN and ran it, but didn't solve the zoom issue. There is  
+        <comment id="4" date="2010-04-07 22:35:09" author="viperwolf">Checked out from SVN and ran it, but didn't solve the zoom issue. There is  
 still the
 issue that (at least on the droid) that it's preventing you from  
 pre-setting the
@@ -1430,7 +1426,7 @@ completed. Might
 even be wise to move the entire camera configure into that as well, just to  
 make sure
 the Droid (or Android 2.1) isn't loosing all the parameters being set.</comment>
-      <comment id="5" date="2010-04-08 03:10:34" author="sro...@gmail.com">Nice one. I just committed something like this. Actually I completely  
+        <comment id="5" date="2010-04-08 03:10:34" author="sro...@gmail.com">Nice one. I just committed something like this. Actually I completely  
 overhauled how CameraManager is
 organized since it was getting unruly. I'd appreciate people like yourself  
 trying the build, not only to see if this
@@ -1438,7 +1434,7 @@ works but to make sure scanning's OK.
 
 (So I can credit you, can you mail me your name? I'm srowen. Or happy to  
 credit viperwolf)</comment>
-      <comment id="6" date="2010-04-22 05:05:13" author="viperwolf">Sorry for delay, been really busy last few weeks. The fix sort of works,  
+        <comment id="6" date="2010-04-22 05:05:13" author="viperwolf">Sorry for delay, been really busy last few weeks. The fix sort of works,  
 but not 100%
 of the time. Seems like 1 out of 10 times it will zoom on first use, but  
 then wont
@@ -1448,12 +1444,13 @@ the zoom controls (android.widget.ZoomControls) to the screen? Still try
 and default
 to 2, but then for problem phones like mine, we could manually zoom in as  
 needed.</comment>
-      <comment id="7" date="2010-04-22 16:48:18" author="sro...@gmail.com">I'm reluctant to since it complicates the interface and not all phones have   
+        <comment id="7" date="2010-04-22 16:48:18" author="sro...@gmail.com">I'm reluctant to since it complicates the interface and not all phones have   
 this function. I don't know if it would 
 solve things. The app is already repeatedly requesting zoom, and that   
 wouldn't be changed by this</comment>
-      <comment id="8" date="2010-09-27 15:16:13" author="audumbarphadte">Zoom is working fine, but only for Droid and Nexus One, with HTC sence it  
+        <comment id="8" date="2010-09-27 15:16:13" author="audumbarphadte">Zoom is working fine, but only for Droid and Nexus One, with HTC sence it  
 dosen't work.</comment>
+      </comments>
     </buginformation>
     <fixedFiles>
       <file>com.google.zxing.client.android.CaptureActivity.java</file>

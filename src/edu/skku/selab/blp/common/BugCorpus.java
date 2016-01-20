@@ -12,37 +12,37 @@ package edu.skku.selab.blp.common;
  *
  */
 public class BugCorpus {
-	private String content;
 	private String summaryPart;
 	private String descriptionPart;
 	private double contentNorm;
 	private double summaryCorpusNorm;
 	private double decriptionCorpusNorm;
+	private String descriptionPartEx;
 
 	/**
 	 * 
 	 */
 	public BugCorpus() {
-		content = "";
 		summaryPart = "";
 		descriptionPart = "";
 		contentNorm = 0;
 		summaryCorpusNorm = 0;
-		decriptionCorpusNorm = 0;	
+		decriptionCorpusNorm = 0;
+		descriptionPartEx = "";
 	}
-
+	
 	/**
 	 * @return the content
 	 */
 	public String getContent() {
-		return content;
+		return summaryPart + " " + descriptionPart;
 	}
-
+	
 	/**
-	 * @param content the content to set
+	 * @return the content extended
 	 */
-	public void setContent(String content) {
-		this.content = content;
+	public String getContentEx() {
+		return summaryPart + " " + descriptionPartEx;
 	}
 
 	/**
@@ -115,4 +115,17 @@ public class BugCorpus {
 		this.decriptionCorpusNorm = decriptionCorpusNorm;
 	}
 
+	/**
+	 * @return the descriptionPartEx
+	 */
+	public String getDescriptionPartEx() {
+		return descriptionPartEx;
+	}
+
+	/**
+	 * @param descriptionPartEx the descriptionPartEx to set
+	 */
+	public void setDescriptionPartEx(String descriptionPartEx) {
+		this.descriptionPartEx = descriptionPartEx;
+	}
 }

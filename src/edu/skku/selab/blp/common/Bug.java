@@ -17,7 +17,6 @@ import java.util.TreeSet;
  *
  */
 public class Bug {
-
     private int ID;
     private String productName;
 	private String fixedDateStringNotModified;
@@ -25,6 +24,7 @@ public class Bug {
     private Date fixedDate;
     private String summary;
     private String description;
+    private ArrayList<Comment> comments;
     private TreeSet<String> fixedFiles;
     private BugCorpus bugCorpus;
     private int	totalCorpusCount;
@@ -38,6 +38,7 @@ public class Bug {
     	this.fixedDate = new Date(System.currentTimeMillis());
     	this.summary = "";
     	this.description = "";
+    	this.comments = new ArrayList<Comment>();
     	this.bugCorpus = new BugCorpus();
     	this.totalCorpusCount = -1;
     	this.version = "";
@@ -52,6 +53,7 @@ public class Bug {
     	setFixedDate(fixedDateString);
     	this.summary = summary;
     	this.description = description;
+    	this.comments = new ArrayList<Comment>();
     	this.version = version;
     	this.bugCorpus = new BugCorpus();
     	this.totalCorpusCount = -1;
@@ -142,16 +144,16 @@ public class Bug {
 	 * @return the corpus
 	 */
 	public String getCorpusContent() {
-//		return bugCorpus.getContent();
-		return bugCorpus.getSummaryPart() + " " + bugCorpus.getDescriptionPart();
+		return bugCorpus.getContent();
+	}
+	
+	/**
+	 * @return the corpus extended
+	 */
+	public String getCorpusContentEx() {
+		return bugCorpus.getContentEx();
 	}
 
-	/**
-	 * @param corpusContent the corpus to set
-	 */
-	public void setCorpusContent(String corpusContent) {
-		bugCorpus.setContent(corpusContent);
-	}
 
 	/**
 	 * @return the productName
@@ -216,6 +218,13 @@ public class Bug {
 		this.stackTraceClasses = stackTraceClasses;
 	}
 	
+	/**
+	 * @param stackTraceClasses the stackTraceClasses to set
+	 */
+	public void addStackTraceClasses(ArrayList<String> stackTraceClasses) {
+		this.stackTraceClasses.addAll(stackTraceClasses);
+	}
+	
 	public void addStackTraceClass(String stackTraceClass) {
 		stackTraceClasses.add(stackTraceClass);
 	}
@@ -246,5 +255,39 @@ public class Bug {
 	 */
 	public void setCorpus(BugCorpus bugCorpus) {
 		this.bugCorpus = bugCorpus;
+	}
+
+	/**
+	 * @return the comments
+	 */
+	public ArrayList<Comment> getComments() {
+		return comments;
+	}
+	
+	/**
+	 * @return all comments' corpus
+	 */
+	public String getAllCommentsCorpus() {
+		StringBuilder allCorpus = new StringBuilder(String.valueOf(""));
+		
+		for (int i = 0; i < comments.size(); i++) {
+			allCorpus.append(comments.get(i).getCommentCorpus()).append(" ");
+		}
+		return allCorpus.toString();
+	}
+
+	/**
+	 * @param comments the comments to set
+	 */
+	public void setComments(ArrayList<Comment> comments) {
+		this.comments = comments;
+	}
+	
+	public void addComment(Comment comment) {
+		comments.add(comment);
+	}
+	
+	public Comment getComment(int index) {
+		return comments.get(index);
 	}
 }
