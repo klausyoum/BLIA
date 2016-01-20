@@ -54,7 +54,7 @@ public class GitTest {
 //		Repository gitrepo = git.getRepository();
 //		System.out.println(gitrepo.getTags());
 		
-		
+		 
 		try {
 			for (RevCommit revCommit : commits){	
 				String hashId = revCommit.getName();
