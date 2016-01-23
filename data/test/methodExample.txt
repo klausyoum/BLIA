@@ -1,0 +1,1683 @@
+public static Test suite() {
+public boolean method(String a, int b) {
+public boolean[] method(String a, int b) {
+private boolean doDeclareAnnotations(DeclareAnnotation decA, SourceTypeBinding sourceType, boolean reportProblems) {
+public String method2(String a, int b) {
+private List<String> m3(int a, int c) {
+public Map<Object, String> m4(int a, int c) {
+private Map<String, Map<String, int>> m5(int a, int c) {
+private Map<List<String>, Map<String, int>> m6(int a, int c) {
+private Map<Map<String, int>, List<String>, Map<String, int>> m7(int a, int c) {
+public static Test suite() {
+private boolean doDeclareAnnotations(DeclareAnnotation decA, SourceTypeBinding sourceType, boolean reportProblems) {
+private void addLocalVariables(MethodGen gen, Map<LocalVariableTag, LVPosition> localVariables) {
+public void setValue(int index) {
+public void setValue(int index) {
+public void testAnnotationDiscoveryNpe() throws Exception {
+private boolean isAspect(TypeDeclaration declaration) {
+public void testDefaultMethodsWithXnoInline() throws Exception {
+public byte[] getJavaClassBytesIncludingReweavable(BcelWorld world) {
+public void testCompileError_478003() throws Exception {
+private boolean checkLazyTjp() {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+private LazyMethodGen makeClosureClassAndReturnConstructor(String closureClassName, LazyMethodGen callbackMethod,
+private LazyMethodGen createShadowMethodGen(String newMethodName, int visibilityModifier, List<String> parameterNames, boolean beingPlacedInInterface) {
+public static Instruction createInvoke(InstructionFactory fact, LazyMethodGen m) {
+public boolean implementOn(Shadow s) {
+public boolean implementOn(Shadow s) {
+private boolean enforceDecpRule1_abstractMethodsImplemented(BcelClassWeaver weaver, ISourceLocation mungerLoc,
+public void testMissingJoinpoint_307147() throws Exception {
+public void testAnnoConversion_474165() throws Exception {
+private boolean canInline(Shadow s) {
+public boolean accessibleTo(ObjectType accessor) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public boolean isAssignmentCompatibleWith(Type t) {
+public ReferenceType getFirstCommonSuperclass(ReferenceType t) {
+public ReferenceType getFirstCommonSuperclass(ReferenceType t) {
+public FuzzyBoolean fastMatch(FastMatchInfo info) {
+public boolean couldMatchJoinPointsInType(Class aClass) {
+protected Class getBaseClass() {
+public static ReflectionBasedReferenceTypeDelegate create14Delegate(ReferenceType forReferenceType, World inWorld,
+private ReflectionWorld() {
+public void testMissingMethod_462821() throws Exception {
+private static void createBridgeMethod(BcelWorld world, LazyMethodGen whatToBridgeToMethodGen, LazyClassGen clazz, ResolvedMember theBridgeMethod) {
+private final String name;
+public MethodGen pack() {
+public static String typesToSignature(UnresolvedType returnType, UnresolvedType[] paramTypes, boolean eraseGenerics) {
+public JavaClass getClassFrom(File where, String clazzname) throws ClassNotFoundException {
+public void testITDInterface_451966() throws Exception {
+public void testShouldFullBuildOnExceptionChange_pr154054() {
+public boolean canBeSeenBy(TypeBinding receiverType, InvocationSite invocationSite, Scope scope) {
+class Bar implements Allergies { }
+public TypePattern parseIsTypePattern() {
+private int VERSION = 1;
+public static TypePattern read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+private boolean isRightCategory(ResolvedType type) {
+public static Test suite() {
+public void uninitializedLocalVariable(LocalVariableBinding binding, ASTNode location) {
+public static Test suite() {
+public void testSuppressTypeNotFound_436653() {
+protected void writeIndex (File indexFile, Map<String,? extends IndexEntry> index) throws IOException {
+public void testVerifyError_443447() {
+public void weaveCflowEntry(final BcelAdvice munger, final Member cflowField) {
+public InstructionList getAdviceInstructions(BcelShadow s, BcelVar extraArgVar, InstructionHandle ifNoAdvice) {
+public InstructionList getAdviceInstructions(BcelShadow s, BcelVar extraArgVar, InstructionHandle ifNoAdvice) {
+classStartIndex = fileContents.toString().indexOf("<h2 title=\"Class ");
+classStartIndex = fileContents.toString().indexOf("class <span class=\"typeNameLabel\">");
+public static List<String> getMissingStringsInFile(File htmlFile, String[] requiredStrings) throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+classMissing.contains("public abstract aspect <B>ClassA</B><DT>extends java.lang.Object<DT>"));
+public void testNestedAspect() throws Exception {
+classMissing.contains("<pre>aspect <span class=\"typeNameLabel\">PkgVisibleClass</span>"));
+public void testNestedAspectWithSimilarName() throws Exception {
+classMissing.contains("public aspect <B>ClassWithNestedAspect</B><DT>extends java.lang.Object</DL>"));
+public void parseOption(String arg, LinkedList args) { // XXX use ListIterator.remove()
+public void parseOption(String arg, LinkedList args) { // XXX use ListIterator.remove()
+public void addAtAspectJAnnotations() {
+public void generateCode(ClassFile enclosingClassFile) {
+public AnnotationAJ[] getAnnotations() {
+public boolean hasAnnotations() {
+public boolean careAboutOtherMessages = true;
+public Message(int line, String text) {
+public Message(int line, String srcFile, String text, ISourceLocation[] seeAlso) {
+public Message(String text) {
+public List<AjcTestCase.Message> weaves;
+public MessageSpec(List<AjcTestCase.Message> infos, List<AjcTestCase.Message> warnings, List<AjcTestCase.Message> errors) {
+public MessageSpec(List<AjcTestCase.Message> warnings, List<AjcTestCase.Message> errors) {
+public void assertMessages(CompilationResult result, String message, MessageSpec expected) {
+private <T> List<T> copyAll(List<T> in) {
+private void addMissing(StringBuffer buff, String type, List<AjcTestCase.Message> messages) {
+public BCException() {
+public ResolvedType[] getAnnotationTypes() {
+public ResolvedType[] getAnnotationTypes() {
+public void addAnnotation(AnnotationAJ annotationX) {
+public boolean hasAnnotations() {
+public static final WeaverStateInfo read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+public static final WeaverStateInfo read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+public List getBindingTypePatterns() {
+public static ITokenSource makeTokenSource(String input, ISourceContext context) {
+public boolean hasAnnotations() {
+private void checkAlwaysMatches(String pointcutExpression, String type, String methodName, String methodSignature) {
+private void checkNeverMatches(String pointcutExpression, String type, String methodName, String methodSignature) {
+protected void mungersTest(ResolvedType ty, ShadowMunger[] x) {
+public static String[] parseIds(String str) {
+public void anInt(int i) {
+public void x(A a) {
+public void z(A a, C c) {
+protected AjcTestCase.MessageSpec buildMessageSpec() {
+public void testDefineConcreteAspect(){
+public void testConstantPool_445395_0() {
+private void addSourceFilesToBuild(String pname, AjCompiler compiler) {
+private String outjar;
+private String projectPath;
+public List<File> getProjectSourceFilesChanged() {
+public void addDependancy(String projectItDependsOn) {
+public void addProjectSourceFileChanged(File f) {
+public void addClasspathEntryChanged(String f) {
+public boolean hasAnnotation(UnresolvedType ofType) {
+public boolean hasUnsatisfiedDependency(ResolvedType aspectType) {
+public void addAspectRequires(String aspectClassName, String requiredType) {
+public void testIterator() {
+public boolean hasAnnotation(UnresolvedType ofType) {
+public PerClause getPerClause() {
+public PerClause getPerClause() {
+public PerClause getPerClause() {
+public static Test suite() {
+public static Test suite() {
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareMixinAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+private static boolean handleDeclareMixinAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+private static boolean handleDeclareMixinAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+public static boolean detailSectionContainsRel(File htmlFile, 
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+public void testAJdocHasClassTitle() throws Exception {
+private String toName(String name) {
+private String toName(String name) {
+public void testAdvisedByInNestedAspect() throws Exception {
+public void testAdvisedByInNestedAspect() throws Exception {
+public void testAdvisedByInNestedAspect() throws Exception {
+public void testAdvisedByInNestedAspect() throws Exception {
+public class DeclareFormsTest extends AjdocTestCase {
+public void testMatchesDeclareCall() throws Exception {
+public void testMatchesDeclareExecution() throws Exception {
+private String toName(String name) {
+public void testMethodAnnotatedBy() throws Exception {
+public void testMethodAnnotatedBy() throws Exception {
+public void testConstructorAnnotatedBy() throws Exception {
+public void testConstructorAnnotatedBy() throws Exception {
+public void testMatchesDeclareAndAdvisedBy() throws Exception {
+public void testMatchesDeclareAndAdvisedBy() throws Exception {
+public static final Attribute readAttribute(DataInputStream file, ConstantPool cpool) throws IOException {
+public class RuntimeVisTypeAnnos extends RuntimeTypeAnnos {
+public static Test suite() {
+public void anonymousTypeBindingCreated(LocalTypeBinding aBinding) {
+private void weaveIntertypes(List<SourceTypeBinding> typesToProcess, SourceTypeBinding typeToWeave,
+public void addParent(ResolvedType newParent) {
+public void testParameterNamesAttribute_436531() {
+private int[] accessFlags;
+private void ensureInflated() {
+private void ensureInflated() {
+public int getParametersCount() {
+public void testVariableNotInitialized_431976() {
+public void uninitializedLocalVariable(LocalVariableBinding binding, ASTNode location) {
+public static Test suite() {
+public void testThisEnclosingJoinPointStaticPartNotInitialized_431976() {
+public void abstractMethodInConcreteClass(SourceTypeBinding type) {
+public static Test suite() {
+public void testLvarTable_435446() throws Exception {
+public static Object initialize() {
+public static Object initialize() {
+public void testBrokenAnnotations_377096() throws Exception {
+public class AllTestsAspectJ180 {
+public static Test suite() {
+public void testDefaultMethods_433744() {
+public static Test suite() {
+public byte[] getBytes() {
+public void testStackmapframe_431976() {
+public void testThisJoinPointNotInitialized_431976() {
+protected String getCommonSuperClass(final String type1, final String type2) {
+public void abstractMethodInConcreteClass(SourceTypeBinding type) {
+public void testNullAnnotationMatching_431541() {
+private AdviceDeclaration findEnclosingAround(Scope scope) {
+public void testAnnosWith18Flags_415957() {
+private int changes = EVERYTHING; // bitflags, see CompilerConfigurationChangeFlags
+public boolean isTerminateAfterCompilation() {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+private int classFileChangedInDirSinceLastBuildRequiringFullBuild(File dir, int pathid) {
+private void recordClassFile(UnwovenClassFile thisTime, File lastTime) {
+private String stringify(IBinaryAnnotation[] annotations) {
+public ReferenceTypeDelegate getDelegate(ReferenceType referenceType) {
+private String getValue(String key, Shadow shadow) {
+public void setFromProperties(File file) {
+protected String[] buildArgs() {
+public void testAnnotatedItd_418129() throws Exception {
+public ReferenceTypeDelegate getDelegate(ReferenceType referenceType) {
+public static Test suite() {
+public void testPr148285() {
+public void testAspectPath_pr249212_c1() throws IOException {
+public void testAdviceDidNotMatch_pr152589() {
+protected String getCommonSuperClass(final String type1, final String type2) {
+public static List<String> loadersToSkip = null;
+public static List<String> loadersToSkip = null;
+private static ExplicitlyInitializedClassLoaderWeavingAdaptor myClassLoaderAdaptor;
+public byte[] preProcess(String className, byte[] bytes, ClassLoader loader, ProtectionDomain protectionDomain) {
+public static List<String> loadersToSkip = null;
+private void registerOptions(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public WeaverOption(IMessageHandler imh) {
+public static Test suite() {
+public static List<String> loadersToSkip = null;
+public static List<String> loadersToSkip = null;
+private static ExplicitlyInitializedClassLoaderWeavingAdaptor myClassLoaderAdaptor;
+public AjBuildConfig generateAjBuildConfig() {
+classpath = cp.toString();
+public void testJava8Code() throws Exception {
+public byte[] preProcess(String className, byte[] bytes, ClassLoader loader, ProtectionDomain protectionDomain) {
+public static List<String> loadersToSkip = null;
+private void registerOptions(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public static WeaverOption parse(String options, ClassLoader laoder, IMessageHandler imh) {
+public WeaverOption(IMessageHandler imh) {
+public static Test suite() {
+public static Test suite() {
+private void addNeededSuperCallMethods(BcelClassWeaver weaver, ResolvedType onType, Set<ResolvedMember> neededSuperCalls) {
+private void addNeededSuperCallMethods(BcelClassWeaver weaver, ResolvedType onType, Set<ResolvedMember> neededSuperCalls) {
+private static LazyMethodGen makeDispatcher(LazyClassGen onGen, String dispatchName, ResolvedMember superMethod,
+public ReferenceTypeDelegate getDelegate(ReferenceType referenceType) {
+private boolean equal2(UnresolvedType[] typeParameters, UnresolvedType[] resolvedParameters) {
+public void setDelegate(ReferenceTypeDelegate delegate) {
+public void addParent(ResolvedType newParent) {
+public boolean hasNewInterfaces() {
+public void addAnnotation(AnnotationAJ annotation) {
+public void setAnnotationTypes(ResolvedType[] annotationTypes) {
+public boolean isEquivalentTo(Object other) {
+private final Map<ResolvedMember, ResolvedMember> mapToAnnotationHolder = new HashMap<ResolvedMember, ResolvedMember>();
+private void fixAnnotationsForResolvedMember(ResolvedMember rm, ResolvedMember declaredSig) {
+public void weaveParentTypeMungers(ResolvedType onType) {
+public ResolvedMember lookupResolvedMember(ResolvedMember aMember, boolean allowMissing, boolean eraseGenerics) {
+private boolean clashesWithExistingMember(ConcreteTypeMunger typeTransformer, Iterator<ResolvedMember> existingMembers) {
+public static Test suite() {
+private boolean mungeNewMethod(BcelClassWeaver classWeaver, NewMethodTypeMunger munger) {
+public boolean visit(FieldDeclaration fieldDeclaration, MethodScope scope) {
+public static final String NO_MATCH_BECAUSE_SOURCE_RETENTION = "noMatchBecauseSourceRetention";
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+public void testSignatures_pr394535() throws Exception {
+public String getSignature() {
+public String getSignatureForAttribute() {
+public void testPSignatures_pr399590() throws Exception {
+public void testPSignatures_pr399590_2() throws Exception {
+public void testPSignatures_pr399590_3() throws Exception {
+public void testPSignatures_pr399590_4() throws Exception {
+public void testPSignatures_pr399590_5() throws Exception {
+public void testIfPointcutNames_pr398246() throws Exception {
+public AnnotationAJ[] getAnnotations() {
+private void recordClassFile(UnwovenClassFile thisTime, File lastTime) {
+private final List<WeakReference<ReferenceType>> derivativeTypes = new ArrayList<WeakReference<ReferenceType>>();
+public boolean isClass() {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public void setGenericType(ReferenceType rt) {
+private final ResolvedType resolveToReferenceType(UnresolvedType ty, boolean allowMissing) {
+private final ResolvedType resolveToReferenceType(UnresolvedType ty, boolean allowMissing) {
+public static class TypeMap {
+public ResolvedType put(String key, ResolvedType type) {
+public void checkq() {
+public ResolvedType get(String key) {
+public BcelObjectType addSourceObjectType(String classname, JavaClass jc, boolean artificial) {
+public void testInconsistentClassFile_pr389750_2() {
+public static Test suite() {
+public void addAspectRequires(String aspectClassName, String requiredType) {
+private static void createBridgeMethod(BcelWorld world, LazyMethodGen whatToBridgeToMethodGen, LazyClassGen clazz, ResolvedMember theBridgeMethod) {
+private static ResolvedMember isOverriding(ResolvedType typeToCheck, ResolvedMember methodThatMightBeGettingOverridden,
+public static void checkForOverride(ResolvedType typeToCheck, String mname, String mparams, String mrettype,
+public static void checkForOverride(ResolvedType typeToCheck, String mname, String mparams, String mrettype,
+public static void checkForOverride(ResolvedType typeToCheck, String mname, String mparams, String mrettype,
+public static void checkForOverride(ResolvedType typeToCheck, String mname, String mparams, String mrettype,
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public static boolean calculateAnyRequiredBridgeMethods(BcelWorld world, LazyClassGen clazz) {
+public String toString() {
+public Set<String> getTargets() {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+protected void resolveAnnotationValues(ResolvedType annotationType, IScope scope) {
+public FuzzyBoolean matches(AnnotatedElement annotated, ResolvedType[] parameterAnnotations) {
+public static Test suite() {
+public class AstUtil {
+public static Expression[] insert(Expression first, Expression[] rest) {
+public void resolve(ClassScope upperScope) {
+public static Test suite() {
+public MethodGen pack() {
+private void forceSyntheticForAjcMagicMembers() {
+public void checkInterTypeMungers() {
+public void testPublicITDFs_pr73507_1() {
+private void addMethodDispatch(LazyClassGen gen, ResolvedMember method, ResolvedMember accessMethod) {
+public List<IMessage> getCompilerErrorMessages(String projectName) {
+public void testIncrementalGenericItds_pr280676_2() throws Exception {
+public void testOutputLocationCallbacks2() {
+public void testPR265729() {
+public void testConstructorAdvice_pr261380() throws Exception {
+public void testDontLoseAdviceMarkers_pr134471() {
+public void testDontLoseAdviceMarkers_pr134471() {
+public void testPr128618() {
+public void testPr128655() {
+public void testPr128655_2() {
+public void testPr134471_IncrementallyRecompilingTheAffectedClass() {
+public void testPR164384_2() {
+private List<String> getRelatedElements(AsmManager model, IProgramElement programElement, int expected) {
+private List<String> getRelatedElements(AsmManager model, IProgramElement advice) {
+public UnresolvedType fromBinding(TypeBinding binding) {
+public UnresolvedType fromBinding(TypeBinding binding) {
+private static Map typeVariableBindingsInProgress = new HashMap();
+public static Test suite() {
+protected JTextField location;
+public ResolvedType[] getDeclaredInterfaces() {
+public void setGenericType(ReferenceType rt) {
+private final ResolvedType resolveToReferenceType(UnresolvedType ty, boolean allowMissing) {
+public class StackMapAdder {
+private final World world;
+protected String getCommonSuperClass(final String type1, final String type2) {
+public void testGenericsWithTwoTypeParamsOneWildcard() {
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+public byte[] getBytes() {
+public ClassLoaderWeavingAdaptor() {
+public void initialize(final ClassLoader classLoader, IWeavingContext context) {
+private void registerOptions(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+private boolean weaveAndDefineConceteAspects() {
+private void registerIncludeExclude(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+private void registerIncludeExclude(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+private void registerDump(final BcelWeaver weaver, final ClassLoader loader, final List<Definition> definitions) {
+private void writeBack(BcelWorld world) {
+public EclipseResolvedMember(MethodBinding binding, MemberKind memberKind, ResolvedType realDeclaringType, int modifiers,
+public String[] getParameterNames() {
+private boolean isTypeDeclarationAvailable() {
+public static Instruction createInvoke(InstructionFactory fact, BcelWorld world, Member signature) {
+public static void appendConversion(InstructionList il, InstructionFactory fact, ResolvedType fromType, ResolvedType toType) {
+protected void assertNoErrors(String projectName) {
+public void testAdditionalDependencies328649_1() throws Exception {
+public void testWorldDemotion_278496_6() throws Exception {
+public void testWorldDemotion_278496_4() throws Exception {
+private String stringify(Object[] arr) {
+public void testMissingRel_328121() throws Exception {
+public void testEncoding_pr290741() throws Exception {
+public void testAspectInheritance_322664() throws Exception {
+protected File getProjectOutputRelativePath(String p, String filename) {
+public boolean canAnnotationTargetType() {
+private boolean overWeaving = false;
+public ResolvedType resolveGenericTypeFor(UnresolvedType anUnresolvedType, boolean allowMissing) {
+public boolean isMinimalModel() {
+public final static String xsetWEAVE_JAVA_PACKAGES = "weaveJavaPackages"; // default
+public void demote(ResolvedType type) {
+public void ensureAdvancedConfigurationProcessed() {
+protected boolean isExpendable(ResolvedType type) {
+private void deleteNewAndDup() {
+public static BcelShadow makeIfaceInitialization(BcelWorld world, LazyMethodGen constructor,
+public void initIfaceInitializer(InstructionHandle end) {
+public static BcelShadow makeAdviceExecution(BcelWorld world, LazyMethodGen enclosingMethod) {
+public static BcelShadow makeMethodCall(BcelWorld world, LazyMethodGen enclosingMethod, InstructionHandle callHandle,
+public static BcelShadow makeFieldGet(BcelWorld world, ResolvedMember field, LazyMethodGen enclosingMethod,
+public static BcelShadow makeFieldSet(BcelWorld world, ResolvedMember field, LazyMethodGen enclosingMethod,
+protected ResolvedType[] getAnnotations(ResolvedMember foundMember, Member relevantMember, ResolvedType relevantType) {
+public void weavePerObjectEntry(final BcelAdvice munger, final BcelVar onVar) {
+public void weaveCflowEntry(final BcelAdvice munger, final Member cflowField) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+private InstructionList getRedoneProceedCall(InstructionFactory fact, LazyMethodGen callbackMethod, BcelAdvice munger,
+private InstructionList getRedoneProceedCallForAnnotationStyle(InstructionFactory fact, LazyMethodGen callbackMethod,
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+private LazyMethodGen createShadowMethodGen(String newMethodName, int visibilityModifier, List<String> parameterNames) {
+private List<ResolvedType> addAspectsFromJarFile(File inFile) throws FileNotFoundException, IOException {
+private ResolvedType isAspect(byte[] classbytes, String name, File dir) throws IOException {
+private static String[] getMethodArgumentNames(Method method, String argNamesFromAnnotation,
+private static String[] getMethodArgumentNames(Method method, String argNamesFromAnnotation,
+private static String makeDeclaredSignature(ResolvedType aGenericType, UnresolvedType[] someParameters) {
+public void testIllegalAccessError_343051() {
+private final Set<ReferenceType> derivativeTypes = new HashSet<ReferenceType>();
+public ReferenceType(ResolvedType theGenericType, ResolvedType[] theParameters, World aWorld) {
+public ResolvedType[] getDeclaredInterfaces() {
+public int getEndPos() {
+public void demoteToSimpleType() {
+public void addParent(ResolvedType newParent) {
+public ResolvedType resolveGenericTypeFor(UnresolvedType anUnresolvedType, boolean allowMissing) {
+public static final String ADVISES = "advises";
+public static String getHandle(AsmManager asm, Advice advice) {
+public void testAspectInheritance_322664() throws Exception {
+private static ResolvedType typeArgument2TypeX(GenericSignature.TypeArgument aTypeArgument,
+private static ResolvedType typeArgument2TypeX(GenericSignature.TypeArgument aTypeArgument,
+public ReferenceTypeDelegate getDelegate() {
+public void testDeclareField_328840() {
+private static ResolvedType typeArgument2TypeX(GenericSignature.TypeArgument aTypeArgument,
+public void testDeclareField_328840() {
+public ReferenceTypeDelegate getDelegate() {
+public void testAdvisingCallJoinpointsInITDS_pr253067() {
+private IProgramElement findFile(IProgramElement whereToLook, String filesubstring) {
+public void testImportHandles() {
+private IProgramElement findFile(IProgramElement whereToLook, String filesubstring) {
+public void testAspectPath_pr274558() throws Exception {
+public void testErrorTargettingTypeThatAlreadyHasIt() {
+public ASTNode convert(DeclareDeclaration declareDecl) {
+public ASTNode convert(DeclareDeclaration declareDecl) {
+public ASTNode convert(DeclareDeclaration declareDecl) {
+private String updateString(String message) {
+public org.aspectj.org.eclipse.jdt.core.dom.SignaturePattern convertSignature(ISignaturePattern patternNode) {
+public org.aspectj.org.eclipse.jdt.core.dom.PatternNode convert(
+public ASTNode convert(
+public class AjASTMatcher extends ASTMatcher {
+public boolean visit(DefaultPointcut node) {
+public class ASTVisitorTest extends TestCase {
+public void testDeclareWarning(){
+public void testDeclareAnnotationMethod(){
+public boolean visit(SignaturePattern node) {
+public void testDeclareWarning() {
+class SourceRangeVisitor extends AjASTVisitor {
+protected AjAST createAjAST() {
+public void testDeclareWarning() throws Exception {
+public BindingTypePattern(UnresolvedType type, int index, boolean isVarArgs) {
+public boolean equals(Object other) {
+private boolean hasField(ResolvedType type) {
+protected boolean matchesExactly(ResolvedType type) {
+private String getTypeNameFromHandle(String handle, Map<String, String> cache) {
+private boolean hasStructuralChanges(ClassFileReader reader, CompactTypeStructureRepresentation existingType) {
+public ReferenceTypeDelegate getDelegate(ReferenceType referenceType) {
+public void testDeletionAnonInnerType_278496_8() throws Exception {
+public void ensureConsistent() {
+protected Class defineClass(String name, byte[] b, CodeSource cs) throws IOException {
+protected Class defineClass(String name, byte[] b, CodeSource cs) throws IOException {
+private void writeBack(BcelWorld world) {
+private int tjpFieldsCounter = -1; // -1 means not yet initialized
+private void addAjcInitializers() {
+private InstructionList initInstructionList() {
+public int compare(Map.Entry<BcelShadow, Field> a, Map.Entry<BcelShadow, Field> b) {
+private void initializeTjp(InstructionFactory fact, InstructionList list, Field field, BcelShadow shadow) {
+protected boolean accept(String className, byte[] bytes) {
+protected boolean accept(String className, byte[] bytes) {
+public void testAcceptanceSpeedStarDotDotStar() throws Exception {
+private void printMainMap(Map<String, ResolvedType> m) {
+public TestWeavingContext(ClassLoader loader) {
+public List<Definition> getDefinitions(final ClassLoader loader, final WeavingAdaptor adaptor) {
+private static void readAnyReweavableData(WeaverStateInfo wsi, VersionedDataInputStream s, boolean compressed)
+public static Test suite() {
+public static Test suite() {
+public CompressingDataOutputStream(ByteArrayOutputStream baos, ConstantPoolWriter constantPoolWriter) {
+public boolean canCompress() {
+private WeaverStateInfo() {
+public void write(CompressingDataOutputStream s) throws IOException {
+public void addConcreteMunger(ConcreteTypeMunger munger) {
+private static void readAnyReweavableData(WeaverStateInfo wsi, VersionedDataInputStream s, boolean compressed)
+public ResolvedType fromType(Type aType) {
+public ResolvedType fromType(Type aType) {
+public ResolvedType[] fromTypes(Type[] types) {
+public void testClassFileSize_312839_1() {
+public void testClassFileSize_312839_1() {
+private void rewritePointcuts(List<ShadowMunger> shadowMungers) {
+protected ResolvedType concreteAspect; // null until after concretize
+public Advice(AjAttribute.AdviceAttribute attribute, Pointcut pointcut, Member signature) {
+public ResolvedType getConcreteAspect() {
+public void testComplex() {
+classWeaver.setReweavableMode(inReweavableMode);
+private boolean match(LazyMethodGen mg) {
+private boolean match(LazyMethodGen mg) {
+private void matchInvokeInstruction(LazyMethodGen mg, InstructionHandle ih, InvokeInstruction invoke,
+public static final String SYNTHETIC_CLASS_POSTFIX = "$ajc";
+private boolean needToReweaveWorld = false;
+public BcelWeaver(BcelWorld world) {
+public BcelWeaver(BcelWorld world) {
+public void addLibraryJarFile(File inFile) throws IOException {
+private List<ResolvedType> addAspectsFromJarFile(File inFile) throws FileNotFoundException, IOException {
+private ResolvedType isAspect(byte[] classbytes, String name, File dir) throws IOException {
+private ResolvedType isAspect(byte[] classbytes, String name, File dir) throws IOException {
+public boolean needToReweaveWorld() {
+public ReferenceType addClassFile(UnwovenClassFile classFile, boolean fromInpath) {
+public void setIsBatchWeave(boolean b) {
+private void rewritePointcuts(List<ShadowMunger> shadowMungers) {
+public void addManifest(Manifest newManifest) {
+public Manifest getManifest(boolean shouldCreate) {
+public Collection<String> weave(File file) throws IOException {
+public Collection<String> weave(IClassFileProvider input) throws IOException {
+public Collection<String> weave(IClassFileProvider input) throws IOException {
+public LazyClassGen weaveWithoutDump(UnwovenClassFile classFile, BcelObjectType classType) throws IOException {
+private Map<BcelShadow, Field> tjpFields = new HashMap<BcelShadow, Field>();
+private InstructionList initializeAllTjps() {
+private BoundedReferenceType getWildcard() {
+public void ensureAdvancedConfigurationProcessed() {
+public void ensureAdvancedConfigurationProcessed() {
+public static Test suite() {
+public boolean weave() {
+public boolean weave() {
+private List<ShadowMunger> fastMatch(List<ShadowMunger> list, ResolvedType type) {
+private static boolean reweavableDiffModeDefault = true;
+public void write(DataOutputStream s) throws IOException {
+public List getTypeMungers(ResolvedType onType) {
+classData = new byte[unwovenClassFileSize];
+private static final byte[] insertArray(byte toInsert[], byte original[], int offset) {
+private final InstructionFactory fact; // alias of clazz.getFactory();
+private BcelClassWeaver(BcelWorld world, LazyClassGen clazz, List<ShadowMunger> shadowMungers,
+private BcelClassWeaver(BcelWorld world, LazyClassGen clazz, List<ShadowMunger> shadowMungers,
+private boolean canMatch(Shadow.Kind kind) {
+private void indexShadowMungers() {
+public static void transformSynchronizedMethod(LazyMethodGen synchronizedMethod) {
+private boolean match(BcelShadow shadow, List<BcelShadow> shadowAccumulator) {
+private boolean match(BcelShadow shadow, List<BcelShadow> shadowAccumulator) {
+public BcelWorld getWorld() {
+public boolean munge(BcelClassWeaver weaver) {
+classDebugInfo = clazz.getClassName();
+private List<ShadowMunger> fastMatch(List<ShadowMunger> list, ResolvedType type) {
+private List<ShadowMunger> fastMatch(List<ShadowMunger> list, ResolvedType type) {
+private List<ShadowMunger> fastMatch(List<ShadowMunger> list, ResolvedType type) {
+public void testSimple() {
+public void testAmbiguousMethod_298665() {
+public boolean hasAnnotation(UnresolvedType ofType) {
+public AnnotationAJ[] getAnnotations() {
+public AnnotationAJ getAnnotationOfType(UnresolvedType ofType) {
+public AnnotationAJ getAnnotationOfType(UnresolvedType ofType) {
+public String getAnnotationDefaultValue() {
+public String getAnnotationDefaultValue() {
+public ResolvedType[] getAnnotationTypes() {
+public String[] getParameterNames() {
+private Annotation[] getEclipseAnnotations() {
+private TypeDeclaration getTypeDeclaration() {
+private TypeDeclaration getTypeDeclaration() {
+private TypeDeclaration getTypeDeclaration() {
+public void testAmbiguousMethod_298665() {
+public void testPipeliningAndGenerics_309336() {
+public UnresolvedType getUpperBound() {
+public boolean isSuper() {
+public class TypeFactory {
+public void addPrivilegedAccesses(Collection<ResolvedMember> accessedMembers) {
+public void write(DataOutputStream s) throws IOException {
+public boolean equals(Object other) {
+public int hashCode() {
+public boolean existsToSupportShadowMunging() {
+public void testIncrementalFqItds_280380_2() throws Exception {
+public void testSubtleGenericsIssue_308773() {
+public void testIncrementalAnnoStyle_pr286341() {
+private boolean doDeclareAnnotations(DeclareAnnotation decA, SourceTypeBinding sourceType, boolean reportProblems) {
+classType.getResolvedTypeX().ensureConsistent();
+private LazyClassGen weave(UnwovenClassFile classFile, BcelObjectType classType, boolean dump) throws IOException {
+classDebugInfo = clazz.getClassName();
+private void dumpUnchanged(UnwovenClassFile classFile) throws IOException {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public void addParent(ResolvedType newParent) {
+protected boolean isSuper = false;
+public static final ReferenceType[] EMPTY_ARRAY = new ReferenceType[0];
+public String toString() {
+public FieldTypeSignature[] interfaceBounds;
+public SimpleClassTypeSignature[] nestedTypes;
+private void unpackGenericSignature() {
+public Var(ResolvedType variableType) {
+private UnresolvedType[] expectedVarTypes; // enables us to check that binding is occurring with the *right* types
+public void set(int i, Var var) {
+public boolean isErroneousVar(int formalIndex) {
+public static final State CONCRETE = new State("concrete", 2);
+protected boolean hasBeenParameterized = false;
+classWeaver.getWorld().getMessageHandler().handleMessage(
+classWeaver.getWorld().getMessageHandler().handleMessage(
+private static boolean handleDeclareMixinAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+private ResolvedMember createOrGetInlineAccessorForMethod(ResolvedMember resolvedMember) {
+private static ResolvedMember isOverriding(ResolvedType typeToCheck, ResolvedMember methodThatMightBeGettingOverridden,
+public static void transformSynchronizedMethod(LazyMethodGen synchronizedMethod) {
+private void match(LazyMethodGen mg, InstructionHandle ih, BcelShadow enclosingShadow, List<BcelShadow> shadowAccumulator) {
+private static void setParams(IProgramElement pe, ResolvedMember sig) {
+public void testWeaverStateInfo() throws ClassNotFoundException, IOException {
+protected void fillDeclaredMembers() {
+public List getExposedPointcuts() {
+private void addPointcutsResolvingConflicts(List<ResolvedMember> acc, List<ResolvedMember> added, boolean isOverriding) {
+public void testTimers_1() {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public void endVisit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public void endVisit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+private List genNamedPointcuts(MethodDeclaration methodDeclaration) {
+private void addAllNamed(Pointcut pointcut, List pointcuts) {
+private String genSourceSignature(MethodDeclaration methodDeclaration) {
+private String genSourceSignature(MethodDeclaration methodDeclaration) {
+public boolean visit(ImportReference importRef, CompilationUnitScope scope) {
+public void endVisit(ImportReference importRef, CompilationUnitScope scope) {
+public boolean visit(FieldDeclaration fieldDeclaration, MethodScope scope) {
+public void endVisit(FieldDeclaration fieldDeclaration, MethodScope scope) {
+protected String generateJavadocComment(ASTNode astNode) {
+protected String generateJavadocComment(ASTNode astNode) {
+public boolean visit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+public boolean visit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+public void endVisit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+private String genSourceSignature(ConstructorDeclaration constructorDeclaration) {
+private String genSourceSignature(ConstructorDeclaration constructorDeclaration) {
+public boolean visit(Initializer initializer, MethodScope scope) {
+protected int getEndLine(ASTNode n) {
+private void addPointcutsResolvingConflicts(List acc, List added, boolean isOverriding) {
+public String getDeclaredGenericSignature() {
+private UnresolvedType fromTypeVariableBinding(TypeVariableBinding aTypeVariableBinding) {
+public void addInterTypeMunger(ConcreteTypeMunger munger) {
+private void addPointcutsResolvingConflicts(List acc, List added, boolean isOverriding) {
+public void testOptimizedMemberLookup() {
+private void compare(List<ResolvedMember> viaIteratorList, List<ResolvedMember> directlyList, String typename) {
+public static final UnresolvedType[] ARRAY_WITH_JUST_OBJECT = new UnresolvedType[] { OBJECT };
+public void resolveBindings(IScope scope, Bindings bindings) {
+public Pointcut concretize1(ResolvedType searchStart, ResolvedType declaringType, IntMap bindings) {
+public Pointcut concretize1(ResolvedType searchStart, ResolvedType declaringType, IntMap bindings) {
+public boolean equals(Object other) {
+public static List readAj5ClassAttributes(AsmManager model, JavaClass javaClass, ReferenceType type, ISourceContext context,
+public static List readAj5ClassAttributes(AsmManager model, JavaClass javaClass, ReferenceType type, ISourceContext context,
+public static List readAj5ClassAttributes(AsmManager model, JavaClass javaClass, ReferenceType type, ISourceContext context,
+public static List<AjAttribute> readAj5MethodAttributes(Method method, BcelMethod bMethod, ResolvedType type,
+private static boolean handleBeforeAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct,
+private static boolean handleAfterAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct,
+private static boolean handleAfterReturningAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct,
+private static boolean handleAfterThrowingAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct,
+private static boolean handleAroundAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct,
+private static boolean handlePointcutAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+private static boolean handlePointcutAnnotation(RuntimeAnnos runtimeAnnotations, AjAttributeMethodStruct struct) {
+private static String lastbit(String fqname) {
+private static String[] getMethodArgumentNames(Method method, String argNamesFromAnnotation,
+public Pointcut getPointcut() {
+public void testBinaryDecpSuperRewrite_290087() {
+public void testITDannos_288049() {
+public boolean munge(BcelClassWeaver weaver) {
+private boolean mungeNewParent(BcelClassWeaver weaver, NewParentTypeMunger munger) {
+private boolean mungeNewParent(BcelClassWeaver weaver, NewParentTypeMunger munger) {
+public boolean attemptToModifySuperCalls(BcelClassWeaver weaver, LazyClassGen newParentTarget, ResolvedType newParent) {
+public boolean attemptToModifySuperCalls(BcelClassWeaver weaver, LazyClassGen newParentTarget, ResolvedType newParent) {
+public boolean attemptToModifySuperCalls(BcelClassWeaver weaver, LazyClassGen newParentTarget, ResolvedType newParent) {
+private String createReadableCtorSig(ResolvedType newParent, ConstantPool cpg, InvokeInstruction invokeSpecial) {
+private ResolvedMember getConstructorWithSignature(ResolvedType tx, String signature) {
+private boolean mungePrivilegedAccess(BcelClassWeaver weaver, PrivilegedAccessMunger munger) {
+classWeaver.getWorld().getMessageHandler().handleMessage(
+private void createBridgeIfNecessary(BcelClassWeaver classWeaver, NewMethodTypeMunger munger,
+private void createAnyBridgeMethodsForCovariance(BcelClassWeaver weaver, NewMethodTypeMunger munger,
+private ResolvedMember getRealMemberForITDFromAspect(ResolvedType aspectType, ResolvedMember lookingFor, boolean isCtorRelated) {
+private void addNeededSuperCallMethods(BcelClassWeaver weaver, ResolvedType onType, Set neededSuperCalls) {
+private void addNeededSuperCallMethods(BcelClassWeaver weaver, ResolvedType onType, Set neededSuperCalls) {
+private boolean mungeNewConstructor(BcelClassWeaver weaver, NewConstructorTypeMunger newConstructorTypeMunger) {
+private boolean mungeNewConstructor(BcelClassWeaver weaver, NewConstructorTypeMunger newConstructorTypeMunger) {
+private static LazyMethodGen makeDispatcher(LazyClassGen onGen, String dispatchName, ResolvedMember superMethod,
+private boolean mungeNewField(BcelClassWeaver weaver, NewFieldTypeMunger munger) {
+private boolean mungeNewField(BcelClassWeaver weaver, NewFieldTypeMunger munger) {
+private boolean mungeNewField(BcelClassWeaver weaver, NewFieldTypeMunger munger) {
+public boolean equals(Object other) {
+public boolean shouldOverwrite() {
+private boolean mungeNewMethod(BcelClassWeaver weaver, NewMethodTypeMunger munger) {
+private boolean mungeNewMethod(BcelClassWeaver weaver, NewMethodTypeMunger munger) {
+private boolean mungeNewMethod(BcelClassWeaver weaver, NewMethodTypeMunger munger) {
+private boolean mungeNewMethod(BcelClassWeaver weaver, NewMethodTypeMunger munger) {
+private boolean mungeNewConstructor(BcelClassWeaver weaver, NewConstructorTypeMunger newConstructorTypeMunger) {
+public ConcreteTypeMunger parameterizeWith(Map m, World w) {
+public boolean equals(Object other) {
+public int hashCode() {
+public void testNPEonBadAspectDecl_286375() {
+public void testVerifyErrorAnnoStyle_288712() {
+private final BcelObjectType ty; // alias of clazz.getType()
+private void checkUnusedDeclareAtTypes(Set unusedDecaTs, boolean isDeclareAtField) {
+private boolean match(BcelShadow shadow, List shadowAccumulator) {
+public BcelWorld getWorld() {
+private static void fixUpCircularDependencies(ResolvedType aTypeX, Map typeVariableResolutions) {
+public GenericSignatureFormatException(String explanation) {
+public boolean isCacheable() {
+public ResolvedType put(String key, ResolvedType type) {
+public void testNPEonBadAspectDecl_286375() {
+public void loadDefaultProperties() {
+public String getCorrespondingType() {
+public void testIncrementalFqItds_280380() throws Exception {
+private ResolvedType annotationType;
+private void ensureAnnotationDiscovered() {
+public ResolvedType getAnnotationType() {
+private void internalBuild(CompilationUnitDeclaration unit, AsmManager structureModel) {
+private void internalBuild(CompilationUnitDeclaration unit, AsmManager structureModel) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public void endVisit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public boolean visit(ImportReference importRef, CompilationUnitScope scope) {
+public void endVisit(ImportReference importRef, CompilationUnitScope scope) {
+private String genSourceSignature(ImportReference importreference) {
+protected String genSourceSignature(FieldDeclaration fieldDeclaration) {
+private boolean weaveAtFieldRepeatedly(List decaFs, List itdFields, List reportedErrors) {
+private boolean doesAlreadyHaveAnnotation(ResolvedMember rm, DeclareAnnotation deca, List reportedProblems) {
+private boolean doesAlreadyHaveAnnotation(LazyMethodGen rm, ResolvedMember itdfieldsig, DeclareAnnotation deca,
+public EclipseResolvedMember(MethodBinding binding, MemberKind memberKind, ResolvedType realDeclaringType, int modifiers,
+private Annotation[] getEclipseAnnotations() {
+public boolean isDefaultConstructor() {
+private void addPublicITDSFrom(SourceTypeBinding anInterface, List toAList) {
+public void addInterTypeMethod(MethodBinding binding) {
+public void testGenericsBridge_pr279983() {
+private char[] getCount(IProgramElement ipe) {
+public void testAdviceHandles_pr284771() throws Exception {
+public void testInterfacesSerializable_pr283229() {
+private void fixupGenericSignatureAttribute() {
+public void testIncrementalAnnotationMatched_276399() throws Exception {
+private char[] getCount(IProgramElement ipe) {
+public ResolvedTypeMunger parameterizedFor(ResolvedType target) {
+public int hashCode() {
+public static void addRelationship(AsmManager model, ResolvedType onType, ResolvedTypeMunger typeTransformer,
+public void resolve(ClassScope upperScope) {
+private boolean suppressingNoExplicitConstructorCall() {
+private AjAttribute makeAttribute(EclipseFactory world) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public class MultiProjectIncrementalTests extends AbstractMultiProjectIncrementalAjdeInteractionTestbed {
+public void testIncrementalAnnotationMatched_276399() throws Exception {
+public void testDeclareAtConstructor() {
+public void testIncrementalItdDefaultCtor() {
+public void testOutputLocationCallbacks2() {
+public List/* IProgramElement */findMatchingPackages(String packagename) {
+public List/* IProgramElement */findMatchingPackages(String packagename) {
+public void testOutputLocationCallbacks2() {
+public void testItdDefaultCtor_pr275032() {
+private boolean weaveDeclareAtMethodCtor(LazyClassGen clazz) {
+private boolean weaveDeclareAtMethodCtor(LazyClassGen clazz) {
+private boolean weaveDeclareAtMethodCtor(LazyClassGen clazz) {
+public static void transformSynchronizedMethod(LazyMethodGen synchronizedMethod) {
+private static final int ACC_SYNTHETIC = 0x1000;
+public String getPackageName() {
+public void addMethodGen(LazyMethodGen gen, ISourceLocation sourceLocation) {
+private void writeBack(BcelWorld world) {
+private void fixupGenericSignatureAttribute() {
+private Signature createSignatureAttribute(String signature) {
+public void addAnnotation(AnnotationGen a) {
+public String allocateField(String prefix) {
+public boolean canBeParameterized() {
+public UnresolvedType getGenericReturnType() {
+private void workOutIfSynthetic() {
+private boolean mungeNewConstructor(BcelClassWeaver weaver, NewConstructorTypeMunger newConstructorTypeMunger) {
+private static void generateAnnotation(Annotation annotation, StandardAnnotation annotationAJ) {
+public EclipseResolvedMember(MethodBinding binding, MemberKind memberKind, ResolvedType realDeclaringType, int modifiers,
+public boolean matches(ResolvedMember aCandidateMatch, boolean ignoreGenerics) {
+private boolean compareToExistingMembers(ConcreteTypeMunger munger, Iterator existingMembers) {
+public void testVerifyOnAnnoBind_pr273628() {
+public static Test suite() {
+classFile.completeCodeAttribute(codeAttributeOffset);
+public class SuperFixerVisitor extends ASTVisitor {
+public void endVisit(MessageSend call, BlockScope scope) {
+public void endVisit(MessageSend call, BlockScope scope) {
+public static Test suite() {
+public void testFunkyPointcut_pr272233() {
+public String toString() {
+public void testAnnotationStyle_pr265356() {
+public ResolvedType parameterizedWith(UnresolvedType[] typeParameters) {
+private InstructionList getRedoneProceedCall(InstructionFactory fact, LazyMethodGen callbackMethod, BcelAdvice munger,
+public static Test suite() {
+public static Test suite() {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public static char getDelimiter(IProgramElement ipe) {
+public static char getDelimiter(IProgramElement ipe) {
+private IProgramElement findElementAtLine(IProgramElement whereToLook, int line) {
+public void testHandleQualification_pr265993() throws IOException {
+public void testX() throws IOException {
+private void createHandleSigForReference(TypeReference ref, TypeBinding tb, MethodScope scope, StringBuffer handleSig) {
+private boolean weaveDeclareAtField(LazyClassGen clazz) {
+public static void transformSynchronizedMethod(LazyMethodGen synchronizedMethod) {
+public void testIncrementalMixin() {
+public UnresolvedType getAnnotationTypeX() {
+public boolean finishResolveTypes(final AbstractMethodDeclaration dec, MethodBinding method, final int baseArgumentCount,
+public void testGenericsItdNpe_pr267559() {
+public void testGenericsItdNpe_pr267559() {
+public ResolvedMemberImpl parameterizedWith(UnresolvedType[] typeParameters, ResolvedType newDeclaringType,
+protected UnresolvedType parameterize(UnresolvedType aType, Map typeVariableMap, boolean inParameterizedType, World w) {
+protected UnresolvedType parameterize(UnresolvedType aType, Map typeVariableMap, boolean inParameterizedType, World w) {
+protected UnresolvedType parameterize(UnresolvedType aType, Map typeVariableMap, boolean inParameterizedType, World w) {
+public void write(DataOutputStream s) throws IOException {
+public void setPointcut(Pointcut pointcut) {
+public void testAssignable03_method_m4() {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public IProgramElement findCloserMatchForLineNumber(IProgramElement node, int lineno) {
+private boolean mungeMethodDelegate(BcelClassWeaver weaver, MethodDelegateTypeMunger munger) {
+public void testDualPreClinit_pr233032() {
+public void testNullDelegateForArray_pr247683() {
+protected boolean couldEverMatchSameTypesAs(TypePattern other) {
+public void write(DataOutputStream out) throws IOException {
+public static TypePattern readTypePatternOldStyle(DataInputStream s, ISourceContext context) throws IOException {
+public TypePattern parameterizeWith(Map typeVariableMap, World w) {
+public TypePattern parseSingleTypePattern(boolean insideTypeParameters) {
+public PatternParser(String data) {
+public boolean matchesStatically(ResolvedType type) {
+protected boolean matchesSubtypes(ResolvedType superType, ResolvedType annotatedType) {
+public static final byte NO_KEY = 9;
+public static TypePattern read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+protected boolean matchesExactly(ResolvedType type, ResolvedType annotatedType) {
+protected boolean matchesExactly(ResolvedType type) {
+public FuzzyBoolean matchesInstanceof(ResolvedType type) {
+protected boolean couldEverMatchSameTypesAs(TypePattern other) {
+public FuzzyBoolean matchesInstanceof(ResolvedType type) {
+protected boolean matchesExactly(ResolvedType type, ResolvedType annotatedType) {
+public class TypePatternTestCase extends PatternsTestCase {
+private void checkIllegalInstanceofMatch(String pattern, String name) {
+private void checkMatch(String pattern, String name, boolean shouldMatch) {
+public ValidateAtAspectJAnnotationsVisitor(CompilationUnitDeclaration unit) {
+private void checkTypeDeclaration(TypeDeclaration typeDecl) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void validateAdvice(MethodDeclaration methodDeclaration) {
+private void resolveAndSetPointcut(MethodDeclaration methodDeclaration, Annotation adviceAnn) {
+private void convertToPointcutDeclaration(MethodDeclaration methodDeclaration, ClassScope scope) {
+private void convertToPointcutDeclaration(MethodDeclaration methodDeclaration, ClassScope scope) {
+private void addClassAndParentsToPrefixes(ReferenceBinding binding, List importedPrefixesList) {
+public String[] getImportedNames() {
+public void message(IMessage aMessage) {
+public void testDualPreClinit_pr233032() {
+public void testHandles_pr263666() {
+public void testAopConfig2() {
+public void testBrokenLVT_pr194314_1() throws Exception {
+public void testBrokenLVT_pr194314_2() throws Exception {
+public void testBrokenLVT_pr194314_3() throws Exception {
+public void testDebuggingBeforeAdvice_pr262509() {
+public void testDebuggingBeforeAdvice_pr262509_3() {
+private String stringify(LocalVariableTable lvt) {
+private boolean sameType(String hid, IProgramElement target, IProgramElement type) {
+private boolean sameType(String hid, IProgramElement target, IProgramElement type) {
+private void recordWhetherCompilationUnitDefinedAspect(File sourceFile, CompilationResult cr) {
+public TypePattern getPerTypePointcut(Pointcut perClausePointcut) {
+public void testIncrementalAndAnnotations() {
+public void testItdProb() {
+public void testAnnotations_pr262154() {
+public void testBrokenLVT_pr194314_1() throws Exception {
+public DeclarePrecedence(List patterns) {
+public void resolve(IScope scope) {
+public void resolve(IScope scope) {
+private int matchingIndex(ResolvedType a) {
+public int compare(ResolvedType aspect1, ResolvedType aspect2) {
+public void testBrokenLVT_pr194314_1() throws Exception {
+private void resolveAnnotationDeclares(List attributeList) {
+public ResolvedType[] getAnnotationTypes() {
+public boolean isAnnotationWithRuntimeRetention() {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+private LazyMethodGen makeClosureClassAndReturnConstructor(String closureClassName, LazyMethodGen callbackMethod,
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+private LazyMethodGen makeClosureClassAndReturnConstructor(String closureClassName, LazyMethodGen callbackMethod,
+private boolean samePackage(String p1, String p2) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+private void addPreInitializationReturnCode(LazyMethodGen extractedMethod, Type[] superConstructorTypes) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public LazyMethodGen extractShadowInstructionsIntoNewMethod(String extractedMethodName, int extractedMethodVisibilityModifier,
+public LazyMethodGen extractShadowInstructionsIntoNewMethod(String extractedMethodName, int extractedMethodVisibilityModifier,
+public boolean implementOn(Shadow s) {
+public boolean implementOn(Shadow s) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public static String aroundShadowMethodName(Member shadowSig, String suffixTag) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public LazyMethodGen extractShadowInstructionsIntoNewMethod(String newMethodName, int visibilityModifier, ShadowMunger munger) {
+private LazyMethodGen createShadowMethodGen(String newMethodName, int visibilityModifier) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundClosure(BcelAdvice munger, boolean hasDynamicTest) {
+public LazyMethodGen createShadowMethodGen(String newMethodName, int visibilityModifier, ShadowMunger munger) {
+private LazyMethodGen createMethodGen(String newMethodName, int visibilityModifier) {
+private LazyMethodGen createMethodGen(String newMethodName, int visibilityModifier) {
+private LazyMethodGen createMethodGen(String newMethodName, int visibilityModifier) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+private final LazyMethodGen enclosingMethod;
+public Member getRealEnclosingCodeSignature() {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+private LazyMethodGen createMethodGen(String newMethodName, int visibilityModifier) {
+private LazyMethodGen createMethodGen(String newMethodName, int visibilityModifier) {
+private Type[] addTypeToFront(Type type, Type[] types) {
+public String getNewGeneratedNameTag() {
+public static String aroundCallbackMethodName(Member shadowSig, String suffixTag) {
+public static String getExtractableName(Member shadowSignature) {
+public boolean implementOn(Shadow s) {
+public boolean hasDynamicTests() {
+public void testCompilingSpring_pr260384() {
+public static Test suite() {
+public boolean equivalentTo(Object other) {
+private boolean shouldConcretizeIfNeeded = true;
+private ShadowMunger rewritePointcutInMunger(ShadowMunger munger) {
+public List getShadowMungers() {
+public NewConstructorTypeMunger(ResolvedMember signature, ResolvedMember syntheticConstructor,
+public void write(DataOutputStream s) throws IOException {
+public ResolvedMember getExplicitConstructor() {
+public ResolvedTypeMunger parameterizedFor(ResolvedType target) {
+public ResolvedTypeMunger parameterizedFor(ResolvedType target) {
+public String toString() {
+public void write(DataOutputStream s) throws IOException {
+public static Declare read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+public String getNameSuffix() {
+public void testConstructorAdvice_pr261380() throws Exception {
+public void testAnnotations_pr262154() {
+public void checkPointcutDeclarations() {
+public void checkPointcutDeclarations() {
+public boolean isAnnotationWithRuntimeRetention() {
+private AnnotationValue generateElementValue(Expression defaultValue, TypeBinding memberValuePairReturnType) {
+public void testAnnotations_pr255555() {
+public void testImportHandles() {
+public void testImportHandles() {
+public void testIncrementalBuildsWithItds_pr259528() {
+public void testConstructorAdvice_pr261380() throws Exception {
+protected static IProgramElement getNode(AsmManager model, Shadow shadow) {
+private void parseConfigFileHelper(File configFile) {
+public ResolvedMember lookupMethodInITDs(Member m) {
+private ResolvedMember lookupMember(Member m, Iterator i) {
+public void testAtAspectJDecp_pr164016() {
+public void checkInterTypeMungers() {
+public static ResolvedTypeMunger read(VersionedDataInputStream s, ISourceContext context) throws IOException {
+public static Kind read(DataInputStream s) throws IOException {
+public String toString() {
+public void setSuperMethodsCalled(Set c) {
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+public boolean munge(BcelClassWeaver weaver) {
+private boolean enforceDecpRule1_abstractMethodsImplemented(BcelClassWeaver weaver, ISourceLocation mungerLoc,
+public static Test suite() {
+private final List pendingTypesToWeave = new ArrayList();
+public AjLookupEnvironment(ITypeRequestor typeRequestor, CompilerOptions options, ProblemReporter problemReporter,
+public void completeTypeBindings() {
+public void completeTypeBindings() {
+public void completeTypeBindings() {
+public void completeTypeBindings() {
+private void collectAllITDsAndDeclares(SourceTypeBinding sourceType, Collection yetToProcess) {
+private void doPendingWeaves() {
+private void addAdviceLikeDeclares(ClassScope s) {
+private void addCrosscuttingStructures(ClassScope s) {
+private void resolvePointcutDeclarations(ClassScope s) {
+private void buildInterTypeAndPerClause(ClassScope s) {
+private boolean isAspect(TypeDeclaration decl) {
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType) {
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void processTypeMungersFromExistingWeaverState(
+private void processTypeMungersFromExistingWeaverState(
+private boolean doDeclareParents(DeclareParents declareParents, SourceTypeBinding sourceType) {
+private boolean doDeclareParents(DeclareParents declareParents, SourceTypeBinding sourceType) {
+private boolean doDeclareAnnotations(DeclareAnnotation decA,
+private boolean doDeclareAnnotations(DeclareAnnotation decA,
+private boolean doDeclareAnnotations(DeclareAnnotation decA,
+private boolean doDeclareAnnotations(DeclareAnnotation decA,
+private boolean doDeclareAnnotations(DeclareAnnotation decA,
+private static Annotation createAnnotationCopy(Annotation ann) {
+private void reportDeclareParentsMessage(WeaveMessage.WeaveMessageKind wmk, SourceTypeBinding sourceType, ResolvedType parent) {
+private String getShortname(String path) {
+private void addParent(SourceTypeBinding sourceType, ResolvedType parent) {
+private final List pendingTypesToFinish = new ArrayList();
+public BinaryTypeBinding createBinaryTypeFrom(IBinaryType binaryType, PackageBinding packageBinding,
+public BinaryTypeBinding createBinaryTypeFrom(IBinaryType binaryType, PackageBinding packageBinding,
+public CrosscuttingMembers(ResolvedType inAspect, boolean shouldConcretizeIfNeeded) {
+public void addLateTypeMungers(Collection c) {
+public boolean replaceWith(CrosscuttingMembers other, boolean careAboutShadowMungers) {
+public boolean replaceWith(CrosscuttingMembers other, boolean careAboutShadowMungers) {
+private ShadowMunger rewritePointcutInMunger(ShadowMunger munger) {
+public List getDeclareSofts() {
+public Map getCflowBelowFields() {
+public boolean parentsIncludeClass(World w) {
+private ResolvedType maybeGetNewParent(ResolvedType targetType, TypePattern typePattern, World world,boolean reportErrors) {
+public ReferenceType[] getAdditionalBounds() {
+public String getParameterSignatureErased() {
+public void testExtendingASI_pr252722() {
+public void testGetNode_pr258653() {
+public void endVisit(QualifiedNameReference ref, BlockScope scope) {
+private void makePublic(TypeBinding binding) {
+public boolean visit(TypeDeclaration localTypeDeclaration, BlockScope scope) {
+public void generate(CodeStream codeStream) {
+public static void addMethodBinding(SourceTypeBinding sourceType, MethodBinding method) {
+public static int makePublic(int modifiers) {
+public static void generateParameterLoads(TypeBinding[] parameters, CodeStream codeStream) {
+public static List getAjSyntheticAttribute() {
+public static ResolvedMember inlineAccessMethodForMethod(UnresolvedType aspectType, ResolvedMember method) {
+public static void main(String[] args) {
+private static AsmManager callAjc(File[] inputFiles) {
+class StubFileGenerator {
+private static final int WEAVE_JAVAX_PACKAGE = 0x4;
+private boolean shouldWeaveName(String name) {
+private void writeZipEntry(ClassFile classFile, String name) throws IOException {
+protected static IProgramElement getNode(AsmManager model, Shadow shadow) {
+public void testAtTargetPlus_pr255856() {
+public class IncrementalOutputLocationManagerTests extends AbstractMultiProjectIncrementalAjdeInteractionTestbed {
+private class MyOutputLocationManager implements IOutputLocationManager {
+public File getOutputLocationForClass(File compilationUnit) {
+public void testPathResolutionWithInpathDirAndNoOutputPath() {
+public void testPathResolutionAfterChangeInClassOnInpath() throws Exception {
+private static class SingleDirOutputLocMgr implements IOutputLocationManager {
+public File getOutputLocationForClass(File compilationUnit) {
+public File getDefaultOutputLocation() {
+public File getOutputLocationForClass(File compilationUnit) {
+public File getOutputLocationForClass(File compilationUnit) {
+private String testProjectOutputPath;
+public TestOutputLocationManager(String testProjectPath) {
+public List getAllOutputLocations() {
+classOutputLoc = new File(testProjectOutputPath);
+public String getSourceFolderForFile(File sourceFile) {
+private String testProjectOutputPath;
+public String getUniqueIdentifier() {
+public List getAllOutputLocations() {
+classOutputLoc = new File(testProjectOutputPath);
+public File getOutputLocationForClass(File compilationUnit) {
+private String getCommonOutputDir() {
+private String writeDirectoryEntry(CompilationResult unitResult, ClassFile classFile, String filename)
+public boolean isCoerceableFrom(ResolvedType o) {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public class ReferenceTypeTestCase extends TestCase {
+public void testIsGenericFalse() {
+private void resolveAndSetPointcut(MethodDeclaration methodDeclaration, Annotation adviceAnn) {
+public void testNonNullAtArgs_pr257833() {
+public void visit(HasAnnotation hasAnnotation) {
+public void testNonNullAtArgs_pr257833() {
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleDeclareParentsAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeFieldStruct struct) {// ,
+private static boolean handleAfterThrowingAnnotation(RuntimeAnnotations runtimeAnnotations, AjAttributeMethodStruct struct,
+public void testPoorAtAjIfMessage_pr256458() {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public void testPoorAtAjIfMessage_pr256458() {
+public void testGetMethodNull_pr154427() {
+private IProgramElement findElementAtLine(IProgramElement whereToLook, int line) {
+public UnresolvedType getExtraParameterType() {
+public void testGetMethodNull_pr154427() {
+public Pointcut parseSinglePointcut() {
+public Pointcut parseSinglePointcut() {
+public void visit(Call call) {
+public void visit(Call call) {
+protected Test findResidueInternal(Shadow shadow, ExposedState state) {
+public void testIncompatibleClassChangeWithITD_pr164633() {
+public void testFQType_pr256937() {
+private InstructionList makeArgsObjectArray() {
+public class AsmRelationshipProvider {
+protected static IProgramElement getNode(AsmManager model, Shadow shadow) {
+protected static IProgramElement findMemberInClass(IProgramElement classNode, Member member) {
+private Pointcut m_lazyPointcut = null;
+public Pointcut getPointcut() {
+protected static AsmRelationshipProvider INSTANCE = new AsmRelationshipProvider();
+private static void addChildNodes(AsmManager asm, ShadowMunger munger, IProgramElement parent, ResolvedMember[] children) {
+public static List readAj5MethodAttributes(Method method, BcelMethod bMethod, ResolvedType type,
+public void testFQType_pr256937() {
+public void testParameterAnnotationsOnITDs_pr256669() { // regular itd
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+private char[] getCount(IProgramElement ipe) {
+public CrosscuttingMembers collectCrosscuttingMembers(boolean shouldConcretizeIfNeeded) {
+public void testGenericPointcuts_1() {
+public void testGenericPointcuts_4() {
+private final boolean isCoerceableFromParameterizedType(ResolvedType other) {
+private final boolean isCoerceableFromParameterizedType(ResolvedType other) {
+private final boolean isCoerceableFromParameterizedType(ResolvedType other) {
+public boolean isAssignableFrom(ResolvedType other, boolean allowMissing) {
+public void testGenericPointcuts_1() {
+public void testGenericPointcuts_4() {
+public ResolvedType[] getDeclaredInterfaces() {
+private static final String TESTER_PATH = ".." + File.separator + "testing-client" + File.separator + "bin"
+public BcelAdvice(AjAttribute.AdviceAttribute attribute, Pointcut pointcut, Member signature, ResolvedType concreteAspect) {
+private static Member shrink(AdviceKind kind, ResolvedType concreteAspect, Member m) {
+public boolean implementOn(Shadow s) {
+public boolean implementOn(Shadow s) {
+private void removeUnnecessaryProblems(BcelMethod method, int problemLineNumber) {
+public void weaveAroundInline(BcelAdvice munger, boolean hasDynamicTest) {
+public class IdWeaveTestCase extends WeaveTestCase {
+public class MoveInstructionsWeaveTestCase extends WeaveTestCase {
+public boolean implementOn(Shadow s) {
+public boolean implementOn(Shadow shadow) {
+public final Kind missingAspectForReweaving = new Kind("missingAspectForReweaving",
+public abstract ISourceLocation getSourceLocation();
+public abstract boolean implementOn(Shadow shadow);
+private OutputSpec m_stdErrSpec;
+public MethodGen pack() {
+public void packBody(MethodGen gen) {
+private void createNewLocalVariables(MethodGen gen) {
+public void optimizedPackBody(MethodGen gen) {
+public boolean isPublic() {
+public void testITDPrecedence_pr233838_1() {
+public void testTerminateAfterCompilation_pr249710() {
+private boolean serialVersionUIDRequiresInitialization = false;
+public byte[] getJavaClassBytesIncludingReweavable(BcelWorld world) {
+private void initializeTjp(InstructionFactory fact, InstructionList list, Field field, BcelShadow shadow) {
+protected String makeString(UnresolvedType[] types) {
+public void testBreakingRecovery_pr226163() {
+private void createBridgeMethodForITDF(BcelClassWeaver weaver, LazyClassGen gen, ResolvedMember itdfieldSetter,
+private void createBridgeMethodForITDF(BcelClassWeaver weaver, LazyClassGen gen, ResolvedMember itdfieldSetter,
+public void acceptResult(CompilationResult unitResult) {
+public void acceptResult(CompilationResult unitResult) {
+public void testResolveGeneric() {
+protected UnresolvedType parameterize(UnresolvedType aType, Map typeVariableMap, boolean inParameterizedType, World w) {
+public static final UnresolvedType AROUND_CLOSURE_TYPE = UnresolvedType
+public static ResolvedMember interMethodBridger(ResolvedMember meth, UnresolvedType aspectType, boolean onInterface) {
+private boolean mungeNewMethod(BcelClassWeaver weaver, NewMethodTypeMunger munger) {
+private void deleteNewAndDup() {
+private void deleteNewAndDup() {
+private void retargetFrom(InstructionHandle old, InstructionHandle fresh) {
+public class Ajc162Tests extends org.aspectj.testing.XMLBasedAjcTestCase {
+public void testPerClause2() {
+public void testAnnotationDecp_pr239441() {
+public IRelationship get(String source, IRelationship.Kind kind, String relationshipName, boolean runtimeTest,
+public Object put(Object o, Object p) {
+public void put(String source, IRelationship relationship) {
+public void clear() {
+public AnnotationAJ getAnnotationOfType(UnresolvedType ofType) {
+public MultiProjTestOutputLocationManager(String testProjectPath) {
+public List getAllOutputLocations() {
+classOutputLoc = new File(testProjectOutputPath);
+public String getSourceFolderForFile(File sourceFile) {
+public void testAspectPath_pr242797_c41() {
+private static String signatureToName(String signature) {
+private IHierarchy model = null;
+public ResolvedType resolve(UnresolvedType ty, boolean allowMissing) {
+private NamePattern[] namePatterns;
+private TypePattern resolveGenericWildcard(IScope scope, UnresolvedType aType) {
+public static final String DEFAULT_CLASSPATH_ENTRIES = 
+public class JDTLikeHandleProvider implements IElementHandleProvider {
+private final String emptyString = "";
+public String createHandleIdentifier(IProgramElement ipe) {
+public String createHandleIdentifier(IProgramElement ipe) {
+public String createHandleIdentifier(IProgramElement ipe) {
+private String getParameters(IProgramElement ipe) {
+private String getParameters(IProgramElement ipe) {
+private char[] getCount(IProgramElement ipe) {
+private char[] getCount(IProgramElement ipe) {
+private char[] getCount(IProgramElement ipe) {
+private char[] getCount(IProgramElement ipe) {
+public String getFileForHandle(String handle) {
+public int getLineNumberForHandle(String handle) {
+public int getOffSetForHandle(String handle) {
+public String createHandleIdentifier(File sourceFile, int line, int column, int offset) {
+public void testDontLoseAdviceMarkers_pr134471() {
+public void testDontLoseAdviceMarkers_pr134471() {
+public void testSpacewarHandles() {
+public void testModelWithMultipleSourceFolders() {
+public void testModelWithMultipleSourceFolders() {
+public static void dumptree(IProgramElement node, int indent) {
+public void testInvalidAspectpath_pr121395() {
+public void testBuildingTwoProjectsInTurns() {
+public void testBrokenCodeCompilation() {
+public void testBrokenCodeCompilation() {
+public void testBrokenCodeCompilation() {
+public void testBuildingTwoProjectsMakingSmallChanges() {
+public void testBuildingTwoProjectsAndVerifyingModel() {
+public void testStateManagement1() {
+public void testStateManagement2() {
+public void testBuildingDependantProjects() {
+public void testPr128618() {
+public void testPr92837() {
+public void testPr141956_IncrementallyCompilingAtAj() {
+public void testPr93310_2() {
+public void testPr113531() {
+public void testPr112736() {
+public void testPr112736() {
+public void testPr113257() {
+public void testPr128655() {
+public void testPr128655() {
+public void testPr128655() {
+public void testPr128655_2() {
+public void testPr128655_2() {
+public void testPr129163() {
+private void checkCompiled(String projectName, String typeNameSubstring) {
+public void testPr133117() {
+public void testPr131505() {
+public void testPr131505() {
+public void testPr131505() {
+public void testPr133532() {
+public void testPr133532_2() {
+public void testPr133532_3() {
+public void testPr134541() {
+public void testJDTLikeHandleProviderWithLstFile_pr141730() {
+public void testSwappingAdviceAndHandles_pr141730() {
+public void testInitializerCountForJDTLikeHandleProvider_pr141730() {
+public void testInitializerCountForJDTLikeHandleProvider_pr141730() {
+public void testPr134471_IncrementalCompilationAndModelUpdates() {
+public void testPr134471_IncrementalCompilationAndModelUpdates() {
+public void testPr134471_IncrementalCompilationAndModelUpdates() {
+public void testPr134471_MovingAdvice() {
+public void testAddingAndRemovingDecwWithStructureModel() {
+public void testAddingAndRemovingDecwWithStructureModel() {
+public void testPr134471_IncrementallyRecompilingTheAffectedClass() {
+public void testPr134471_IncrementallyRecompilingTheAffectedClass() {
+public void testPr134471_IncrementallyRecompilingAspectContainingDeclare() {
+public void testPr134471_IncrementallyRecompilingAspectContainingDeclare() {
+public void testPr134471_IncrementallyRecompilingTheClassAffectedByDeclare() {
+public void testPr134471_IncrementallyRecompilingTheClassAffectedByDeclare() {
+public void testPr134471_IncrementallyRecompilingTheClassAffectedByDeclare() {
+public void testPr134471_IncrementallyRecompilingTheClassAffectedByDeclare() {
+public void testDontLoseXlintWarnings_pr141556() {
+public void testDontLoseXlintWarnings_pr141556() {
+public void testAdviceDidNotMatch_pr152589() {
+public void testNoFullBuildOnChangeInSysOutInAdviceBody_pr154054() {
+public void testPR164384_1() {
+public void testPR164384_3() {
+public void testPR164384_3() {
+public void testPr168840() throws Exception {
+public void testPr168840() throws Exception {
+private List/* IProgramElement */getRelatedElements(IProgramElement advice) {
+private IProgramElement findCode(IProgramElement ipe, int linenumber) {
+private void printModel() {
+public class ModelTests extends ModelTestCase {
+public void testNewIProgramElementMethods_pr141730() {
+public void testPCDInClassAppearsInModel_pr148027() {
+public static Test suite() {
+public class AsmHierarchyBuilder extends ASTVisitor {
+public void buildStructureForCompilationUnit(CompilationUnitDeclaration cuDeclaration, IHierarchy structureModel,
+private void internalBuild(CompilationUnitDeclaration unit, IHierarchy structureModel) {
+private void internalBuild(CompilationUnitDeclaration unit, IHierarchy structureModel) {
+private IProgramElement findOrCreateChildSourceFolder(String sourceFolder, IHierarchy structureModel) {
+private IProgramElement genAddToNode(File sourceFile, CompilationUnitDeclaration unit, IHierarchy structureModel) {
+private IProgramElement genAddToNode(File sourceFile, CompilationUnitDeclaration unit, IHierarchy structureModel) {
+private IProgramElement genAddToNode(File sourceFile, CompilationUnitDeclaration unit, IHierarchy structureModel) {
+private IProgramElement genAddToNode(File sourceFile, CompilationUnitDeclaration unit, IHierarchy structureModel) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public void endVisit(TypeDeclaration typeDeclaration, CompilationUnitScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, ClassScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(TypeDeclaration memberTypeDeclaration, BlockScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+private ResolvedMember getPointcutDeclaration(ReferencePointcut rp, MethodDeclaration declaration) {
+private void addAllNamed(Pointcut pointcut, List pointcuts) {
+private String genSourceSignature(MethodDeclaration methodDeclaration) {
+protected void genBytecodeInfo(MethodDeclaration methodDeclaration, IProgramElement peNode) {
+public boolean visit(ImportReference importRef, CompilationUnitScope scope) {
+public boolean visit(ImportReference importRef, CompilationUnitScope scope) {
+public void endVisit(ImportReference importRef, CompilationUnitScope scope) {
+public boolean visit(FieldDeclaration fieldDeclaration, MethodScope scope) {
+protected String generateJavadocComment(ASTNode astNode) {
+protected String generateJavadocComment(ASTNode astNode) {
+protected String genSourceSignature(FieldDeclaration fieldDeclaration) {
+public boolean visit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+public boolean visit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+public boolean visit(ConstructorDeclaration constructorDeclaration, ClassScope scope) {
+private String genSourceSignature(ConstructorDeclaration constructorDeclaration) {
+public boolean visit(Initializer initializer, MethodScope scope) {
+protected int getStartLine(ASTNode n) {
+protected int getEndLine(ASTNode n) {
+private int getEndLine(AbstractVariableDeclaration avd) {
+private int getEndLine(AbstractMethodDeclaration amd) {
+private char[] getCount(IProgramElement ipe) {
+public void setOutputLocForResource(File f) {
+public void testModelWithMultipleSourceFolders() {
+public void testIncrementalItdsWithMultipleAspects_pr173729() {
+private boolean hasStructuralChanges(ClassFileReader reader, CompactTypeStructureRepresentation existingType) {
+public void testDecAtAnnoDecP_pr198341() { runTest("dec atanno and decp"); }
+public void installGlobals(AjBuildConfig global) { // XXX relies on default values
+private int sourceFileCount;
+private boolean openOutputStream(File outJar) {
+private void copyResourcesFromFile(File f, String filename, File src) throws IOException {
+private void writeDirectory(String directory, File srcloc) throws IOException {
+private void writeResource(String filename, byte[] content, File srcLocation) throws IOException {
+private void writeManifest() throws IOException {
+private void writeOutxmlFile() throws IOException {
+private Map /* File --> List (String) */findOutputDirsForAspects() {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+private void initBcelWorld(IMessageHandler handler) throws IOException {
+public String extractDestinationPathFromSourceFile(CompilationResult result) {
+classpaths[i] = (String) cps.get(i);
+private void writeDirectoryEntry(CompilationResult unitResult, ClassFile classFile, String filename) throws IOException {
+private String checkRtJar(AjBuildConfig buildConfig) {
+public String toString() {
+public void setStructureModel(IHierarchy structureModel) {
+public IProgressListener getProgressListener() {
+public String getOutputClassFileName(char[] eclipseClassFileName, CompilationResult result) {
+public String formatEntry(int phaseId, Object data) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void validateAdvice(MethodDeclaration methodDeclaration) {
+public AnnotationX convertEclipseAnnotation(Annotation eclipseAnnotation, World w) {
+public void methodMustOverride(AbstractMethodDeclaration method) {
+private void deleteBinaryClassFiles() {
+public ICompilerAdapter getAdapter(Compiler forCompiler) {
+public boolean match(CflowPointcut node, Object other) {
+public void q() throws InvalidInputException {
+public void testPropertyDescriptorsForDefaultTypePattern() {
+public void testPropertyDescriptorsForSignaturePattern() {
+public void testPropertyDescriptorsForAjTypeDeclaration() {
+public class AjPipeliningCompilerAdapter extends AbstractCompilerAdapter {
+public AjPipeliningCompilerAdapter(Compiler compiler, boolean isBatchCompile, BcelWorld world, BcelWeaver weaver,
+public void afterDietParsing(CompilationUnitDeclaration[] units) {
+public void afterResolving(CompilationUnitDeclaration unit) {
+public void afterAnalysing(CompilationUnitDeclaration unit) {
+public void afterGenerating(CompilationUnitDeclaration unit) {
+public void afterCompiling(CompilationUnitDeclaration[] units) {
+public void acceptResult(CompilationResult result) {
+private List getBinarySourcesFrom(Map binarySourceEntries) {
+private void ensureWeaverInitialized() {
+public boolean handleMessage(IMessage message) throws AbortException {
+public boolean handleMessage(IMessage message) throws AbortException {
+public boolean handleMessage(IMessage message) throws AbortException {
+private int getEndPos(ISourceLocation sLoc, CompilationResult result) {
+public AdviceDeclaration(CompilationResult result, AdviceKind kind) {
+public void resolveStatements() {
+classFile.generateMethodInfoHeader(binding);
+classFile.generateCodeAttributeHeader();
+classFile.generateCodeAttributeHeader();
+private static TypeBinding[] resize(int newSize, TypeBinding[] bindings) {
+public void postParse(TypeDeclaration typeDec) {
+private static Argument[] extendArgumentsLength(Argument[] args, int addedArguments) {
+public StringBuffer printReturnType(int indent, StringBuffer output) {
+private void generatePerSupportMembers(ClassFile classFile) {
+public PointcutDeclaration(CompilationResult compilationResult) {
+public StringBuffer printBody(int indent, StringBuffer output) {
+private void convertToPointcutDeclaration(MethodDeclaration methodDeclaration, ClassScope scope) {
+private static Annotation createAnnotationFromBcelAnnotation(AnnotationX annX, int pos, EclipseFactory factory) {
+public UnresolvedType fromBinding(TypeBinding binding) {
+public SyntheticFieldBinding createSyntheticFieldBinding(SourceTypeBinding owningType, ResolvedMember member) {
+public FieldBinding internalMakeFieldBinding(ResolvedMember member, List aliases) {
+private TypeVariableBinding makeTypeVariableBindingFromAJTypeVariable(TypeVariable tv) {
+public ResolvedType[] getAnnotationTypes() {
+private void mungeNewConstructor(SourceTypeBinding sourceType, NewConstructorTypeMunger munger) {
+private InterTypeMemberFinder findOrCreateInterTypeMemberFinder(SourceTypeBinding sourceType) {
+public ISourceLocation getSourceLocation() {
+private void maybeDeleteResource(String resName, List oldResources) {
+classesFromName.remove(cf.fullyQualifiedTypeName);
+private String stringifyList(Set l) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+protected IProject[] build(int kind, Map ignored, IProgressMonitor monitor) throws CoreException {
+public ICompilerAdapter getAdapter(Compiler forCompiler) {
+public ICompilerAdapter getAdapter(Compiler forCompiler) {
+public boolean handleMessage(IMessage message) throws AbortException {
+public String getOutputClassFileName(char[] eclipseClassFileName, CompilationResult result) {
+private EclipseAdapterUtils() {
+public ASTNode convert(AdviceDeclaration adviceDeclaration) {
+public ASTNode convert(AdviceDeclaration adviceDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.AbstractMethodDeclaration methodDeclaration) {
+public ASTNode convert(InterTypeFieldDeclaration fieldDecl) {
+public ASTNode convert(PointcutDeclaration pointcutDeclaration) {
+public ASTNode convert(PointcutDeclaration pointcutDeclaration) {
+public ASTNode convert(
+public SingleVariableDeclaration convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Argument argument) {
+public SingleVariableDeclaration convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Argument argument) {
+public SingleVariableDeclaration convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Argument argument) {
+public ArrayInitializer convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ArrayInitializer expression) {
+public TypeDeclaration convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ASTNode[] nodes) {
+public TypeDeclaration convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ASTNode[] nodes) {
+public Block convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Block statement) {
+public BreakStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.BreakStatement statement) {
+public CharacterLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.CharLiteral expression) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ClassLiteralAccess expression) {
+public CompilationUnit convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration unit, char[] source) {
+public CompilationUnit convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.CompilationUnitDeclaration unit, char[] source) {
+public StringLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ExtendedStringLiteral expression) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.FieldReference reference) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.FieldReference reference) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.FieldReference reference) {
+public NumberLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.FloatLiteral expression) {
+public ForStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ForStatement statement) {
+public ForStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ForStatement statement) {
+public IfStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.IfStatement statement) {
+public InstanceofExpression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.InstanceOfExpression expression) {
+public NumberLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.IntLiteral expression) {
+public NumberLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.IntLiteralMinValue expression) {
+public LabeledStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.LabeledStatement statement) {
+public InfixExpression convert(StringLiteralConcatenation expression) {
+public NormalAnnotation convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.NormalAnnotation annotation) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.OR_OR_Expression expression) {
+public PostfixExpression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.PostfixExpression expression) {
+public PrefixExpression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.PrefixExpression expression) {
+classInstanceCreation.setType(convertType(allocation.type));
+classInstanceCreation.setAnonymousClassDeclaration(anonymousClassDeclaration);
+classInstanceCreation.setSourceRange(start, allocation.sourceEnd - start + 1);
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Reference reference) {
+public SingleMemberAnnotation convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.SingleMemberAnnotation annotation) {
+public Statement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Statement statement) {
+public Statement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Statement statement) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.StringLiteral expression) {
+public SwitchStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.SwitchStatement statement) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ThisReference reference) {
+public Expression convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.ThisReference reference) {
+public BooleanLiteral convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.TrueLiteral expression) {
+public TryStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.TryStatement statement) {
+public TryStatement convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.TryStatement statement) {
+public ASTNode convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeDeclaration typeDeclaration) {
+public Name convert(org.aspectj.org.eclipse.jdt.internal.compiler.ast.TypeReference typeReference) {
+protected FieldDeclaration convertToFieldDeclaration(
+protected FieldDeclaration convertToFieldDeclaration(
+protected VariableDeclarationExpression convertToVariableDeclarationExpression(
+protected SingleVariableDeclaration convertToSingleVariableDeclaration(LocalDeclaration localDeclaration) {
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(InterTypeFieldDeclaration fieldDeclaration) {
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(InterTypeFieldDeclaration fieldDeclaration) {
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(
+protected VariableDeclarationFragment convertToVariableDeclarationFragment(
+protected VariableDeclarationStatement convertToVariableDeclarationStatement(
+public Type convertType(TypeReference typeReference) {
+public Type convertType(TypeReference typeReference) {
+public Type convertType(TypeReference typeReference) {
+public Type convertType(TypeReference typeReference) {
+public Type convertType(TypeReference typeReference) {
+protected Comment createComment(int[] positions) {
+protected Statement createFakeEmptyStatement(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Statement statement) {
+private Modifier createModifier(ModifierKeyword keyword) {
+private BlockScope lookupScope(ASTNode node) {
+private BlockScope lookupScope(ASTNode node) {
+private BlockScope lookupScope(ASTNode node) {
+protected void recordName(Name name, org.aspectj.org.eclipse.jdt.internal.compiler.ast.ASTNode compilerNode) {
+protected void recordNodes(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Javadoc javadoc, TagElement tagElement) {
+protected void recordNodes(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Javadoc javadoc, TagElement tagElement) {
+protected void recordNodes(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Javadoc javadoc, TagElement tagElement) {
+protected void recordNodes(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Javadoc javadoc, TagElement tagElement) {
+protected void recordNodes(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Javadoc javadoc, TagElement tagElement) {
+protected int retrieveEndingSemiColonPosition(int start, int end) {
+protected int retrieveEndOfDimensionsPosition(int start, int end) {
+protected int retrieveEndOfDimensionsPosition(int start, int end) {
+protected int retrieveEndOfElementTypeNamePosition(int start, int end) {
+protected int retrieveEndOfElementTypeNamePosition(int start, int end) {
+protected int retrieveEndOfRightParenthesisPosition(int start, int end) {
+protected int retrieveExtraDimension(int start, int end) {
+protected int retrieveExtraDimension(int start, int end) {
+protected void retrieveIdentifierAndSetPositions(int start, int end, Name name) {
+protected int retrieveIdentifierEndPosition(int start, int end) {
+protected int retrievePositionBeforeNextCommaOrSemiColon(int start, int end) {
+protected int retrievePositionBeforeNextCommaOrSemiColon(int start, int end) {
+protected int retrieveProperRightBracketPosition(int bracketNumber, int start) {
+protected int retrieveRightBraceOrSemiColonPosition(int start, int end) {
+protected int retrieveRightBraceOrSemiColonPosition(int start, int end) {
+protected int retrieveRightBrace(int start, int end) {
+protected int retrieveRightBracketPosition(int start, int end) {
+protected void retrieveSemiColonPosition(ASTNode node) {
+protected int retrieveStartBlockPosition(int start, int end) {
+protected int retrieveStartBlockPosition(int start, int end) {
+protected int retrieveStartingCatchPosition(int start, int end) {
+protected void setModifiers(AnnotationTypeMemberDeclaration annotationTypeMemberDecl,
+protected void setModifiers(SingleVariableDeclaration variableDecl, Argument argument) {
+protected void setModifiers(SingleVariableDeclaration variableDecl, Argument argument) {
+protected void setModifiers(SingleVariableDeclaration variableDecl, LocalDeclaration localDeclaration) {
+protected void setModifiers(SingleVariableDeclaration variableDecl, LocalDeclaration localDeclaration) {
+protected void setModifiers(VariableDeclarationExpression variableDeclarationExpression, LocalDeclaration localDeclaration) {
+protected QualifiedName setQualifiedNameNameAndSourceRanges(char[][] typeName, long[] positions,
+protected QualifiedName setQualifiedNameNameAndSourceRanges(char[][] typeName, long[] positions,
+protected QualifiedName setQualifiedNameNameAndSourceRanges(char[][] typeName, long[] positions,
+protected QualifiedName setQualifiedNameNameAndSourceRanges(char[][] typeName, long[] positions, int endingIndex,
+protected QualifiedName setQualifiedNameNameAndSourceRanges(char[][] typeName, long[] positions, int endingIndex,
+protected void setTypeNameForAnnotation(org.aspectj.org.eclipse.jdt.internal.compiler.ast.Annotation compilerAnnotation,
+protected void setTypeForField(FieldDeclaration fieldDeclaration, Type type, int extraDimension) {
+protected void setTypeForMethodDeclaration(MethodDeclaration methodDeclaration, Type type, int extraDimension) {
+protected void setTypeForSingleVariableDeclaration(SingleVariableDeclaration singleVariableDeclaration, Type type,
+protected void setTypeForVariableDeclarationExpression(VariableDeclarationExpression variableDeclarationExpression, Type type,
+protected void setTypeForVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement, Type type,
+protected static List aspectPROPERTY_DESCRIPTORS_3_0;
+protected static List aspectPROPERTY_DESCRIPTORS_3_0;
+private boolean isPrivileged = false;
+private boolean isPrivileged = false;
+private boolean isPrivileged = false;
+public static List propertyDescriptors(int apiLevel) {
+public void setPerClause(ASTNode perClause) {
+public List getAdvice() {
+public static List propertyDescriptors(int apiLevel) {
+public static List propertyDescriptors(int apiLevel) {
+public static List propertyDescriptors(int apiLevel) {
+public static int bareMain(String[] args, boolean useSystemExit, List fails, List errors, List warnings, List infos) {
+private static void readMessages(IMessageHolder holder, IMessage.Kind kind, boolean orGreater, List sink) {
+public void runMain(String[] args, boolean useSystemExit) {
+public void testPropertyDescriptorsForPointcutDeclaration() {
+public void testPropertyDescriptorsForAspectDeclaration() {
+public void testPropertyDescriptorsForAjTypeDeclaration2() {
+public void testPropertyDescriptorsForAjTypeDeclaration3() {
+public void testPropertyDescriptorsForDeclareAtField() {
+public void testPropertyDescriptorsForDeclareAtType() {
+public void testPropertyDescriptorsForDeclareErrorDeclaration() {
+private void generatePerSupportMembers(ClassFile classFile) {
+classFile.generateMethodInfoHeader(methodBinding);
+public void generate(CodeStream codeStream) {
+public void generate(CodeStream codeStream) {
+public void generate(CodeStream codeStream) {
+private void buildPerClause(ClassScope scope) {
+private void checkTypeDeclaration(TypeDeclaration typeDecl) {
+private void checkTypeDeclaration(TypeDeclaration typeDecl) {
+private void checkTypeDeclaration(TypeDeclaration typeDecl) {
+private void validateAspectDeclaration(TypeDeclaration typeDecl) {
+private void ensureVoidReturnType(MethodDeclaration methodDeclaration) {
+private void ensureVoidReturnType(MethodDeclaration methodDeclaration) {
+private String maybeGetExtraArgName() {
+private String getStringLiteralFor(String memberName, Annotation inAnnotation, int[] location) {
+private void copyAllFields(MethodDeclaration from, MethodDeclaration to) {
+private static class AspectJAnnotations {
+private static class AspectJAnnotations {
+public AspectJAnnotations(Annotation[] annotations) {
+public AspectJAnnotations(Annotation[] annotations) {
+public boolean hasAspectJAnnotations() {
+public Object visit(IfPointcut node, Object data) {
+private void buildInterTypeAndPerClause(ClassScope s) {
+private boolean isAspect(TypeDeclaration decl) {
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private void weaveInterTypeDeclarations(SourceTypeBinding sourceType, Collection typeMungers, Collection declareParents,
+private boolean doDeclareParents(DeclareParents declareParents, SourceTypeBinding sourceType) {
+private boolean doDeclareAnnotations(DeclareAnnotation decA, SourceTypeBinding sourceType, boolean reportProblems) {
+private boolean doDeclareAnnotations(DeclareAnnotation decA, SourceTypeBinding sourceType, boolean reportProblems) {
+private void addParent(SourceTypeBinding sourceType, ResolvedType parent) {
+public void anonymousTypeBindingCreated(LocalTypeBinding aBinding) {
+private static void generateAnnotation(Annotation annotation, AnnotationAJ annotationAJ) {
+private static void generateAnnotation(Annotation annotation, AnnotationAJ annotationAJ) {
+private static AnnotationValue generateElementValue(Expression defaultValue, TypeBinding memberValuePairReturnType) {
+private static AnnotationValue generateElementValue(Expression defaultValue, TypeBinding memberValuePairReturnType) {
+private static AnnotationValue generateElementValueForNonConstantExpression(Expression defaultValue,
+private static AnnotationValue generateElementValueForNonConstantExpression(Expression defaultValue,
+private static AnnotationValue generateElementValueForNonConstantExpression(Expression defaultValue,
+public UnresolvedType fromBinding(TypeBinding binding) {
+private UnresolvedType fromTypeVariableBinding(TypeVariableBinding aTypeVariableBinding) {
+public UnresolvedType[] fromBindings(TypeBinding[] bindings) {
+public EclipseTypeMunger makeEclipseTypeMunger(ConcreteTypeMunger concrete) {
+public ResolvedMember makeResolvedMember(MethodBinding binding, TypeBinding declaringType, MemberKind memberKind) {
+public TypeBinding makeTypeBinding(UnresolvedType typeX) {
+private boolean isParameterizedWithTypeVariables(UnresolvedType typeX) {
+private TypeBinding makeTypeBinding1(UnresolvedType typeX) {
+private TypeBinding makeTypeBinding1(UnresolvedType typeX) {
+private TypeBinding makeTypeBinding1(UnresolvedType typeX) {
+private TypeBinding makeTypeBinding1(UnresolvedType typeX) {
+public FieldBinding internalMakeFieldBinding(ResolvedMember member, List aliases) {
+private TypeVariableBinding[] makeTypeVariableBindingsFromAJTypeVariables(TypeVariable[] typeVariables) {
+public void addTypeBinding(TypeBinding binding) {
+public void minicleanup() {
+protected void fillDeclaredMembers() {
+private ResolvedPointcutDefinition makeResolvedPointcutDefinition(AbstractMethodDeclaration md) {
+public boolean hasAnnotation(UnresolvedType ofType) {
+public boolean hasAnnotation(UnresolvedType ofType) {
+private void generateAnnotation(Annotation annotation, AnnotationAJ annotationAJ) {
+private void generateAnnotation(Annotation annotation, AnnotationAJ annotationAJ) {
+private AnnotationValue generateElementValue(Expression defaultValue, TypeBinding memberValuePairReturnType) {
+private AnnotationValue generateElementValueForNonConstantExpression(Expression defaultValue, TypeBinding defaultValueBinding) {
+private AnnotationValue generateElementValueForNonConstantExpression(Expression defaultValue, TypeBinding defaultValueBinding) {
+public Collection getDeclares() {
+private TypeVariable typeParameter2TypeVariable(TypeParameter aTypeParameter) {
+private TypeVariable typeParameter2TypeVariable(TypeParameter aTypeParameter) {
+public InterTypeMethodBinding(EclipseFactory world, ResolvedTypeMunger munger, UnresolvedType withinType,
+public boolean canBeSeenBy(TypeBinding receiverType, InvocationSite invocationSite, Scope scope) {
+public String toString() {
+private void recordClassFile(UnwovenClassFile thisTime, File lastTime) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public void genLabelAndKind(MethodDeclaration methodDeclaration, IProgramElement node) {
+public void setParameters(AbstractMethodDeclaration md, IProgramElement pe) {
+public void setParameters(AbstractMethodDeclaration md, IProgramElement pe) {
+public boolean visit(MethodDeclaration methodDeclaration, ClassScope scope) {
+public AjASTMatcher() {
+public boolean match(PointcutDeclaration node, Object other) {
+public boolean match(NotPointcut node, Object other) {
+public boolean match(PerTypeWithin node, Object other) {
+public boolean match(CflowPointcut node, Object other) {
+public boolean match(AfterAdviceDeclaration node, Object other) {
+public boolean match(AroundAdviceDeclaration node, Object other) {
+public boolean match(InterTypeFieldDeclaration node, Object other) {
+public boolean match(InterTypeMethodDeclaration node, Object other) {
+public void test_cantMakeInheritedInstanceMethodsStatic() {
+public void xxxtest_cantExtendFinalClass() { // XXX removed test, need to discuss with andy how to repair...
+public void test_cantReduceVisibilityOfOverriddenMethods_1() {
+public void test_cantReduceVisibilityOfOverriddenMethods_2() {
+public void test_overriddenMethodsCantHaveIncompatibleReturnTypes() {
+public void test_inheritedAbstractMethodsMustBeImplemented_1() {
+public void test_interfaceMethodsImplemented() {
+public void test_inheritedAbstractMethodsMustBeImplemented_2() {
+public void test_inheritedAbstractMethodsMustBeImplemented_3() {
+public void test_missingCtorAddedViaITD() {
+public void testPropertyDescriptorsForDeclareParentsDeclaration() {
+public void testPropertyDescriptorsForDeclarePrecedence() {
+public void testPropertyDescriptorsForDeclareSoftDeclaration() {
+public void testPropertyDescriptorsForDeclareWarningDeclaration() {
+public AjBuildConfig populateBuildConfig(AjBuildConfig buildConfig, String[] args, boolean setClasspath, File configFile) {
+public void parseOption(String arg, LinkedList args) { // XXX use ListIterator.remove()
+public void parseOption(String arg, LinkedList args) { // XXX use ListIterator.remove()
+public void parseOption(String arg, LinkedList args) { // XXX use ListIterator.remove()
+public String getAnnotationDefaultValue() {
+public String getAnnotationDefaultValue() {
+public ResolvedType[] getAnnotationTypes() {
+public String[] getParameterNames() {
+private Annotation[] getEclipseAnnotations() {
+public void unhandledException(TypeBinding exceptionType, ASTNode location) {
+public void disallowedTargetForAnnotation(Annotation annotation) {
+private Map/* <File, List<ClassFile> */fullyQualifiedTypeNamesResultingFromCompilationUnit = new HashMap();
+public boolean prepareForNextBuild(AjBuildConfig newBuildConfig) {
+private List /* File */getOutputLocations(AjBuildConfig config) {
+private boolean changedAndNeedsFullBuild(List oldPath, List newPath, boolean checkClassFiles, List outputLocs) {
+private boolean changedAndNeedsFullBuild(List oldPath, List newPath, boolean checkClassFiles, List outputLocs) {
+private boolean changedAndNeedsFullBuild(List oldPath, List newPath, boolean checkClassFiles, List outputLocs) {
+public Set getFilesToCompile(boolean firstPass) {
+public Map /* String -> List<ucf> */getBinaryFilesToCompile(boolean firstTime) {
+public Map /* String -> List<ucf> */getBinaryFilesToCompile(boolean firstTime) {
+private void deleteClassFiles() {
+private UnwovenClassFile createUnwovenClassFile(AjBuildConfig.BinarySourceFile bsf) {
+public void noteResult(InterimCompilationResult result) {
+private void deleteTypesThatWereInThisCompilationUnitLastTimeRoundButHaveBeenDeletedInThisIncrement(File sourceFile,
+private void removeFromClassFilesIfPresent(String className, List classFiles) {
+classFiles.remove(victim);
+private void recordWhetherCompilationUnitDefinedAspect(File sourceFile, CompilationResult cr) {
+private UnwovenClassFile removeFromPreviousIfPresent(UnwovenClassFile cf, InterimCompilationResult previous) {
+private void recordClassFile(UnwovenClassFile thisTime, File lastTime) {
+private void recordClassFile(UnwovenClassFile thisTime, File lastTime) {
+private static final char[][] EMPTY_CHAR_ARRAY = new char[0][];
+private static StringSet makeStringSet(List strings) {
+protected void addAffectedSourceFiles(Set addTo, Set lastTimeSources) {
+protected void addAffectedSourceFiles(Set addTo, Set lastTimeSources) {
+protected void recordTypeChanged(String typename) {
+protected void addDependentsOf(File sourceFile) {
+public long getLastFullBuildTime() {
+public void recordBinarySource(String fromPathName, List unwovenClassFiles) {
+public void recordBinarySource(String fromPathName, List unwovenClassFiles) {
+public void recordResource(String resourceName) {
+public boolean accept(File dir, String name) {
+public Map getAspectNamesToFileNameMap() {
+public AjBuildManager getAjBuildManager() {
+public ASTNode convert(AdviceDeclaration adviceDeclaration){
+public void q() throws InvalidInputException {
+public void testPropertyDescriptorsForPointcutDeclaration() {
+public void testPropertyDescriptorsForPointcutDeclaration() {
+public void testPropertyDescriptorsForPointcutDeclaration() {
+public void testInternalPointcutDeclaration() {
+public void testInternalPointcutDeclaration() {
+public void testPropertyDescriptorsForAspectDeclaration() {
+public void testPropertyDescriptorsForAspectDeclaration() {
+public void testPropertyDescriptorsForAspectDeclaration() {
+public void testPropertyDescriptorsForAjTypeDeclaration() {
+public void testPropertyDescriptorsForAjTypeDeclaration2() {
+public void testPropertyDescriptorsForAjTypeDeclaration3() {
+public void testPropertyDescriptorsForDeclareAtField() {
