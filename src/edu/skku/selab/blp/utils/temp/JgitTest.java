@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2014 by Software Engineering Lab. of Sungkyunkwan University. All Rights Reserved.
+ * 
+ * Permission to use, copy, modify, and distribute this software and its documentation for
+ * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
+ * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
+ */
 package edu.skku.selab.blp.utils.temp;
 
 import java.io.BufferedReader;
@@ -19,27 +26,27 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.TreeWalk; 
 
+/**
+ * @author Jun Ahn(ahnjune@skku.edu)
+ * @author Klaus Changsun Youm(klausyoum@skku.edu)
+ *
+ */
 public class JgitTest {
-	public static int addMethodnum1 = 0;
-	public static int addMethodnum2 = 0;
 
-	
 	public static String containsMethodName(String line) {
-		line = line.trim();
-		
 		String foundResult = null;
 		String[] wordArray = null;
 		String foundMethod = null;
 		
 		// check that a line is comment.
-		if (line.startsWith("//") || line.startsWith("/*") || line.startsWith("*/") || line.startsWith("*"))
+		String trimmedLine = line.trim();
+		if (trimmedLine.startsWith("//") || trimmedLine.startsWith("/*") ||
+				trimmedLine.startsWith("*/") || trimmedLine.startsWith("*"))
 			return null;
 		
 		// split code and comment if the line has comment.
@@ -47,6 +54,10 @@ public class JgitTest {
 		methodCandidate = line;
 		if (methodCandidate.indexOf("//") > 0) {
 			methodCandidate = methodCandidate.substring(0, methodCandidate.indexOf("//"));	
+		}
+		
+		if (methodCandidate.contains(";")) {
+			return null;
 		}
 		
 		int index = methodCandidate.indexOf('(');
@@ -57,13 +68,15 @@ public class JgitTest {
 			methodCandidate = methodCandidate.substring(0, index + 1);
 		}
 		
-		if (methodCandidate.contains("=") || methodCandidate.contains(" new ") ||
-				methodCandidate.contains(" class ") || methodCandidate.contains(" extends "))
-			return null;		
+		Pattern keywordPattern = Pattern.compile("(\\s)+(=|new|class|extends|if|else|return)(\\s)+");
+		Matcher keywordMatcher = keywordPattern.matcher(methodCandidate);
+		if (keywordMatcher.find()) {
+			return null;
+		}
 	
-		String regExp = "(public|private|protected)*\\s+"
+		String regExp = "(public|private|protected)+\\s+"
 				+ "(abstract|static|final|native|strictfp|synchronized)*\\s*"
-				+ "([A-z0-9_,.<>\\[\\]]*\\s*)*" + "\\(";
+				+ "([A-z0-9_,.$<>\\[\\]]*\\s*)*" + "\\(";
 		Pattern pattern = Pattern.compile(regExp);
 		Matcher matcher = pattern.matcher(methodCandidate);
 		if (matcher.find()) {
@@ -84,121 +97,119 @@ public class JgitTest {
 	}
 	
 	public static void main(String[] args) throws IOException, NoHeadException, GitAPIException {
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File("/Users/ahnjun/git/org.aspectj/.git"))
-		  .readEnvironment() // scan environment GIT_* variables
-		  .findGitDir() // scan up the file system tree
-		  .build();
-		
-		File gitWorkDir = new File("/Users/ahnjun/git/org.aspectj/.git");
-		Git git=Git.open(gitWorkDir);
-		Git git1 = new Git(repository);
+		String userHomeDir = System.getProperty("user.home");
+		String GitRepoPath = userHomeDir + "/git/org.aspectj/.git";
+//		String GitRepoPath = userHomeDir + "/git/eclipse.platform.swt/.git";
+//		String GitRepoPath = userHomeDir + "/git/zxing/.git";
+
+		File gitWorkDir = new File(GitRepoPath);
+		Git git = Git.open(gitWorkDir);
 		Iterable<RevCommit> commits = git.log().all().call();
-		ObjectReader reader = repository.newObjectReader();
-		 
+
 		try {
 			for (RevCommit revCommit : commits){	
-				String hashId = revCommit.getName();
-				String oldHash = revCommit.getName();
+				String commitId = revCommit.getName();
 				String fullMessage = revCommit.getShortMessage();
-				List<String> Array2 = new ArrayList<String>();
-    			List<Integer> Array3 = new ArrayList<Integer>();
-    			int num1 = 0;
-    			
-				System.out.println("Hash ID : " + oldHash); // 해쉬 ID
+				System.out.println("Commit ID : " + commitId);
 
-				if (fullMessage.matches(".*fix.*") == true || fullMessage.matches(".*bug.*") == true
-						|| fullMessage.matches(".*Fix.*") == true || fullMessage.matches(".*Bug.*") == true){
-					
-					ObjectId oldId = git.getRepository().resolve(oldHash + "~1^{tree}");
-				    ObjectId headId = git.getRepository().resolve(oldHash + "^{tree}");
-				    ObjectReader reader1 = git.getRepository().newObjectReader();
+				if (fullMessage.matches(".*fix.*") || fullMessage.matches(".*Fix.*")
+						|| fullMessage.matches(".*bug.*") || fullMessage.matches(".*Bug.*")) {
+					ObjectId oldId = git.getRepository().resolve(commitId + "~1^{tree}");
+					ObjectId headId = git.getRepository().resolve(commitId + "^{tree}");
+					ObjectReader newObjectReader = git.getRepository().newObjectReader();
 
-				    CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
-				    oldTreeIter.reset(reader1, oldId);
-				    CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-				    newTreeIter.reset(reader1, headId);
-				 
-				    List<DiffEntry> diffs= git.diff()
-				            .setNewTree(newTreeIter)
-				            .setOldTree(oldTreeIter)
-				            .call();
-				     
-				    ByteArrayOutputStream out = new ByteArrayOutputStream();
-				    DiffFormatter df = new DiffFormatter(out);
-				    df.setRepository(git.getRepository());
-				 				    
+					CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
+					oldTreeIter.reset(newObjectReader, oldId);
+					CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
+					newTreeIter.reset(newObjectReader, headId);
+
+					List<DiffEntry> diffs= git.diff()
+							.setNewTree(newTreeIter)
+							.setOldTree(oldTreeIter)
+							.call();
+
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					DiffFormatter df = new DiffFormatter(out);
+					df.setRepository(git.getRepository());
+
 					for(DiffEntry diff : diffs) {			    	
 						df.format(diff);
 						String diffText = out.toString("UTF-8");
-						int diffTimeing = diffText.indexOf("@@");
-						
-					    RevTree tree = revCommit.getTree();
-					    String newPath = diff.getNewPath();
-					    String oldPath = diff.getOldPath();
-					    TreeWalk treeWalk = TreeWalk.forPath(reader1, newPath, tree);
-					    
-					    if (newPath.length() == newPath.lastIndexOf(".java")+5){
-						    	System.out.println("File Name : " + newPath);
-					    		String methodData = diffText.substring(diffTimeing).replace("\n+", "\n");
-					    		BufferedReader methodRead = new BufferedReader(new StringReader(methodData));
-					    		String i = null;
-					    		int iii = 0;
-					    		
-					    		while((i = methodRead.readLine()) != null){
-					    			iii++;
-					    				Pattern addMethod = Pattern.compile("([+][0-9]*)([,][0-9]*)");
-					    				Matcher match1 = addMethod.matcher(i);
-					    				
-					    				while(match1.find()) {
-					    					if (i.indexOf("@@") != -1){
-					    						
-					    						addMethodnum1 = Integer.parseInt(match1.group(1).replace("+", ""));
-						    		            addMethodnum2 = Integer.parseInt(match1.group(2).replace(",", ""));
-						    		            
-						    		            if (addMethod.matcher(i) != null){
-											        if (treeWalk != null) {
-											        	// use the blob id to read the file's data
-											        	byte[] data = reader1.open(treeWalk.getObjectId(0)).getBytes();
-											        	String sourceCode = new String(data, "UTF-8");	
-											        	BufferedReader codeReader = new BufferedReader(new StringReader(sourceCode));
-											        	String ii = null;
-											        	
-											        	List<String> Array1 = new ArrayList<String>();
-											        	
-											        	int codeNum = 0;
-											        	while((ii = codeReader.readLine()) != null){
-											        		codeNum++;
-											        		Array1.add(ii);
-											        		int q = 0;						        		
-											        		if(codeNum == addMethodnum1+addMethodnum2){
-											        			for(int ee=codeNum-2; ee > 0; ee--){	
-											        				String foundMethod = null;
-											        				foundMethod = JgitTest.containsMethodName(Array1.get(ee));
-											        				if (foundMethod != null){
-											        					System.out.println("	[MATHCED] " + foundMethod + " - " + Array1.get(ee).replaceAll("\t", ""));
-											        				}
-										        				}
-										        			}			            
-										        		}
-										        	}
-						    					}
-					    					} 
-					    				}
-					    		}
-					    }
-					out.reset();
+						int chunkHeaderIndex = diffText.indexOf("@@");
+						// in case of deleted file
+						if (chunkHeaderIndex == -1) {
+							continue;
+						}
+
+						RevTree tree = revCommit.getTree();
+						String oldPath = diff.getOldPath();
+						String newPath = diff.getNewPath();
+						TreeWalk treeWalk = TreeWalk.forPath(newObjectReader, newPath, tree);
+
+						if (newPath.endsWith(".java")) {
+							System.out.println("New path : " + newPath);
+							String methodData = diffText.substring(chunkHeaderIndex);
+							BufferedReader chunk = new BufferedReader(new StringReader(methodData));
+							String line = null;
+							int chunkStartLineNum = 0;
+							int chunkLineCount = 0;
+							
+							if ((line = chunk.readLine()) != null) {
+								System.out.printf("Chunk header: %s\n", line);
+
+								String[] splitWords = line.split(" ")[2].split("[+,]");
+								if (splitWords.length >= 3) {
+									chunkStartLineNum = Integer.parseInt(splitWords[1]);
+									chunkLineCount = Integer.parseInt(splitWords[2]);
+								} else if (splitWords.length == 2) { // "--0,0 +1"
+									chunkStartLineNum = Integer.parseInt(splitWords[1]);
+									chunkLineCount = Integer.parseInt(splitWords[1]);
+								} else {
+									System.out.printf("Diff Data: %s\n", diffText);
+									System.err.println("ERROR: Invalid chunk header!");
+									System.exit(-1);
+								}
+								
+								System.out.printf("%s => %d, %d\n", line, chunkStartLineNum, chunkLineCount);
+							} else {
+								System.err.println("ERROR: Invalid chunk header!");
+								System.exit(-1);
+							}
+							
+							if (treeWalk != null) {
+								// use the blob id to read the file's data
+								byte[] data = newObjectReader.open(treeWalk.getObjectId(0)).getBytes();
+								String sourceCode = new String(data, "UTF-8");	
+								BufferedReader codeReader = new BufferedReader(new StringReader(sourceCode));
+
+								String codeLine = null;
+								List<String> codeLineArray = new ArrayList<String>();
+								while((codeLine = codeReader.readLine()) != null){
+									codeLineArray.add(codeLine);
+								}
+								
+								for(int i = (chunkStartLineNum + chunkLineCount - 2); i >= 0; i--){	
+//									System.out.printf("[%d]: %s\n", i, codeLineArray.get(i));
+									
+									String foundMethod = JgitTest.containsMethodName(codeLineArray.get(i));
+									if (foundMethod != null){
+										System.out.println("	[MATHCED] " + foundMethod + " - " + codeLineArray.get(i).replaceAll("\t", ""));
+									}
+								}
+							}
+						}
+						out.reset();
 					}	
 				}
 				System.out.println("-------------------------");
 			}
-		
+
 		} catch (Exception e){
 			StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
 			String exceptionAsStrting = sw.toString();
-			
-			System.err.println("Error : "+ exceptionAsStrting);
+
+			System.err.println("Unexpcted exception: "+ exceptionAsStrting);
 		}
 	}
 }
