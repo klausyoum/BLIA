@@ -177,8 +177,6 @@ public class BugRepoAnalyzer {
 		BugDAO bugDAO = new BugDAO();
 		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
-		String productName = Property.getInstance().getProductName();
-		
         for(int i = 0; i < bugs.size(); i++) {
         	Bug bug = bugs.get(i);
         	int firstBugID = bug.getID();
@@ -187,8 +185,8 @@ public class BugRepoAnalyzer {
         	String fixedDateString = bug.getFixedDateString();
         	ArrayList<Bug> targetBugs = null;
         	int targetIndex = 0;
-        	if (1 < bugDAO.getBugCountWithFixedDate(productName, fixedDateString)) {
-        		targetBugs = bugDAO.getPreviousFixedBugs(productName, fixedDateString, firstBugID);
+        	if (1 < bugDAO.getBugCountWithFixedDate(fixedDateString)) {
+        		targetBugs = bugDAO.getPreviousFixedBugs(fixedDateString, firstBugID);
         		targetIndex = targetBugs.size();
         	} else {
         		targetBugs = bugs;

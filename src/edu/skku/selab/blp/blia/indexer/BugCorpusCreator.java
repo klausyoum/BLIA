@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -21,15 +22,24 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import edu.skku.selab.blp.Property;
+import edu.skku.selab.blp.common.ASTCreator;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.Comment;
+import edu.skku.selab.blp.common.CommitInfo;
+import edu.skku.selab.blp.common.ExtendedCommitInfo;
+import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Splitter;
@@ -72,7 +82,6 @@ public class BugCorpusCreator {
 	 */
 	public void create(boolean stackTraceAnalysis) throws Exception {
 		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		ArrayList<Bug> list = parseXML(stackTraceAnalysis);
 		property.setBugReportCount(list.size());
 		
@@ -85,13 +94,13 @@ public class BugCorpusCreator {
 		if (!file.exists())
 			file.mkdir();
 		
+		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		BugDAO bugDAO = new BugDAO();
 		Bug bug;
 		Iterator<Bug> bugIter = list.iterator();
 		
 		while (bugIter.hasNext()) {
 			bug = (Bug) bugIter.next();
-			bug.setProductName(productName);
 			
 			// test code
 //			if (bug.getID().contains("92241")) {
@@ -130,21 +139,31 @@ public class BugCorpusCreator {
 			writer.flush();
 			writer.close();
 			
-			// DO NOT insert corpus here~!
-			// Creating BugCorpus willl be done at BugVectorCreator
-//			String[] corpusArray = corpuses.toString().split(" ");
-//			for (int i = 0; i < corpusArray.length; i++) {
-//				bugDAO.insertCorpus(corpusArray[i], productName);
-//			}
-			
-//			bugDAO.insertBug(bug);
 			bugDAO.insertStructuredBug(bug);
 			
-			TreeSet<String> fixedFiles = bug.getFixedFiles();
-			Iterator<String> fixedFilesIter = fixedFiles.iterator();
-			while (fixedFilesIter.hasNext()) {
-				String fixedFileName = (String) fixedFilesIter.next();
-				bugDAO.insertBugFixedFileInfo(bug.getID(), fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING, productName);
+//			TreeSet<String> fixedFiles = bug.getFixedFiles();
+//			Iterator<String> fixedFilesIter = fixedFiles.iterator();
+//			while (fixedFilesIter.hasNext()) {
+//				String fixedFileName = (String) fixedFilesIter.next();
+//				bugDAO.insertBugFixedFileInfo(bug.getID(), fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
+//			}
+			
+			ArrayList<ExtendedCommitInfo> fixedCommitInfos = bug.getFixedCommitInfos();
+			for (int i = 0; i < fixedCommitInfos.size(); ++i) {
+				int bugID = bug.getID();
+				HashMap<String, ArrayList<Method>> allFixedMethodsMap = fixedCommitInfos.get(i).getAllFixedMethods();
+				Iterator<String> fixedFilesIter = allFixedMethodsMap.keySet().iterator();
+				while (fixedFilesIter.hasNext()) {
+					String fixedFileName = (String) fixedFilesIter.next();
+					int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
+					
+					ArrayList<Method> fixedMethods = allFixedMethodsMap.get(fixedFileName);
+					for (int j = 0; j < fixedMethods.size(); ++j) {
+						Method method = fixedMethods.get(j);
+						method.setSourceFileVersionID(sourceFileVersionID);
+						bugDAO.insertBugFixedMethodInfo(bugID, method);
+					}
+				}
 			}
 		}
 	}
@@ -263,28 +282,57 @@ public class BugCorpusCreator {
 											}
 										}
 									}
-								}
-								if (node.getNodeName().equals("fixedFiles")) {
-									NodeList _l = node.getChildNodes();
-									for (int j = 0; j < _l.getLength(); j++) {
-										Node _n = _l.item(j);
-										if (_n.getNodeName().equals("file")) {
-											String fileName = _n.getTextContent();
-											
-											String checkingString = "org.aspectj/modules/"; 
-											if (fileName.contains(checkingString)) {
-												fileName = fileName.substring(checkingString.length(), fileName.length());
-												
-//												int pathIndex = fileName.indexOf("/src/");
-//												if (-1 != pathIndex) {
-//													fileName = fileName.substring(pathIndex + 5, fileName.length());
-//													fileName = fileName.replace('/', '.');
-//												}
-						
-												// debug code
-												System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fileName);
+								} else if (node.getNodeName().equals("fixedCommits")) {
+									NodeList commitList = node.getChildNodes();
+									for (int j = 0; j < commitList.getLength(); j++) {
+										Node commitNode = commitList.item(j);
+										if (commitNode.getNodeName().equals("commit")) {
+											String commitID = commitNode.getAttributes().getNamedItem("id").getNodeValue();
+											String author = commitNode.getAttributes().getNamedItem("author").getNodeValue();
+											String commitDateString = commitNode.getAttributes().getNamedItem("date").getNodeValue();
+
+											ExtendedCommitInfo fixedCommitInfo = new ExtendedCommitInfo();
+											fixedCommitInfo.setCommitID(commitID);
+											fixedCommitInfo.setCommitter(author);
+											fixedCommitInfo.setCommitDate(commitDateString);
+
+											NodeList fixedFileList = commitNode.getChildNodes();
+											for (int k = 0; k < fixedFileList.getLength(); k++) {
+												Node fixedFile = fixedFileList.item(k);
+												if (fixedFile.getNodeName().equals("file")) {
+													String fixedFileName = fixedFile.getAttributes().getNamedItem("name").getNodeValue(); 
+													
+													String checkingString = "org.aspectj/modules/"; 
+													if (fixedFileName.contains(checkingString)) {
+														fixedFileName = fixedFileName.substring(checkingString.length(), fixedFileName.length());
+														
+//														int pathIndex = fileName.indexOf("/src/");
+//														if (-1 != pathIndex) {
+//															fileName = fileName.substring(pathIndex + 5, fileName.length());
+//															fileName = fileName.replace('/', '.');
+//														}
+								
+														// debug code
+														System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fixedFileName);
+													}
+													
+													NodeList fixedMethodList = fixedFile.getChildNodes();
+													for (int l = 0; l < fixedMethodList.getLength(); l++) {
+														Node fixedMethodNode = fixedMethodList.item(l);
+														if (fixedMethodNode.getNodeName().equals("method")) {
+															String methodName = fixedMethodNode.getAttributes().getNamedItem("name").getNodeValue();
+															String returnType = fixedMethodNode.getAttributes().getNamedItem("returnType").getNodeValue();
+															String params = fixedMethodNode.getAttributes().getNamedItem("parameters").getNodeValue();
+
+															Method fixedMethod = new Method(methodName, returnType, params);
+															fixedCommitInfo.addFixedMethod(fixedFileName, fixedMethod);
+														}
+													}
+												}
 											}
-											bug.addFixedFile(fileName);
+											
+//											bug.addFixedFile(fixedFileName); // previous version of BLIA
+											bug.addFixedCommitInfo(fixedCommitInfo);
 										}
 									}
 								}

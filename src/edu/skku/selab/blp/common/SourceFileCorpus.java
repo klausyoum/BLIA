@@ -23,6 +23,8 @@ public class SourceFileCorpus {
 	private String variablePart;
 	private String commentPart;
 	private ArrayList<String> importedClasses;
+	private ArrayList<Method> methodList;
+	
 	private double contentNorm;
 	private double classCorpusNorm;
 	private double methodCorpusNorm;
@@ -38,6 +40,7 @@ public class SourceFileCorpus {
 		variablePart = "";
 		commentPart = "";
 		importedClasses = null;
+		setMethodList(null);
 		
 		classCorpusNorm = 0;
 		methodCorpusNorm = 0;
@@ -209,5 +212,19 @@ public class SourceFileCorpus {
 	 */
 	public void setContentNorm(double contentNorm) {
 		this.contentNorm = contentNorm;
+	}
+
+	/**
+	 * @return the methodList
+	 */
+	public ArrayList<Method> getMethodList() {
+		return methodList;
+	}
+
+	/**
+	 * @param methodList the methodList to set
+	 */
+	public void setMethodList(ArrayList<Method> methodList) {
+		this.methodList = methodList;
 	}
 }

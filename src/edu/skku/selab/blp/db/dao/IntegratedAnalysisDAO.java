@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
+import edu.skku.selab.blp.db.IntegratedMethodAnalysisValue;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -38,7 +39,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			int sourceFileVersionID = integratedAnalysisValue.getSourceFileVersionID();
 			
 			if (INVALID == sourceFileVersionID) {
-				sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(integratedAnalysisValue.getFileName(), integratedAnalysisValue.getProductName(), integratedAnalysisValue.getVersion());
+				sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(integratedAnalysisValue.getFileName(), integratedAnalysisValue.getVersion());
 			}
 			
 			ps = analysisDbConnection.prepareStatement(sql);
@@ -49,7 +50,27 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			ps.setDouble(5, integratedAnalysisValue.getBugLocatorScore());
 			ps.setDouble(6, integratedAnalysisValue.getStackTraceScore());
 			ps.setDouble(7, integratedAnalysisValue.getCommitLogScore());
-			ps.setDouble(8, integratedAnalysisValue.getBLIAScore());
+			ps.setDouble(8, integratedAnalysisValue.getBliaScore());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int insertMethodAnalysisVaule(IntegratedMethodAnalysisValue integratedMethodAnalysisValue) {
+		String sql = "INSERT INTO INT_MTH_ANALYSIS (BUG_ID, MTH_ID, COMM_SCORE, BLIA_MTH_SCORE) "+
+				"VALUES (?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, integratedMethodAnalysisValue.getBugID());
+			ps.setInt(2, integratedMethodAnalysisValue.getMethodID());
+			ps.setDouble(3, integratedMethodAnalysisValue.getCommitLogScore());
+			ps.setDouble(4, integratedMethodAnalysisValue.getBliaMethodScore());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -102,10 +123,29 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 //		System.out.printf("Bug ID: %d, SourceFileVerID: %d\n", integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setDouble(1, integratedAnalysisValue.getBLIAScore());
+			ps.setDouble(1, integratedAnalysisValue.getBliaScore());
 			ps.setDouble(2, integratedAnalysisValue.getBugLocatorScore());
 			ps.setInt(3, integratedAnalysisValue.getBugID());
 			ps.setInt(4, integratedAnalysisValue.getSourceFileVersionID());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;		
+	}
+	
+	public int updateBLIAMethodScore(IntegratedMethodAnalysisValue integratedMethodAnalysisValue) {
+		String sql = "UPDATE INT_MTH_ANALYSIS SET BLIA_MTH_SCORE = ? WHERE BUG_ID = ? AND MTH_ID = ?";
+		int returnValue = INVALID;
+		
+		System.out.printf("Bug ID: %d, MethodID: %d\n", integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getBliaMethodScore());
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setDouble(1, integratedMethodAnalysisValue.getBliaMethodScore());
+			ps.setDouble(2, integratedMethodAnalysisValue.getBugID());
+			ps.setInt(3, integratedMethodAnalysisValue.getMethodID());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -139,7 +179,6 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		
 		int sourceFileVersionID = integratedAnalysisValue.getSourceFileVersionID();
 		if (INVALID == sourceFileVersionID) {
-			String productName = Property.getInstance().getProductName();
 			String fileName = integratedAnalysisValue.getFileName();
 			if (fileName.contains(".java")) {
 				fileName = fixFileName(fileName);
@@ -148,7 +187,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			String version = integratedAnalysisValue.getVersion();
 			
 			SourceFileDAO sourceFileDAO = new SourceFileDAO();
-			sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
+			sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, version);
 			
 			if (INVALID == sourceFileVersionID) {
 				return INVALID;
@@ -225,16 +264,59 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			e.printStackTrace();
 		}
 		
+		if (INVALID == returnValue)
+			return returnValue;
+		
+		sql = "DELETE FROM INT_MTH_ANALYSIS";
+		returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return returnValue;
+	}
+	
+	public HashMap<Integer, IntegratedMethodAnalysisValue> getMethodAnalysisValues(int bugID) {
+		HashMap<Integer, IntegratedMethodAnalysisValue> integratedMethodAnalysisValues = null;
+		IntegratedMethodAnalysisValue resultValue = null;
+
+		String sql = "SELECT A.MTH_ID, A.COMM_SCORE, A.BLIA_MTH_SCORE FROM INT_MTH_ANALYSIS A " +
+				"WHERE A.BUG_ID = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == integratedMethodAnalysisValues) {
+					integratedMethodAnalysisValues = new HashMap<Integer, IntegratedMethodAnalysisValue>();
+				}
+				
+				resultValue = new IntegratedMethodAnalysisValue();
+				resultValue.setBugID(bugID);
+				resultValue.setMethodID(rs.getInt("MTH_ID"));
+				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
+				resultValue.setBliaMethodScore(rs.getDouble("BLIA_MTH_SCORE"));
+				
+				integratedMethodAnalysisValues.put(resultValue.getMethodID(), resultValue);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return integratedMethodAnalysisValues;
 	}
 	
 	public HashMap<Integer, IntegratedAnalysisValue> getAnalysisValues(int bugID) {
 		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = null;
 		IntegratedAnalysisValue resultValue = null;
-
-//		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
-//				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
-//				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID";
 
 		String sql = "SELECT A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A " +
@@ -253,15 +335,13 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				
 				resultValue = new IntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
-//				resultValue.setFileName(rs.getString("SF_NAME"));
-//				resultValue.setProductName(rs.getString("PROD_NAME"));
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
 				resultValue.setVsmScore(rs.getDouble("VSM_SCORE"));
 				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
 				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
 				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
 				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
-				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
 				
 				integratedAnalysisValues.put(resultValue.getSourceFileVersionID(), resultValue);
 			}
@@ -276,7 +356,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		ArrayList<IntegratedAnalysisValue> bugLocatorRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
 
-		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
+		String sql = "SELECT C.SF_NAME, B.VER, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
 				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BL_SCORE != 0" +
 				"ORDER BY A.BL_SCORE DESC ";
@@ -299,13 +379,12 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				resultValue = new IntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setFileName(rs.getString("SF_NAME"));
-				resultValue.setProductName(rs.getString("PROD_NAME"));
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
 				resultValue.setVsmScore(rs.getDouble("VSM_SCORE"));
 				resultValue.setSimilarityScore(rs.getDouble("SIMI_SCORE"));
 				resultValue.setBugLocatorScore(rs.getDouble("BL_SCORE"));
 				resultValue.setStackTraceScore(rs.getDouble("STRACE_SCORE"));
-				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
 				
 				bugLocatorRankedValues.add(resultValue);
 			}
@@ -319,11 +398,6 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	public ArrayList<IntegratedAnalysisValue> getBLIARankedValues(int bugID, int limit) {
 		ArrayList<IntegratedAnalysisValue> bliaRankedValues = null;
 		IntegratedAnalysisValue resultValue = null;
-
-//		String sql = "SELECT C.SF_NAME, B.VER, C.PROD_NAME, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.COMM_SCORE, A.BLIA_SCORE "+
-//				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
-//				"WHERE A.BUG_ID = ? AND A.SF_VER_ID = B.SF_VER_ID AND B.SF_ID = C.SF_ID AND A.BLIA_SCORE != 0" +
-//				"ORDER BY A.BLIA_SCORE DESC ";
 
 		String sql = "SELECT A.SF_VER_ID, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A " +
@@ -349,7 +423,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 				resultValue = new IntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
-				resultValue.setBLIAScore(rs.getDouble("BLIA_SCORE"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
 				
 				bliaRankedValues.add(resultValue);
 			}
@@ -358,5 +432,44 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		}
 		
 		return bliaRankedValues;
+	}
+	
+	public ArrayList<IntegratedMethodAnalysisValue> getBLIAMethodRankedValues(int bugID, int limit) {
+		ArrayList<IntegratedMethodAnalysisValue> extendedBliaRankedValues = null;
+		IntegratedMethodAnalysisValue resultValue = null;
+
+		String sql = "SELECT A.MTH_ID, A.BLIA_MTH_SCORE "+
+				"FROM INT_MTH_ANALYSIS A " +
+				"WHERE A.BUG_ID = ? AND A.BLIA_MTH_SCORE != 0 " +
+				"ORDER BY A.BLIA_MTH_SCORE DESC ";
+
+		
+		if (limit != 0) {
+			sql += "LIMIT " + limit;
+		}
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == extendedBliaRankedValues) {
+					extendedBliaRankedValues = new ArrayList<IntegratedMethodAnalysisValue>();
+				}
+				
+				resultValue = new IntegratedMethodAnalysisValue();
+				resultValue.setBugID(bugID);
+				resultValue.setMethodID(rs.getInt("MTH_ID"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_MHT_SCORE"));
+				
+				extendedBliaRankedValues.add(resultValue);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return extendedBliaRankedValues;
 	}
 }

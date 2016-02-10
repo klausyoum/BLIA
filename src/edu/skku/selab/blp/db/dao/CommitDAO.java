@@ -14,7 +14,9 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.skku.selab.blp.db.CommitInfo;
+import edu.skku.selab.blp.common.CommitInfo;
+import edu.skku.selab.blp.common.ExtendedCommitInfo;
+import edu.skku.selab.blp.common.Method;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -29,9 +31,8 @@ public class CommitDAO extends BaseDAO {
 		super();
 	}
 	
-	
 	public int insertCommitInfo(CommitInfo commitInfo) {
-		String sql = "INSERT INTO COMM_INFO (COMM_ID, COMM_DATE, MSG, COMMITTER, PROD_NAME) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO COMM_INFO (COMM_ID, COMM_DATE, MSG, COMMITTER) VALUES (?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
@@ -40,7 +41,6 @@ public class CommitDAO extends BaseDAO {
 			ps.setString(2, commitInfo.getCommitDateString());
 			ps.setString(3, commitInfo.getMessage());
 			ps.setString(4, commitInfo.getCommitter());
-			ps.setString(5, commitInfo.getProductName());
 			
 			returnValue = ps.executeUpdate();
 			
@@ -71,7 +71,7 @@ public class CommitDAO extends BaseDAO {
 		
 		return returnValue;
 	}
-
+	
 	public int deleteAllCommitInfo() {
 		String sql = "DELETE FROM COMM_INFO";
 		int returnValue = INVALID;
@@ -119,23 +119,53 @@ public class CommitDAO extends BaseDAO {
 		return allCommitFiles;
 	}
 	
-	public CommitInfo getCommitInfo(String commitID, String productName) {
+	public HashMap<String, ArrayList<Method>> getCommitMethods(String commitID) {
+		HashMap<String, ArrayList<Method>> allCommitMethods = null;
+
+		String sql = "SELECT COMM_FILE, COMM_MTH FROM COMM_MTH_INFO " + 
+				"WHERE COMM_ID = ? ORDER BY COMM_FILE";
+
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, commitID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				if (null == allCommitMethods) {
+					allCommitMethods = new HashMap<String, ArrayList<Method>>();
+				}
+
+				String commitFile = rs.getString("COMM_FILE");
+				ArrayList<Method> commitMethods = allCommitMethods.get(commitFile);
+				if (null == commitMethods) {
+					commitMethods = new ArrayList<Method>();
+					allCommitMethods.put(commitFile, commitMethods);
+				}
+				commitMethods.add(new Method(rs.getString("COMM_MTH")));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return allCommitMethods;
+	}
+	
+	public CommitInfo getCommitInfo(String commitID) {
 		CommitInfo commitInfo = null;
 		
 		String sql = "SELECT COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
-				"WHERE COMM_ID = ? AND PROD_NAME = ?";
+				"WHERE COMM_ID = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, commitID);
-			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			
 			if (rs.next()) {
 				commitInfo = new CommitInfo();
 				commitInfo.setCommitID(commitID);
-				commitInfo.setProductName(productName);
 				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
 				commitInfo.setMessage(rs.getString("MSG"));
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
@@ -148,14 +178,12 @@ public class CommitDAO extends BaseDAO {
 		return commitInfo;
 	}
 	
-	public int getCommitInfoCount(String productName) {
-		String sql = "SELECT count(COMM_ID) FROM COMM_INFO " + 
-				"WHERE PROD_NAME = ?";
+	public int getCommitInfoCount() {
+		String sql = "SELECT count(COMM_ID) FROM COMM_INFO";
 		
 		int commitInfoCount = 0;
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -168,17 +196,15 @@ public class CommitDAO extends BaseDAO {
 		return commitInfoCount;
 	}
 	
-	public ArrayList<CommitInfo> getAllCommitInfos(String productName) {
+	public ArrayList<CommitInfo> getAllCommitInfos() {
 		ArrayList<CommitInfo> allCommitInfos = null;
 		CommitInfo commitInfo = null;
 		
-		String sql = "SELECT COMM_ID, PROD_NAME, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
-				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
+		String sql = "SELECT COMM_ID, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
+				"ORDER BY COMM_DATE";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
@@ -188,7 +214,6 @@ public class CommitDAO extends BaseDAO {
 				commitInfo = new CommitInfo();
 				String commitID = rs.getString("COMM_ID");
 				commitInfo.setCommitID(commitID);
-				commitInfo.setProductName(rs.getString("PROD_NAME"));
 				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
 				commitInfo.setMessage(rs.getString("MSG"));
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
@@ -206,27 +231,24 @@ public class CommitDAO extends BaseDAO {
 		return allCommitInfos;
 	}
 	
-	public ArrayList<CommitInfo> getFilteredCommitInfos(String productName) {
-		ArrayList<CommitInfo> filteredCommitInfos = null;
-		CommitInfo commitInfo = null;
+	public ArrayList<ExtendedCommitInfo> getFilteredCommitInfos() {
+		ArrayList<ExtendedCommitInfo> filteredCommitInfos = null;
+		ExtendedCommitInfo commitInfo = null;
 		
-		String sql = "SELECT COMM_ID, PROD_NAME, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
-				"WHERE PROD_NAME = ? ORDER BY COMM_DATE";
+		String sql = "SELECT COMM_ID, COMM_DATE, MSG, COMMITTER FROM COMM_INFO " + 
+				"ORDER BY COMM_DATE";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
 				if (null == filteredCommitInfos) {
-					filteredCommitInfos = new ArrayList<CommitInfo>();
+					filteredCommitInfos = new ArrayList<ExtendedCommitInfo>();
 				}
-				commitInfo = new CommitInfo();
+				commitInfo = new ExtendedCommitInfo();
 				String commitID = rs.getString("COMM_ID");
 				commitInfo.setCommitID(commitID);
-				commitInfo.setProductName(rs.getString("PROD_NAME"));
 				commitInfo.setCommitDate(rs.getTimestamp("COMM_DATE"));
 				commitInfo.setMessage(rs.getString("MSG"));
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
@@ -245,6 +267,7 @@ public class CommitDAO extends BaseDAO {
 			for (int i = 0; i < filteredCommitInfos.size(); i++) {
 				commitInfo = filteredCommitInfos.get(i);
 				commitInfo.setCommitFiles(this.getCommitFiles(commitInfo.getCommitID()));
+				commitInfo.setCommitMethodMap(this.getCommitMethods(commitInfo.getCommitID()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -266,5 +289,31 @@ public class CommitDAO extends BaseDAO {
 		}
 		
 		return returnValue;
+	}
+	
+	public ExtendedCommitInfo getFixedCommitInfo(String commitID) {
+		CommitInfo commitInfo = getCommitInfo(commitID);
+		ExtendedCommitInfo fixedCommitInfo = new ExtendedCommitInfo(commitInfo);
+		
+		String sql = "SELECT COMM_FILE, COMM_MTH FROM COMM_MTH_INFO " + 
+				"WHERE COMM_ID = ?";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setString(1, commitID);
+			
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				String fixedFile = rs.getString("COMM_FILE");
+				String fixedMethodInfo = rs.getString("COMM_MTH");
+				Method fixedMethod = new Method(fixedMethodInfo);
+				fixedCommitInfo.addFixedMethod(fixedFile, fixedMethod);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return fixedCommitInfo;
 	}
 }

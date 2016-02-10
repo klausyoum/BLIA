@@ -109,7 +109,7 @@ public class PrintTestResult {
 						result.getBugLocatorScore() + "|" +
 						result.getStackTraceScore() + "|" +
 						result.getCommitLogScore() + "|" +
-						result.getBLIAScore() + "\n");				
+						result.getBliaScore() + "\n");				
 			}
 		}
 		resultWriter.close();

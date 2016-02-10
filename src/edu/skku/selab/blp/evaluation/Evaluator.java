@@ -33,21 +33,21 @@ import edu.skku.selab.blp.utils.Util;
 public class Evaluator {
 	public final static String ALG_BUG_LOCATOR = "BugLocator";
 	public final static String ALG_BLIA = "BLIA";
-	public final static String ALG_BLIA_PLUS = "BLIA+";
+	public final static String ALG_BLIA_COMMENT = "BLIA with comment analysis";
 	
-	private ExperimentResult experimentResult;
-	private ArrayList<Bug> bugs = null;
-	private HashMap<Integer, HashSet<SourceFile>> realFixedFilesMap = null;;
-	private HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
-	private FileWriter writer = null; 
+	protected ExperimentResult experimentResult;
+	protected ArrayList<Bug> bugs = null;
+	protected HashMap<Integer, HashSet<SourceFile>> realFixedFilesMap = null;;
+	protected HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
+	protected FileWriter writer = null; 
 	
-	private Integer syncLock = 0;
-	private int top1 = 0;
-	private int top5 = 0;
-	private int top10 = 0;
+	protected Integer syncLock = 0;
+	protected int top1 = 0;
+	protected int top5 = 0;
+	protected int top10 = 0;
 	
-	private Double sumOfRRank = 0.0;
-	private Double MAP = 0.0;
+	protected Double sumOfRRank = 0.0;
+	protected Double MAP = 0.0;
 	
 	/**
 	 * 
@@ -76,9 +76,8 @@ public class Evaluator {
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] Evaluator.evaluate().\n");
 		
-		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		bugs = bugDAO.getAllBugs(productName, true);
+		bugs = bugDAO.getAllBugs(true);
 		
 		realFixedFilesMap = new HashMap<Integer, HashSet<SourceFile>>();
 		rankedValuesMap = new HashMap<Integer, ArrayList<IntegratedAnalysisValue>>();
@@ -103,7 +102,7 @@ public class Evaluator {
 		ArrayList<IntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
-		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_PLUS)) {
+		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA)) {
 			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
 		}
 		
@@ -119,8 +118,6 @@ public class Evaluator {
      
         @Override
         public void run() {
-			// Compute similarity between Bug report & source files
-        	
         	try {
         		calculateTopN();
         		calculateMRR();
@@ -280,7 +277,7 @@ public class Evaluator {
         }
     }
 	
-	private void calculateMetrics() throws Exception {
+	protected void calculateMetrics() throws Exception {
 		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
 				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
 				experimentResult.getPastDays()); 

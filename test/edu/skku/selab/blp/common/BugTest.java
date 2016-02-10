@@ -48,7 +48,6 @@ public class BugTest {
 	@Test
 	public void verifyConstructor() {
 		int ID = 29769;
-		String productName = "BLIA";
 		String openDate = "2003-01-19 11:42:00";
 		String fixDate = "2003-01-24 21:17:00";
 		String summary = "Ajde does not support new AspectJ 1.1 compiler options";
@@ -60,7 +59,7 @@ public class BugTest {
 		fixedFiles.add(fixedFile1);
 		fixedFiles.add(fixedFile2);
 		
-		Bug bug = new Bug(ID, productName, openDate, fixDate, summary, description, version, fixedFiles);
+		Bug bug = new Bug(ID, openDate, fixDate, summary, description, version, fixedFiles);
 		
 		int commentID = 1;
 		String author = "BLIA Plus";

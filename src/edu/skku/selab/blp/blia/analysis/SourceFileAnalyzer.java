@@ -59,11 +59,8 @@ public class SourceFileAnalyzer {
 	 * @see edu.skku.selab.blp.analysis.IAnalyzer#analyze()
 	 */
 	public void analyze(String version, boolean useStructuredInfo) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
+		sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(version);
 		sourceFileAllTermMaps = new HashMap<Integer, HashMap<String, AnalysisValue>>();
 		sourceFileCorpusMap = new HashMap<Integer, SourceFileCorpus>();
 		sourceFileLengthScoreMap = new HashMap<Integer, Double>();

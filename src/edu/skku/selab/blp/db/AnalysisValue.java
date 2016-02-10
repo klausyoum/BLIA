@@ -15,7 +15,6 @@ public class AnalysisValue {
 	private int ID;
 	protected String name;
 	protected String version;
-	protected String productName;
 	protected String term;
 	protected int sourceFileVersionID;
 	protected int termID;
@@ -31,7 +30,6 @@ public class AnalysisValue {
 		setID(0);
 		name = "";
 		version = "";
-		productName = "";
 		term = "";
 		sourceFileVersionID = INIT_VALUE;
 		setTermID(INIT_VALUE);
@@ -42,11 +40,10 @@ public class AnalysisValue {
 		termWeight = INIT_VALUE;
 	}
 	
-	public AnalysisValue(String name, String productName, String term, double termWeight) {
+	public AnalysisValue(String name, String term, double termWeight) {
 		setID(0);
 		setName(name);
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		termCount = INIT_VALUE;
@@ -56,11 +53,10 @@ public class AnalysisValue {
 		setTermWeight(termWeight);
 	}
 	
-	public AnalysisValue(int ID, String productName, String term, double termWeight) {
+	public AnalysisValue(int ID, String term, double termWeight) {
 		setID(ID);
 		setName("");
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		termCount = INIT_VALUE;
@@ -70,11 +66,10 @@ public class AnalysisValue {
 		setTermWeight(termWeight);
 	}
 	
-	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf) {
+	public AnalysisValue(String name, String term, int termCount, int invDocCount, double tf, double idf) {
 		setID(0);
 		setName(name);
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		setTermCount(termCount);
@@ -84,11 +79,10 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 	
-	public AnalysisValue(int ID, String productName, String term, int termCount, int invDocCount, double tf, double idf) {
+	public AnalysisValue(int ID, String term, int termCount, int invDocCount, double tf, double idf) {
 		setID(ID);
 		setName("");
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		setTermCount(termCount);
@@ -98,11 +92,10 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 	
-	public AnalysisValue(String name, String productName, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
+	public AnalysisValue(String name, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
 		setID(0);
 		setName(name);
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		setTermCount(termCount);
@@ -112,11 +105,10 @@ public class AnalysisValue {
 		setTermWeight(termWeight);
 	}
 	
-	public AnalysisValue(int ID, String productName, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
+	public AnalysisValue(int ID, String term, int termCount, int invDocCount, double tf, double idf, double termWeight) {
 		setID(ID);
 		setName("");
 		version = "";
-		setProductName(productName);
 		setTerm(term);
 		setTermID(INIT_VALUE);
 		setTermCount(termCount);
@@ -129,11 +121,10 @@ public class AnalysisValue {
 	/**
 	 * 
 	 */
-	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount) {
+	public AnalysisValue(String name, String version, String term, int termCount, int invDocCount) {
 		setID(0);
 		setName(name);
 		setVersion(version);
-		setProductName(productName);
 		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
 		setTermID(INIT_VALUE);
@@ -144,11 +135,10 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 	
-	public AnalysisValue(int ID, String productName, String version, String term, int termCount, int invDocCount) {
+	public AnalysisValue(int ID, String version, String term, int termCount, int invDocCount) {
 		setID(ID);
 		setName("");
 		setVersion(version);
-		setProductName(productName);
 		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
 		setTermID(INIT_VALUE);
@@ -162,11 +152,10 @@ public class AnalysisValue {
 	/**
 	 * 
 	 */
-	public AnalysisValue(String name, String productName, String version, String term, int termCount, int invDocCount, double tf, double idf) {
+	public AnalysisValue(String name, String version, String term, int termCount, int invDocCount, double tf, double idf) {
 		setID(0);
 		setName(name);
 		setVersion(version);
-		setProductName(productName);
 		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
 		setTermID(INIT_VALUE);
@@ -177,11 +166,10 @@ public class AnalysisValue {
 		setTermWeight(INIT_VALUE);
 	}
 
-	public AnalysisValue(int ID, String productName, String version, String term, int termCount, int invDocCount, double tf, double idf) {
+	public AnalysisValue(int ID, String version, String term, int termCount, int invDocCount, double tf, double idf) {
 		setID(ID);
 		setName("");
 		setVersion(version);
-		setProductName(productName);
 		setTerm(term);
 		setSourceFileVersionID(INIT_VALUE);
 		setTermID(INIT_VALUE);
@@ -218,20 +206,6 @@ public class AnalysisValue {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
-	}
-
-	/**
-	 * @return the productName
-	 */
-	public String getProductName() {
-		return productName;
-	}
-
-	/**
-	 * @param productName the productName to set
-	 */
-	public void setProductName(String productName) {
-		this.productName = productName;
 	}
 
 	/**

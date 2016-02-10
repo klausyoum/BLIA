@@ -9,6 +9,7 @@ import edu.skku.selab.blp.db.dao.CommitDAOTest;
 import edu.skku.selab.blp.db.dao.ExperimentResultDAOTest;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAOTest;
 import edu.skku.selab.blp.db.dao.SourceFileDAOTest;
+import edu.skku.selab.blp.db.dao.MethodDAOTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -16,7 +17,8 @@ import edu.skku.selab.blp.db.dao.SourceFileDAOTest;
 	CommitDAOTest.class,
 	ExperimentResultDAOTest.class,
 	IntegratedAnalysisDAOTest.class,
-	SourceFileDAOTest.class})
+	SourceFileDAOTest.class,
+	MethodDAOTest.class})
 public class DAOAllTests {
 
 }

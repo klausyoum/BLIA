@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="lib/preferences-3.2.100-v20070522.jar"/>
 	<classpathentry kind="lib" path="lib/wvtool.jar"/>
 	<classpathentry kind="lib" path="lib/h2-1.4.184.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.6.2.201501210735-r.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/selenium-java-2.48.2-srcs.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/selenium-java-2.48.2.jar"/>
@@ -74,5 +73,6 @@
 	<classpathentry kind="lib" path="lib/xalan-2.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.6.2.201501210735-r.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

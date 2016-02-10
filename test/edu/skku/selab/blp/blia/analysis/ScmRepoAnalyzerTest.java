@@ -23,7 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.Property;
-import edu.skku.selab.blp.db.CommitInfo;
+import edu.skku.selab.blp.common.CommitInfo;
 import edu.skku.selab.blp.db.dao.DbUtil;
 
 /**

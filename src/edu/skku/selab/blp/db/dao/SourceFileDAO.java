@@ -35,15 +35,14 @@ public class SourceFileDAO extends BaseDAO {
 		super();
 	}
 	
-	public int insertSourceFile(String fileName, String productName) {
-		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME, PROD_NAME) VALUES (?, ?, ?)";
+	public int insertSourceFile(String fileName) {
+		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME) VALUES (?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, fileName);
-			ps.setString(3, productName);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -51,21 +50,20 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		
 		if (INVALID != returnValue) {
-			returnValue = getSourceFileID(fileName, productName);
+			returnValue = getSourceFileID(fileName);
 		} 
 
 		return returnValue;
 	}
 	
-	public int insertSourceFile(String fileName, String className, String productName) {
-		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME, PROD_NAME) VALUES (?, ?, ?)";
+	public int insertSourceFile(String fileName, String className) {
+		String sql = "INSERT INTO SF_INFO (SF_NAME, CLS_NAME) VALUES (?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, className);
-			ps.setString(3, productName);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -73,7 +71,7 @@ public class SourceFileDAO extends BaseDAO {
 		}
 		
 		if (INVALID != returnValue) {
-			returnValue = getSourceFileID(fileName, className, productName);
+			returnValue = getSourceFileID(fileName, className);
 		} 
 
 		return returnValue;
@@ -94,14 +92,13 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, Integer> getSourceFiles(String productName) {
+	public HashMap<String, Integer> getSourceFiles() {
 		HashMap<String, Integer> fileInfo = new HashMap<String, Integer>();
 		
-		String sql = "SELECT SF_NAME, SF_ID FROM SF_INFO WHERE PROD_NAME = ?";
+		String sql = "SELECT SF_NAME, SF_ID FROM SF_INFO";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -113,14 +110,13 @@ public class SourceFileDAO extends BaseDAO {
 		return fileInfo;
 	}
 	
-	public int getSourceFileCount(String productName, String version) {
-		String sql = "SELECT COUNT(SF_VER_ID) FROM SF_INFO A, SF_VER_INFO B WHERE A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND B.VER = ?";
+	public int getSourceFileCount(String version) {
+		String sql = "SELECT COUNT(SF_VER_ID) FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND B.VER = ?";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -183,16 +179,14 @@ public class SourceFileDAO extends BaseDAO {
 		return versions;	
 	}
 	
-	public String getSourceFilePath(String fileName, String productName) {
+	public String getSourceFilePath(String fileName) {
 		String sourceFilePath = null;
 		String sql = "SELECT SF_PATH FROM SF_INFO " +
-				"WHERE SF_NAME = ? AND PROD_NAME = ?";
+				"WHERE SF_NAME = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
-			
 			
 			rs = ps.executeQuery();
 			
@@ -205,15 +199,14 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFilePath;	
 	}
 	
-	public int getSourceFileID(String fileName, String productName) {
+	public int getSourceFileID(String fileName) {
 		int returnValue = INVALID;
 		String sql = "SELECT SF_ID FROM SF_INFO " +
-				"WHERE SF_NAME = ? AND PROD_NAME = ?";
+				"WHERE SF_NAME = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			
@@ -226,16 +219,15 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 	
-	public int getSourceFileID(String fileName, String className, String productName) {
+	public int getSourceFileID(String fileName, String className) {
 		int returnValue = INVALID;
 		String sql = "SELECT SF_ID FROM SF_INFO " +
-				"WHERE SF_NAME = ? AND CLS_NAME = ? AND PROD_NAME = ?";
+				"WHERE SF_NAME = ? AND CLS_NAME = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
 			ps.setString(2, className);
-			ps.setString(3, productName);
 			
 			rs = ps.executeQuery();
 			
@@ -250,7 +242,7 @@ public class SourceFileDAO extends BaseDAO {
 	
 	public int getSourceFileVersionID(int sourceFileID, String version) {
 		int returnValue = INVALID;
-		String sql = "SELECT SF_VER_ID FROM SF_VER_INFO B " +
+		String sql = "SELECT SF_VER_ID FROM SF_VER_INFO " +
 				"WHERE SF_ID = ? AND VER = ?";
 		
 		try {
@@ -269,16 +261,15 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 
-	public int getSourceFileVersionID(String fileName, String productName, String version) {
+	public int getSourceFileVersionID(String fileName, String version) {
 		int returnValue = INVALID;
 		String sql = "SELECT B.SF_VER_ID FROM SF_INFO A, SF_VER_INFO B " +
-				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
+				"WHERE A.SF_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
-			ps.setString(3, version);
+			ps.setString(2, version);
 			
 			rs = ps.executeQuery();
 			
@@ -291,15 +282,14 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;	
 	}
 	
-	public HashSet<String> getSourceFileNames(String productName, String version) {
+	public HashSet<String> getSourceFileNames(String version) {
 		HashSet<String> sourceFileNames = null;
 		String sql = "SELECT A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
-				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
+				"WHERE B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			
@@ -315,42 +305,14 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFileNames;	
 	}
 	
-//	public HashSet<String> getClassNames(String productName, String version) {
-//		HashSet<String> sourceFileNames = null;
-//		String sql = "SELECT A.CLS_NAME FROM SF_INFO A, SF_VER_INFO B " +
-//				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
-//		
-//		try {
-//			ps = analysisDbConnection.prepareStatement(sql);
-//			ps.setString(1, productName);
-//			ps.setString(2, version);
-//			
-//			rs = ps.executeQuery();
-//			
-//			while (rs.next()) {
-//				if (null == sourceFileNames) {
-//					sourceFileNames = new HashSet<String>();
-//				}
-//				
-//				String fileName = rs.getString("CLS_NAME");
-//				String className = fileName.substring(0, fileName.lastIndexOf("."));
-//				sourceFileNames.add(className);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return sourceFileNames;	
-//	}
-	
-	public HashMap<String, String> getClassNames(String productName, String version) {
+	public HashMap<String, String> getClassNames(String version) {
 		HashMap<String, String> sourceFileNames = null;
 		String sql = "SELECT A.CLS_NAME, A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
-				"WHERE A.PROD_NAME = ? AND B.VER = ? AND A.SF_ID = B.SF_ID";
+				"WHERE B.VER = ? AND A.SF_ID = B.SF_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			
@@ -443,22 +405,19 @@ public class SourceFileDAO extends BaseDAO {
 	/**
 	 * Get <Source file name, CorpusMap> with product name and version
 	 * 
-	 * @param productName	Product name
 	 * @param version		Version
 	 * @return HashMap<String, SourceFileCorpus>	<Source file name, Source file corpus>
 	 */
-	public HashMap<String, SourceFileCorpus> getCorpusMap(String productName, String version) {
+	public HashMap<String, SourceFileCorpus> getCorpusMap(String version) {
 		HashMap<String, SourceFileCorpus> corpusSets = new HashMap<String, SourceFileCorpus>();
 		
 		String sql = "SELECT A.SF_NAME, B.COR, B.CLS_COR, B.MTH_COR, B.VAR_COR, B.CMT_COR " +
 					"FROM SF_INFO A, SF_VER_INFO B " +
-					"WHERE A.SF_ID = B.SF_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ?";
+					"WHERE A.SF_ID = B.SF_ID AND B.VER = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -566,18 +525,16 @@ public class SourceFileDAO extends BaseDAO {
 		return corpus;
 	}
 	
-	public HashMap<String, Integer> getSourceFileVersionIDs(String productName, String version) {
+	public HashMap<String, Integer> getSourceFileVersionIDs(String version) {
 		HashMap<String, Integer> sourceFileVersionIDs = new HashMap<String, Integer>();
 		
 		String sql = "SELECT A.SF_NAME, B.SF_VER_ID " +
 					"FROM SF_INFO A, SF_VER_INFO B " +
-					"WHERE A.SF_ID = B.SF_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ?";
+					"WHERE A.SF_ID = B.SF_ID AND B.VER = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -589,18 +546,16 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFileVersionIDs;
 	}
 	
-	public HashMap<String, Integer> getTotalCorpusLengths(String productName, String version) {
+	public HashMap<String, Integer> getTotalCorpusLengths(String version) {
 		HashMap<String, Integer> totalCorpusLengths = new HashMap<String, Integer>();
 		
 		String sql = "SELECT A.SF_NAME, B.TOT_CNT " +
 					"FROM SF_INFO A, SF_VER_INFO B " +
-					"WHERE A.SF_ID = B.SF_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ?";
+					"WHERE A.SF_ID = B.SF_ID AND B.VER = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -612,18 +567,17 @@ public class SourceFileDAO extends BaseDAO {
 		return totalCorpusLengths;
 	}
 	
-	public int updateLengthScore(String productName, String fileName, String version, double lengthScore) {
+	public int updateLengthScore(String fileName, String version, double lengthScore) {
 		String sql = "UPDATE SF_VER_INFO SET LEN_SCORE = ? " +
-				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE  A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE  A.SF_ID = B.SF_ID " +
 				"AND A.SF_NAME = ? AND B.VER = ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, lengthScore);
-			ps.setString(2, productName);
-			ps.setString(3, fileName);
-			ps.setString(4, version);
+			ps.setString(2, fileName);
+			ps.setString(3, version);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -633,18 +587,17 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int updateTotalCoupusCount(String productName, String fileName, String version, int totalCorpusCount) {
+	public int updateTotalCoupusCount(String fileName, String version, int totalCorpusCount) {
 		String sql = "UPDATE SF_VER_INFO SET TOT_CNT = ? " +
-				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID " +
 				"AND A.SF_NAME = ? AND B.VER = ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setInt(1, totalCorpusCount);
-			ps.setString(2, productName);
-			ps.setString(3, fileName);
-			ps.setString(4, version);
+			ps.setString(2, fileName);
+			ps.setString(3, version);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -654,19 +607,17 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int updateNormValue(String productName, String fileName, String version, double corpusNorm) {
+	public int updateNormValue(String fileName, String version, double corpusNorm) {
 		String sql = "UPDATE SF_VER_INFO SET COR_NORM = ? " +
-				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID " +
 				"AND A.SF_NAME = ? AND B.VER = ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, corpusNorm);
-			
-			ps.setString(2, productName);
-			ps.setString(3, fileName);
-			ps.setString(4, version);
+			ps.setString(2, fileName);
+			ps.setString(3, version);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -676,10 +627,10 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int updateNormValues(String productName, String fileName, String version,
+	public int updateNormValues(String fileName, String version,
 			double corpusNorm, double classNorm, double methodNorm, double variableNorm, double commentNorm) {
 		String sql = "UPDATE SF_VER_INFO SET COR_NORM = ?, CLS_COR_NORM = ?, MTH_COR_NORM = ?, VAR_COR_NORM = ?, CMT_COR_NORM = ? " +
-				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID AND A.PROD_NAME = ? " +
+				"WHERE SF_ID IN (SELECT A.SF_ID FROM SF_INFO A, SF_VER_INFO B WHERE A.SF_ID = B.SF_ID " +
 				"AND A.SF_NAME = ? AND B.VER = ?)";
 		int returnValue = INVALID;
 		
@@ -691,9 +642,8 @@ public class SourceFileDAO extends BaseDAO {
 			ps.setDouble(4, variableNorm);
 			ps.setDouble(5, commentNorm);
 			
-			ps.setString(6, productName);
-			ps.setString(7, fileName);
-			ps.setString(8, version);
+			ps.setString(6, fileName);
+			ps.setString(7, version);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -703,18 +653,16 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, Double> getLengthScores(String productName, String version) {
+	public HashMap<String, Double> getLengthScores(String version) {
 		HashMap<String, Double> lengthScores = new HashMap<String, Double>();
 		
 		String sql = "SELECT A.SF_NAME, B.LEN_SCORE " +
 					"FROM SF_INFO A, SF_VER_INFO B " +
-					"WHERE A.SF_ID = B.SF_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ?";
+					"WHERE A.SF_ID = B.SF_ID AND B.VER = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -747,14 +695,13 @@ public class SourceFileDAO extends BaseDAO {
 		return lengthScore;
 	}
 	
-	public int insertTerm(String term, String productName) {
-		String sql = "INSERT INTO SF_TERM_INFO (TERM, PROD_NAME) VALUES (?, ?)";
+	public int insertTerm(String term) {
+		String sql = "INSERT INTO SF_TERM_INFO (TERM) VALUES (?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
-			ps.setString(2, productName);
 			
 			returnValue = ps.executeUpdate();
 		} catch (JdbcSQLException e) {
@@ -785,14 +732,13 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, Integer> getTermMap(String productName) {
+	public HashMap<String, Integer> getTermMap() {
 		HashMap<String, Integer> fileInfo = new HashMap<String, Integer>();
 		
-		String sql = "SELECT TERM, SF_TERM_ID FROM SF_TERM_INFO WHERE PROD_NAME = ?";
+		String sql = "SELECT TERM, SF_TERM_ID FROM SF_TERM_INFO";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1,  productName);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -804,14 +750,13 @@ public class SourceFileDAO extends BaseDAO {
 		return fileInfo;
 	}
 	
-	public int getTermID(String term, String productName) {
+	public int getTermID(String term) {
 		int returnValue = INVALID;
-		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ? AND PROD_NAME = ?";
+		String sql = "SELECT SF_TERM_ID FROM SF_TERM_INFO WHERE TERM = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, term);
-			ps.setString(2, productName);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -868,19 +813,17 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, ArrayList<String>> getAllImportedClasses(String productName, String version) {
+	public HashMap<String, ArrayList<String>> getAllImportedClasses(String version) {
 		HashMap<String, ArrayList<String>> importedClassesMap = new HashMap<String, ArrayList<String>>();
 		
 		String sql = "SELECT A.SF_NAME, C.IMP_CLASS " +
 					"FROM SF_INFO A, SF_VER_INFO B, SF_IMP_INFO C " +
 					"WHERE A.SF_ID = B.SF_ID AND " +
-					"B.SF_VER_ID = C.SF_VER_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ?";
+					"B.SF_VER_ID = C.SF_VER_ID AND B.VER = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
+			ps.setString(1, version);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -901,20 +844,18 @@ public class SourceFileDAO extends BaseDAO {
 		return importedClassesMap;
 	}
 	
-	public ArrayList<String> getImportedClasses(String productName, String version, String fileName) {
+	public ArrayList<String> getImportedClasses(String version, String fileName) {
 		ArrayList<String> importedClasses = null;
 		
 		String sql = "SELECT C.IMP_CLASS " +
 					"FROM SF_INFO A, SF_VER_INFO B, SF_IMP_INFO C " +
 					"WHERE A.SF_ID = B.SF_ID AND " +
-					"B.SF_VER_ID = C.SF_VER_ID AND " +
-					"A.PROD_NAME = ? AND B.VER = ? AND A.SF_NAME = ?";
+					"B.SF_VER_ID = C.SF_VER_ID AND B.VER = ? AND A.SF_NAME = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, productName);
-			ps.setString(2, version);
-			ps.setString(3, fileName);
+			ps.setString(1, version);
+			ps.setString(2, fileName);
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
@@ -932,9 +873,8 @@ public class SourceFileDAO extends BaseDAO {
 	
 	public int insertTermWeight(AnalysisValue termWeight) {
 		
-		int fileVersionID = getSourceFileVersionID(termWeight.getName(),
-				termWeight.getProductName(), termWeight.getVersion());
-		int termID = getTermID(termWeight.getTerm(), termWeight.getProductName());
+		int fileVersionID = getSourceFileVersionID(termWeight.getName(), termWeight.getVersion());
+		int termID = getTermID(termWeight.getTerm());
 		
 		String sql = "INSERT INTO SF_TERM_WGT (SF_VER_ID, SF_TERM_ID, TERM_CNT, INV_DOC_CNT, TF, IDF) " +
 				"VALUES (?, ?, ?, ?, ?, ?)";
@@ -994,22 +934,20 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public AnalysisValue getTermWeight(String fileName, String productName, String version, String term) {
+	public AnalysisValue getTermWeight(String fileName, String version, String term) {
 		AnalysisValue returnValue = null;
 
 		String sql = "SELECT D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF "+
 				"FROM SF_INFO A, SF_VER_INFO B, SF_TERM_INFO C, SF_TERM_WGT D " +
-				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
+				"WHERE A.SF_NAME = ? AND A.SF_ID = B.SF_ID AND " +
 				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND C.TERM = ? AND " +
-				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
+				"C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
-			ps.setString(3, version);
-			ps.setString(4, term);
-			ps.setString(5, productName);
+			ps.setString(2, version);
+			ps.setString(3, term);
 			
 			rs = ps.executeQuery();
 			
@@ -1017,7 +955,6 @@ public class SourceFileDAO extends BaseDAO {
 				returnValue = new AnalysisValue();
 				
 				returnValue.setName(fileName);
-				returnValue.setProductName(productName);
 				returnValue.setVersion(version);
 				returnValue.setTerm(term);
 				returnValue.setTermCount(rs.getInt("TERM_CNT"));
@@ -1033,21 +970,19 @@ public class SourceFileDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<String, AnalysisValue> getTermMap(String productName, String fileName, String version) {
+	public HashMap<String, AnalysisValue> getTermMap(String fileName, String version) {
 		HashMap<String, AnalysisValue> termMap = null;
 
 		String sql = "SELECT C.TERM, D.SF_VER_ID, D.SF_TERM_ID, D.TERM_CNT, D.INV_DOC_CNT, D.TF, D.IDF "+
 				"FROM SF_INFO A, SF_VER_INFO B, SF_TERM_INFO C, SF_TERM_WGT D " +
-				"WHERE A.SF_NAME = ? AND A.PROD_NAME = ? AND A.SF_ID = B.SF_ID AND " +
+				"WHERE A.SF_NAME = ? AND A.SF_ID = B.SF_ID AND " +
 				"B.VER = ? AND B.SF_VER_ID = D.SF_VER_ID AND " +
-				"C.PROD_NAME = ? AND C.SF_TERM_ID = D.SF_TERM_ID";
+				"C.SF_TERM_ID = D.SF_TERM_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, fileName);
-			ps.setString(2, productName);
-			ps.setString(3, version);
-			ps.setString(4, productName);
+			ps.setString(2, version);
 			
 			rs = ps.executeQuery();
 			
@@ -1059,7 +994,6 @@ public class SourceFileDAO extends BaseDAO {
 				
 				String term = rs.getString("TERM");
 				termWeight.setName(fileName);
-				termWeight.setProductName(productName);
 				termWeight.setVersion(version);
 				termWeight.setTerm(term);
 				termWeight.setSourceFileVersionID(rs.getInt("SF_VER_ID"));

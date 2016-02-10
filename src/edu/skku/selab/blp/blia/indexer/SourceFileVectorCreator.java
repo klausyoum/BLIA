@@ -42,8 +42,7 @@ public class SourceFileVectorCreator {
 	 */
 	public Hashtable<String, Integer> getInverseDocCountTable(String version) throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		String productName = Property.getInstance().getProductName();
-		HashMap<String, SourceFileCorpus> corpusSets = sourceFileDAO.getCorpusMap(productName, version);
+		HashMap<String, SourceFileCorpus> corpusSets = sourceFileDAO.getCorpusMap(version);
 		
 		Iterator<String> fileNameIter = corpusSets.keySet().iterator();
 		Hashtable<String, Integer> countTable = new Hashtable<String, Integer>();
@@ -85,10 +84,9 @@ public class SourceFileVectorCreator {
 	public void computeLengthScore(String version) throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		
 		int max = 0x80000000;
-		HashMap<String, Integer> lensTable = sourceFileDAO.getTotalCorpusLengths(productName, version);
+		HashMap<String, Integer> lensTable = sourceFileDAO.getTotalCorpusLengths(version);
 	
 		int count = 0;
 		int sum = 0;
@@ -151,7 +149,7 @@ public class SourceFileVectorCreator {
 			}
 			
 //			System.out.printf("FileName: %s, score: %f\n", fileName, score);
-			sourceFileDAO.updateLengthScore(productName, fileName, version, score);
+			sourceFileDAO.updateLengthScore(fileName, version, score);
 		}
 	}
 
@@ -182,7 +180,6 @@ public class SourceFileVectorCreator {
 	 */
 	public void createIndex(String version) throws Exception {
 		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		Hashtable<String, Integer> inverseDocCountTable = getInverseDocCountTable(version);
 		// set total word count
 		property.setWordCount(inverseDocCountTable.size());	
@@ -194,10 +191,10 @@ public class SourceFileVectorCreator {
 		Iterator<String> idcTableIter = inverseDocCountTable.keySet().iterator();
 		while (idcTableIter.hasNext()) {
 			term = idcTableIter.next();
-			sourceFileDAO.insertTerm(term, productName);
+			sourceFileDAO.insertTerm(term);
 		}
 		
-		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(productName, version);
+		HashMap<String, SourceFileCorpus> corpusMap = sourceFileDAO.getCorpusMap(version);
 		
 		String fileName = "";
 		int totalCorpusCount = 0;
@@ -231,14 +228,14 @@ public class SourceFileVectorCreator {
 				}
 			}
 			
-			sourceFileDAO.updateTotalCoupusCount(productName, fileName, version, totalCorpusCount);
+			sourceFileDAO.updateTotalCoupusCount(fileName, version, totalCorpusCount);
 
 			Iterator<String> termTableIter = termTable.keySet().iterator();
 			while (termTableIter.hasNext()) {
 				term = termTableIter.next();
 				termCount = termTable.get(term);
 				inverseDocCount = inverseDocCountTable.get(term).intValue();
-				AnalysisValue termWeight = new AnalysisValue(fileName, productName, version, term, termCount, inverseDocCount);
+				AnalysisValue termWeight = new AnalysisValue(fileName, version, term, termCount, inverseDocCount);
 				sourceFileDAO.insertTermWeight(termWeight);		
 			}
 		}
@@ -256,13 +253,11 @@ public class SourceFileVectorCreator {
     }
     
     private class WorkerThread implements Runnable {
-    	private String productName;
     	private String fileName;
     	private String version;
     	
     	
-        public WorkerThread(String productName, String fileName, String version){
-            this.productName = productName;
+        public WorkerThread(String fileName, String version){
             this.fileName = fileName;
             this.version = version;
         }
@@ -284,7 +279,7 @@ public class SourceFileVectorCreator {
 //			if (fileName.equalsIgnoreCase("org.eclipse.swt.internal.win32.NMCUSTOMDRAW.java")) {
 				Integer totalTermCount = totalCorpusLengths.get(fileName);
 				
-				HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(productName, fileName, version);
+				HashMap<String, AnalysisValue> sourceFileTermMap = sourceFileDAO.getTermMap(fileName, version);
 				if (sourceFileTermMap == null) {
 					// debug code
 					System.out.printf("[SourceFileVectorCreator.create()] The file name that has no valid terms: %s\n", fileName);
@@ -344,7 +339,7 @@ public class SourceFileVectorCreator {
 //				System.out.printf(">>>> corpusNorm: %f, classCorpusNorm: %f, methodCorpusNorm: %f, variableNorm: %f, commentNorm: %f\n",
 //						corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, variableNorm);
 				
-				sourceFileDAO.updateNormValues(productName, fileName, version, corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, commentNorm);
+				sourceFileDAO.updateNormValues(fileName, version, corpusNorm, classCorpusNorm, methodCorpusNorm, variableNorm, commentNorm);
         }
     }
 
@@ -353,19 +348,17 @@ public class SourceFileVectorCreator {
 	 * @see edu.skku.selab.blia.indexer.IVectorCreator#create()
 	 */
 	public void create(String version) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		totalCorpusLengths = sourceFileDAO.getTotalCorpusLengths(productName, version);
-		sourceFileCorpusMap = sourceFileDAO.getCorpusMap(productName, version);
-		fileCount = sourceFileDAO.getSourceFileCount(productName, version);
+		totalCorpusLengths = sourceFileDAO.getTotalCorpusLengths(version);
+		sourceFileCorpusMap = sourceFileDAO.getCorpusMap(version);
+		fileCount = sourceFileDAO.getSourceFileCount(version);
 		
 		// Calculate vector
 		Iterator<String> fileNameIter = totalCorpusLengths.keySet().iterator();
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		while (fileNameIter.hasNext()) {
 			String fileName = fileNameIter.next();
-			Runnable worker = new WorkerThread(productName, fileName, version);
+			Runnable worker = new WorkerThread(fileName, version);
 			executor.execute(worker);
 		}
 		

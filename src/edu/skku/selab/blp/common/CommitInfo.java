@@ -5,7 +5,7 @@
  * educational, research, and not-for-profit purposes, without fee and without a signed licensing agreement,
  * is hereby granted, provided that the above copyright notice appears in all copies, modifications, and distributions.
  */
-package edu.skku.selab.blp.db;
+package edu.skku.selab.blp.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,12 +24,11 @@ public class CommitInfo {
 	public final static int MODIFY_COMMIT = 4;
 	public final static int RENAME_COMMIT = 5;
 	
-	private String commitID;
-	private String productName;
-    private Date commitDate;
-    private String message;
-    private String committer;
-    private HashMap<Integer, HashSet<String>> commitFilesMap;
+	protected String commitID;
+	protected Date commitDate;
+	protected String message;
+	protected String committer;
+	protected HashMap<Integer, HashSet<String>> commitFilesMap;
 
 	/**
 	 * 
@@ -158,20 +157,6 @@ public class CommitInfo {
 			this.commitFilesMap.put(commitType, commitFiles);
 		}
 		commitFiles.add(fileName);
-	}
-
-	/**
-	 * @return the productName
-	 */
-	public String getProductName() {
-		return productName;
-	}
-
-	/**
-	 * @param productName the productName to set
-	 */
-	public void setProductName(String productName) {
-		this.productName = productName;
 	}
 
 	/**

@@ -21,7 +21,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-import edu.skku.selab.blp.db.CommitInfo;
+import edu.skku.selab.blp.common.CommitInfo;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 
 /**
@@ -30,14 +30,12 @@ import edu.skku.selab.blp.db.dao.CommitDAO;
  */
 public class GitCommitLogCollector implements ICommitLogCollector {
 	private String repoDir;
-	private String productName;
 	
 	/**
 	 * 
 	 */
-	public GitCommitLogCollector(String productName, String repoDir) {
+	public GitCommitLogCollector(String repoDir) {
 		this.repoDir = repoDir;
-		this.productName = productName;
 	}
 	
 	public void collectCommitLog(Date since, Date until, boolean collectForcely) throws Exception {
@@ -54,7 +52,7 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 			commitDAO.deleteAllCommitFileInfo();
 		}
 		
-		if (commitDAO.getCommitInfoCount(productName) == 0) {
+		if (commitDAO.getCommitInfoCount() == 0) {
 			Git git = new Git(repository);
 			Iterator<RevCommit> commitLogs = git.log().call().iterator();
 			
@@ -88,7 +86,6 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 				commitInfo.setCommitter(currentCommit.getCommitterIdent().getName());
 				commitInfo.setMessage(currentCommit.getShortMessage());
 				commitInfo.setCommitDate(commitDate);
-				commitInfo.setProductName(productName);
 
 				// debug code
 //				System.out.printf("Committer: %s, Time: %s, Msg: %s\n",

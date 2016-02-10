@@ -67,9 +67,9 @@ public class BLP {
 				+ prop.getPastDays() + ", cadidateLimitRate: "
 				+ prop.getCandidateLimitRate();
 
-		// Evaluate the accuracy result of BLIA+
+		// Evaluate the accuracy result of BLIA
 		Evaluator evaluator = new Evaluator(prop.getProductName(),
-				Evaluator.ALG_BLIA_PLUS, algorithmDescription, prop.getAlpha(),
+				Evaluator.ALG_BLIA, algorithmDescription, prop.getAlpha(),
 				prop.getBeta(), prop.getPastDays(),
 				prop.getCandidateLimitRate());
 		evaluator.evaluate();

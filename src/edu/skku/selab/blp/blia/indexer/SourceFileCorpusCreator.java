@@ -77,8 +77,6 @@ public class SourceFileCorpusCreator {
 		File files[] = detector.detect(property.getSourceCodeDirList());
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		String productName = property.getProductName();
-
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
 		for (int i = 0; i < files.length; i++) {
@@ -90,7 +88,7 @@ public class SourceFileCorpusCreator {
 					fileName += ".java";
 				}
 
-				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, productName);
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName);
 				if (BaseDAO.INVALID == sourceFileID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", fileName);
 					throw new Exception(); 

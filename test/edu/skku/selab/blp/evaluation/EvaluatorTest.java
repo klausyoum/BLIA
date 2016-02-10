@@ -127,7 +127,7 @@ public class EvaluatorTest {
 				algorithmDescription += " without Stack-Trace analysis";
 			}
 			
-			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
+			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
 					prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 			evaluator.evaluate();
 		}
@@ -149,9 +149,11 @@ public class EvaluatorTest {
 
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
-		
+
+//		for (double alpha = 0.4; alpha <= 0.4; alpha += 0.1) {
 		for (double alpha = 0.0; alpha <= 0.9; alpha += 0.1) {
 			for (double beta = 0.0; beta <= 0.9; beta += 0.1) {
+//			for (double beta = 0.0; beta <= 0.0; beta += 0.1) {
 				prop.setAlpha(alpha);
 				prop.setBeta(beta);
 				runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
@@ -166,7 +168,7 @@ public class EvaluatorTest {
 						algorithmDescription += " without Stack-Trace analysis";
 					}
 					
-					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
+					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
 							prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluator.evaluate();
 				}
@@ -182,8 +184,9 @@ public class EvaluatorTest {
 		
 		// Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
 		boolean useStrucrutedInfo = true;
-		
-		boolean prepareAnalysisData = false;
+	
+		// DO NOT change prepareAnalysisData for this experiment, because changing pastDays needs prepareAnalysisData. 
+		boolean prepareAnalysisData = true;
 		boolean preAnalyze = true; // DO NOT change preAnalyze for this experiment, because changing pastDays needs pre-analysis. 
 		boolean analyze = true;
 		boolean includeStackTrace = true;
@@ -191,7 +194,7 @@ public class EvaluatorTest {
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
 		
-		int[] pastDays = {15}; //, 30, 60, 90, 120};
+		int[] pastDays = {15, 30, 60, 90, 120, 150, 180};
 		for (int i = 0; i < pastDays.length; i++) {
 			prop.setPastDays(pastDays[i]);
 			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
@@ -206,7 +209,7 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
 			}
@@ -248,7 +251,7 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_PLUS, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
 			}

@@ -68,7 +68,6 @@ public class StackTraceAnalyzer {
 				return;
 			}
 			
-    		String productName = Property.getInstance().getProductName();
 			HashMap<String, String> classNames = classNamesMap.get(version);
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				int currentRank = j + 1;
@@ -80,7 +79,7 @@ public class StackTraceAnalyzer {
 					stackTraceAnalysisValue.setBugID(bug.getID());
 					
 					fileName = classNames.get(className);
-					int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
+					int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, version);
 					stackTraceAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
 					
 					if (j < 10) {
@@ -97,7 +96,7 @@ public class StackTraceAnalyzer {
 			for (int j = 0; j < stackTraceClasses.size(); j++) {
 				String className = stackTraceClasses.get(j);
 				String fileName = classNames.get(className);
-				ArrayList<String> importedClasses = sourceFileDAO.getImportedClasses(productName, version, fileName);
+				ArrayList<String> importedClasses = sourceFileDAO.getImportedClasses(version, fileName);
 				
 				if (null == importedClasses) {
 					continue;
@@ -111,7 +110,7 @@ public class StackTraceAnalyzer {
 						IntegratedAnalysisValue importedClassAnalysisValue = new IntegratedAnalysisValue();
 						importedClassAnalysisValue.setBugID(bug.getID());
 						
-						int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, productName, version);
+						int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fileName, version);
 						importedClassAnalysisValue.setSourceFileVersionID(sourceFileVersionID);
 						importedClassAnalysisValue.setStackTraceScore(DEFAULT_BOOST_SCORE);
 						
@@ -133,8 +132,6 @@ public class StackTraceAnalyzer {
     }
 	
 	public void analyze() throws Exception {
-		String productName = Property.getInstance().getProductName();
-		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		
 		classNamesMap = new HashMap<String, HashMap<String, String>>();
@@ -143,7 +140,7 @@ public class StackTraceAnalyzer {
 			String version = bug.getVersion();
 			
 			if (!classNamesMap.containsKey(version)) {
-				HashMap<String, String> classNames = sourceFileDAO.getClassNames(productName, version);
+				HashMap<String, String> classNames = sourceFileDAO.getClassNames(version);
 				classNamesMap.put(version, classNames);
 			}
 		}
