@@ -147,7 +147,7 @@ select the size closest to the screen size so changed that.</comment>
       <commit Id="cb247250ac2b7526196943b1be616f0ccf989ec9" author="srowen" date="2010-03-31 01:28:44"/>
           <file name="android/src/com/google/zxing/client/android/HelpActivity.java">
           </file>
-      </commit>
+      </commit> 
     </fixedCommits>
   </bug>
   <bug id="383" opendate="2010-04-15 05:04:58" fixdate="2010-04-16 03:04:35">

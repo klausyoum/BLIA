@@ -17,7 +17,7 @@ without coersion.</comment>
 		<comment id="3" date="2004-10-14 20:14:59 EDT" author="Gary Gregory">Created attachment 15178 [details]
 A wrapper to OleAutomation.</comment>
 		<comment id="4" date="2004-10-14 20:40:15 EDT" author="Gary Gregory">Hm, you're right, this toString() method should not cause any side effects. How
-about:
+about: 
 
     public static String toString(Variant variant) {
         int type = variant.getType();
