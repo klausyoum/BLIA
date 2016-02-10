@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +31,9 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -50,7 +54,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import edu.skku.selab.blp.utils.temp.MethodVisitor;
-import jcodelib.util.CodeUtils; 
 
 /**
  * @author Jun Ahn(ahnjune@skku.edu)
@@ -60,12 +63,24 @@ import jcodelib.util.CodeUtils;
 public class JgitTest {
 	private static HashMap<String, HashSet<String>> fixedCommitMap = null;
 
+	public static CompilationUnit getCompilationUnit(String source) {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		Map options = JavaCore.getOptions();
+		JavaCore.setComplianceOptions(JavaCore.VERSION_1_7, options);
+		parser.setCompilerOptions(options);
+		parser.setSource(source.toCharArray());
+		CompilationUnit cu = (CompilationUnit)parser.createAST(null);
+
+		return cu;
+	}
+	
 	private static void loadFixedCommits() throws FileNotFoundException {
 		String userHomeDir = System.getProperty("user.home");
 		String bugRepoPath = userHomeDir + "/git/BLIA/data/";
 //		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "AspectJFixedCommits.txt"));
-		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
-//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
+//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
+		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
 
 		fixedCommitMap = new HashMap<String, HashSet<String>>();
 
@@ -92,8 +107,8 @@ public class JgitTest {
 		String userHomeDir = System.getProperty("user.home");
 		String bugRepoPath = userHomeDir + "/git/BLIA/data/";
 //		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "AspectJFixedCommits.txt"));
-		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
-//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
+//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
+		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
 
 		String foundCommit = null;
 
@@ -113,8 +128,8 @@ public class JgitTest {
 		String userHomeDir = System.getProperty("user.home");
 		String bugRepoPath = userHomeDir + "/git/BLIA/data/";
 //		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "AspectJFixedCommits.txt"));
-		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
-//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
+//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
+		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
 
 		while (bugRepoRead.hasNextLine()) {
 			String line1 = bugRepoRead.nextLine();
@@ -139,17 +154,17 @@ public class JgitTest {
 		String bugRepoPath = userHomeDir + "/git/BLIA/data/";
 
 //		String GitRepoPath = userHomeDir + "/git/org.aspectj/.git";
-		String GitRepoPath = userHomeDir + "/git/eclipse.platform.swt/.git";
-//		String GitRepoPath = userHomeDir + "/git/zxing/.git";
+//		String GitRepoPath = userHomeDir + "/git/eclipse.platform.swt/.git";
+		String GitRepoPath = userHomeDir + "/git/zxing/.git";
 
 //		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "AspectJFixedCommits.txt"));
-		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
-//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
+//		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "SWTFixedCommits.txt"));
+		Scanner bugRepoRead = new Scanner(new File(bugRepoPath + "ZXingFixedCommits.txt"));
 
 		// XML
 //		String productName = "AspectJ";
-		String productName = "SWT";
-//		String productName = "ZXing";
+//		String productName = "SWT";
+		String productName = "ZXing";
 
 		String bugRepoFileName = productName + "BugRepository.xml";
 
@@ -385,7 +400,7 @@ public class JgitTest {
 											File javaFile = new File(
 													"/Users/ahnjun/Documents/Develop/workspace1/Test/data/SourceFile/"
 															+ pathName + fileName);
-											CompilationUnit cu = CodeUtils.getCompilationUnit(new String(data));
+											CompilationUnit cu = getCompilationUnit(new String(data));
 											MethodVisitor visitor = new MethodVisitor();
 											if (newPath.contains(fileName)) {
 												if (bugID.matches(bugRepoId)) {
