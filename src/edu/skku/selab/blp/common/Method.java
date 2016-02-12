@@ -174,4 +174,15 @@ public class Method {
 	public void setHashKey(String hashKey) {
 		this.hashKey = hashKey;
 	}
+	
+	public String getConcatenatedString() {
+		return name + "|" + returnType + "|" + params;
+	}
+	
+	public boolean equals(Object obj) {
+		Method targetMethod = (Method) obj;
+		return (this.getName().equals(targetMethod.getName()) &&
+				this.getReturnType().equals(targetMethod.getReturnType()) &&
+				this.getParams().equals(targetMethod.getParams()));
+	}
 }

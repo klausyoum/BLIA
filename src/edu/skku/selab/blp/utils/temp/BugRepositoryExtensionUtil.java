@@ -219,7 +219,7 @@ public class BugRepositoryExtensionUtil {
 			ArrayList<Method> fixedMethods = commitMethods.get(fileName);
 			
 			if (fixedMethods != null && fixedMethods.size() > 0) {
-				for (int j = 0; j > fixedMethods.size(); ++j) {
+				for (int j = 0; j < fixedMethods.size(); ++j) {
 					Method fixedMethod = fixedMethods.get(j);
 					xmlWriter.write(methodStartTag + "\""
 							+ fixedMethod.getName() + "\" " + "returnType="
@@ -229,6 +229,50 @@ public class BugRepositoryExtensionUtil {
 				}
 			}
 			xmlWriter.write(fileEndTag);
+		}
+	}
+	
+	private static void findMethodInfoFromChunk(String newPath, int actualModifiedStartLine, int actualModifiedEndLine, MethodVisitor visitor, CompilationUnit cu, ArrayList<String> commitFiles, HashMap<String, ArrayList<Method>> commitMethods) {
+		ArrayList<Method> commitMethodList = commitMethods.get(newPath);
+		if (null == commitMethodList) commitMethodList = new ArrayList<Method>();
+		
+//		System.out.printf("actualModifiedStartLine: %d, actualModifiedEndLine: %d\n", actualModifiedStartLine, actualModifiedEndLine);
+		
+		if (visitor != null && cu != null) {
+			for (MethodDeclaration md : visitor.methods) {
+				int methodStartLine = cu.getLineNumber(md.getStartPosition());
+				int methodEndLine = cu.getLineNumber(md.getStartPosition() + md.getLength());
+//				System.out.printf("methodStartLine: %d, methodEndLine: %d\n", methodStartLine, methodEndLine);
+				
+				if (methodEndLine < actualModifiedStartLine) {
+					continue;
+				} else if ((methodStartLine >= actualModifiedStartLine && methodStartLine <= actualModifiedEndLine) ||
+						(methodStartLine <= actualModifiedStartLine && methodEndLine >= actualModifiedStartLine) || 
+						(methodStartLine <= actualModifiedEndLine)) {
+					String methodName = md.getName().toString();
+					String returnType = (null != md.getReturnType2()) ? md.getReturnType2().toString() : "";
+					String parameters = "";
+					for (int l = 0; l < md.parameters().size(); l++) {
+						parameters += ((SingleVariableDeclaration) md.parameters().get(l)).getType().toString();
+						parameters += " ";
+					}
+					parameters = parameters.trim();
+
+					Method foundMethod = new Method(methodName, returnType, parameters);
+					if (!commitMethodList.contains(foundMethod)) {
+						commitMethodList.add(foundMethod);
+						System.out.printf("Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, parameters);
+					}
+				} else if (methodStartLine > actualModifiedEndLine) {
+					break;
+				}
+			}
+			
+			// add commit file
+			if (!commitFiles.contains(newPath)) {
+				commitFiles.add(newPath);
+			}
+			commitMethods.put(newPath, commitMethodList);
 		}
 	}
 	
@@ -255,94 +299,83 @@ public class BugRepositoryExtensionUtil {
 		df.setRepository(git.getRepository());
 		
 		for (DiffEntry diff : diffs) {
-			df.format(diff);
-			String diffText = out.toString("UTF-8");
-			int chunkHeaderIndex = diffText.indexOf("@@");
-			// in case of deleted file
-			if (chunkHeaderIndex == -1) {
+//			String oldPath = diff.getOldPath();
+			String newPath = diff.getNewPath();
+			if (!newPath.endsWith(".java")) {
 				continue;
 			}
-
-			RevTree tree = revCommit.getTree();
-			String oldPath = diff.getOldPath();
-			String newPath = diff.getNewPath();
-			TreeWalk treeWalk = TreeWalk.forPath(newObjectReader, newPath, tree);
+			System.out.println("FileName : " + newPath);
 			
-			if (newPath.endsWith(".java")) {
-				System.out.println("FileName : " + newPath);
-				if (newPath != null) {
-					String methodData = diffText.substring(chunkHeaderIndex);
-					BufferedReader chunk = new BufferedReader(new StringReader(methodData));
-					String line = null;
-					int chunkStartLineNum = 0;
-					int chunkLineCount = 0;
-
-					if ((line = chunk.readLine()) != null) {
-						String[] splitWords = line.split(" ")[2].split("[+,]");
-						if (splitWords.length >= 3) {
-							chunkStartLineNum = Integer.parseInt(splitWords[1]);
-							chunkLineCount = Integer.parseInt(splitWords[2]);
-							// System.out.println("chunkStart
-							// Linenum : " +
-							// chunkStartLineNum + " " +
-							// chunkLineCount);
-						} else if (splitWords.length == 2) { // "--0,0
-																// +1"
-							chunkStartLineNum = Integer.parseInt(splitWords[1]);
-							chunkLineCount = Integer.parseInt(splitWords[1]);
-							// System.out.println("chunkStart
-							// Linenum : " +
-							// chunkStartLineNum + " " +
-							// chunkLineCount);
-						} else {
-							System.exit(-1);
-						}
-					} else {
-						System.exit(-1);
+			RevTree tree = revCommit.getTree();
+			TreeWalk treeWalk = TreeWalk.forPath(newObjectReader, newPath, tree);
+			MethodVisitor visitor = null;
+			CompilationUnit cu = null;
+			if (treeWalk != null) {
+				// use the blob id to read the file's data
+				byte[] data = newObjectReader.open(treeWalk.getObjectId(0)).getBytes();
+				cu = getCompilationUnit(new String(data));
+				visitor = new MethodVisitor();
+				cu.accept(visitor);
+			}
+			
+			df.format(diff);
+			String diffText = out.toString("UTF-8");
+			BufferedReader diffTextReader = new BufferedReader(new StringReader(diffText));
+			String diffLine = null;
+			int chunkStartLineNum = 0;
+			int chunkLineCount = 0;
+			int currentLineOfNewFile = 0;
+			int actualModifiedStartLine = 0;
+			int actualModifiedEndLine = 0;
+			boolean foundModifiedLine = false;
+			while ((diffLine = diffTextReader.readLine()) != null) {
+				if (diffLine.startsWith("@@")) {
+					if (0 != actualModifiedStartLine) {
+						findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
 					}
-
-					// add commit file
-					commitFiles.add(newPath);
 					
-					ArrayList<Method> commitMethodList = commitMethods.get(newPath);
-					if (null == commitMethodList) commitMethodList = new ArrayList<Method>();
+					String[] splitWords = diffLine.split(" ")[2].split("[+,]");
+					if (splitWords.length >= 3) {
+						chunkStartLineNum = Integer.parseInt(splitWords[1]);
+						chunkLineCount = Integer.parseInt(splitWords[2]);
+//						System.out.printf("chunkHeaderLine: %s\n", diffLine);
+//						System.out.printf("chunkStartLineNum: %d, chunkLineCount: %d\n", chunkStartLineNum, chunkLineCount);
+					} else if (splitWords.length == 2) { // --0,0 or +1
+						chunkStartLineNum = Integer.parseInt(splitWords[1]);
+						chunkLineCount = Integer.parseInt(splitWords[1]);
+//						System.out.printf("chunkStartLineNum: %d, chunkLineCount: %d\n", chunkStartLineNum, chunkLineCount);
+					} else {
+						System.out.printf("[ERROR] splitWords.length: %d\n", splitWords.length);
+						return;
+					}
 					
-					if (treeWalk != null) {
-						// use the blob id to read the file's data
-						byte[] data = newObjectReader.open(treeWalk.getObjectId(0)).getBytes();
-						CompilationUnit cu = getCompilationUnit(new String(data));
-						MethodVisitor visitor = new MethodVisitor();
-						cu.accept(visitor);
-						for (MethodDeclaration md : visitor.methods) {
-							for (int startLine = cu.getLineNumber(md.getStartPosition());
-									startLine < cu.getLineNumber(md.getStartPosition() + md.getLength());
-									startLine++) {
-								if (startLine == chunkStartLineNum) {
-									System.out.println("Method: " + md.getName());
-									System.out.println(
-											"Return Type: " + md.getReturnType2());
-									System.out.println("Parameter: " + md.parameters());
-
-									String parameters = "";
-									for (int l = 0; l < md.parameters().size(); l++) {
-										parameters += ((SingleVariableDeclaration) md
-												.parameters().get(l)).getType()
-												.toString();
-										parameters += " ";
-									}
-									parameters = parameters.trim();
-
-									Method foundMethod = new Method(md.getName().toString(), md.getReturnType2().toString(), parameters);
-									commitMethodList.add(foundMethod);
-									break;
-								}
-							}
+					foundModifiedLine = false;
+					currentLineOfNewFile = chunkStartLineNum - 1;
+				} else {
+					if (chunkStartLineNum != 0) {
+						if (!diffLine.startsWith("-")) {
+							currentLineOfNewFile++;
+//							System.out.printf("[%d]: %s\n", currentLineOfNewFile, diffLine);
 						}
-						
-						commitMethods.put(newPath, commitMethodList);
+					}
+					
+					if (!diffLine.startsWith("---") && !diffLine.startsWith("+++") && diffLine.startsWith("+")) {
+						if (!foundModifiedLine) {
+							actualModifiedStartLine = currentLineOfNewFile;
+							actualModifiedEndLine = actualModifiedStartLine; 
+							foundModifiedLine = true;
+						} else {
+							actualModifiedEndLine = currentLineOfNewFile;
+						}
 					}
 				}
 			}
+
+			// for final chunk
+			findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
+
+			// SHOULD reset ByteArrayOutputStream
+			out.reset();
 		}
 	}
 	
