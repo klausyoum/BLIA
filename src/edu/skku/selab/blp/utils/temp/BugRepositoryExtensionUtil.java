@@ -38,6 +38,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
@@ -63,16 +64,16 @@ public class BugRepositoryExtensionUtil {
 	private static HashMap<String, RevCommit> allCommitMap = new HashMap<String, RevCommit>();
 	
 //	private static String FIXED_COMMIT_FILE = "AspectJFixedCommits.txt";
-//	private static String FIXED_COMMIT_FILE = "SWTFixedCommits.txt";
-	private static String FIXED_COMMIT_FILE = "ZXingFixedCommits.txt";
-	
-//	private static String PROJECT_GIT_PATH = "/git/org.aspectj/.git";
-//	private static String PROJECT_GIT_PATH = "/git/eclipse.platform.swt/.git";
-	private static String PROJECT_GIT_PATH = "/git/zxing/.git";
-	
 //	private static String TARGET_PRODUCT_NAME = "AspectJ";
+//	private static String PROJECT_GIT_PATH = "/git/org.aspectj/.git";
+
+//	private static String FIXED_COMMIT_FILE = "SWTFixedCommits.txt";
 //	private static String TARGET_PRODUCT_NAME = "SWT";
+//	private static String PROJECT_GIT_PATH = "/git/eclipse.platform.swt/.git";
+
+	private static String FIXED_COMMIT_FILE = "ZXingFixedCommits.txt";
 	private static String TARGET_PRODUCT_NAME = "ZXing";
+	private static String PROJECT_GIT_PATH = "/git/zxing/.git";
 
 	private static CompilationUnit getCompilationUnit(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
@@ -299,6 +300,10 @@ public class BugRepositoryExtensionUtil {
 		df.setRepository(git.getRepository());
 		
 		for (DiffEntry diff : diffs) {
+			if (ChangeType.MODIFY != diff.getChangeType()) {
+				continue;
+			}
+			
 //			String oldPath = diff.getOldPath();
 			String newPath = diff.getNewPath();
 			if (!newPath.endsWith(".java")) {
