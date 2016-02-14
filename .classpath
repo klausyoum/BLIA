@@ -73,6 +73,9 @@
 	<classpathentry kind="lib" path="lib/xalan-2.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis-1.4.01.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.6.2.201501210735-r.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jgit.source_4.3.0.201602121639.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jgit_4.3.0.201602121639.jar" sourcepath="lib/org.eclipse.jgit.source_4.3.0.201602121639.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.16.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-1.7.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

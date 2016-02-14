@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,11 +38,19 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.diff.DiffAlgorithm.SupportedAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+import org.eclipse.jgit.diff.Edit.Type;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.diff.EditList;
+import org.eclipse.jgit.diff.HistogramDiff;
+import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.StoredConfig;
+import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
@@ -74,6 +83,8 @@ public class BugRepositoryExtensionUtil {
 	private static String FIXED_COMMIT_FILE = "ZXingFixedCommits.txt";
 	private static String TARGET_PRODUCT_NAME = "ZXing";
 	private static String PROJECT_GIT_PATH = "/git/zxing/.git";
+	
+	private static boolean DEBUG_MODE = false;
 
 	private static CompilationUnit getCompilationUnit(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
@@ -97,16 +108,14 @@ public class BugRepositoryExtensionUtil {
 			String[] items = line.split(" ");
 
 			String bugID = items[0];
-			HashSet<String> hashSet = null;
-			for (int i = 1; i < items.length; i++) {
-				hashSet = fixedCommitMap.get(bugID);
-				if (hashSet == null) {
-					hashSet = new HashSet<String>();
-				}
-
-				hashSet.add(items[i]);
+			HashSet<String> hashSet = fixedCommitMap.get(bugID);
+			if (hashSet == null) {
+				hashSet = new HashSet<String>();
 			}
 
+			for (int i = 1; i < items.length; i++) {
+				hashSet.add(items[i]);
+			}
 			fixedCommitMap.put(bugID, hashSet);
 		}
 	}
@@ -237,15 +246,22 @@ public class BugRepositoryExtensionUtil {
 		ArrayList<Method> commitMethodList = commitMethods.get(newPath);
 		if (null == commitMethodList) commitMethodList = new ArrayList<Method>();
 		
-//		System.out.printf("actualModifiedStartLine: %d, actualModifiedEndLine: %d\n", actualModifiedStartLine, actualModifiedEndLine);
+		if (DEBUG_MODE) {
+			System.out.printf("actualModifiedStartLine: %d, actualModifiedEndLine: %d\n", actualModifiedStartLine, actualModifiedEndLine);
+		}
 		
 		if (visitor != null && cu != null) {
 			for (MethodDeclaration md : visitor.methods) {
-				int methodStartLine = cu.getLineNumber(md.getStartPosition());
+				// comment lines before a method are ignored.
+				int methodStartLine = cu.getLineNumber(md.getName().getStartPosition());
 				int methodEndLine = cu.getLineNumber(md.getStartPosition() + md.getLength());
-//				System.out.printf("methodStartLine: %d, methodEndLine: %d\n", methodStartLine, methodEndLine);
+				if (DEBUG_MODE) {
+					System.out.printf("methodStartLine: %d, methodEndLine: %d\n", methodStartLine, methodEndLine);
+				}
 				
-				if (methodEndLine < actualModifiedStartLine) {
+				if ((methodEndLine < actualModifiedStartLine) || 
+						(methodStartLine != methodEndLine &&
+						methodEndLine == actualModifiedStartLine && actualModifiedStartLine == actualModifiedEndLine)) {
 					continue;
 				} else if ((methodStartLine >= actualModifiedStartLine && methodStartLine <= actualModifiedEndLine) ||
 						(methodStartLine <= actualModifiedStartLine && methodEndLine >= actualModifiedStartLine) || 
@@ -292,7 +308,12 @@ public class BugRepositoryExtensionUtil {
 		oldTreeIter.reset(newObjectReader, oldId);
 		CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
 		newTreeIter.reset(newObjectReader, headId);
-
+		
+//		StoredConfig config = git.getRepository().getConfig();
+////		Set<String> sections = config.getSections();
+////		config.getEnum(ConfigConstants.CONFIG_DIFF_SECTION, null, ConfigConstants.CONFIG_KEY_ALGORITHM, SupportedAlgorithm.HISTOGRAM);
+//		config.setString(ConfigConstants.CONFIG_DIFF_SECTION, null, ConfigConstants.CONFIG_KEY_ALGORITHM, "histogram");
+//		config.save();
 		List<DiffEntry> diffs = git.diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -315,70 +336,58 @@ public class BugRepositoryExtensionUtil {
 			TreeWalk treeWalk = TreeWalk.forPath(newObjectReader, newPath, tree);
 			MethodVisitor visitor = null;
 			CompilationUnit cu = null;
+			String newSource = null;
 			if (treeWalk != null) {
 				// use the blob id to read the file's data
 				byte[] data = newObjectReader.open(treeWalk.getObjectId(0)).getBytes();
-				cu = getCompilationUnit(new String(data));
+				newSource = new String(data);
+				cu = getCompilationUnit(newSource);
 				visitor = new MethodVisitor();
 				cu.accept(visitor);
 			}
 			
 			df.format(diff);
 			String diffText = out.toString("UTF-8");
-			BufferedReader diffTextReader = new BufferedReader(new StringReader(diffText));
-			String diffLine = null;
-			int chunkStartLineNum = 0;
-			int chunkLineCount = 0;
-			int currentLineOfNewFile = 0;
-			int actualModifiedStartLine = 0;
-			int actualModifiedEndLine = 0;
-			boolean foundModifiedLine = false;
-			while ((diffLine = diffTextReader.readLine()) != null) {
-				if (diffLine.startsWith("@@")) {
-					if (0 != actualModifiedStartLine) {
-						findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
-					}
-					
-					String[] splitWords = diffLine.split(" ")[2].split("[+,]");
-					if (splitWords.length >= 3) {
-						chunkStartLineNum = Integer.parseInt(splitWords[1]);
-						chunkLineCount = Integer.parseInt(splitWords[2]);
-//						System.out.printf("chunkHeaderLine: %s\n", diffLine);
-//						System.out.printf("chunkStartLineNum: %d, chunkLineCount: %d\n", chunkStartLineNum, chunkLineCount);
-					} else if (splitWords.length == 2) { // --0,0 or +1
-						chunkStartLineNum = Integer.parseInt(splitWords[1]);
-						chunkLineCount = Integer.parseInt(splitWords[1]);
-//						System.out.printf("chunkStartLineNum: %d, chunkLineCount: %d\n", chunkStartLineNum, chunkLineCount);
-					} else {
-						System.out.printf("[ERROR] splitWords.length: %d\n", splitWords.length);
-						return;
-					}
-					
-					foundModifiedLine = false;
-					currentLineOfNewFile = chunkStartLineNum - 1;
-				} else {
-					if (chunkStartLineNum != 0) {
-						if (!diffLine.startsWith("-")) {
-							currentLineOfNewFile++;
-//							System.out.printf("[%d]: %s\n", currentLineOfNewFile, diffLine);
-						}
-					}
-					
-					if (!diffLine.startsWith("---") && !diffLine.startsWith("+++") && diffLine.startsWith("+")) {
-						if (!foundModifiedLine) {
-							actualModifiedStartLine = currentLineOfNewFile;
-							actualModifiedEndLine = actualModifiedStartLine; 
-							foundModifiedLine = true;
-						} else {
-							actualModifiedEndLine = currentLineOfNewFile;
-						}
-					}
+	
+			FileHeader diffHeader = df.toFileHeader(diff);
+			EditList editList = diffHeader.toEditList();
+			for (int i = 0; i < editList.size(); ++i) {
+				Edit edit = editList.get(i);
+				if (DEBUG_MODE) {
+					System.out.printf("Type: %s, A[%d, %d], B[%d, %d]\n", edit.getType().toString(),
+							edit.getBeginA(), edit.getEndA(), edit.getBeginB(), edit.getEndB());
 				}
+				int actualModifiedStartLine = edit.getBeginB();
+				int actualModifiedEndLine = edit.getEndB();
+				
+				if (edit.getType() == Type.INSERT) {
+					String sourceLines[] = newSource.split("\n");
+
+					boolean isEmptyLines = true;
+					for (int l = edit.getBeginB() + 1; l <= edit.getEndB(); ++l) {
+						if ((l - 1) < sourceLines.length) {
+							String insertedLine = sourceLines[l - 1];
+							if (insertedLine.trim().length() != 0) {
+								isEmptyLines = false;
+								break;
+							}
+						}
+					}
+					
+					if (isEmptyLines)
+						continue;
+				}
+				
+				if (edit.getType() != Type.DELETE) {
+					actualModifiedStartLine = edit.getBeginB() + 1;
+				} else {
+					actualModifiedStartLine = edit.getBeginB() + 1;
+					actualModifiedEndLine = actualModifiedStartLine;
+				}
+				
+				findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
 			}
-
-			// for final chunk
-			findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
-
+			
 			// SHOULD reset ByteArrayOutputStream
 			out.reset();
 		}
@@ -427,6 +436,11 @@ public class BugRepositoryExtensionUtil {
 			if (bugNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element bugElement = (Element) bugNode;
 				String bugID = bugElement.getAttribute("id");
+				
+				// TODO: debug code
+				if (bugID.equals("91159")) {
+					System.out.printf("Bug ID: %s\n", bugID);
+				}
 				
 				writeBugBaseInfo(xmlWriter, bugElement);
 				writeBugInformationSection(xmlWriter, bugElement);
