@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.skku.selab.blp.common.CommitInfo;
+import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 
 /**
@@ -85,14 +86,14 @@ public class CommitDAOTest {
 		String commitDateString2 = "2015-01-31 15:19:00";
 		String message2 = "[2] Commited by Klaus for BLIA testing";
 		
-		CommitInfo commitInfo1 = new CommitInfo();
+		ExtendedCommitInfo commitInfo1 = new ExtendedCommitInfo();
 		commitInfo1.setCommitID(commitID1);
 		commitInfo1.setCommitDate(commitDateString1);
 		commitInfo1.setMessage(message1);
 		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName1);
 		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName2);
 		
-		CommitInfo commitInfo2 = new CommitInfo();
+		ExtendedCommitInfo commitInfo2 = new ExtendedCommitInfo();
 		commitInfo2.setCommitID(commitID2);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date commitDate = simpleDateFormat.parse(commitDateString2);

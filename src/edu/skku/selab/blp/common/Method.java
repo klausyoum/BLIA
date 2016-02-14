@@ -36,9 +36,11 @@ public class Method {
     	this.setID(0);
     	this.setSourceFileVersionID(-1);
     	
-    	this.name = concatenatedMethodInfo.split("|")[0];
-    	this.returnType = concatenatedMethodInfo.split("|")[1];
-    	this.params = concatenatedMethodInfo.split("|")[2];
+    	String splitLines[] = concatenatedMethodInfo.split("\\|");
+    	this.name = splitLines[0];
+    	this.returnType = splitLines[1];
+    	
+    	this.params = (splitLines.length < 3) ? "" : splitLines[2];
     	this.setHashKey(calculateMD5(name + " " + returnType + " " + params));
     }
     

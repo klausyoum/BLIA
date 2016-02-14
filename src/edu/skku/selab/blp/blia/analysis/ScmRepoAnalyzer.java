@@ -103,6 +103,11 @@ public class ScmRepoAnalyzer {
 				}
 				
 				HashMap<String, ArrayList<Method>> allCommitMethods = relatedCommitInfo.getAllFixedMethods();
+				if (allCommitMethods == null) {
+					System.err.printf("[NO fixed method!] BugID: %d, Commit ID: %s\n", bug.getID(), relatedCommitInfo.getCommitID());
+					continue;
+				}
+				
 				Iterator<ArrayList<Method>> commitMethodsIter = allCommitMethods.values().iterator();
 				while (commitMethodsIter.hasNext()) {
 					ArrayList<Method> commitMethods = commitMethodsIter.next();
@@ -110,6 +115,11 @@ public class ScmRepoAnalyzer {
 					for (int i = 0; i < commitMethods.size(); ++i) {
 						Method method = commitMethods.get(i);
 						int methodID = methodDAO.getMethodID(method);
+
+						// in case of the method which cannot be found
+						if (methodID == MethodDAO.INVALID) {
+							continue;
+						}
 
 						IntegratedMethodAnalysisValue methodAnalysisValue = methodAnalysisValues.get(methodID);
 						if (null == methodAnalysisValue) {

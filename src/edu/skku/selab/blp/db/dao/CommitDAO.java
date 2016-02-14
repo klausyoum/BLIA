@@ -31,20 +31,20 @@ public class CommitDAO extends BaseDAO {
 		super();
 	}
 	
-	public int insertCommitInfo(CommitInfo commitInfo) {
+	public int insertCommitInfo(ExtendedCommitInfo extendedCommitInfo) {
 		String sql = "INSERT INTO COMM_INFO (COMM_ID, COMM_DATE, MSG, COMMITTER) VALUES (?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, commitInfo.getCommitID());
-			ps.setString(2, commitInfo.getCommitDateString());
-			ps.setString(3, commitInfo.getMessage());
-			ps.setString(4, commitInfo.getCommitter());
+			ps.setString(1, extendedCommitInfo.getCommitID());
+			ps.setString(2, extendedCommitInfo.getCommitDateString());
+			ps.setString(3, extendedCommitInfo.getMessage());
+			ps.setString(4, extendedCommitInfo.getCommitter());
 			
 			returnValue = ps.executeUpdate();
 			
-			HashMap<Integer, HashSet<String>> allCommitFiles = commitInfo.getAllCommitFiles();
+			HashMap<Integer, HashSet<String>> allCommitFiles = extendedCommitInfo.getAllCommitFiles();
 			Iterator<Integer> iter = allCommitFiles.keySet().iterator();
 			
 			while (iter.hasNext()) {
@@ -56,7 +56,7 @@ public class CommitDAO extends BaseDAO {
 					sql = "INSERT INTO COMM_FILE_INFO (COMM_ID, COMM_FILE, COMM_TYPE) VALUES (?, ?, ?)";
 					
 					ps = analysisDbConnection.prepareStatement(sql);
-					ps.setString(1, commitInfo.getCommitID());
+					ps.setString(1, extendedCommitInfo.getCommitID());
 					ps.setString(2, checkedInFileName);
 					ps.setInt(3, commitType);
 					
@@ -64,6 +64,27 @@ public class CommitDAO extends BaseDAO {
 				}
 			}
 			
+			HashMap<String, ArrayList<Method>> allFixedMethods = extendedCommitInfo.getAllFixedMethods();
+			Iterator<String> allFixedMethodsIter = allFixedMethods.keySet().iterator();
+			
+			while (allFixedMethodsIter.hasNext()) {
+				String fixedFile = allFixedMethodsIter.next();
+				ArrayList<Method> fixedMethods = allFixedMethods.get(fixedFile);
+				
+				for (int i = 0; i < fixedMethods.size(); ++i) {
+					Method method = fixedMethods.get(i);
+					
+					sql = "INSERT INTO COMM_MTH_INFO (COMM_ID, COMM_FILE, COMM_MTH, COM_MTH_HASH_KEY) VALUES (?, ?, ?, ?)";
+					
+					ps = analysisDbConnection.prepareStatement(sql);
+					ps.setString(1, extendedCommitInfo.getCommitID());
+					ps.setString(2, fixedFile);
+					ps.setString(3, method.getConcatenatedString());
+					ps.setString(4, method.getHashKey());
+					
+					returnValue = ps.executeUpdate();
+				}
+			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();

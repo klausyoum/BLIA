@@ -7,14 +7,16 @@
  */
 package edu.skku.selab.blp.utils.temp;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,18 +39,14 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
-import org.eclipse.jgit.diff.DiffAlgorithm.SupportedAlgorithm;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.Edit.Type;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.diff.EditList;
-import org.eclipse.jgit.diff.HistogramDiff;
-import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.patch.FileHeader;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -59,9 +56,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import edu.skku.selab.blp.common.Method;
-import edu.skku.selab.blp.utils.temp.MethodVisitor;
+import edu.skku.selab.blp.common.MethodVisitor;
 
 /**
  * @author Jun Ahn(ahnjune@skku.edu)
@@ -85,7 +83,7 @@ public class BugRepositoryExtensionUtil {
 	private static String PROJECT_GIT_PATH = "/git/zxing/.git";
 	
 	private static boolean DEBUG_MODE = false;
-
+	
 	private static CompilationUnit getCompilationUnit(String source) {
 		ASTParser parser = ASTParser.newParser(AST.JLS3);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -160,7 +158,7 @@ public class BugRepositoryExtensionUtil {
 		String commentsStartTag = "      <comments>\n";
 		String commentsEndTag = "      </comments>\n";
 		
-		String commentStartTag = "      <comment id=";
+		String commentStartTag = "        <comment id=";
 		String commentEndTag = "</comment>\n";
 		String commentDateAttr = "date=";
 		String commentAuthorAttr = "author=";
@@ -172,6 +170,7 @@ public class BugRepositoryExtensionUtil {
 		bugSummary = bugSummary.replaceAll("&", "&amp;");
 		bugSummary = bugSummary.replaceAll("<", "&lt;");
 		bugSummary = bugSummary.replaceAll(">", "&gt;");
+		bugSummary = bugSummary.replaceAll("\"", "&quot;");
 		xmlWriter.write(bugSummary);
 		xmlWriter.write(bugSummaryEndTag);
 
@@ -180,6 +179,7 @@ public class BugRepositoryExtensionUtil {
 		bugDescription = bugDescription.replaceAll("&", "&amp;");
 		bugDescription = bugDescription.replaceAll("<", "&lt;");
 		bugDescription = bugDescription.replaceAll(">", "&gt;");
+		bugDescription = bugDescription.replaceAll("\"", "&quot;");
 
 		xmlWriter.write(bugDescription);
 		xmlWriter.write(bugDescriptionEndTag);
@@ -210,6 +210,7 @@ public class BugRepositoryExtensionUtil {
 			commentDescription = commentDescription.replaceAll("&", "&amp;");
 			commentDescription = commentDescription.replaceAll("<", "&lt;");
 			commentDescription = commentDescription.replaceAll(">", "&gt;");
+			commentDescription = commentDescription.replaceAll("\"", "&quot;");
 			xmlWriter.write(commentStartTag + "\"" + commentId + "\" " + commentDateAttr + "\"" + commentDate + "\" "
 					+ commentAuthorAttr + "\"" + commentAuthor + "\">" + commentDescription + commentEndTag);
 		}
@@ -231,10 +232,15 @@ public class BugRepositoryExtensionUtil {
 			if (fixedMethods != null && fixedMethods.size() > 0) {
 				for (int j = 0; j < fixedMethods.size(); ++j) {
 					Method fixedMethod = fixedMethods.get(j);
+					
+					String params = fixedMethod.getParams();
+					params = params.replaceAll("<", "&lt;");
+					params = params.replaceAll(">", "&gt;");
+					
 					xmlWriter.write(methodStartTag + "\""
 							+ fixedMethod.getName() + "\" " + "returnType="
 							+ "\"" + fixedMethod.getReturnType() + "\" "
-							+ "parameters=" + "\"" + fixedMethod.getParams() + "\"/>"
+							+ "parameters=" + "\"" + params + "\"/>"
 							+ "\n");
 				}
 			}
@@ -242,7 +248,9 @@ public class BugRepositoryExtensionUtil {
 		}
 	}
 	
-	private static void findMethodInfoFromChunk(String newPath, int actualModifiedStartLine, int actualModifiedEndLine, MethodVisitor visitor, CompilationUnit cu, ArrayList<String> commitFiles, HashMap<String, ArrayList<Method>> commitMethods) {
+	private static void extractMethodInfo(String newPath, int actualModifiedStartLine, int actualModifiedEndLine,
+			MethodVisitor visitor, CompilationUnit cu,
+			ArrayList<String> commitFiles, HashMap<String, ArrayList<Method>> commitMethods) {
 		ArrayList<Method> commitMethodList = commitMethods.get(newPath);
 		if (null == commitMethodList) commitMethodList = new ArrayList<Method>();
 		
@@ -293,13 +301,25 @@ public class BugRepositoryExtensionUtil {
 		}
 	}
 	
-	private static void extractCommitFilesAndMethods(RevCommit revCommit, String commitID, ArrayList<String> commitFiles, HashMap<String, ArrayList<Method>> commitMethods) throws IOException, GitAPIException {
+	private static String convertToFile(String path) {
+		String fixedFile = "";
+		if (TARGET_PRODUCT_NAME.equals("ZXing")) {
+			String splitter = "/src/";
+			fixedFile = path.substring(path.indexOf(splitter) + splitter.length());
+			fixedFile = fixedFile.replace('/', '.');
+		}
+		
+		return fixedFile;
+	}
+	
+	private static void extractCommitFilesAndMethods(RevCommit revCommit, ArrayList<String> commitFiles, HashMap<String, ArrayList<Method>> commitMethods) throws IOException, GitAPIException {
 		String userHomeDir = System.getProperty("user.home");
 		String gitRepoPath = userHomeDir + PROJECT_GIT_PATH;
 		
 		File gitWorkDir = new File(gitRepoPath);
 		Git git = Git.open(gitWorkDir);
 
+		String commitID = revCommit.getName();
 		ObjectId oldId = git.getRepository().resolve(commitID + "~1^{tree}");
 		ObjectId headId = git.getRepository().resolve(commitID + "^{tree}");
 		ObjectReader newObjectReader = git.getRepository().newObjectReader();
@@ -309,13 +329,7 @@ public class BugRepositoryExtensionUtil {
 		CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
 		newTreeIter.reset(newObjectReader, headId);
 		
-//		StoredConfig config = git.getRepository().getConfig();
-////		Set<String> sections = config.getSections();
-////		config.getEnum(ConfigConstants.CONFIG_DIFF_SECTION, null, ConfigConstants.CONFIG_KEY_ALGORITHM, SupportedAlgorithm.HISTOGRAM);
-//		config.setString(ConfigConstants.CONFIG_DIFF_SECTION, null, ConfigConstants.CONFIG_KEY_ALGORITHM, "histogram");
-//		config.save();
 		List<DiffEntry> diffs = git.diff().setNewTree(newTreeIter).setOldTree(oldTreeIter).call();
-
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DiffFormatter df = new DiffFormatter(out);
 		df.setRepository(git.getRepository());
@@ -330,6 +344,8 @@ public class BugRepositoryExtensionUtil {
 			if (!newPath.endsWith(".java")) {
 				continue;
 			}
+			
+			String fixedFile = convertToFile(newPath);
 			System.out.println("FileName : " + newPath);
 			
 			RevTree tree = revCommit.getTree();
@@ -385,12 +401,15 @@ public class BugRepositoryExtensionUtil {
 					actualModifiedEndLine = actualModifiedStartLine;
 				}
 				
-				findMethodInfoFromChunk(newPath, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
+				extractMethodInfo(fixedFile, actualModifiedStartLine, actualModifiedEndLine, visitor, cu, commitFiles, commitMethods);
 			}
 			
 			// SHOULD reset ByteArrayOutputStream
 			out.reset();
 		}
+		
+		df.close();
+		git.close();
 	}
 	
 	public static void main(String[] args) throws Exception, IOException, NoHeadException, GitAPIException, InterruptedException {
@@ -403,10 +422,16 @@ public class BugRepositoryExtensionUtil {
 		// No comment on the Bug repository file name (before Bug repository
 		// Name : ex : SWTBugrepository.xml)
 		File bugRepoXmlFile = new File("./data/" + bugRepoFileName);
+		InputStream inputStream= new FileInputStream(bugRepoXmlFile);
+		Reader reader = new InputStreamReader(inputStream,"UTF-8");
+		    	      
+		InputSource is = new InputSource(reader);
+		is.setEncoding("UTF-8");
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dbFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(bugRepoXmlFile);
+//		Document doc = docBuilder.parse(bugRepoXmlFile);
+		Document doc = docBuilder.parse(is);
 
 		doc.getDocumentElement().normalize();
 
@@ -438,7 +463,7 @@ public class BugRepositoryExtensionUtil {
 				String bugID = bugElement.getAttribute("id");
 				
 				// TODO: debug code
-				if (bugID.equals("91159")) {
+				if (bugID.equals("469")) {
 					System.out.printf("Bug ID: %s\n", bugID);
 				}
 				
@@ -461,11 +486,11 @@ public class BugRepositoryExtensionUtil {
 					
 					xmlWriter.write(commitStartTag + "\"" + fixedCommitID + "\" " + "author=" + "\""
 							+ revCommit.getAuthorIdent().getName() + "\" " + "date=" + "\"" + dateFormat
-							+ "\"/>" + "\n");
+							+ "\">" + "\n");
 					
 					ArrayList<String> commitFiles = new ArrayList<String>();
 					HashMap<String, ArrayList<Method>> commitMethods = new HashMap<String, ArrayList<Method>>();
-					extractCommitFilesAndMethods(revCommit, fixedCommitID, commitFiles, commitMethods);
+					extractCommitFilesAndMethods(revCommit, commitFiles, commitMethods);
 					writeFixedFilesAndMethodsSection(xmlWriter, commitFiles, commitMethods);
 					
 					xmlWriter.write(commitEndTag);

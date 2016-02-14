@@ -89,7 +89,9 @@ public class BLIA {
 		startTime = System.currentTimeMillis();
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(repoDir);
-		boolean collectForcely = false;
+		
+		// TODO: default value of collectForcely is false. After testing the value SHOULD be fixed.
+		boolean collectForcely = true;
 		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil, collectForcely);
 		System.out.printf("[DONE] Commit log collecting.(%s sec)\n", getElapsedTimeSting(startTime));
 		
@@ -225,14 +227,14 @@ public class BLIA {
 		
 		HashMap<Integer, IntegratedMethodAnalysisValue> integratedMethodAnalysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID);
 		if (null == integratedMethodAnalysisValues) {
-			return;
+			integratedMethodAnalysisValues = new HashMap<Integer, IntegratedMethodAnalysisValue>();
 		}
 		
 //		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
 		// AmaLgam doesn't use normalize
 		normalize(integratedAnalysisValues);
 		combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
-		combineForMethodLevel(integratedAnalysisValues, integratedMethodAnalysisValues, alpha, beta, includeStackTrace);
+//		combineForMethodLevel(integratedAnalysisValues, integratedMethodAnalysisValues, alpha, beta, includeStackTrace);
 		
 		@SuppressWarnings("unused")
 		int sourceFileCount = integratedAnalysisValues.keySet().size();
@@ -255,22 +257,22 @@ public class BLIA {
 			}
 		}
 		
-		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
-		while (integratedMethodAnalysisValuesIter.hasNext()) {
-			int methodID = integratedMethodAnalysisValuesIter.next();
-			
-			IntegratedMethodAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
-//			System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
-			int updatedColumnCount = integratedAnalysisDAO.updateBLIAMethodScore(integratedMethodAnalysisValue);
-//			System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
-			if (0 == updatedColumnCount) {
-				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, methodID: %d\n",
-						integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getMethodID());
-
-				// remove following line after testing.
-//				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-			}
-		}
+//		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
+//		while (integratedMethodAnalysisValuesIter.hasNext()) {
+//			int methodID = integratedMethodAnalysisValuesIter.next();
+//			
+//			IntegratedMethodAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
+////			System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
+//			int updatedColumnCount = integratedAnalysisDAO.updateBLIAMethodScore(integratedMethodAnalysisValue);
+////			System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
+//			if (0 == updatedColumnCount) {
+//				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, methodID: %d\n",
+//						integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getMethodID());
+//
+//				// remove following line after testing.
+////				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+//			}
+//		}
     }
 	
 	public void analyze(String version, boolean includeStackTrace) throws Exception {
@@ -372,7 +374,7 @@ public class BLIA {
 		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
 		while (integratedAnalysisValuesIter.hasNext()) {
 			int sourceFileVersionID = integratedAnalysisValuesIter.next();
-			IntegratedAnalysisValue integratedAnalysisValue = integratedMethodAnalysisValues.get(sourceFileVersionID);
+			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 			
 			double vsmScore = integratedAnalysisValue.getVsmScore();
 			double similarityScore = integratedAnalysisValue.getSimilarityScore();

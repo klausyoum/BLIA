@@ -768,30 +768,6 @@ public class BugDAO extends BaseDAO {
 		return bugAnalysisValues;
 	}
 	
-//	public int insertBugFixInfo(int bugID, String fileName, String functionName, String version) {
-//		String sql = "INSERT INTO BUG_FIX_INFO (BUG_ID, FIXED_SF_VER_ID, FIXED_FUNC_VER_ID) VALUES (?, ?, ?)";
-//		int returnValue = INVALID;
-//		
-//		try {
-//			SourceFileDAO sourceFileDAO = new SourceFileDAO();
-//			int fixedSourceFileID = sourceFileDAO.getSourceFileVersionID(fileName, version);
-//			
-//			// TODO: implement functionDAO.getFunctionVersionID() later
-//			int fixedFunctionID = INVALID;
-//
-//			ps = analysisDbConnection.prepareStatement(sql);
-//			ps.setInt(1, bugID);
-//			ps.setInt(2, fixedSourceFileID);
-//			ps.setInt(3, fixedFunctionID);
-//			
-//			returnValue = ps.executeUpdate();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//		return returnValue;
-//	}
-	
 	public int insertBugFixedFileInfo(int bugID, String fileName, String version) {
 		String sql = "INSERT INTO BUG_FIX_SF_INFO (BUG_ID, FIXED_SF_VER_ID) VALUES (?, ?)";
 		int returnValue = INVALID;

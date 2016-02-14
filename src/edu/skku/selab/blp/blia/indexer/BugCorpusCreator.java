@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.ASTCreator;
@@ -141,20 +144,20 @@ public class BugCorpusCreator {
 			
 			bugDAO.insertStructuredBug(bug);
 			
-//			TreeSet<String> fixedFiles = bug.getFixedFiles();
-//			Iterator<String> fixedFilesIter = fixedFiles.iterator();
-//			while (fixedFilesIter.hasNext()) {
-//				String fixedFileName = (String) fixedFilesIter.next();
-//				bugDAO.insertBugFixedFileInfo(bug.getID(), fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
-//			}
+			TreeSet<String> fixedFiles = bug.getFixedFiles();
+			Iterator<String> fixedFilesIter = fixedFiles.iterator();
+			while (fixedFilesIter.hasNext()) {
+				String fixedFileName = (String) fixedFilesIter.next();
+				bugDAO.insertBugFixedFileInfo(bug.getID(), fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
+			}
 			
 			ArrayList<ExtendedCommitInfo> fixedCommitInfos = bug.getFixedCommitInfos();
 			for (int i = 0; i < fixedCommitInfos.size(); ++i) {
 				int bugID = bug.getID();
 				HashMap<String, ArrayList<Method>> allFixedMethodsMap = fixedCommitInfos.get(i).getAllFixedMethods();
-				Iterator<String> fixedFilesIter = allFixedMethodsMap.keySet().iterator();
-				while (fixedFilesIter.hasNext()) {
-					String fixedFileName = (String) fixedFilesIter.next();
+				Iterator<String> fixedMethodsIter = allFixedMethodsMap.keySet().iterator();
+				while (fixedMethodsIter.hasNext()) {
+					String fixedFileName = (String) fixedMethodsIter.next();
 					int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(fixedFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
 					
 					ArrayList<Method> fixedMethods = allFixedMethodsMap.get(fixedFileName);
@@ -228,7 +231,11 @@ public class BugCorpusCreator {
 		
 		try {
 			DocumentBuilder domBuilder = domFactory.newDocumentBuilder();
-			InputStream is = new FileInputStream(property.getBugFilePath());
+			InputStream inputStream = new FileInputStream(property.getBugFilePath());
+			Reader reader = new InputStreamReader(inputStream,"UTF-8");
+			InputSource is = new InputSource(reader);
+			is.setEncoding("UTF-8");
+
 			Document doc = domBuilder.parse(is);
 			Element root = doc.getDocumentElement();
 			NodeList bugRepository = root.getChildNodes();
@@ -315,6 +322,7 @@ public class BugCorpusCreator {
 														// debug code
 														System.out.printf("[BugCorpusCreator.parseXML()] BugID: %d, Fixed file name: %s\n", bug.getID(), fixedFileName);
 													}
+													bug.addFixedFile(fixedFileName);
 													
 													NodeList fixedMethodList = fixedFile.getChildNodes();
 													for (int l = 0; l < fixedMethodList.getLength(); l++) {
@@ -323,6 +331,8 @@ public class BugCorpusCreator {
 															String methodName = fixedMethodNode.getAttributes().getNamedItem("name").getNodeValue();
 															String returnType = fixedMethodNode.getAttributes().getNamedItem("returnType").getNodeValue();
 															String params = fixedMethodNode.getAttributes().getNamedItem("parameters").getNodeValue();
+															
+															System.out.printf("[Fixed] Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, params);
 
 															Method fixedMethod = new Method(methodName, returnType, params);
 															fixedCommitInfo.addFixedMethod(fixedFileName, fixedMethod);

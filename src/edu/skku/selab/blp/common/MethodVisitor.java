@@ -1,4 +1,4 @@
-package edu.skku.selab.blp.utils.temp;
+package edu.skku.selab.blp.common;
 import java.util.ArrayList;
 import java.util.List;
 
