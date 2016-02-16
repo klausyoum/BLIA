@@ -11,11 +11,11 @@ package edu.skku.selab.blp.db;
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
  */
-public class IntegratedMethodAnalysisValue extends IntegratedAnalysisValue {
+public class ExtendedIntegratedAnalysisValue extends IntegratedAnalysisValue {
 	private int methodID;
 	private double bliaMethodScore;
 	
-	public IntegratedMethodAnalysisValue() {
+	public ExtendedIntegratedAnalysisValue() {
 		super();
 		setMethodID(-1);
 		setBliaMethodScore(0.0);

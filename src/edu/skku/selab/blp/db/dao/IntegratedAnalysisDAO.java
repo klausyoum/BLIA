@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.IntegratedMethodAnalysisValue;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -60,7 +60,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public int insertMethodAnalysisVaule(IntegratedMethodAnalysisValue integratedMethodAnalysisValue) {
+	public int insertMethodAnalysisVaule(ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue) {
 		String sql = "INSERT INTO INT_MTH_ANALYSIS (BUG_ID, MTH_ID, COMM_SCORE, BLIA_MTH_SCORE) "+
 				"VALUES (?, ?, ?, ?)";
 		int returnValue = INVALID;
@@ -136,11 +136,14 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;		
 	}
 	
-	public int updateBLIAMethodScore(IntegratedMethodAnalysisValue integratedMethodAnalysisValue) {
+	public int updateBLIAMethodScore(ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue) {
 		String sql = "UPDATE INT_MTH_ANALYSIS SET BLIA_MTH_SCORE = ? WHERE BUG_ID = ? AND MTH_ID = ?";
 		int returnValue = INVALID;
 		
-		System.out.printf("Bug ID: %d, MethodID: %d\n", integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getBliaMethodScore());
+		// TODO: debug code
+		System.out.printf("Bug ID: %d, MethodID: %d, BLIA method score: %f\n", integratedMethodAnalysisValue.getBugID(),
+				integratedMethodAnalysisValue.getMethodID(),
+				integratedMethodAnalysisValue.getBliaMethodScore());
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setDouble(1, integratedMethodAnalysisValue.getBliaMethodScore());
@@ -281,9 +284,9 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return returnValue;
 	}
 	
-	public HashMap<Integer, IntegratedMethodAnalysisValue> getMethodAnalysisValues(int bugID) {
-		HashMap<Integer, IntegratedMethodAnalysisValue> integratedMethodAnalysisValues = null;
-		IntegratedMethodAnalysisValue resultValue = null;
+	public HashMap<Integer, ExtendedIntegratedAnalysisValue> getMethodAnalysisValues(int bugID) {
+		HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues = null;
+		ExtendedIntegratedAnalysisValue resultValue = null;
 
 		String sql = "SELECT A.MTH_ID, A.COMM_SCORE, A.BLIA_MTH_SCORE FROM INT_MTH_ANALYSIS A " +
 				"WHERE A.BUG_ID = ?";
@@ -296,10 +299,10 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			
 			while (rs.next()) {
 				if (null == integratedMethodAnalysisValues) {
-					integratedMethodAnalysisValues = new HashMap<Integer, IntegratedMethodAnalysisValue>();
+					integratedMethodAnalysisValues = new HashMap<Integer, ExtendedIntegratedAnalysisValue>();
 				}
 				
-				resultValue = new IntegratedMethodAnalysisValue();
+				resultValue = new ExtendedIntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setMethodID(rs.getInt("MTH_ID"));
 				resultValue.setCommitLogScore(rs.getDouble("COMM_SCORE"));
@@ -354,7 +357,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 	
 	public ArrayList<IntegratedAnalysisValue> getBugLocatorRankedValues(int bugID, int limit) {
 		ArrayList<IntegratedAnalysisValue> bugLocatorRankedValues = null;
-		IntegratedAnalysisValue resultValue = null;
+		ExtendedIntegratedAnalysisValue resultValue = null;
 
 		String sql = "SELECT C.SF_NAME, B.VER, A.SF_VER_ID, A.VSM_SCORE, A.SIMI_SCORE, A.BL_SCORE, A.STRACE_SCORE, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A, SF_VER_INFO B, SF_INFO C " +
@@ -376,7 +379,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 					bugLocatorRankedValues = new ArrayList<IntegratedAnalysisValue>();
 				}
 				
-				resultValue = new IntegratedAnalysisValue();
+				resultValue = new ExtendedIntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setFileName(rs.getString("SF_NAME"));
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
@@ -395,9 +398,9 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return bugLocatorRankedValues;
 	}
 	
-	public ArrayList<IntegratedAnalysisValue> getBLIARankedValues(int bugID, int limit) {
+	public ArrayList<IntegratedAnalysisValue> getBliaFileRankedValues(int bugID, int limit) {
 		ArrayList<IntegratedAnalysisValue> bliaRankedValues = null;
-		IntegratedAnalysisValue resultValue = null;
+		ExtendedIntegratedAnalysisValue resultValue = null;
 
 		String sql = "SELECT A.SF_VER_ID, A.BLIA_SCORE "+
 				"FROM INT_ANALYSIS A " +
@@ -420,7 +423,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 					bliaRankedValues = new ArrayList<IntegratedAnalysisValue>();
 				}
 				
-				resultValue = new IntegratedAnalysisValue();
+				resultValue = new ExtendedIntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setSourceFileVersionID(rs.getInt("SF_VER_ID"));
 				resultValue.setBliaScore(rs.getDouble("BLIA_SCORE"));
@@ -434,9 +437,9 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		return bliaRankedValues;
 	}
 	
-	public ArrayList<IntegratedMethodAnalysisValue> getBLIAMethodRankedValues(int bugID, int limit) {
-		ArrayList<IntegratedMethodAnalysisValue> extendedBliaRankedValues = null;
-		IntegratedMethodAnalysisValue resultValue = null;
+	public ArrayList<ExtendedIntegratedAnalysisValue> getBliaMethodRankedValues(int bugID, int limit) {
+		ArrayList<ExtendedIntegratedAnalysisValue> extendedBliaRankedValues = null;
+		ExtendedIntegratedAnalysisValue resultValue = null;
 
 		String sql = "SELECT A.MTH_ID, A.BLIA_MTH_SCORE "+
 				"FROM INT_MTH_ANALYSIS A " +
@@ -456,13 +459,13 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 			
 			while (rs.next()) {
 				if (null == extendedBliaRankedValues) {
-					extendedBliaRankedValues = new ArrayList<IntegratedMethodAnalysisValue>();
+					extendedBliaRankedValues = new ArrayList<ExtendedIntegratedAnalysisValue>();
 				}
 				
-				resultValue = new IntegratedMethodAnalysisValue();
+				resultValue = new ExtendedIntegratedAnalysisValue();
 				resultValue.setBugID(bugID);
 				resultValue.setMethodID(rs.getInt("MTH_ID"));
-				resultValue.setBliaScore(rs.getDouble("BLIA_MHT_SCORE"));
+				resultValue.setBliaScore(rs.getDouble("BLIA_MTH_SCORE"));
 				
 				extendedBliaRankedValues.add(resultValue);
 			}

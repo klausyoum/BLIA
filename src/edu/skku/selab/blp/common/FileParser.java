@@ -491,7 +491,7 @@ public class FileParser {
 						parameters = parameters.trim();
 						
 						// debug code
-						System.out.printf(">>> Method: %s %s(%s)\n", returnTypeString, methodName, parameters);
+//						System.out.printf(">>> Method: %s %s(%s)\n", returnTypeString, methodName, parameters);
 						Method method = new Method(methodName, returnTypeString, parameters);
 						allMethodList.add(method);
 						

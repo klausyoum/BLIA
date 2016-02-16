@@ -7,14 +7,18 @@
  */
 package edu.skku.selab.blp.evaluation;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Method;
-import edu.skku.selab.blp.db.IntegratedMethodAnalysisValue;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.ExperimentResultDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
@@ -25,10 +29,10 @@ import edu.skku.selab.blp.utils.Util;
  *
  */
 public class EvaluatorForMethodLevel extends Evaluator {
-	public final static String ALG_BLIA_METHOD = "Method level's BLIA";
+	public final static String ALG_BLIA_METHOD = "BLIA with method level";
 	
 	protected HashMap<Integer, HashSet<Method>> realFixedMethodsMap = null;
-	protected HashMap<Integer, ArrayList<IntegratedMethodAnalysisValue>> rankedMethodValuesMap = null;
+	protected HashMap<Integer, ArrayList<ExtendedIntegratedAnalysisValue>> rankedMethodValuesMap = null;
 	
 	/**
 	 * 
@@ -55,7 +59,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 		bugs = bugDAO.getAllBugs(true);
 		
 		realFixedMethodsMap = new HashMap<Integer, HashSet<Method>>();
-		rankedMethodValuesMap = new HashMap<Integer, ArrayList<IntegratedMethodAnalysisValue>>();
+		rankedMethodValuesMap = new HashMap<Integer, ArrayList<ExtendedIntegratedAnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			int bugID = bugs.get(i).getID();
 			HashSet<Method> fixedMethods = bugDAO.getFixedMethods(bugID);
@@ -72,14 +76,75 @@ public class EvaluatorForMethodLevel extends Evaluator {
 		System.out.printf("[DONE] Evaluator.evaluate().(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 	
-	private ArrayList<IntegratedMethodAnalysisValue> getRankedValues(int bugID, int limit) throws Exception {
+	private ArrayList<ExtendedIntegratedAnalysisValue> getRankedValues(int bugID, int limit) throws Exception {
 		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-		ArrayList<IntegratedMethodAnalysisValue> rankedValues = null;
+		ArrayList<ExtendedIntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(EvaluatorForMethodLevel.ALG_BLIA_METHOD)) {
-			rankedValues = integratedAnalysisDAO.getBLIAMethodRankedValues(bugID, limit);
+			rankedValues = integratedAnalysisDAO.getBliaMethodRankedValues(bugID, limit);
 		}
 
 		return rankedValues;
+	}
+	
+	protected void calculateMetrics() throws Exception {
+		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
+				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
+				experimentResult.getPastDays()); 
+		if (experimentResult.getCandidateRate() > 0.0) {
+			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
+		}
+		outputFileName += ".txt";
+		writer = new FileWriter(outputFileName, false);
+		
+		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
+//		boolean isCounted = false;
+		for (int i = 0; i < bugs.size(); i++) {
+			Runnable worker = new WorkerThread(bugs.get(i).getID());
+			executor.execute(worker);
+		}
+		
+		executor.shutdown();
+		while (!executor.isTerminated()) {
+		}
+		
+		experimentResult.setTop1(top1);
+		experimentResult.setTop5(top5);
+		experimentResult.setTop10(top10);
+		
+		int bugCount = bugs.size();
+		experimentResult.setTop1Rate((double) top1 / bugCount);
+		experimentResult.setTop5Rate((double) top5 / bugCount);
+		experimentResult.setTop10Rate((double) top10 / bugCount);
+
+		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
+				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
+		String log = "Top1: " + experimentResult.getTop1() + ", " +
+				"Top5: " + experimentResult.getTop5() + ", " +
+				"Top10: " + experimentResult.getTop10() + ", " +
+				"Top1Rate: " + experimentResult.getTop1Rate() + ", " +
+				"Top5Rate: " + experimentResult.getTop5Rate() + ", " +
+				"Top10Rate: " + experimentResult.getTop10Rate() + "\n";
+		writer.write(log);
+		
+////////////////////////////////////////////////////////////////////////////
+		double MRR = sumOfRRank / bugs.size();
+		experimentResult.setMRR(MRR);
+		
+		System.out.printf("MRR: %f\n", experimentResult.getMRR());
+		log = "MRR: " + experimentResult.getMRR() + "\n";
+		writer.write(log);
+
+////////////////////////////////////////////////////////////////////////////
+		MAP = MAP / bugs.size();
+		experimentResult.setMAP(MAP);
+		
+		System.out.printf("MAP: %f\n", experimentResult.getMAP());
+		log = "MAP: " + experimentResult.getMAP() + "\n";
+		writer.write(log);
+		
+		writer.flush();
+		writer.close();
 	}
 	
     private class WorkerThread implements Runnable {
@@ -122,9 +187,9 @@ public class EvaluatorForMethodLevel extends Evaluator {
 			// test code
 			limitedCount = 30;
 			
-			ArrayList<IntegratedMethodAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
+			ArrayList<ExtendedIntegratedAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
 			if (rankedMethodValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedMethodValues.size(); j++) {
@@ -139,7 +204,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 							String log = bugID + " " + fixedMethodMap.get(methodID).getName() + " " + (j + 1) + "\n";
 							writer.write(log);
 	//						System.out.printf("%d %s %d\n",
-	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+	//								bugID, fixedMethodMap.get(methodID).getName(), j + 1);
 							break;						
 						} else if (j < 5) {
 							top5++;
@@ -148,7 +213,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 							String log = bugID + " " + fixedMethodMap.get(methodID).getName() + " " + (j + 1) + "\n";
 							writer.write(log);
 	//						System.out.printf("%d %s %d\n",
-	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+	//								bugID, fixedMethodMap.get(methodID).getName(), j + 1);
 							break;
 						} else if (j < 10) {
 							top10++;
@@ -156,7 +221,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 							String log = bugID + " " + fixedMethodMap.get(methodID).getName() + " " + (j + 1) + "\n";
 							writer.write(log);
 	//						System.out.printf("%d %s %d\n",
-	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+	//								bugID, fixedMethodMap.get(methodID).getName(), j + 1);
 							break;
 						}
 						// debug code
@@ -164,7 +229,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 							String log = bugID + " " + fixedMethodMap.get(methodID).getName() + " " + (j + 1) + "\n";
 							writer.write(log);
 	//						System.out.printf("%d %s %d\n",
-	//								bugID, fixedFileVersionMap.get(sourceFileVersionID).getName(), j + 1);
+	//								bugID, fixedMethodMap.get(methodID).getName(), j + 1);
 							break;
 						}
 					}
@@ -186,9 +251,9 @@ public class EvaluatorForMethodLevel extends Evaluator {
 				fixedMethodsIDs.add(fixedMethod.getID());
 			}
 			
-			ArrayList<IntegratedMethodAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
+			ArrayList<ExtendedIntegratedAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
 			if (rankedMethodValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedMethodValues.size(); j ++) {
@@ -222,9 +287,9 @@ public class EvaluatorForMethodLevel extends Evaluator {
 			
 			int numberOfFixedFiles = 0;
 			int numberOfPositiveInstances = 0;
-			ArrayList<IntegratedMethodAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
+			ArrayList<ExtendedIntegratedAnalysisValue> rankedMethodValues = rankedMethodValuesMap.get(bugID);
 			if (rankedMethodValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedMethodValues.size(); j ++) {

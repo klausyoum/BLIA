@@ -233,13 +233,17 @@ public class BugRepositoryExtensionUtil {
 				for (int j = 0; j < fixedMethods.size(); ++j) {
 					Method fixedMethod = fixedMethods.get(j);
 					
+					String returnType = fixedMethod.getReturnType();
+					returnType = returnType.replaceAll("<", "&lt;");
+					returnType = returnType.replaceAll(">", "&gt;");
+					
 					String params = fixedMethod.getParams();
 					params = params.replaceAll("<", "&lt;");
 					params = params.replaceAll(">", "&gt;");
 					
 					xmlWriter.write(methodStartTag + "\""
 							+ fixedMethod.getName() + "\" " + "returnType="
-							+ "\"" + fixedMethod.getReturnType() + "\" "
+							+ "\"" + returnType + "\" "
 							+ "parameters=" + "\"" + params + "\"/>"
 							+ "\n");
 				}
@@ -302,11 +306,17 @@ public class BugRepositoryExtensionUtil {
 	}
 	
 	private static String convertToFile(String path) {
-		String fixedFile = "";
+		String fixedFile = path;
 		if (TARGET_PRODUCT_NAME.equals("ZXing")) {
 			String splitter = "/src/";
 			fixedFile = path.substring(path.indexOf(splitter) + splitter.length());
 			fixedFile = fixedFile.replace('/', '.');
+		} else if (TARGET_PRODUCT_NAME.equals("SWT")) {
+			String splitter = "/org/eclipse/";
+			fixedFile = path.substring(path.indexOf(splitter) + 1);
+			fixedFile = fixedFile.replace('/', '.');
+		} else if (TARGET_PRODUCT_NAME.equals("AspectJ")) {
+			fixedFile = "org.aspectj/modules/" + fixedFile;
 		}
 		
 		return fixedFile;

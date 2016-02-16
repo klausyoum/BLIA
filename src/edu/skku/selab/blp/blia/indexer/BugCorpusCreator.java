@@ -44,6 +44,7 @@ import edu.skku.selab.blp.common.CommitInfo;
 import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.dao.BugDAO;
+import edu.skku.selab.blp.db.dao.MethodDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 import edu.skku.selab.blp.utils.Splitter;
 import edu.skku.selab.blp.utils.Stem;
@@ -99,6 +100,7 @@ public class BugCorpusCreator {
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		BugDAO bugDAO = new BugDAO();
+		MethodDAO methodDAO = new MethodDAO();
 		Bug bug;
 		Iterator<Bug> bugIter = list.iterator();
 		
@@ -165,6 +167,12 @@ public class BugCorpusCreator {
 						Method method = fixedMethods.get(j);
 						method.setSourceFileVersionID(sourceFileVersionID);
 						bugDAO.insertBugFixedMethodInfo(bugID, method);
+						
+						// if fixed method is not found from current source version
+						int methodID = methodDAO.getMethodID(method);
+						if (methodID == MethodDAO.INVALID) {
+							methodID = methodDAO.insertMethod(method);
+						}
 					}
 				}
 			}

@@ -51,12 +51,12 @@ public class MethodDAO extends BaseDAO {
 	public int getMethodID(Method method) {
 		int returnValue = INVALID;
 		String sql = "SELECT MTH_ID FROM MTH_INFO " +
-				"WHERE HASH_KEY = ? AND SF_VER_ID = ?";
+				"WHERE HASH_KEY = ? AND MTH_NAME = ?";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
 			ps.setString(1, method.getHashKey());
-			ps.setInt(2, method.getSourceFileVersionID());
+			ps.setString(2, method.getName());
 			
 			rs = ps.executeQuery();
 			

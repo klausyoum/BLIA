@@ -22,10 +22,11 @@ import edu.skku.selab.blp.common.CommitInfo;
 import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.IntegratedMethodAnalysisValue;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.MethodDAO;
+import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -68,10 +69,11 @@ public class ScmRepoAnalyzer {
         private void insertDataToDb() throws Exception {
     		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
     		MethodDAO methodDAO = new MethodDAO();
+    		SourceFileDAO sourceFileDAO = new SourceFileDAO();
     		
 			// <fileName, analysisValue>
 			HashMap<String, IntegratedAnalysisValue> analysisValues = new HashMap<String, IntegratedAnalysisValue>();
-			HashMap<Integer, IntegratedMethodAnalysisValue> methodAnalysisValues = new HashMap<Integer, IntegratedMethodAnalysisValue>();
+			HashMap<Integer, ExtendedIntegratedAnalysisValue> methodAnalysisValues = new HashMap<Integer, ExtendedIntegratedAnalysisValue>();
 			ArrayList<ExtendedCommitInfo> relatedCommitInfos = findCommitInfoWithinDays(filteredCommitInfos, bug.getOpenDate(), pastDays);
 			if (null == relatedCommitInfos) {
 				return;
@@ -108,22 +110,24 @@ public class ScmRepoAnalyzer {
 					continue;
 				}
 				
-				Iterator<ArrayList<Method>> commitMethodsIter = allCommitMethods.values().iterator();
-				while (commitMethodsIter.hasNext()) {
-					ArrayList<Method> commitMethods = commitMethodsIter.next();
+				commitFilesIter = allCommitMethods.keySet().iterator();
+				while (commitFilesIter.hasNext()) {
+					String commitFileName = commitFilesIter.next();
+					ArrayList<Method> commitMethods = allCommitMethods.get(commitFileName);
 					
 					for (int i = 0; i < commitMethods.size(); ++i) {
 						Method method = commitMethods.get(i);
 						int methodID = methodDAO.getMethodID(method);
 
-						// in case of the method which cannot be found
 						if (methodID == MethodDAO.INVALID) {
-							continue;
+							int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(commitFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
+							method.setSourceFileVersionID(sourceFileVersionID);
+							methodID = methodDAO.insertMethod(method);
 						}
 
-						IntegratedMethodAnalysisValue methodAnalysisValue = methodAnalysisValues.get(methodID);
+						ExtendedIntegratedAnalysisValue methodAnalysisValue = methodAnalysisValues.get(methodID);
 						if (null == methodAnalysisValue) {
-							methodAnalysisValue = new IntegratedMethodAnalysisValue();
+							methodAnalysisValue = new ExtendedIntegratedAnalysisValue();
 							methodAnalysisValue.setBugID(bug.getID());
 							methodAnalysisValue.setMethodID(methodID);
 						}
@@ -154,9 +158,9 @@ public class ScmRepoAnalyzer {
 			}
 			
 			// Then save the score for the fixed methods
-			Iterator<IntegratedMethodAnalysisValue> methodAnalysisValueIter = methodAnalysisValues.values().iterator();
+			Iterator<ExtendedIntegratedAnalysisValue> methodAnalysisValueIter = methodAnalysisValues.values().iterator();
 			while (methodAnalysisValueIter.hasNext()) {
-				IntegratedMethodAnalysisValue methodAnalysisValue = methodAnalysisValueIter.next();
+				ExtendedIntegratedAnalysisValue methodAnalysisValue = methodAnalysisValueIter.next();
 				integratedAnalysisDAO.insertMethodAnalysisVaule(methodAnalysisValue);
 
 				// DEBUG code
@@ -171,7 +175,10 @@ public class ScmRepoAnalyzer {
 	public void analyze(String version) throws Exception {
 		// Do loop from the oldest bug,
 		CommitDAO commitDAO = new CommitDAO();
-		filteredCommitInfos = commitDAO.getFilteredCommitInfos();
+		
+		// TODO: check following variables!
+		boolean filtered = false;
+		filteredCommitInfos = commitDAO.getCommitInfos(filtered);
 
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		for (int i = 0; i < bugs.size(); i++) {

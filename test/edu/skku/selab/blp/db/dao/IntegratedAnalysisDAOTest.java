@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
-import edu.skku.selab.blp.db.IntegratedMethodAnalysisValue;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
@@ -153,7 +153,7 @@ public class IntegratedAnalysisDAOTest {
 		double bliaMethodScore = 0.7329;
 		final double delta = 0.00001;
 
-		IntegratedMethodAnalysisValue integratedMethodAnalysisValue = new IntegratedMethodAnalysisValue();
+		ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = new ExtendedIntegratedAnalysisValue();
 		integratedMethodAnalysisValue.setBugID(bugID1);
 		integratedMethodAnalysisValue.setMethodID(methodID1);
 		integratedMethodAnalysisValue.setCommitLogScore(commitLogScore);
@@ -162,11 +162,11 @@ public class IntegratedAnalysisDAOTest {
 		assertNotEquals("AnalysisVaule insertion failed!", BaseDAO.INVALID,
 				integratedAnalysisDAO.insertMethodAnalysisVaule(integratedMethodAnalysisValue));
 		
-		HashMap<Integer, IntegratedMethodAnalysisValue> analysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID1);
+		HashMap<Integer, ExtendedIntegratedAnalysisValue> analysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID1);
 		assertEquals("analysisValues size is wrong.", 1, analysisValues.size());
 		
 		
-		IntegratedMethodAnalysisValue analysisValue = analysisValues.get(methodID1); 
+		ExtendedIntegratedAnalysisValue analysisValue = analysisValues.get(methodID1); 
 		assertNotNull("analysisValue can't be found.", analysisValue);
 		assertEquals("Bug ID is NOT same!", bugID1, analysisValue.getBugID());
 		

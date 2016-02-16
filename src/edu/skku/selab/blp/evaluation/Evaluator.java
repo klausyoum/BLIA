@@ -32,8 +32,7 @@ import edu.skku.selab.blp.utils.Util;
  */
 public class Evaluator {
 	public final static String ALG_BUG_LOCATOR = "BugLocator";
-	public final static String ALG_BLIA = "BLIA";
-	public final static String ALG_BLIA_METHOD = "BLIA with method level";
+	public final static String ALG_BLIA_FILE = "BLIA with file level";
 	
 	protected ExperimentResult experimentResult;
 	protected ArrayList<Bug> bugs = null;
@@ -102,16 +101,9 @@ public class Evaluator {
 		ArrayList<IntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
-		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA) ||
-				experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_METHOD)) {
-			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
+		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_FILE)) {
+			rankedValues = integratedAnalysisDAO.getBliaFileRankedValues(bugID, limit);
 		}
-
-		// TODO: Following lines and above conditions should be checked for method level's bug localization
-//		else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA)) {
-//			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
-//		}
-		
 		return rankedValues;
 	}
 	
@@ -157,7 +149,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j++) {
@@ -221,7 +213,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
@@ -257,7 +249,7 @@ public class Evaluator {
 			int numberOfPositiveInstances = 0;
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {

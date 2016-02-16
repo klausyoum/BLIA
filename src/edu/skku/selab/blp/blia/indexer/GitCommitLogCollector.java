@@ -49,7 +49,7 @@ import edu.skku.selab.blp.db.dao.CommitDAO;
  */
 public class GitCommitLogCollector implements ICommitLogCollector {
 	private String repoDir;
-	private boolean DEBUG_MODE = true;
+	private boolean DEBUG_MODE = false;
 	
 	/**
 	 * 
@@ -86,7 +86,7 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 			if (!newPath.endsWith(".java")) {
 				return null;
 			}
-			System.out.println("FileName : " + newPath);
+//			System.out.println("FileName : " + newPath);
 			
 			RevTree tree = revCommit.getTree();
 			ObjectReader newObjectReader = git.getRepository().newObjectReader();
@@ -187,7 +187,7 @@ public class GitCommitLogCollector implements ICommitLogCollector {
 					Method foundMethod = new Method(methodName, returnType, parameters);
 					if (!commitMethodList.contains(foundMethod)) {
 						commitMethodList.add(foundMethod);
-						System.out.printf("Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, parameters);
+//						System.out.printf("Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, parameters);
 					}
 				} else if (methodStartLine > actualModifiedEndLine) {
 					break;

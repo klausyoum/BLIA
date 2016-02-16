@@ -127,9 +127,13 @@ public class EvaluatorTest {
 				algorithmDescription += " without Stack-Trace analysis";
 			}
 			
-			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
+			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
 					prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 			evaluator.evaluate();
+			
+//			EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
+//					algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+//			evaluatorForMethodLevel.evaluate();
 		}
 		
 		System.out.printf("[DONE] BLIA Evaluation once(Total %s sec)\n", Util.getElapsedTimeSting(totalStartTime));
@@ -168,9 +172,13 @@ public class EvaluatorTest {
 						algorithmDescription += " without Stack-Trace analysis";
 					}
 					
-					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
+					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
 							prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluator.evaluate();
+					
+					EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
+							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+					evaluatorForMethodLevel.evaluate();
 				}
 			}
 		}
@@ -209,9 +217,13 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
+				
+				EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
+						algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+				evaluatorForMethodLevel.evaluate();
 			}
 		}
 		
@@ -251,9 +263,13 @@ public class EvaluatorTest {
 					algorithmDescription += " without Stack-Trace analysis";
 				}
 				
-				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_COMMENT, algorithmDescription,
+				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
 						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();
+				
+				EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
+						algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+				evaluatorForMethodLevel.evaluate();
 			}
 		}
 		

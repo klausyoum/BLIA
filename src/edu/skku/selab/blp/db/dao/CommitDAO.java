@@ -252,7 +252,7 @@ public class CommitDAO extends BaseDAO {
 		return allCommitInfos;
 	}
 	
-	public ArrayList<ExtendedCommitInfo> getFilteredCommitInfos() {
+	public ArrayList<ExtendedCommitInfo> getCommitInfos(boolean filtered) {
 		ArrayList<ExtendedCommitInfo> filteredCommitInfos = null;
 		ExtendedCommitInfo commitInfo = null;
 		
@@ -274,15 +274,19 @@ public class CommitDAO extends BaseDAO {
 				commitInfo.setMessage(rs.getString("MSG"));
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
 				
-				String pattern = "(?i)(.*fix.*)|(?i)(.*bug.*)";
-		        Pattern r = Pattern.compile(pattern);
-		        Matcher m = r.matcher(commitInfo.getMessage());
+				if (filtered) {
+					String pattern = "(?i)(.*fix.*)|(?i)(.*bug.*)";
+			        Pattern r = Pattern.compile(pattern);
+			        Matcher m = r.matcher(commitInfo.getMessage());
 
-		        if (m.find()) {
-		        	// debug code
-//		        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
+			        if (m.find()) {
+			        	// debug code
+//			        	System.out.printf("Commit Message: %s\n", commitInfo.getMessage());
+						filteredCommitInfos.add(commitInfo);
+			        }
+				} else {
 					filteredCommitInfos.add(commitInfo);
-		        }
+				}
 			}
 			
 			for (int i = 0; i < filteredCommitInfos.size(); i++) {

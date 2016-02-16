@@ -69,7 +69,7 @@ public class BLP {
 
 		// Evaluate the accuracy result of BLIA
 		Evaluator evaluator = new Evaluator(prop.getProductName(),
-				Evaluator.ALG_BLIA, algorithmDescription, prop.getAlpha(),
+				Evaluator.ALG_BLIA_FILE, algorithmDescription, prop.getAlpha(),
 				prop.getBeta(), prop.getPastDays(),
 				prop.getCandidateLimitRate());
 		evaluator.evaluate();
