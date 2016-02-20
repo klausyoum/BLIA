@@ -43,6 +43,7 @@ import edu.skku.selab.blp.common.Comment;
 import edu.skku.selab.blp.common.CommitInfo;
 import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.common.Method;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.MethodDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
@@ -146,6 +147,11 @@ public class BugCorpusCreator {
 			
 			bugDAO.insertStructuredBug(bug);
 			
+			ArrayList<Comment> comments = bug.getComments();
+			for (int i = 0; i < comments.size(); ++i) {
+				bugDAO.insertComment(bug.getID(), comments.get(i));
+			}
+			
 			TreeSet<String> fixedFiles = bug.getFixedFiles();
 			Iterator<String> fixedFilesIter = fixedFiles.iterator();
 			while (fixedFilesIter.hasNext()) {
@@ -170,7 +176,7 @@ public class BugCorpusCreator {
 						
 						// if fixed method is not found from current source version
 						int methodID = methodDAO.getMethodID(method);
-						if (methodID == MethodDAO.INVALID) {
+						if (methodID == BaseDAO.INVALID) {
 							methodID = methodDAO.insertMethod(method);
 						}
 					}

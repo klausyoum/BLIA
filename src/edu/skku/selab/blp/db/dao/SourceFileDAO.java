@@ -305,6 +305,26 @@ public class SourceFileDAO extends BaseDAO {
 		return sourceFileNames;	
 	}
 	
+	public String getSourceFileName(int sourceFileVersionID) {
+		String sourceFileName = "";
+		String sql = "SELECT A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +
+				"WHERE B.SF_VER_ID = ? AND A.SF_ID = B.SF_ID";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, sourceFileVersionID);
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				sourceFileName = rs.getString("SF_NAME");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sourceFileName;			
+	}
+	
 	public HashMap<String, String> getClassNames(String version) {
 		HashMap<String, String> sourceFileNames = null;
 		String sql = "SELECT A.CLS_NAME, A.SF_NAME FROM SF_INFO A, SF_VER_INFO B " +

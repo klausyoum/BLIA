@@ -23,6 +23,7 @@ import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.MethodDAO;
@@ -119,7 +120,7 @@ public class ScmRepoAnalyzer {
 						Method method = commitMethods.get(i);
 						int methodID = methodDAO.getMethodID(method);
 
-						if (methodID == MethodDAO.INVALID) {
+						if (methodID == BaseDAO.INVALID) {
 							int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(commitFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
 							method.setSourceFileVersionID(sourceFileVersionID);
 							methodID = methodDAO.insertMethod(method);

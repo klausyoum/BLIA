@@ -98,7 +98,7 @@ public class PrintTestResult {
 		while (bugIter.hasNext()) {
 			Bug bug = bugIter.next();
 			
-			ArrayList<IntegratedAnalysisValue> resultList = integratedAnalysisDAO.getBliaFileRankedValues(bug.getID(), limit);
+			ArrayList<IntegratedAnalysisValue> resultList = integratedAnalysisDAO.getBliaSourceFileRankedValues(bug.getID(), limit);
 			
 			for (int i = 0; i < resultList.size(); i++) {
 				IntegratedAnalysisValue result = resultList.get(i); 
@@ -110,7 +110,7 @@ public class PrintTestResult {
 						result.getBugLocatorScore() + "|" +
 						result.getStackTraceScore() + "|" +
 						result.getCommitLogScore() + "|" +
-						result.getBliaScore() + "\n");				
+						result.getBliaSourceFileScore() + "\n");				
 			}
 		}
 		resultWriter.close();

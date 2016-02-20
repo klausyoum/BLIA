@@ -29,7 +29,7 @@ import edu.skku.selab.blp.utils.Util;
  *
  */
 public class EvaluatorForMethodLevel extends Evaluator {
-	public final static String ALG_BLIA_METHOD = "BLIA with method level";
+	public final static String ALG_BLIA_METHOD = "BLIA_Method";
 	
 	protected HashMap<Integer, HashSet<Method>> realFixedMethodsMap = null;
 	protected HashMap<Integer, ArrayList<ExtendedIntegratedAnalysisValue>> rankedMethodValuesMap = null;
@@ -87,13 +87,7 @@ public class EvaluatorForMethodLevel extends Evaluator {
 	}
 	
 	protected void calculateMetrics() throws Exception {
-		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
-				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
-				experimentResult.getPastDays()); 
-		if (experimentResult.getCandidateRate() > 0.0) {
-			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
-		}
-		outputFileName += ".txt";
+		String outputFileName = getOutputFileName();
 		writer = new FileWriter(outputFileName, false);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);

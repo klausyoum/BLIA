@@ -7,6 +7,7 @@
  */
 package edu.skku.selab.blp.db.dao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.skku.selab.blp.common.Method;
@@ -93,8 +94,8 @@ public class MethodDAO extends BaseDAO {
 	}
 	
 	// <Hash key, Method>
-	public HashMap<String, Method> getAllMethods() {
-		HashMap<String, Method> methodInfo = new HashMap<String, Method>();
+	public HashMap<Integer, ArrayList<Method>> getAllMethods() {
+		HashMap<Integer, ArrayList<Method>> methodMap = new HashMap<Integer, ArrayList<Method>>();
 		
 		String sql = "SELECT MTH_ID, SF_VER_ID, MTH_NAME, RET_TYPE, PARAMS, HASH_KEY FROM MTH_INFO";
 		
@@ -103,15 +104,21 @@ public class MethodDAO extends BaseDAO {
 			
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Method method = new Method(rs.getInt("MTH_ID"), rs.getInt("SF_VER_ID"),
+				int sourceFileVersionID = rs.getInt("SF_VER_ID");
+				Method method = new Method(rs.getInt("MTH_ID"), sourceFileVersionID,
 						rs.getString("MTH_NAME"), rs.getString("RET_TYPE"), rs.getString("PARAMS"),
 						rs.getString("HASH_KEY"));
-				methodInfo.put(rs.getString("HASH_KEY"), method);
+				ArrayList<Method> methods = methodMap.get(sourceFileVersionID);
+				if (methods == null) {
+					methods = new ArrayList<Method>();
+				}
+				methods.add(method);
+				methodMap.put(sourceFileVersionID, methods);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return methodInfo;
+		return methodMap;
 	}
 	
 	public int deleteAllMethods() {

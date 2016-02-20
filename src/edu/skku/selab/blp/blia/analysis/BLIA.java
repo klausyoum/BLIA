@@ -90,8 +90,7 @@ public class BLIA {
 		String repoDir = Property.getInstance().getRepoDir();
 		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(repoDir);
 		
-		// TODO: default value of collectForcely is false. After testing the value SHOULD be fixed.
-		boolean collectForcely = true;
+		boolean collectForcely = false;
 		gitCommitLogCollector.collectCommitLog(commitSince, commitUntil, collectForcely);
 		System.out.printf("[DONE] Commit log collecting.(%s sec)\n", getElapsedTimeSting(startTime));
 		
@@ -137,85 +136,86 @@ public class BLIA {
 		System.out.printf("[DONE] Scm repository analysis.(%s sec)\n", getElapsedTimeSting(startTime));
 	}
 	
-    @SuppressWarnings("unused")
-	private class WorkerThread implements Runnable {
-    	private int bugID;
-    	private boolean includeStackTrace;
-    	
-        public WorkerThread(int bugID, boolean includeStackTrace){
-            this.bugID = bugID;
-            this.includeStackTrace = includeStackTrace;
-        }
-     
-        @Override
-        public void run() {
-			// Compute similarity between Bug report & source files
-        	
-        	try {
-        		insertDataToDb();
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
-        }
-        
-        private void insertDataToDb() throws Exception {
-			long startTime = System.currentTimeMillis();
-
-        	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
-    		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
-    		HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID);
-    		if (null == integratedMethodAnalysisValues) {
-    			return;
-    		}
-
-//			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
-			// AmaLgam doesn't use normalize
-			normalize(integratedAnalysisValues);
-			combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
-			combineForMethodLevel(integratedAnalysisValues, integratedMethodAnalysisValues, alpha, beta, includeStackTrace);
-			
-			int sourceFileCount = integratedAnalysisValues.keySet().size();
-//			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
-			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
-			while (integratedAnalysisValuesIter.hasNext()) {
-				int sourceFileVersionID = integratedAnalysisValuesIter.next();
-				
-				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-				int updatedColumnCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
-				if (0 == updatedColumnCount) {
-					System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
-							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
-
-					// remove following line after testing.
-//					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-				}
-			}
-			
-			Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
-			while (integratedMethodAnalysisValuesIter.hasNext()) {
-				int methodID = integratedMethodAnalysisValuesIter.next();
-				
-				ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
-//				System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
-				int updatedColumnCount = integratedAnalysisDAO.updateBLIAMethodScore(integratedMethodAnalysisValue);
-//				System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
-				if (0 == updatedColumnCount) {
-					System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, methodID: %d\n",
-							integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getMethodID());
-
-					// remove following line after testing.
-//					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
-				}
-			}
-
-			synchronized (completeBugIdCount) {
-				completeBugIdCount++;
-				System.out.printf("[Thread()] [%d] Bug ID: %s (%s sec)\n", completeBugIdCount, bugID, Util.getElapsedTimeSting(startTime));
-			}
-        }
-    }
+	// TODO: will be removed after testing complete
+//    @SuppressWarnings("unused")
+//	private class WorkerThread implements Runnable {
+//    	private int bugID;
+//    	private boolean includeStackTrace;
+//    	
+//        public WorkerThread(int bugID, boolean includeStackTrace){
+//            this.bugID = bugID;
+//            this.includeStackTrace = includeStackTrace;
+//        }
+//     
+//        @Override
+//        public void run() {
+//			// Compute similarity between Bug report & source files
+//        	
+//        	try {
+//        		insertDataToDb();
+//        	} catch (Exception e) {
+//        		e.printStackTrace();
+//        	}
+//        }
+//        
+//        private void insertDataToDb() throws Exception {
+//			long startTime = System.currentTimeMillis();
+//
+//        	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+//    		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisDAO.getAnalysisValues(bugID);
+//    		HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID);
+//    		if (null == integratedMethodAnalysisValues) {
+//    			return;
+//    		}
+//
+////			HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
+//			// AmaLgam doesn't use normalize
+//			normalize(integratedAnalysisValues);
+//			combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
+//			combineForMethodLevel(integratedAnalysisValues, integratedMethodAnalysisValues, alpha, beta, includeStackTrace);
+//			
+//			int sourceFileCount = integratedAnalysisValues.keySet().size();
+////			System.out.printf("After combine(), integratedAnalysisValues: %d\n", sourceFileCount);
+//			Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
+//			while (integratedAnalysisValuesIter.hasNext()) {
+//				int sourceFileVersionID = integratedAnalysisValuesIter.next();
+//				
+//				IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
+//				int updatedColumnCount = integratedAnalysisDAO.updateBliaSourceFileScore(integratedAnalysisValue);
+//				if (0 == updatedColumnCount) {
+//					System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
+//							integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
+//
+//					// remove following line after testing.
+////					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+//				}
+//			}
+//			
+//			Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
+//			while (integratedMethodAnalysisValuesIter.hasNext()) {
+//				int methodID = integratedMethodAnalysisValuesIter.next();
+//				
+//				ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
+////				System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
+//				int updatedColumnCount = integratedAnalysisDAO.updateBliaMethodScore(integratedMethodAnalysisValue);
+////				System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
+//				if (0 == updatedColumnCount) {
+//					System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, methodID: %d\n",
+//							integratedMethodAnalysisValue.getBugID(), integratedMethodAnalysisValue.getMethodID());
+//
+//					// remove following line after testing.
+////					integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
+//				}
+//			}
+//
+//			synchronized (completeBugIdCount) {
+//				completeBugIdCount++;
+//				System.out.printf("[Thread()] [%d] Bug ID: %s (%s sec)\n", completeBugIdCount, bugID, Util.getElapsedTimeSting(startTime));
+//			}
+//        }
+//    }
     
-    private void calculateBLIAScore(int bugID, boolean includeStackTrace) throws Exception {
+    private void calculateBliaSourceFileScore(int bugID, boolean includeStackTrace) throws Exception {
 //		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
     	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
     	
@@ -225,16 +225,10 @@ public class BLIA {
 			return;
 		}
 		
-		HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID);
-		if (null == integratedMethodAnalysisValues) {
-			integratedMethodAnalysisValues = new HashMap<Integer, ExtendedIntegratedAnalysisValue>();
-		}
-		
 //		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
 		// AmaLgam doesn't use normalize
 		normalize(integratedAnalysisValues);
 		combine(integratedAnalysisValues, alpha, beta, includeStackTrace);
-		combineForMethodLevel(integratedAnalysisValues, integratedMethodAnalysisValues, alpha, beta, includeStackTrace);
 		
 		@SuppressWarnings("unused")
 		int sourceFileCount = integratedAnalysisValues.keySet().size();
@@ -246,8 +240,8 @@ public class BLIA {
 			
 			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
 //			System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
-			int updatedColumnCount = integratedAnalysisDAO.updateBLIAScore(integratedAnalysisValue);
-//			System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
+			int updatedColumnCount = integratedAnalysisDAO.updateBliaSourceFileScore(integratedAnalysisValue);
+//			System.out.printf("After updateBliaSourceFileScore(), count: %d/%d\n", count, sourceFileCount);
 			if (0 == updatedColumnCount) {
 				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, sourceFileVersionID: %d\n",
 						integratedAnalysisValue.getBugID(), integratedAnalysisValue.getSourceFileVersionID());
@@ -256,6 +250,20 @@ public class BLIA {
 //				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue);
 			}
 		}
+    }
+    
+    private void calculateBliaMethodScore(int bugID) throws Exception {
+//		HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues = integratedAnalysisValuesMap.get(bugID);
+    	IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+    	
+//    	System.out.printf("Before integratedAnalysisDAO.getAnalysisValues() \n");
+		HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues = integratedAnalysisDAO.getMethodAnalysisValues(bugID);
+		if (null == integratedMethodAnalysisValues) {
+			integratedMethodAnalysisValues = new HashMap<Integer, ExtendedIntegratedAnalysisValue>();
+		}
+		
+//		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
+		combineForMethodLevel(integratedMethodAnalysisValues, beta);
 		
 		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
 		while (integratedMethodAnalysisValuesIter.hasNext()) {
@@ -263,7 +271,7 @@ public class BLIA {
 			
 			ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
 //			System.out.printf("Before updateBLIAScore(), count: %d/%d\n", count++, sourceFileCount);
-			int updatedColumnCount = integratedAnalysisDAO.updateBLIAMethodScore(integratedMethodAnalysisValue);
+			int updatedColumnCount = integratedAnalysisDAO.updateBliaMethodScore(integratedMethodAnalysisValue);
 //			System.out.printf("After updateBLIAScore(), count: %d/%d\n", count, sourceFileCount);
 			if (0 == updatedColumnCount) {
 				System.err.printf("[ERROR] BLIA.analyze(): BLIA and BugLocator score update failed! BugID: %s, methodID: %d\n",
@@ -275,7 +283,7 @@ public class BLIA {
 		}
     }
 	
-	public void analyze(String version, boolean includeStackTrace) throws Exception {
+	public void analyze(String version, boolean includeStackTrace, boolean analyzeMethod) throws Exception {
 		if (null == bugs) {
 			BugDAO bugDAO = new BugDAO();
 			bugs = bugDAO.getAllBugs(false);			
@@ -305,11 +313,26 @@ public class BLIA {
 		for (int i = 0; i < bugs.size(); i++) {
 			long startTime = System.currentTimeMillis();
 			int bugID = bugs.get(i).getID();
-			calculateBLIAScore(bugID, includeStackTrace);
-			System.out.printf("[calculateBLIAScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
+			calculateBliaSourceFileScore(bugID, includeStackTrace);
+			System.out.printf("[calculateBliaSourceFileScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
 //			Runnable worker = new WorkerThread(bugs.get(i).getID());
 //			executor.execute(worker);
 		}
+		
+    	if (analyzeMethod) {
+    		MethodAnalyzer methodAnalyzer = new MethodAnalyzer(bugs);
+    		methodAnalyzer.analyze();
+    	}
+		
+		for (int i = 0; i < bugs.size(); i++) {
+			long startTime = System.currentTimeMillis();
+			int bugID = bugs.get(i).getID();
+			calculateBliaMethodScore(bugID);
+			System.out.printf("[calculateBliaMethodScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
+//			Runnable worker = new WorkerThread(bugs.get(i).getID());
+//			executor.execute(worker);
+		}
+		
 //		executor.shutdown();
 //		while (!executor.isTerminated()) {
 //		}
@@ -339,15 +362,17 @@ public class BLIA {
 			double bugLocatorScore = (1 - alpha) * (vsmScore) + alpha * similarityScore;
 			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
 			
-			double bliaScore = bugLocatorScore;
+			double middleSourceFileScore = bugLocatorScore;
 			if (includeStackTrace) {
-				bliaScore += stackTraceScore;
+				middleSourceFileScore += stackTraceScore;
 			}
+			integratedAnalysisValue.setMiddleSourceFileScore(middleSourceFileScore);
 			
-			if (bliaScore > 0) {
-				bliaScore = (1 - beta) * bliaScore + beta * commitLogScore;
+			double bliaSourceFileScore = middleSourceFileScore;
+			if (bliaSourceFileScore > 0) {
+				bliaSourceFileScore = (1 - beta) * bliaSourceFileScore + beta * commitLogScore;
 			} else {
-				bliaScore = 0;
+				bliaSourceFileScore = 0;
 			}
 
 //			if (vsmScore > 0.5) {
@@ -356,7 +381,7 @@ public class BLIA {
 //				bliaScore = 0;
 //			}
 			
-			integratedAnalysisValue.setBliaScore(bliaScore);
+			integratedAnalysisValue.setBliaSourceFileScore(bliaSourceFileScore);
 		}
 	}
 	
@@ -368,80 +393,23 @@ public class BLIA {
 	 * @param beta
 	 * @param includeStackTrace
 	 */
-	private void combineForMethodLevel(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues,
-			HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues, double alpha, double beta,
-			boolean includeStackTrace) {
-
+	private void combineForMethodLevel(HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues, double beta) {
 		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
 		while (integratedMethodAnalysisValuesIter.hasNext()) {
 			int methodID = integratedMethodAnalysisValuesIter.next();
 			
 			ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(methodID);
+			double methodVsmScore = integratedMethodAnalysisValue.getVsmScore();
 			double commitMethodLogScore = integratedMethodAnalysisValue.getCommitLogScore();
-			double bliaMethodScore = commitMethodLogScore;
+			
+			double bliaMethodScore = 0.0;
+			if (methodVsmScore > 0) {
+				bliaMethodScore = (1 - beta) * methodVsmScore + beta * commitMethodLogScore;
+			}
+			
 			integratedMethodAnalysisValue.setBliaMethodScore(bliaMethodScore);
 		}
-		
-		// TODO: will be removed
-//		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
-//		while (integratedAnalysisValuesIter.hasNext()) {
-//			int sourceFileVersionID = integratedAnalysisValuesIter.next();
-//			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-//			
-//			double vsmScore = integratedAnalysisValue.getVsmScore();
-//			double similarityScore = integratedAnalysisValue.getSimilarityScore();
-//			double stackTraceScore = integratedAnalysisValue.getStackTraceScore();
-//			
-//			double bugLocatorScore = (1 - alpha) * (vsmScore) + alpha * similarityScore;
-//			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
-//			
-//			double bliaMethodScore = bugLocatorScore;
-//			if (includeStackTrace) {
-//				bliaMethodScore += stackTraceScore;
-//			}
-//
-//			Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
-//			while (integratedMethodAnalysisValuesIter.hasNext()) {
-//				int methodID = integratedMethodAnalysisValuesIter.next();
-//				
-//			}
-//			IntegratedMethodAnalysisValue integratedMethodAnalysisValue = integratedMethodAnalysisValues.get(sourceFileVersionID);
-//			double commitMethodLogScore = integratedMethodAnalysisValue.getCommitLogScore();
-//			if (bliaMethodScore > 0) {
-//				bliaMethodScore = (1 - beta) * bliaMethodScore + beta * commitMethodLogScore;
-//			} else {
-//				bliaMethodScore = 0;
-//			}
-//			
-//			integratedMethodAnalysisValue.setBliaMethodScore(bliaMethodScore);
-//		}
 	}
-
-//	/**
-//	 * Combine rVSMScore(vsmVector) and SimiScore(graphVector)
-//	 * 
-//	 * @param vsmVector
-//	 * @param graphVector
-//	 * @param f
-//	 * @return
-//	 */
-//	public void combine(HashMap<Integer, IntegratedAnalysisValue> integratedAnalysisValues, double alpha) {
-//		Iterator<Integer> integratedAnalysisValuesIter = integratedAnalysisValues.keySet().iterator();
-//		while (integratedAnalysisValuesIter.hasNext()) {
-//			int sourceFileVersionID = integratedAnalysisValuesIter.next();
-//			IntegratedAnalysisValue integratedAnalysisValue = integratedAnalysisValues.get(sourceFileVersionID);
-//			
-//			double vsmScore = integratedAnalysisValue.getVsmScore();
-//			double similarityScore = integratedAnalysisValue.getSimilarityScore();
-////			double stackTraceScore = integratedAnalysisValue.getStackTraceScore();
-//			
-//			double bugLocatorScore = vsmScore * (1 - alpha) + similarityScore * alpha;
-//			integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
-//
-//			// Only Stack Trace analysis included.
-////			integratedAnalysisValue.setBLIAScore(bugLocatorScore + stackTraceScore);
-//		}
-//	}
 
 	/**
 	 * Normalize values in array from max. to min of array
@@ -544,7 +512,8 @@ public class BLIA {
 		BLIA blia = new BLIA();
 		
 		boolean useStrucrutedInfo = true;
-		boolean includeStackTrace = true;	
+		boolean includeStackTrace = true;
+		boolean analyzeMethod = true;
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = prop.getProductName();
@@ -564,7 +533,7 @@ public class BLIA {
 		
 		System.out.printf("[STARTED] BLIA anlaysis.\n");
 		startTime = System.currentTimeMillis();
-		blia.analyze(version, includeStackTrace);
+		blia.analyze(version, includeStackTrace, analyzeMethod);
 		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 }

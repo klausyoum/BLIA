@@ -32,7 +32,7 @@ import edu.skku.selab.blp.utils.Util;
  */
 public class Evaluator {
 	public final static String ALG_BUG_LOCATOR = "BugLocator";
-	public final static String ALG_BLIA_FILE = "BLIA with file level";
+	public final static String ALG_BLIA_FILE = "BLIA_File";
 	
 	protected ExperimentResult experimentResult;
 	protected ArrayList<Bug> bugs = null;
@@ -102,7 +102,7 @@ public class Evaluator {
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
 		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_FILE)) {
-			rankedValues = integratedAnalysisDAO.getBliaFileRankedValues(bugID, limit);
+			rankedValues = integratedAnalysisDAO.getBliaSourceFileRankedValues(bugID, limit);
 		}
 		return rankedValues;
 	}
@@ -274,15 +274,21 @@ public class Evaluator {
 			}
         }
     }
-	
-	protected void calculateMetrics() throws Exception {
+    
+    protected String getOutputFileName() {
 		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
 				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
 				experimentResult.getPastDays()); 
 		if (experimentResult.getCandidateRate() > 0.0) {
 			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
 		}
-		outputFileName += ".txt";
+		outputFileName += "_" + experimentResult.getAlgorithmName() + ".txt";
+		
+		return outputFileName;
+    }
+	
+	protected void calculateMetrics() throws Exception {
+		String outputFileName = getOutputFileName();
 		writer = new FileWriter(outputFileName, false);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
@@ -305,7 +311,8 @@ public class Evaluator {
 		experimentResult.setTop5Rate((double) top5 / bugCount);
 		experimentResult.setTop10Rate((double) top10 / bugCount);
 
-		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+		System.out.printf("[%s] Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+				experimentResult.getAlgorithmName(),
 				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
 				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
 		String log = "Top1: " + experimentResult.getTop1() + ", " +

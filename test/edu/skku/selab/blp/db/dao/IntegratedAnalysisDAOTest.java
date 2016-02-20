@@ -119,7 +119,7 @@ public class IntegratedAnalysisDAOTest {
 		integratedAnalysisValue.setBugLocatorScore(bugLocatorScore);
 		integratedAnalysisValue.setStackTraceScore(stackTraceScore);
 		integratedAnalysisValue.setCommitLogScore(commitLogScore);
-		integratedAnalysisValue.setBliaScore(bliaScore);
+		integratedAnalysisValue.setBliaSourceFileScore(bliaScore);
 		
 		assertNotEquals("AnalysisVaule insertion failed!", BaseDAO.INVALID,
 				integratedAnalysisDAO.insertAnalysisVaule(integratedAnalysisValue));
@@ -139,7 +139,7 @@ public class IntegratedAnalysisDAOTest {
 		assertEquals("bugLocatorScore is NOT same!", bugLocatorScore, analysisValue.getBugLocatorScore(), delta);
 		assertEquals("stackTraceScore is NOT same!", stackTraceScore, analysisValue.getStackTraceScore(), delta);
 		assertEquals("commitLogScore is NOT same!", commitLogScore, analysisValue.getCommitLogScore(), delta);
-		assertEquals("bliaScore is NOT same!", bliaScore, analysisValue.getBliaScore(), delta);
+		assertEquals("bliaScore is NOT same!", bliaScore, analysisValue.getBliaSourceFileScore(), delta);
 	}
 	
 	@Test

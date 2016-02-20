@@ -216,6 +216,26 @@ public class BugDAO extends BaseDAO {
 		}
 		return bugs;	
 	}
+	
+	public HashMap<Integer, Double> getAllNorms() {
+		HashMap<Integer, Double> bugNormMap = new HashMap<Integer, Double>();
+		
+		String sql = "SELECT BUG_ID, COR_NORM FROM BUG_INFO ";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				int bugID = rs.getInt("BUG_ID");
+				double bugNorm = rs.getDouble("COR_NORM");
+				bugNormMap.put(bugID, bugNorm);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bugNormMap;	
+	}
 
 	public int getBugCountWithFixedDate(String fixedDateString) {
 		String sql = "SELECT COUNT(BUG_ID) FROM BUG_INFO " +
@@ -1034,7 +1054,7 @@ public class BugDAO extends BaseDAO {
 	}
 	
 	public int insertComment(int bugID, Comment comment) {
-		String sql = "INSERT INTO BUG_CMT_INFO (BUG_ID, CMD_ID, ATHR, CMT_DATE, CMT_COR) VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_CMT_INFO (BUG_ID, CMT_ID, ATHR, CMT_DATE, CMT_COR) VALUES (?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {

@@ -53,7 +53,7 @@ public class CommitDAO extends BaseDAO {
 				
 				while (commitFilesIter.hasNext()) {
 					String checkedInFileName = commitFilesIter.next();
-					sql = "INSERT INTO COMM_FILE_INFO (COMM_ID, COMM_FILE, COMM_TYPE) VALUES (?, ?, ?)";
+					sql = "INSERT INTO COMM_SF_INFO (COMM_ID, COMM_SF, COMM_TYPE) VALUES (?, ?, ?)";
 					
 					ps = analysisDbConnection.prepareStatement(sql);
 					ps.setString(1, extendedCommitInfo.getCommitID());
@@ -74,7 +74,7 @@ public class CommitDAO extends BaseDAO {
 				for (int i = 0; i < fixedMethods.size(); ++i) {
 					Method method = fixedMethods.get(i);
 					
-					sql = "INSERT INTO COMM_MTH_INFO (COMM_ID, COMM_FILE, COMM_MTH, COM_MTH_HASH_KEY) VALUES (?, ?, ?, ?)";
+					sql = "INSERT INTO COMM_MTH_INFO (COMM_ID, COMM_SF, COMM_MTH, COM_MTH_HASH_KEY) VALUES (?, ?, ?, ?)";
 					
 					ps = analysisDbConnection.prepareStatement(sql);
 					ps.setString(1, extendedCommitInfo.getCommitID());
@@ -111,7 +111,7 @@ public class CommitDAO extends BaseDAO {
 	public HashMap<Integer, HashSet<String>> getCommitFiles(String commitID) {
 		HashMap<Integer, HashSet<String>> allCommitFiles = null;
 
-		String sql = "SELECT COMM_FILE, COMM_TYPE FROM COMM_FILE_INFO " + 
+		String sql = "SELECT COMM_SF, COMM_TYPE FROM COMM_SF_INFO " + 
 				"WHERE COMM_ID = ? ORDER BY COMM_TYPE";
 
 		try {
@@ -131,7 +131,7 @@ public class CommitDAO extends BaseDAO {
 					commitFiles = new HashSet<String>();
 					allCommitFiles.put(commitType, commitFiles);
 				}
-				commitFiles.add(rs.getString("COMM_FILE"));
+				commitFiles.add(rs.getString("COMM_SF"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -143,8 +143,8 @@ public class CommitDAO extends BaseDAO {
 	public HashMap<String, ArrayList<Method>> getCommitMethods(String commitID) {
 		HashMap<String, ArrayList<Method>> allCommitMethods = null;
 
-		String sql = "SELECT COMM_FILE, COMM_MTH FROM COMM_MTH_INFO " + 
-				"WHERE COMM_ID = ? ORDER BY COMM_FILE";
+		String sql = "SELECT COMM_SF, COMM_MTH FROM COMM_MTH_INFO " + 
+				"WHERE COMM_ID = ? ORDER BY COMM_SF";
 
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
@@ -157,7 +157,7 @@ public class CommitDAO extends BaseDAO {
 					allCommitMethods = new HashMap<String, ArrayList<Method>>();
 				}
 
-				String commitFile = rs.getString("COMM_FILE");
+				String commitFile = rs.getString("COMM_SF");
 				ArrayList<Method> commitMethods = allCommitMethods.get(commitFile);
 				if (null == commitMethods) {
 					commitMethods = new ArrayList<Method>();
@@ -302,7 +302,7 @@ public class CommitDAO extends BaseDAO {
 	}
 	
 	public int deleteAllCommitFileInfo() {
-		String sql = "DELETE FROM COMM_FILE_INFO";
+		String sql = "DELETE FROM COMM_SF_INFO";
 		int returnValue = INVALID;
 		
 		try {
@@ -320,7 +320,7 @@ public class CommitDAO extends BaseDAO {
 		CommitInfo commitInfo = getCommitInfo(commitID);
 		ExtendedCommitInfo fixedCommitInfo = new ExtendedCommitInfo(commitInfo);
 		
-		String sql = "SELECT COMM_FILE, COMM_MTH FROM COMM_MTH_INFO " + 
+		String sql = "SELECT COMM_SF, COMM_MTH FROM COMM_MTH_INFO " + 
 				"WHERE COMM_ID = ?";
 		
 		try {
@@ -330,7 +330,7 @@ public class CommitDAO extends BaseDAO {
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				String fixedFile = rs.getString("COMM_FILE");
+				String fixedFile = rs.getString("COMM_SF");
 				String fixedMethodInfo = rs.getString("COMM_MTH");
 				Method fixedMethod = new Method(fixedMethodInfo);
 				fixedCommitInfo.addFixedMethod(fixedFile, fixedMethod);

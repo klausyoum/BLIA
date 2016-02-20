@@ -9,6 +9,7 @@ package edu.skku.selab.blp.db.dao;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.junit.After;
@@ -113,16 +114,33 @@ public class MethodDAOTest {
 	public void verifyGetAllMethods() throws Exception{
 		MethodDAO methodDAO = new MethodDAO();
 		
-		HashMap<String, Method> methodMap = methodDAO.getAllMethods();
-		for (int i = 0; i < 4; ++i) {
-			Method method = methodMap.get(hashKeys[i]);
-			assertNotNull("Retured method is NULL!", method);
-			
-			assertEquals(sourceFileVersions[i], method.getSourceFileVersionID());
-			assertEquals(methodNames[i], method.getName());
-			assertEquals(returnTypes[i], method.getReturnType());
-			assertEquals(argTypes[i], method.getParams());
-			assertEquals(hashKeys[i], method.getHashKey());
-		}
+		HashMap<Integer, ArrayList<Method>> methodMap = methodDAO.getAllMethods();
+		ArrayList<Method> methods = methodMap.get(1);
+		assertEquals(2, methods.size());
+		assertEquals(sourceFileVersions[0], methods.get(0).getSourceFileVersionID());
+		assertEquals(methodNames[0], methods.get(0).getName());
+		assertEquals(returnTypes[0], methods.get(0).getReturnType());
+		assertEquals(argTypes[0], methods.get(0).getParams());
+		assertEquals(hashKeys[0], methods.get(0).getHashKey());
+		
+		assertEquals(sourceFileVersions[1], methods.get(1).getSourceFileVersionID());
+		assertEquals(methodNames[1], methods.get(1).getName());
+		assertEquals(returnTypes[1], methods.get(1).getReturnType());
+		assertEquals(argTypes[1], methods.get(1).getParams());
+		assertEquals(hashKeys[1], methods.get(1).getHashKey());
+		
+		methods = methodMap.get(2);
+		assertEquals(2, methods.size());
+		assertEquals(sourceFileVersions[2], methods.get(0).getSourceFileVersionID());
+		assertEquals(methodNames[2], methods.get(0).getName());
+		assertEquals(returnTypes[2], methods.get(0).getReturnType());
+		assertEquals(argTypes[2], methods.get(0).getParams());
+		assertEquals(hashKeys[2], methods.get(0).getHashKey());
+		
+		assertEquals(sourceFileVersions[3], methods.get(1).getSourceFileVersionID());
+		assertEquals(methodNames[3], methods.get(1).getName());
+		assertEquals(returnTypes[3], methods.get(1).getReturnType());
+		assertEquals(argTypes[3], methods.get(1).getParams());
+		assertEquals(hashKeys[3], methods.get(1).getHashKey());
 	}
 }

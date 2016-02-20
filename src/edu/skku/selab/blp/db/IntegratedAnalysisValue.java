@@ -21,7 +21,8 @@ public class IntegratedAnalysisValue {
 	protected double bugLocatorScore;
 	protected double stackTraceScore;
 	protected double commitLogScore;
-	protected double bliaScore;
+	private double middleSourceFileScore;
+	protected double bliaSourceFileScore;
 
 	/**
 	 * 
@@ -36,7 +37,8 @@ public class IntegratedAnalysisValue {
 		bugLocatorScore = 0.0;
 		stackTraceScore = 0.0;
 		commitLogScore = 0.0;
-		bliaScore = 0.0;
+		setMiddleSourceFileScore(0.0);
+		bliaSourceFileScore = 0.0;
 	}
 
 	/**
@@ -124,17 +126,17 @@ public class IntegratedAnalysisValue {
 	}
 
 	/**
-	 * @return the bliaScore
+	 * @return the bliaSourceFileScore
 	 */
-	public double getBliaScore() {
-		return bliaScore;
+	public double getBliaSourceFileScore() {
+		return bliaSourceFileScore;
 	}
 
 	/**
-	 * @param bliaScore the bliaScore to set
+	 * @param bliaSourceFileScore the bliaSourceFileScore to set
 	 */
-	public void setBliaScore(double bliaScore) {
-		this.bliaScore = bliaScore;
+	public void setBliaSourceFileScore(double bliaSourceFileScore) {
+		this.bliaSourceFileScore = bliaSourceFileScore;
 	}
 
 	/**
@@ -177,5 +179,19 @@ public class IntegratedAnalysisValue {
 	 */
 	public void setCommitLogScore(double commitLogScore) {
 		this.commitLogScore = commitLogScore;
+	}
+
+	/**
+	 * @return the middleSourceFileScore
+	 */
+	public double getMiddleSourceFileScore() {
+		return middleSourceFileScore;
+	}
+
+	/**
+	 * @param middleSourceFileScore the middleSourceFileScore to set
+	 */
+	public void setMiddleSourceFileScore(double middleSourceFileScore) {
+		this.middleSourceFileScore = middleSourceFileScore;
 	}
 }

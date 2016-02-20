@@ -31,7 +31,7 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  *
  */
 public class SourceFileAnalyzer {
-	private ArrayList<Bug> bugs;
+	protected ArrayList<Bug> bugs;
 	private HashMap<String, Integer> sourceFileVersionIDs;
 	private HashMap<Integer, HashMap<String, AnalysisValue>> sourceFileAllTermMaps;
 	private HashMap<Integer, SourceFileCorpus> sourceFileCorpusMap;
@@ -56,7 +56,6 @@ public class SourceFileAnalyzer {
 	/**
 	 * Calculate VSM score between source files and each bug report 
 	 * 
-	 * @see edu.skku.selab.blp.analysis.IAnalyzer#analyze()
 	 */
 	public void analyze(String version, boolean useStructuredInfo) throws Exception {
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();

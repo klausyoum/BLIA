@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -39,6 +40,7 @@ public class FileParser {
 	
 	private String allClassNames;
 	private String allMethodNames;
+	private String allInnerMethodNames;
 	private String allVariableNames;
 	private String allComments;
 	private ArrayList<Method> allMethodList;
@@ -51,6 +53,7 @@ public class FileParser {
 	public FileParser(File file) {
 		allClassNames = null;
 		allMethodNames = null;
+		allInnerMethodNames = null;
 		allVariableNames = null;
 		allComments = null;
 		allMethodList = null;
@@ -77,16 +80,16 @@ public class FileParser {
 		return len;
 	}
 	
-	private String[] splitContent(String content) {
-		String tokensInSourceCode[] = Splitter.splitSourceCode(content);
+	public static String[] splitContent(String content) {
+		String tokensInConent[] = Splitter.splitSourceCode(content);
 		StringBuffer sourceCodeContentBuffer = new StringBuffer();
-		for (int i = 0; i < tokensInSourceCode.length; i++) {
-			String token = tokensInSourceCode[i];
+		for (int i = 0; i < tokensInConent.length; i++) {
+			String token = tokensInConent[i];
 			sourceCodeContentBuffer.append((new StringBuilder(String.valueOf(token))).append(" ").toString());
 		}
 
-		String processedConent = sourceCodeContentBuffer.toString().toLowerCase();
-		return processedConent.split(" ");
+		String processedContent = sourceCodeContentBuffer.toString().toLowerCase();
+		return processedContent.split(" ");
 	}
 	
 	public String[] getStructuredContentWithFullyIdentifier(int type) {
@@ -99,6 +102,10 @@ public class FileParser {
 			break;
 		case METHOD_PART:
 			content =  getAllMethodNames();
+			if (getAllMethodNames().length() != 0) {
+				content += " ";
+			}
+			content += getAllInnerMethodNames();
 			break;
 		case VARIABLE_PART:
 			content =  getAllVariableNames();
@@ -123,6 +130,10 @@ public class FileParser {
 			break;
 		case METHOD_PART:
 			content =  getAllMethodNames();
+			if (getAllMethodNames().length() != 0) {
+				content += " ";
+			}
+			content += getAllInnerMethodNames();
 			break;
 		case VARIABLE_PART:
 			content =  getAllVariableNames();
@@ -149,13 +160,65 @@ public class FileParser {
 	
 	public String[] getClassNameAndMethodName() {
 		String content = (new StringBuilder(String.valueOf(getAllClassNames()))).append(" ")
-				.append(getAllMethodNames()).toString().toLowerCase();
+				.append(getAllMethodNames()).append(" ").toString().toLowerCase();
 		return content.split(" ");
 	}
 
 	public String getPackageName() {
 		return compilationUnit.getPackage() != null ?
 				compilationUnit.getPackage().getName().getFullyQualifiedName() : "";
+	}
+	
+	private String getAllInnerMethodNames() {
+		if (allInnerMethodNames != null) {
+			return allInnerMethodNames;
+		} else {
+	    	final ArrayList<String> innerMethodNameList = new ArrayList<String>();
+	    	
+	    	compilationUnit.accept(new ASTVisitor() {
+	    		public boolean visit(TypeDeclaration type) {
+	    		    if (!type.isPackageMemberTypeDeclaration()) {
+//    		            System.out.printf("Inner class name: %s\n", type.getName());
+    		            
+    					MethodDeclaration methodDecls[] = type.getMethods();
+    					MethodDeclaration methodDeclaration[];
+    					int k = (methodDeclaration = methodDecls).length;
+    					for (int j = 0; j < k; j++) {
+    						MethodDeclaration methodDecl = methodDeclaration[j];
+    						String methodName = methodDecl.getName().getFullyQualifiedName();
+    						
+    						Type returnType = methodDecl.getReturnType2();
+    						String returnTypeString = (returnType == null) ? "" : returnType.toString();
+    						
+    						String parameters = "";
+    						for (int l = 0; l < methodDecl.parameters().size(); l++) {
+    							parameters += ((SingleVariableDeclaration) methodDecl.parameters().get(l)).getType().toString();
+    							parameters += " ";
+    						}
+    						parameters = parameters.trim();
+    						
+    						// debug code
+//	    						System.out.printf(">>> Method: %s %s(%s)\n", returnTypeString, methodName, parameters);
+    						Method method = new Method(methodName, returnTypeString, parameters);
+    						allMethodList.add(method);
+    						
+    						innerMethodNameList.add(methodName);
+    					}
+	    		    }
+	    		    return super.visit(type);
+	    		}
+	    	});
+	    	
+	    	allInnerMethodNames = "";
+			for (Iterator<String> iterator = innerMethodNameList.iterator(); iterator.hasNext();) {
+				String structuredInfoName = (String) iterator.next();
+				allInnerMethodNames = (new StringBuilder(String.valueOf(allInnerMethodNames)))
+						.append(structuredInfoName).append(" ").toString();
+			}
+		
+			allInnerMethodNames = allInnerMethodNames.trim(); 
+			return allInnerMethodNames;	
+		}
 	}
 	
 	public String getAllVariableNames() {
@@ -460,6 +523,7 @@ public class FileParser {
 			return allMethodList;
 		} else {
 			getAllMethodNames();
+			getAllInnerMethodNames();
 			return allMethodList;
 		}
 	}
@@ -507,7 +571,7 @@ public class FileParser {
 						.append(methodName).append(" ").toString();
 			}
 
-			allMethodNames = allMethodNames.trim(); 
+			allMethodNames = allMethodNames.trim();
 			return allMethodNames;
 		}
 	}
