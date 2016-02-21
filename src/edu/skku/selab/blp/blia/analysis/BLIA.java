@@ -284,7 +284,7 @@ public class BLIA {
 		}
     }
 	
-	public void analyze(String version, boolean includeStackTrace, boolean analyzeMethod) throws Exception {
+	public void analyze(String version, boolean includeStackTrace) throws Exception {
 		if (null == bugs) {
 			BugDAO bugDAO = new BugDAO();
 			bugs = bugDAO.getAllBugs(false);			
@@ -320,10 +320,8 @@ public class BLIA {
 //			executor.execute(worker);
 		}
 		
-    	if (analyzeMethod) {
-    		MethodAnalyzer methodAnalyzer = new MethodAnalyzer(bugs);
-    		methodAnalyzer.analyze();
-    	}
+		MethodAnalyzer methodAnalyzer = new MethodAnalyzer(bugs);
+		methodAnalyzer.analyze();
 		
 		for (int i = 0; i < bugs.size(); i++) {
 			long startTime = System.currentTimeMillis();
@@ -547,7 +545,6 @@ public class BLIA {
 		
 		boolean useStrucrutedInfo = true;
 		boolean includeStackTrace = true;
-		boolean analyzeMethod = true;
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = prop.getProductName();
@@ -567,7 +564,7 @@ public class BLIA {
 		
 		System.out.printf("[STARTED] BLIA anlaysis.\n");
 		startTime = System.currentTimeMillis();
-		blia.analyze(version, includeStackTrace, analyzeMethod);
+		blia.analyze(version, includeStackTrace);
 		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 }

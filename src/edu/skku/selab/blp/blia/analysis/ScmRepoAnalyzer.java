@@ -107,7 +107,7 @@ public class ScmRepoAnalyzer {
 				
 				HashMap<String, ArrayList<Method>> allCommitMethods = relatedCommitInfo.getAllFixedMethods();
 				if (allCommitMethods == null) {
-					System.err.printf("[NO fixed method!] BugID: %d, Commit ID: %s\n", bug.getID(), relatedCommitInfo.getCommitID());
+//					System.err.printf("[NO fixed method!] BugID: %d, Commit ID: %s\n", bug.getID(), relatedCommitInfo.getCommitID());
 					continue;
 				}
 				

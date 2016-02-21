@@ -112,7 +112,7 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
     			ArrayList<Method> methods = methodMap.get(sourceFileVersionID);
     			if (methods == null) {
     				SourceFileDAO sourceFileDAO = new SourceFileDAO();
-    				System.err.printf("[ERROR] MethodAnalyzer.computeSimilarity()> File name without methods: %s, SF_VER_ID: %d\n",
+    				System.err.printf("MethodAnalyzer.computeSimilarity()> File name without methods: %s, SF_VER_ID: %d\n",
     						sourceFileDAO.getSourceFileName(sourceFileVersionID), sourceFileVersionID);
     				return;
     			}

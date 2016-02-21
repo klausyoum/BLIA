@@ -346,7 +346,7 @@ public class BugCorpusCreator {
 															String returnType = fixedMethodNode.getAttributes().getNamedItem("returnType").getNodeValue();
 															String params = fixedMethodNode.getAttributes().getNamedItem("parameters").getNodeValue();
 															
-															System.out.printf("[Fixed] Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, params);
+//															System.out.printf("[Fixed] Method: %s, Return Type: %s, Parameter: %s\n", methodName, returnType, params);
 
 															Method fixedMethod = new Method(methodName, returnType, params);
 															fixedCommitInfo.addFixedMethod(fixedFileName, fixedMethod);
