@@ -263,6 +263,7 @@ public class BLIA {
 		}
 		
 //		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
+		normalizeVsmScore(integratedMethodAnalysisValues);
 		combineForMethodLevel(integratedMethodAnalysisValues, beta);
 		
 		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
@@ -466,6 +467,39 @@ public class BLIA {
 			integratedAnalysisValue.setVsmScore(normalizedVsmScore);
 			integratedAnalysisValue.setSimilarityScore(normalizedSimiScore);
 //			integratedAnalysisValue.setCommitLogScore(normalizedCommitLogScore);
+		}
+	}
+	
+	/**
+	 * Normalize values of VSM score ONLY in array from max. to min of array 
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private void normalizeVsmScore(HashMap<Integer, ExtendedIntegratedAnalysisValue> extendedIntegratedAnalysisValues) {
+		double maxVsmScore = Double.MIN_VALUE;
+		double minVsmScore = Double.MAX_VALUE;;
+		
+		Iterator<Integer> integratedMethodAnalysisValuesIter = extendedIntegratedAnalysisValues.keySet().iterator();
+		while (integratedMethodAnalysisValuesIter.hasNext()) {
+			int methodID = integratedMethodAnalysisValuesIter.next();
+			IntegratedAnalysisValue integratedAnalysisValue = extendedIntegratedAnalysisValues.get(methodID);
+			double vsmScore = integratedAnalysisValue.getVsmScore();
+			if (maxVsmScore < vsmScore) {
+				maxVsmScore = vsmScore;
+			}
+			if (minVsmScore > vsmScore) {
+				minVsmScore = vsmScore;
+			}
+		}
+		
+		double spanVsmScore = maxVsmScore - minVsmScore;
+		integratedMethodAnalysisValuesIter = extendedIntegratedAnalysisValues.keySet().iterator();
+		while (integratedMethodAnalysisValuesIter.hasNext()) {
+			int methodID = integratedMethodAnalysisValuesIter.next();
+			IntegratedAnalysisValue integratedAnalysisValue = extendedIntegratedAnalysisValues.get(methodID);
+			double normalizedVsmScore = (integratedAnalysisValue.getVsmScore() - minVsmScore) / spanVsmScore;
+			integratedAnalysisValue.setVsmScore(normalizedVsmScore);
 		}
 	}
 	

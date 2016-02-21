@@ -110,7 +110,8 @@ public class EvaluatorForMethodLevel extends Evaluator {
 		experimentResult.setTop5Rate((double) top5 / bugCount);
 		experimentResult.setTop10Rate((double) top10 / bugCount);
 
-		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+		System.out.printf("[%s] Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+				experimentResult.getAlgorithmName(),
 				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
 				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
 		String log = "Top1: " + experimentResult.getTop1() + ", " +
