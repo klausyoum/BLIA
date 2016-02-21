@@ -502,7 +502,7 @@ public class IntegratedAnalysisDAO extends BaseDAO {
 		String sql = "SELECT A.SF_VER_ID, A.MID_SF_SCORE "+
 				"FROM INT_ANALYSIS A " +
 				"WHERE A.BUG_ID = ? AND A.MID_SF_SCORE != 0 " +
-				"ORDER BY A.BLIA_SF_SCORE DESC ";
+				"ORDER BY A.MID_SF_SCORE DESC ";
 
 		
 		if (limit != 0) {
