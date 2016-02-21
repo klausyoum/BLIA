@@ -60,7 +60,7 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
 		methodMap = methodDAO.getAllMethods();
 		bugNormMap = bugDAO.getAllNorms();
 
-		int limit = 30;
+		int limit = 10;
 		rankedSuspFilesMap = new HashMap<Integer, ArrayList<IntegratedAnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			int bugID = bugs.get(i).getID();

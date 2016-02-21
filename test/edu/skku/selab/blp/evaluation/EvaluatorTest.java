@@ -61,7 +61,7 @@ public class EvaluatorTest {
 	}
 	
 	private void runBLIA(boolean useStrucrutedInfo, boolean prepareAnalysisData, boolean preAnalyze, boolean analyze,
-			boolean includeStackTrace, boolean analyzeMethod) throws Exception {
+			boolean includeStackTrace) throws Exception {
 		Property prop = Property.getInstance();
 				
 		String version = SourceFileDAO.DEFAULT_VERSION_STRING;
@@ -100,7 +100,7 @@ public class EvaluatorTest {
 		if (analyze) {
 			System.out.printf("[STARTED] BLIA anlaysis.\n");
 			startTime = System.currentTimeMillis();
-			blia.analyze(version, includeStackTrace, analyzeMethod);
+			blia.analyze(version, includeStackTrace);
 			System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 		}
 	}
@@ -116,11 +116,10 @@ public class EvaluatorTest {
 		boolean preAnalyze = true;
 		boolean analyze = true;
 		boolean includeStackTrace = true;
-		boolean analyzeMethod = true;
 
 		long totalStartTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation once.\n");
-		runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, analyzeMethod);
+		runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
 		
 		if (analyze) {
 			String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
@@ -160,18 +159,17 @@ public class EvaluatorTest {
 		boolean preAnalyze = false;
 		boolean analyze = true;
 		boolean includeStackTrace = true;
-		boolean analyzeMethod = false;
 
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
 
-		for (double alpha = 0.4; alpha <= 0.4; alpha += 0.1) {
-//		for (double alpha = 0.0; alpha <= 0.9; alpha += 0.1) {
+//		for (double alpha = 0.4; alpha <= 0.4; alpha += 0.1) {
+		for (double alpha = 0.0; alpha <= 0.9; alpha += 0.1) {
 			for (double beta = 0.0; beta <= 0.9; beta += 0.1) {
 //			for (double beta = 0.0; beta <= 0.0; beta += 0.1) {
 				prop.setAlpha(alpha);
 				prop.setBeta(beta);
-				runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, analyzeMethod);
+				runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
 
 				if (analyze) {
 					String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
@@ -212,7 +210,6 @@ public class EvaluatorTest {
 		boolean preAnalyze = true; // DO NOT change preAnalyze for this experiment, because changing pastDays needs pre-analysis. 
 		boolean analyze = true;
 		boolean includeStackTrace = true;
-		boolean analyzeMethod = true;
 		
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
@@ -220,7 +217,7 @@ public class EvaluatorTest {
 		int[] pastDays = {15, 30, 60, 90, 120, 150, 180};
 		for (int i = 0; i < pastDays.length; i++) {
 			prop.setPastDays(pastDays[i]);
-			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, analyzeMethod);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
 
 			if (analyze) {
 				String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
@@ -260,7 +257,6 @@ public class EvaluatorTest {
 		boolean preAnalyze = true;
 		boolean analyze = true;
 		boolean includeStackTrace = true;
-		boolean analyzeMethod = true;
 		
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
@@ -269,7 +265,7 @@ public class EvaluatorTest {
 		
 		for (int i = 0; i < candidateLimitRate.length; i++) {
 			prop.setCandidateLimitRate(candidateLimitRate[i]);
-			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, analyzeMethod);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace);
 
 			if (analyze) {
 				String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
