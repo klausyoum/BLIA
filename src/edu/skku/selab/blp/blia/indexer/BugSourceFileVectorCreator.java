@@ -143,7 +143,7 @@ public class BugSourceFileVectorCreator {
 	 * @param totalTermCount
 	 * @return
 	 */
-	private float getTfValue(int freq, int totalTermCount) {
+	protected float getTfValue(int freq, int totalTermCount) {
 		return (float) Math.log(freq) + 1.0F;
 	}
 
@@ -154,7 +154,7 @@ public class BugSourceFileVectorCreator {
 	 * @param totalCount
 	 * @return
 	 */
-	private float getIdfValue(double docCount, double totalCount) {
+	protected float getIdfValue(double docCount, double totalCount) {
 		return (float) Math.log(totalCount / docCount);
 	}
 }

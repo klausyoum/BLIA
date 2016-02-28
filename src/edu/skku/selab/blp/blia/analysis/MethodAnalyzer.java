@@ -16,6 +16,7 @@ import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 import edu.skku.selab.blp.db.dao.MethodDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
+import edu.skku.selab.blp.blia.indexer.BugMethodVectorCreator;
 import edu.skku.selab.blp.blia.indexer.SourceFileCorpusCreator;
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
@@ -73,6 +74,10 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
 			rankedSuspFilesMap.put(bugID, rankedSuspiciousFileValues);
 		}
 		
+		bugDAO.deleteAllBugMthTermWeights();
+		BugMethodVectorCreator bugMethodVectorCreator = new BugMethodVectorCreator(methodMap);
+		bugMethodVectorCreator.create(SourceFileDAO.DEFAULT_VERSION_STRING, rankedSuspFilesMap);
+		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 
 		for (int i = 0; i < bugs.size(); i++) {
@@ -114,7 +119,7 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
     				SourceFileDAO sourceFileDAO = new SourceFileDAO();
     				System.err.printf("MethodAnalyzer.computeSimilarity()> File name without methods: %s, SF_VER_ID: %d\n",
     						sourceFileDAO.getSourceFileName(sourceFileVersionID), sourceFileVersionID);
-    				return;
+    				continue;
     			}
     			for (int j = 0; j < methods.size(); ++j) {
     				Method method = methods.get(j);
@@ -130,10 +135,19 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
     				for (int k = 0; k < terms.length; ++k) {
     					AnalysisValue analysisValue = bugDAO.getBugSfTermWeight(bugID, terms[k]);
     					if (analysisValue != null) {
-    						vsmScore += analysisValue.getTf() * analysisValue.getIdf();
+    						AnalysisValue methodTermAnalysisValue = bugDAO.getBugMthTermWeight(bugID, terms[k]);
+    						if (methodTermAnalysisValue == null) {
+    							System.err.printf("MethodAnalyzer.computeSimilarity()> Can't find bugID: %s, term: %s\n",
+    									bugID, terms[k]);
+    							return;
+    						}
+    						double methodTermWeight = methodTermAnalysisValue.getTf() * methodTermAnalysisValue.getIdf();
+    						vsmScore += (analysisValue.getTf() * analysisValue.getIdf()) * methodTermWeight;
     					}
     				}
-    				vsmScore /= bugNorm;
+    				
+    				double methodNorm = bugDAO.getNormValue(bugID);
+    				vsmScore /= (bugNorm * methodNorm);
     				if (vsmScore == 0) continue;
     				
         			ExtendedIntegratedAnalysisValue integratedMethodAnalysisValue = new ExtendedIntegratedAnalysisValue();

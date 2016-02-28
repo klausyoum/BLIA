@@ -284,7 +284,7 @@ public class BLIA {
 		}
     }
 	
-	public void analyze(String version, boolean includeStackTrace) throws Exception {
+	public void analyze(String version, boolean includeStackTrace, boolean includeMethodAnalyze) throws Exception {
 		if (null == bugs) {
 			BugDAO bugDAO = new BugDAO();
 			bugs = bugDAO.getAllBugs(false);			
@@ -320,21 +320,23 @@ public class BLIA {
 //			executor.execute(worker);
 		}
 		
-		MethodAnalyzer methodAnalyzer = new MethodAnalyzer(bugs);
-		methodAnalyzer.analyze();
-		
-		for (int i = 0; i < bugs.size(); i++) {
-			long startTime = System.currentTimeMillis();
-			int bugID = bugs.get(i).getID();
-			calculateBliaMethodScore(bugID);
-			System.out.printf("[calculateBliaMethodScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
-//			Runnable worker = new WorkerThread(bugs.get(i).getID());
-//			executor.execute(worker);
+		if (includeMethodAnalyze) {
+			MethodAnalyzer methodAnalyzer = new MethodAnalyzer(bugs);
+			methodAnalyzer.analyze();
+			
+			for (int i = 0; i < bugs.size(); i++) {
+				long startTime = System.currentTimeMillis();
+				int bugID = bugs.get(i).getID();
+				calculateBliaMethodScore(bugID);
+				System.out.printf("[calculateBliaMethodScore()] [%d] Bug ID: %d (%s sec)\n", i, bugID, Util.getElapsedTimeSting(startTime));
+//				Runnable worker = new WorkerThread(bugs.get(i).getID());
+//				executor.execute(worker);
+			}
+			
+//			executor.shutdown();
+//			while (!executor.isTerminated()) {
+//			}
 		}
-		
-//		executor.shutdown();
-//		while (!executor.isTerminated()) {
-//		}
 		
 		System.out.printf("[DONE] BLIA.anlayze()\n");
 	}
@@ -545,6 +547,8 @@ public class BLIA {
 		
 		boolean useStrucrutedInfo = true;
 		boolean includeStackTrace = true;
+		
+		boolean includeMethodAnalyze = true;
 
 		DbUtil dbUtil = new DbUtil();
 		String dbName = prop.getProductName();
@@ -564,7 +568,7 @@ public class BLIA {
 		
 		System.out.printf("[STARTED] BLIA anlaysis.\n");
 		startTime = System.currentTimeMillis();
-		blia.analyze(version, includeStackTrace);
+		blia.analyze(version, includeStackTrace, includeMethodAnalyze);
 		System.out.printf("[DONE] BLIA anlaysis.(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
 	}
 }

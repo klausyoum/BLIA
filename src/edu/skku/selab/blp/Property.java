@@ -28,6 +28,9 @@ public class Property {
 	final static private String WORK_DIR = Property.readProperty("WORK_DIR");
 	final static private String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
+	final static public String RUN_LEVEL_FILE = "FILE";
+	final static public String RUN_LEVEL_METHOD = "METHOD";
+	
 	private String targetProduct;
 	private String bugFilePath;
 	private String sourceCodeDir;
@@ -48,6 +51,8 @@ public class Property {
 	private Calendar until = null;
 	private String repoDir;
 	private double candidateLimitRate = 1.0;
+	
+	private String runLevel;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -139,6 +144,7 @@ public class Property {
 
 		p.setValues(productName, sourceCodeDir, alpha, beta, pastDays, repoDir,
 				bugFilePath, since, until, candidateLimitRate);
+		p.setRunLevel(Property.readProperty("RUN_LEVEL"));
 		
 		return p;
 	}
@@ -370,5 +376,27 @@ public class Property {
 	 */
 	public void setBugFilePath(String bugFilePath) {
 		this.bugFilePath = bugFilePath;
+	}
+
+	/**
+	 * @return the runLevel
+	 */
+	public String getRunLevel() {
+		return runLevel;
+	}
+
+	/**
+	 * @param runLevel the runLevel to set
+	 */
+	public void setRunLevel(String runLevel) {
+		this.runLevel = runLevel;
+	}
+	
+	public boolean isMethodLevel() {
+		return runLevel.equals(RUN_LEVEL_METHOD);
+	}
+	
+	public boolean isFileLevel() {
+		return runLevel.equals(RUN_LEVEL_FILE);
 	}
 }

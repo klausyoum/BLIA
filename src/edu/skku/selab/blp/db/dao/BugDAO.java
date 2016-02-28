@@ -617,8 +617,47 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public int insertBugMthTermWeight(AnalysisValue bugMthTermWeight) {
+		int termID = getSfTermID(bugMthTermWeight.getTerm());
+		
+		String sql = "INSERT INTO BUG_MTH_TERM_WGT (BUG_ID, MTH_TERM_ID, TERM_CNT, INV_DOC_CNT, TF, IDF) " +
+				"VALUES (?, ?, ?, ?, ?, ?)";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugMthTermWeight.getID());
+			ps.setInt(2, termID);
+			ps.setInt(3, bugMthTermWeight.getTermCount());
+			ps.setInt(4, bugMthTermWeight.getInvDocCount());
+			ps.setDouble(5, bugMthTermWeight.getTf());
+			ps.setDouble(6, bugMthTermWeight.getIdf());
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
 	public int deleteAllBugSfTermWeights() {
 		String sql = "DELETE FROM BUG_SF_TERM_WGT";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int deleteAllBugMthTermWeights() {
+		String sql = "DELETE FROM BUG_MTH_TERM_WGT";
 		int returnValue = INVALID;
 		
 		try {
@@ -636,10 +675,44 @@ public class BugDAO extends BaseDAO {
 		AnalysisValue termWeight = null;
 
 		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF "+
-				"FROM BUG_INFO A, SF_TERM_INFO B, BUG_SF_TERM_WGT C " +
-				"WHERE A.BUG_ID = ? AND " +
+				"FROM SF_TERM_INFO B, BUG_SF_TERM_WGT C " +
+				"WHERE C.BUG_ID = ? AND " +
 				"B.TERM = ? AND " +
 				"B.SF_TERM_ID = C.SF_TERM_ID";
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, bugID);
+			ps.setString(2, term);
+			
+			rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				termWeight = new AnalysisValue();
+				
+				termWeight.setID(bugID);
+				termWeight.setTerm(term);
+				termWeight.setTermCount(rs.getInt("TERM_CNT"));
+				termWeight.setInvDocCount(rs.getInt("INV_DOC_CNT"));
+				termWeight.setTf(rs.getDouble("TF"));
+				termWeight.setIdf(rs.getDouble("IDF"));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return termWeight;
+	}
+	
+	public AnalysisValue getBugMthTermWeight(int bugID, String term) {
+		AnalysisValue termWeight = null;
+
+		String sql = "SELECT C.TERM_CNT, C.INV_DOC_CNT, C.TF, C.IDF "+
+				"FROM SF_TERM_INFO B, BUG_MTH_TERM_WGT C " +
+				"WHERE C.BUG_ID = ? AND " +
+				"B.TERM = ? AND " +
+				"B.SF_TERM_ID = C.MTH_TERM_ID";
 		
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
@@ -1032,6 +1105,24 @@ public class BugDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public int updateMethodTotalTermCount(int bugID, int totalTermCount) {
+		String sql = "UPDATE BUG_INFO SET MTH_TOT_CNT = ? " +
+				"WHERE BUG_ID = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setInt(1, totalTermCount);
+			ps.setInt(2, bugID);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
 	public int updateNormValues(int bugID, double corpusNorm, double summaryCorpusNorm, double descriptionCorpusNorm) {
 		String sql = "UPDATE BUG_INFO SET COR_NORM = ?, SMR_COR_NORM = ?, DESC_COR_NORM = ? " +
 				"WHERE BUG_ID = ?";
@@ -1044,6 +1135,24 @@ public class BugDAO extends BaseDAO {
 			ps.setDouble(3, descriptionCorpusNorm);
 			
 			ps.setInt(4, bugID);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
+	public int updateMthNormValues(int bugID, double methodNorm) {
+		String sql = "UPDATE BUG_INFO SET MTH_NORM = ? " +
+				"WHERE BUG_ID = ?";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			ps.setDouble(1, methodNorm);
+			ps.setInt(2, bugID);
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {

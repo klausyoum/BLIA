@@ -14,18 +14,15 @@ package edu.skku.selab.blp.utils;
 
 public class Stem
 {
-
     public Stem()
     {
     }
 
     public static String stem(String word)
     {
+        PorterStemmer stemmer = new PorterStemmer();
         stemmer.reset();
         stemmer.stem(word);
         return stemmer.toString();
     }
-
-    private static PorterStemmer stemmer = new PorterStemmer();
-
 }
