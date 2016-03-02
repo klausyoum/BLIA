@@ -51,13 +51,15 @@ public class Evaluator {
 	/**
 	 * 
 	 */
-	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays) {
+	public Evaluator(String productName, String algorithmName, String algorithmDescription,
+			double alpha, double beta, double gamma, int pastDays) {
 		experimentResult = new ExperimentResult();
 		experimentResult.setProductName(productName);
 		experimentResult.setAlgorithmName(algorithmName);
 		experimentResult.setAlgorithmDescription(algorithmDescription);
 		experimentResult.setAlpha(alpha);
 		experimentResult.setBeta(beta);
+		experimentResult.setGamma(gamma);
 		experimentResult.setPastDays(pastDays);
 		bugs = null;
 		realFixedFilesMap = null;
@@ -66,8 +68,9 @@ public class Evaluator {
 	/**
 	 * 
 	 */
-	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays, double candidateRate) {
-		this(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+	public Evaluator(String productName, String algorithmName, String algorithmDescription,
+			double alpha, double beta, double gamma, int pastDays, double candidateRate) {
+		this(productName, algorithmName, algorithmDescription, alpha, beta, gamma, pastDays);
 		experimentResult.setCandidateRate(candidateRate);
 	}
 	
@@ -276,9 +279,9 @@ public class Evaluator {
     }
     
     protected String getOutputFileName() {
-		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
+		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_gamma_%.1f_k_%d",
 				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
-				experimentResult.getPastDays()); 
+				experimentResult.getGamma(), experimentResult.getPastDays()); 
 		if (experimentResult.getCandidateRate() > 0.0) {
 			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
 		}

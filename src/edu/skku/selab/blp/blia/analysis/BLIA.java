@@ -39,6 +39,7 @@ public class BLIA {
 	private ArrayList<Bug> bugs = null;
 	private double alpha = 0;
 	private double beta = 0;
+	private double gamma = 0;
 	private static Integer completeBugIdCount = 0;
 	
 	public BLIA() {
@@ -264,7 +265,7 @@ public class BLIA {
 		
 //		System.out.printf("After integratedAnalysisDAO.getAnalysisValues() \n");
 		normalizeVsmScore(integratedMethodAnalysisValues);
-		combineForMethodLevel(integratedMethodAnalysisValues, beta);
+		combineForMethodLevel(integratedMethodAnalysisValues, gamma);
 		
 		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
 		while (integratedMethodAnalysisValuesIter.hasNext()) {
@@ -293,6 +294,7 @@ public class BLIA {
 		Property property = Property.getInstance();
 		alpha = property.getAlpha();
 		beta = property.getBeta();
+		gamma = property.getGamma();
 		
 //		integratedAnalysisValuesMap = new HashMap<String, HashMap<Integer, IntegratedAnalysisValue>>();
 //		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
@@ -388,13 +390,10 @@ public class BLIA {
 	
 	/**
 	 * 
-	 * @param integratedAnalysisValues
 	 * @param integratedMethodAnalysisValues
-	 * @param alpha
-	 * @param beta
-	 * @param includeStackTrace
+	 * @param gamma
 	 */
-	private void combineForMethodLevel(HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues, double beta) {
+	private void combineForMethodLevel(HashMap<Integer, ExtendedIntegratedAnalysisValue> integratedMethodAnalysisValues, double gamma) {
 		Iterator<Integer> integratedMethodAnalysisValuesIter = integratedMethodAnalysisValues.keySet().iterator();
 		while (integratedMethodAnalysisValuesIter.hasNext()) {
 			int methodID = integratedMethodAnalysisValuesIter.next();
@@ -405,7 +404,7 @@ public class BLIA {
 			
 			double bliaMethodScore = 0.0;
 			if (methodVsmScore > 0) {
-				bliaMethodScore = (1 - beta) * methodVsmScore + beta * commitMethodLogScore;
+				bliaMethodScore = (1 - gamma) * methodVsmScore + gamma * commitMethodLogScore;
 			}
 			
 			integratedMethodAnalysisValue.setBliaMethodScore(bliaMethodScore);

@@ -119,7 +119,7 @@ public class EvaluatorTest {
 		
 		if (analyze) {
 			String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
-					", beta: " + prop.getBeta() + ", pastDays: " + prop.getPastDays() +
+					", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays() +
 					", cadidateLimitRate: " + prop.getCandidateLimitRate();
 			if (useStrucrutedInfo) {
 				algorithmDescription += " with structured info";
@@ -129,12 +129,12 @@ public class EvaluatorTest {
 			}
 			
 			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
-					prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+					prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 			evaluator.evaluate();				
 
 			if (includeMethodAnalyze) {
 				EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
-						algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+						algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluatorForMethodLevel.evaluate();
 			}
 		}
@@ -169,7 +169,7 @@ public class EvaluatorTest {
 
 				if (analyze) {
 					String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
-							", beta: " + prop.getBeta() + ", pastDays: " + prop.getPastDays();
+							", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays();
 					if (useStrucrutedInfo) {
 						algorithmDescription += " with structured info";
 					}
@@ -178,12 +178,12 @@ public class EvaluatorTest {
 					}
 					
 					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
-							prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+							prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluator.evaluate();				
 
 					if (includeMethodAnalyze) {
 						EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
-								algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+								algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 						evaluatorForMethodLevel.evaluate();
 					}
 				}
@@ -218,7 +218,7 @@ public class EvaluatorTest {
 
 			if (analyze) {
 				String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
-						", beta: " + prop.getBeta() + ", pastDays: " + prop.getPastDays();
+						", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays();
 				if (useStrucrutedInfo) {
 					algorithmDescription += " with structured info";
 				}
@@ -227,12 +227,12 @@ public class EvaluatorTest {
 				}
 				
 				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
-						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+						prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();				
 
 				if (includeMethodAnalyze) {
 					EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
-							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+							algorithmDescription, prop.getAlpha(), prop.getGamma(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluatorForMethodLevel.evaluate();
 				}
 			}
@@ -267,7 +267,7 @@ public class EvaluatorTest {
 
 			if (analyze) {
 				String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
-						", beta: " + prop.getBeta() + ", pastDays: " + prop.getPastDays();
+						", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays();
 				algorithmDescription += ", candidateLimitRate: " + candidateLimitRate[i];
 				if (useStrucrutedInfo) {
 					algorithmDescription += " with structured info";
@@ -277,12 +277,54 @@ public class EvaluatorTest {
 				}
 				
 				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
-						prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+						prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 				evaluator.evaluate();				
 
 				if (includeMethodAnalyze) {
 					EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
-							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
+					evaluatorForMethodLevel.evaluate();
+				}
+			}
+		}
+		
+		System.out.printf("[DONE] BLIA Evaluation repeatedly(Total %s sec)\n", Util.getElapsedTimeSting(startTime));
+	}
+	
+	@Test
+	public void verifyEvaluateBLIAWithChangingGamma() throws Exception {
+		Property prop = Property.loadInstance();
+		
+		// [NOTE!!!] Before this method running, verifyEvaluateBLIAOnce() should be called to create indexing DB
+		boolean useStrucrutedInfo = true;
+		
+		boolean prepareAnalysisData = false;
+		boolean preAnalyze = false;
+		boolean analyze = true;
+		boolean includeStackTrace = true;
+		
+		boolean includeMethodAnalyze = prop.isMethodLevel();
+
+		long startTime = System.currentTimeMillis();
+		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
+
+		for (double gamma = 0.0; gamma <= 0.9; gamma += 0.1) {
+			prop.setGamma(gamma);
+			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, includeMethodAnalyze);
+
+			if (analyze) {
+				String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
+						", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays();
+				if (useStrucrutedInfo) {
+					algorithmDescription += " with structured info";
+				}
+				if (!includeStackTrace) {
+					algorithmDescription += " without Stack-Trace analysis";
+				}
+				
+				if (includeMethodAnalyze) {
+					EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
+							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluatorForMethodLevel.evaluate();
 				}
 			}

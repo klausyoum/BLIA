@@ -79,7 +79,6 @@ public class MethodAnalyzer extends SourceFileAnalyzer {
 		bugMethodVectorCreator.create(SourceFileDAO.DEFAULT_VERSION_STRING, rankedSuspFilesMap);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
-
 		for (int i = 0; i < bugs.size(); i++) {
 			// calculate term count, IDC, TF and IDF
 			Runnable worker = new WorkerThread(bugs.get(i));

@@ -38,16 +38,17 @@ public class EvaluatorForMethodLevel extends Evaluator {
 	 * 
 	 */
 	public EvaluatorForMethodLevel(String productName, String algorithmName, String algorithmDescription,
-			double alpha, double beta, int pastDays) {
-		super(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+			double alpha, double beta, double gamma, int pastDays) {
+		super(productName, algorithmName, algorithmDescription, alpha, beta, gamma, pastDays);
 		realFixedMethodsMap = null;
 	}
 	
 	/**
 	 * 
 	 */
-	public EvaluatorForMethodLevel(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays, double candidateRate) {
-		this(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+	public EvaluatorForMethodLevel(String productName, String algorithmName, String algorithmDescription,
+			double alpha, double beta, double gamma, int pastDays, double candidateRate) {
+		this(productName, algorithmName, algorithmDescription, alpha, beta, gamma, pastDays);
 		experimentResult.setCandidateRate(candidateRate);
 	}
 	

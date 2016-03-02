@@ -316,6 +316,21 @@ public class CommitDAO extends BaseDAO {
 		return returnValue;
 	}
 	
+	public int deleteAllCommitMethodInfo() {
+		String sql = "DELETE FROM COMM_MTH_INFO";
+		int returnValue = INVALID;
+		
+		try {
+			ps = analysisDbConnection.prepareStatement(sql);
+			
+			returnValue = ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return returnValue;
+	}
+	
 	public ExtendedCommitInfo getFixedCommitInfo(String commitID) {
 		CommitInfo commitInfo = getCommitInfo(commitID);
 		ExtendedCommitInfo fixedCommitInfo = new ExtendedCommitInfo(commitInfo);
