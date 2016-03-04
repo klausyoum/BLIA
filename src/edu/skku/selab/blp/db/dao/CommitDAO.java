@@ -275,7 +275,7 @@ public class CommitDAO extends BaseDAO {
 				commitInfo.setCommitter(rs.getString("COMMITTER"));
 				
 				if (filtered) {
-					String pattern = "(?i)(.*fix.*)|(?i)(.*bug.*)";
+					String pattern = "(?i)(.*fix.*)|(?i)(.*bug.*)|(?i)(.*issue.*)|(?i)(.*fail.*)|(?i)(.*error.*)|(?i)(.*problem.*)|(?i)(.*crash.*)";
 			        Pattern r = Pattern.compile(pattern);
 			        Matcher m = r.matcher(commitInfo.getMessage());
 

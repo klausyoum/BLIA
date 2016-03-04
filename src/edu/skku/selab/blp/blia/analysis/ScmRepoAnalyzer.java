@@ -177,8 +177,8 @@ public class ScmRepoAnalyzer {
 		// Do loop from the oldest bug,
 		CommitDAO commitDAO = new CommitDAO();
 		
-		// TODO: check following variables!
-		boolean filtered = false;
+		// Checked the "filtered". This variable is valid when it is true
+		boolean filtered = true;
 		filteredCommitInfos = commitDAO.getCommitInfos(filtered);
 
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
