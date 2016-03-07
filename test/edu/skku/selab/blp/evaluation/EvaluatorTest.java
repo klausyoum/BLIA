@@ -232,7 +232,7 @@ public class EvaluatorTest {
 
 				if (includeMethodAnalyze) {
 					EvaluatorForMethodLevel evaluatorForMethodLevel = new EvaluatorForMethodLevel(prop.getProductName(), EvaluatorForMethodLevel.ALG_BLIA_METHOD,
-							algorithmDescription, prop.getAlpha(), prop.getGamma(), prop.getBeta(), prop.getPastDays(), prop.getCandidateLimitRate());
+							algorithmDescription, prop.getAlpha(), prop.getBeta(), prop.getGamma(), prop.getPastDays(), prop.getCandidateLimitRate());
 					evaluatorForMethodLevel.evaluate();
 				}
 			}
