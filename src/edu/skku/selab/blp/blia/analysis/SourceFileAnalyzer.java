@@ -31,7 +31,7 @@ import edu.skku.selab.blp.db.dao.SourceFileDAO;
  *
  */
 public class SourceFileAnalyzer {
-	private ArrayList<Bug> bugs;
+	protected ArrayList<Bug> bugs;
 	private HashMap<String, Integer> sourceFileVersionIDs;
 	private HashMap<Integer, HashMap<String, AnalysisValue>> sourceFileAllTermMaps;
 	private HashMap<Integer, SourceFileCorpus> sourceFileCorpusMap;
@@ -56,14 +56,10 @@ public class SourceFileAnalyzer {
 	/**
 	 * Calculate VSM score between source files and each bug report 
 	 * 
-	 * @see edu.skku.selab.blp.analysis.IAnalyzer#analyze()
 	 */
 	public void analyze(String version, boolean useStructuredInfo) throws Exception {
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(productName, version);
+		sourceFileVersionIDs = sourceFileDAO.getSourceFileVersionIDs(version);
 		sourceFileAllTermMaps = new HashMap<Integer, HashMap<String, AnalysisValue>>();
 		sourceFileCorpusMap = new HashMap<Integer, SourceFileCorpus>();
 		sourceFileLengthScoreMap = new HashMap<Integer, Double>();

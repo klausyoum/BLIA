@@ -27,14 +27,13 @@ public class BugSourceFileVectorCreator {
 		BugDAO bugDAO = new BugDAO();
 		HashMap<Integer, Bug> bugs = bugDAO.getBugs();
 		Property property = Property.getInstance();
-		String productName = property.getProductName();
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		HashMap<String, Integer> sourceFileTermMap = sourceFileDAO.getTermMap(productName);
+		HashMap<String, Integer> sourceFileTermMap = sourceFileDAO.getTermMap();
 		
 		SourceFileVectorCreator sourceFileVectorCreator = new SourceFileVectorCreator(); 
 		Hashtable<String, Integer> inverseDocCountTable = sourceFileVectorCreator.getInverseDocCountTable(version);
-		int fileCount = sourceFileDAO.getSourceFileCount(productName, version);
+		int fileCount = sourceFileDAO.getSourceFileCount(version);
 		
 		int bugID = 0;
 		int totalTermCount = 0;
@@ -88,7 +87,7 @@ public class BugSourceFileVectorCreator {
 //						System.out.printf("Corpus: %s, termCount: %d\n", corpus, termCount);
 			}
 			
-			bugDAO.updateTotalTermCount(productName, bugID, totalTermCount);
+			bugDAO.updateTotalTermCount(bugID, totalTermCount);
 //				System.out.printf("totalTermCount: %d\n", totalTermCount);
 			
 			double corpusNorm = 0.0D;
@@ -123,7 +122,7 @@ public class BugSourceFileVectorCreator {
 						descriptionCorpusNorm += termWeightSquare;
 					}
 					
-					AnalysisValue bugSfTermWeight = new AnalysisValue(bugID, productName, bugTerm, bugTermCount, inverseDocCount, tf, idf);						
+					AnalysisValue bugSfTermWeight = new AnalysisValue(bugID, bugTerm, bugTermCount, inverseDocCount, tf, idf);						
 					bugDAO.insertBugSfTermWeight(bugSfTermWeight);
 				}
 			}
@@ -133,7 +132,7 @@ public class BugSourceFileVectorCreator {
 			summaryCorpusNorm = Math.sqrt(summaryCorpusNorm);
 			descriptionCorpusNorm = Math.sqrt(descriptionCorpusNorm);
 
-			bugDAO.updateNormValues(productName, bugID, corpusNorm, summaryCorpusNorm, descriptionCorpusNorm);					
+			bugDAO.updateNormValues(bugID, corpusNorm, summaryCorpusNorm, descriptionCorpusNorm);					
 		}
 	}
 	
@@ -144,7 +143,7 @@ public class BugSourceFileVectorCreator {
 	 * @param totalTermCount
 	 * @return
 	 */
-	private float getTfValue(int freq, int totalTermCount) {
+	protected float getTfValue(int freq, int totalTermCount) {
 		return (float) Math.log(freq) + 1.0F;
 	}
 
@@ -155,7 +154,7 @@ public class BugSourceFileVectorCreator {
 	 * @param totalCount
 	 * @return
 	 */
-	private float getIdfValue(double docCount, double totalCount) {
+	protected float getIdfValue(double docCount, double totalCount) {
 		return (float) Math.log(totalCount / docCount);
 	}
 }

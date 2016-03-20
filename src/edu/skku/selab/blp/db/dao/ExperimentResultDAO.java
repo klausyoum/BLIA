@@ -23,8 +23,8 @@ public class ExperimentResultDAO extends BaseDAO {
 	}
 	
 	public int insertExperimentResult(ExperimentResult experimentResult) {
-		String sql = "INSERT INTO EXP_INFO (TOP1, TOP5, TOP10, TOP1_RATE, TOP5_RATE, TOP10_RATE, MRR, MAP, PROD_NAME, ALG_NAME, ALG_DESC, ALPHA, BETA, PAST_DAYS, EXP_DATE) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO EXP_INFO (TOP1, TOP5, TOP10, TOP1_RATE, TOP5_RATE, TOP10_RATE, MRR, MAP, PROD_NAME, ALG_NAME, ALG_DESC, ALPHA, BETA, GAMMA, PAST_DAYS, EXP_DATE) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		try {
@@ -42,8 +42,9 @@ public class ExperimentResultDAO extends BaseDAO {
 			ps.setString(11, experimentResult.getAlgorithmDescription());
 			ps.setDouble(12, experimentResult.getAlpha());
 			ps.setDouble(13, experimentResult.getBeta());
-			ps.setInt(14, experimentResult.getPastDays());
-			ps.setString(15, experimentResult.getExperimentDateString());
+			ps.setDouble(14, experimentResult.getGamma());
+			ps.setInt(15, experimentResult.getPastDays());
+			ps.setString(16, experimentResult.getExperimentDateString());
 			
 			returnValue = ps.executeUpdate();
 		} catch (Exception e) {
@@ -71,7 +72,7 @@ public class ExperimentResultDAO extends BaseDAO {
 	public ExperimentResult getExperimentResult(String productName, String algorithmName) {
 		ExperimentResult returnValue = null;
 
-		String sql = "SELECT TOP1, TOP5, TOP10, TOP1_RATE, TOP5_RATE, TOP10_RATE, MRR, MAP, ALG_DESC, ALPHA, BETA, PAST_DAYS, EXP_DATE "+
+		String sql = "SELECT TOP1, TOP5, TOP10, TOP1_RATE, TOP5_RATE, TOP10_RATE, MRR, MAP, ALG_DESC, ALPHA, BETA, GAMMA, PAST_DAYS, EXP_DATE "+
 				"FROM EXP_INFO " +
 				"WHERE PROD_NAME = ? AND ALG_NAME = ?";
 		
@@ -98,6 +99,7 @@ public class ExperimentResultDAO extends BaseDAO {
 				returnValue.setAlgorithmDescription(rs.getString("ALG_DESC"));
 				returnValue.setAlpha(rs.getDouble("ALPHA"));
 				returnValue.setBeta(rs.getDouble("BETA"));
+				returnValue.setBeta(rs.getDouble("GAMMA"));
 				returnValue.setPastDays(rs.getInt("PAST_DAYS"));
 				returnValue.setExperimentDate(rs.getTimestamp("EXP_DATE"));
 			}

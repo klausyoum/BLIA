@@ -17,6 +17,7 @@ import org.junit.Test;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.BugCorpus;
 import edu.skku.selab.blp.common.SourceFile;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
 import edu.skku.selab.blp.db.dao.BugDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
@@ -97,7 +98,7 @@ public class PrintTestResult {
 		while (bugIter.hasNext()) {
 			Bug bug = bugIter.next();
 			
-			ArrayList<IntegratedAnalysisValue> resultList = integratedAnalysisDAO.getBLIARankedValues(bug.getID(), limit);
+			ArrayList<IntegratedAnalysisValue> resultList = integratedAnalysisDAO.getBliaSourceFileRankedValues(bug.getID(), limit);
 			
 			for (int i = 0; i < resultList.size(); i++) {
 				IntegratedAnalysisValue result = resultList.get(i); 
@@ -109,7 +110,7 @@ public class PrintTestResult {
 						result.getBugLocatorScore() + "|" +
 						result.getStackTraceScore() + "|" +
 						result.getCommitLogScore() + "|" +
-						result.getBLIAScore() + "\n");				
+						result.getBliaSourceFileScore() + "\n");				
 			}
 		}
 		resultWriter.close();

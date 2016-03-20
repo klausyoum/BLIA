@@ -19,7 +19,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.skku.selab.blp.db.CommitInfo;
+import edu.skku.selab.blp.common.CommitInfo;
+import edu.skku.selab.blp.common.ExtendedCommitInfo;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 
 /**
@@ -27,7 +28,6 @@ import edu.skku.selab.blp.db.dao.CommitDAO;
  *
  */
 public class CommitDAOTest {
-	private String productName = "BLIA";
 	private String fileName1 = "test_10.java";
 	private String fileName2 = "test_11.java";
 	private String fileName3 = "test_20.java";
@@ -62,11 +62,11 @@ public class CommitDAOTest {
 		
 		// preparation phase
 		sourceFileDAO.deleteAllSourceFiles();
-		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1, productName));
-		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2, productName));
-		assertNotEquals("fileName3 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName3, productName));
-		assertNotEquals("fileName4 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName4, productName));
-		assertNotEquals("fileName5 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName5, productName));
+		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1));
+		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2));
+		assertNotEquals("fileName3 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName3));
+		assertNotEquals("fileName4 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName4));
+		assertNotEquals("fileName5 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName5));
 	}
 
 	/**
@@ -86,17 +86,15 @@ public class CommitDAOTest {
 		String commitDateString2 = "2015-01-31 15:19:00";
 		String message2 = "[2] Commited by Klaus for BLIA testing";
 		
-		CommitInfo commitInfo1 = new CommitInfo();
+		ExtendedCommitInfo commitInfo1 = new ExtendedCommitInfo();
 		commitInfo1.setCommitID(commitID1);
-		commitInfo1.setProductName(productName);
 		commitInfo1.setCommitDate(commitDateString1);
 		commitInfo1.setMessage(message1);
 		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName1);
 		commitInfo1.addCommitFile(CommitInfo.MODIFY_COMMIT, fileName2);
 		
-		CommitInfo commitInfo2 = new CommitInfo();
+		ExtendedCommitInfo commitInfo2 = new ExtendedCommitInfo();
 		commitInfo2.setCommitID(commitID2);
-		commitInfo2.setProductName(productName);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date commitDate = simpleDateFormat.parse(commitDateString2);
 		commitInfo2.setCommitDate(commitDate);
@@ -109,11 +107,10 @@ public class CommitDAOTest {
 		commitDAO.deleteAllCommitInfo();
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo1));
 		assertNotEquals("CommitInfo insertion failed!", BaseDAO.INVALID, commitDAO.insertCommitInfo(commitInfo2));
-		assertEquals("CommitInfoCount is wrong.", 2, commitDAO.getCommitInfoCount(productName));
+		assertEquals("CommitInfoCount is wrong.", 2, commitDAO.getCommitInfoCount());
 		
-		CommitInfo returnedCommitInfo = commitDAO.getCommitInfo(commitID1, productName);
+		CommitInfo returnedCommitInfo = commitDAO.getCommitInfo(commitID1);
 		assertEquals("commitID1 is wrong.", commitID1, returnedCommitInfo.getCommitID());
-		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString1 is wrong.", commitDateString1, returnedCommitInfo.getCommitDateString());
 		assertEquals("message1 is wrong.", message1, returnedCommitInfo.getMessage());
 		
@@ -129,9 +126,8 @@ public class CommitDAOTest {
 			fail("commitFiles are wrong.");
 		}
 		
-		returnedCommitInfo = commitDAO.getCommitInfo(commitID2, productName);
+		returnedCommitInfo = commitDAO.getCommitInfo(commitID2);
 		assertEquals("commitID2 is wrong.", commitID2, returnedCommitInfo.getCommitID());
-		assertEquals("productName is wrong.", productName, returnedCommitInfo.getProductName());
 		assertEquals("commitDateString2 is wrong.", commitDateString2, returnedCommitInfo.getCommitDateString());
 		assertEquals("message2 is wrong.", message2, returnedCommitInfo.getMessage());
 
@@ -154,5 +150,4 @@ public class CommitDAOTest {
 			fail("commitFiles are wrong.");
 		}
 	}
-
 }

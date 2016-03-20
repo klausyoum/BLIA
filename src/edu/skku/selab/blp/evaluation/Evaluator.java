@@ -32,32 +32,34 @@ import edu.skku.selab.blp.utils.Util;
  */
 public class Evaluator {
 	public final static String ALG_BUG_LOCATOR = "BugLocator";
-	public final static String ALG_BLIA = "BLIA";
+	public final static String ALG_BLIA_FILE = "BLIA_File";
 	
-	private ExperimentResult experimentResult;
-	private ArrayList<Bug> bugs = null;
-	private HashMap<Integer, HashSet<SourceFile>> realFixedFilesMap = null;;
-	private HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
-	private FileWriter writer = null; 
+	protected ExperimentResult experimentResult;
+	protected ArrayList<Bug> bugs = null;
+	protected HashMap<Integer, HashSet<SourceFile>> realFixedFilesMap = null;;
+	protected HashMap<Integer, ArrayList<IntegratedAnalysisValue>> rankedValuesMap = null;
+	protected FileWriter writer = null; 
 	
-	private Integer syncLock = 0;
-	private int top1 = 0;
-	private int top5 = 0;
-	private int top10 = 0;
+	protected Integer syncLock = 0;
+	protected int top1 = 0;
+	protected int top5 = 0;
+	protected int top10 = 0;
 	
-	private Double sumOfRRank = 0.0;
-	private Double MAP = 0.0;
+	protected Double sumOfRRank = 0.0;
+	protected Double MAP = 0.0;
 	
 	/**
 	 * 
 	 */
-	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays) {
+	public Evaluator(String productName, String algorithmName, String algorithmDescription,
+			double alpha, double beta, double gamma, int pastDays) {
 		experimentResult = new ExperimentResult();
 		experimentResult.setProductName(productName);
 		experimentResult.setAlgorithmName(algorithmName);
 		experimentResult.setAlgorithmDescription(algorithmDescription);
 		experimentResult.setAlpha(alpha);
 		experimentResult.setBeta(beta);
+		experimentResult.setGamma(gamma);
 		experimentResult.setPastDays(pastDays);
 		bugs = null;
 		realFixedFilesMap = null;
@@ -66,8 +68,9 @@ public class Evaluator {
 	/**
 	 * 
 	 */
-	public Evaluator(String productName, String algorithmName, String algorithmDescription, double alpha, double beta, int pastDays, double candidateRate) {
-		this(productName, algorithmName, algorithmDescription, alpha, beta, pastDays);
+	public Evaluator(String productName, String algorithmName, String algorithmDescription,
+			double alpha, double beta, double gamma, int pastDays, double candidateRate) {
+		this(productName, algorithmName, algorithmDescription, alpha, beta, gamma, pastDays);
 		experimentResult.setCandidateRate(candidateRate);
 	}
 	
@@ -75,9 +78,8 @@ public class Evaluator {
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] Evaluator.evaluate().\n");
 		
-		String productName = experimentResult.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		bugs = bugDAO.getAllBugs(productName, true);
+		bugs = bugDAO.getAllBugs(true);
 		
 		realFixedFilesMap = new HashMap<Integer, HashSet<SourceFile>>();
 		rankedValuesMap = new HashMap<Integer, ArrayList<IntegratedAnalysisValue>>();
@@ -102,10 +104,9 @@ public class Evaluator {
 		ArrayList<IntegratedAnalysisValue> rankedValues = null;
 		if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BUG_LOCATOR)) {
 			rankedValues = integratedAnalysisDAO.getBugLocatorRankedValues(bugID, limit);
-		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA)) {
-			rankedValues = integratedAnalysisDAO.getBLIARankedValues(bugID, limit);
+		} else if (experimentResult.getAlgorithmName().equalsIgnoreCase(Evaluator.ALG_BLIA_FILE)) {
+			rankedValues = integratedAnalysisDAO.getBliaSourceFileRankedValues(bugID, limit);
 		}
-		
 		return rankedValues;
 	}
 	
@@ -118,8 +119,6 @@ public class Evaluator {
      
         @Override
         public void run() {
-			// Compute similarity between Bug report & source files
-        	
         	try {
         		calculateTopN();
         		calculateMRR();
@@ -153,7 +152,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j++) {
@@ -217,7 +216,7 @@ public class Evaluator {
 			
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
@@ -253,7 +252,7 @@ public class Evaluator {
 			int numberOfPositiveInstances = 0;
 			ArrayList<IntegratedAnalysisValue> rankedValues = rankedValuesMap.get(bugID);
 			if (rankedValues == null) {
-				System.out.printf("[ERROR] Bug ID: %d\n", bugID);
+				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
 			for (int j = 0; j < rankedValues.size(); j ++) {
@@ -278,15 +277,21 @@ public class Evaluator {
 			}
         }
     }
-	
-	private void calculateMetrics() throws Exception {
-		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_k_%d",
+    
+    protected String getOutputFileName() {
+		String outputFileName = String.format("../Results/%s_alpha_%.1f_beta_%.1f_gamma_%.1f_k_%d",
 				experimentResult.getProductName(), experimentResult.getAlpha(), experimentResult.getBeta(),
-				experimentResult.getPastDays()); 
+				experimentResult.getGamma(), experimentResult.getPastDays()); 
 		if (experimentResult.getCandidateRate() > 0.0) {
 			outputFileName += String.format("_cand_rate_%.2f", experimentResult.getCandidateRate()); 			
 		}
-		outputFileName += ".txt";
+		outputFileName += "_" + experimentResult.getAlgorithmName() + ".txt";
+		
+		return outputFileName;
+    }
+	
+	protected void calculateMetrics() throws Exception {
+		String outputFileName = getOutputFileName();
 		writer = new FileWriter(outputFileName, false);
 		
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
@@ -309,7 +314,8 @@ public class Evaluator {
 		experimentResult.setTop5Rate((double) top5 / bugCount);
 		experimentResult.setTop10Rate((double) top10 / bugCount);
 
-		System.out.printf("Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+		System.out.printf("[%s] Top1: %d, Top5: %d, Top10: %d, Top1Rate: %f, Top5Rate: %f, Top10Rate: %f\n",
+				experimentResult.getAlgorithmName(),
 				experimentResult.getTop1(), experimentResult.getTop5(), experimentResult.getTop10(),
 				experimentResult.getTop1Rate(), experimentResult.getTop5Rate(), experimentResult.getTop10Rate());
 		String log = "Top1: " + experimentResult.getTop1() + ", " +

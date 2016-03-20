@@ -23,6 +23,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
+
+
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
  *
@@ -43,7 +45,7 @@ public class JGitUtil {
 	 */
 	public static void main(String[] args) throws IOException, NoHeadException, GitAPIException {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File("D:\\workspace\\aspectj\\org.aspectj\\.git"))
+		Repository repository = builder.setGitDir(new File("/Users/ahnjun/git/org.aspectj/.git"))
 		  .readEnvironment() // scan environment GIT_* variables
 		  .findGitDir() // scan up the file system tree
 		  .build();
@@ -63,7 +65,8 @@ public class JGitUtil {
 
 			long timestamp = (long) currentCommit.getCommitTime() * 1000;
 			Date commitTime = new Date(timestamp);
-			System.out.printf("Committer: %s, Time: %s, Msg: %s\n",
+			System.out.printf("Committer: %s, "
+					+ ": %s, Msg: %s\n",
 					currentCommit.getCommitterIdent().getName(),
 					commitTime.toString(), 
 					currentCommit.getShortMessage());

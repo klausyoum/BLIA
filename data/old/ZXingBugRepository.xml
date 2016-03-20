@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<bugrepository name="ZXing">
+  <bug id="364" opendate="2010-03-30 04:03:07" fixdate="2010-04-01 03:04:39">
+    <buginformation>
+      <summary>Crashes on Highscreen Zeus</summary>
+      <description>1. When BarcodeScanner runs, it dead with NullPointerException 2. 3. V/CameraManager( 2138): Calculated framing rect: Rect(50, 0 - 350, 240) W/dalvikvm( 2138): threadid=17: thread exiting with uncaught exception (group=0x4001da28) E/AndroidRuntime( 2138): Uncaught handler: thread Thread-9 exiting due to uncaught exception E/AndroidRuntime( 2138): java.lang.IllegalArgumentException: Unsupported picture format: 0/null E/AndroidRuntime( 2138):</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.HelpActivity.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="383" opendate="2010-04-15 05:04:58" fixdate="2010-04-16 03:04:35">
+    <buginformation>
+      <summary>3.22 on Samsung Spica (480x320) shows only 1/4 of magnified screen</summary>
+      <description>Upgrade 3.2 -&gt; 3.22 introduced new bug on Samsung Spica i5700. At 480x320 screen, program shows only left upper corner of camera input. Picture looks twice bigger, than it should be. It's impossible to scan any codes. Rolled back to 3.2, until fixed. I can give you a build that may address this if you'll get me your email address separately. Status: AcceptedOwner: srowenLabels: -Priority-Medium Priority-Low Will be glad to help with testing. vitaly@rcdesign.ru Debug package, you've sent, is ok at spica. I committed my fix to SVN, a change which also ought resolve an issue on the Moment + Android 2.1 Status: Fixed</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.camera.CameraConfigurationManager.java</file>
+      <file>com.google.zxing.client.android.camera.CameraManager.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="357" opendate="2010-03-10 01:03:22" fixdate="2010-04-19 13:04:49">
+    <buginformation>
+      <summary>Failure decoding PDF417 barcode</summary>
+      <description>We are currently evaluating ZXING for a banking records system which uses PDF417 on printed documents. The input images are grayscale JPEGs from a scanner. The system already decodes Code39 successfully, but PDF417 fails with NotfoundException or FormatException on the attached images (same encoded text on all of them): 00123MCTA0123456789012345678901234567890123456789012345678900101 I'm using version 1.5 on Windows XP. I've modified the GUIRunner to run with the following params: Hashtable&lt;DecodeHintType, Object&gt; hints = new Hashtable&lt;DecodeHintType, Object&gt;(3);</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.pdf417.decoder.DecodedBitStreamParser.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="411" opendate="2010-05-19 08:05:08" fixdate="2010-05-19 11:05:59">
+    <buginformation>
+      <summary>IllegalArgumentException; message=Both dimensions must be greater than 0</summary>
+      <description>1. 2. 3. What version of the product are you using? On what operating system? Latest checked out on May 18th on Windows &amp;amp; Linux Code attached Images where the error occured temppage57.png 37.2 KB &amp;nbsp; View &amp;nbsp; Download Complete code Code.java 9.3 KB &amp;nbsp; View &amp;nbsp; Download public static Collection&lt;Result&gt; scanBarcodes(LuminanceSource source) is the function that generates the error. Thanks, I'll look into this more. Should be easy to avoid this. java.lang.IllegalArgumentException: Both dimensions must be greater than 0</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.qrcode.QRCodeReader.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="412" opendate="2010-05-19 14:05:00" fixdate="2010-05-21 06:05:44">
+    <buginformation>
+      <summary>ArithmeticException; message=/ by zero</summary>
+      <description>1. Use the following function from code attached with the image attached 2. public static Collection&lt;Result&gt; scanBarcodes(LuminanceSource source) 3. see the catch ArithmeticException, that is where the exception occurs What version of the product are you using? On what operating system? Checked out as of May 18th, 2010 Code and the image file attached Code.java 9.3 KB &amp;nbsp; View &amp;nbsp; Download temppage14.png 22.7 KB &amp;nbsp; View &amp;nbsp; Download Also easy to fix. You're running into corner-cases in the "pure barcode" mode. This maybe not surprising since these images aren't a pure barcode, let alone contain a barcode! Why are you using pure barcode mode though? This shouldn't be needed. Status: AcceptedOwner: srowenLabels: -Priority-Medium Priority-Low () Status: Fixed I am using the scanning in batch mode. Only the separator pages would have barcodes. Majority of the pages that I scan do not have any barcode. BTW. Thank you for fixing those issues so quick. If they're scans, even if the pages are really clean scans, you may not want PURE_BARCODE. It gets thrown off easily if it's not actually a pure, exactly oriented image. I would just set TRY_HARDER. But hey if you tried it and it worked better, go ahead.</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.qrcode.QRCodeReader.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="407" opendate="2010-05-17 20:05:08" fixdate="2010-05-27 01:05:54">
+    <buginformation>
+      <summary>Update broke app on my Incredible?</summary>
+      <description>1. Open app 2. Won't scan a barcode other than QRCode What is the expected output? Used to scan everything up close What do you see instead? Instant zoom and constantly trying to focus and doesn't focus into barcode What version of the product are you using? 51 On what operating system? HTC Sense Android 2.1 Before the 51 update, I could scan any barcode at a close distance. I noticed a new behavior with v51 - when I open the app it automatically zooms the camera. I think the problem I am having is that it's too far zoomed in, so when it tries to focus, it can't because barcodes are not clear enough to scan, unless I hold them about 9-12" away, and at that point the app gets confused with other product lines on the packaging. I'm not technical when it comes to programming apps, but I wanted to let you know that I haven't been able to use this app on my HTC Incredible since upgrading to the 51 version, and think the zoom or focus is the problem. Similar problem on MyTouch3G, android 1.6 stock T-Mobile version. App worked great until last update now auto-focus keeps trying to focus on barcode (QR on screen from market and book UPC used as test) and won't read it, but most times if I go into the app's menu and change a setting (enable or disable 1D codes for example) it will then scan and read the barcode. Problem seems independent of code being scanned. This seems specific to new, Sense-based devices -- have heard this in regards the MyTouch too. For example the N1 is fine, and a Hero with 1.5 is fine. I think we have a workaround so anyone willing to try a new build can contact me off- list. Update to 3.3 broke most QR scanning on my Droid (2.1). It continuously zooms in and out. It's in focus at times, and even puts green highlights on the big corner squares, but seems hung in an infinite loop. This happens for Google business card I got at the ISEF in San Jose last week, and a Google add on the back cover of Business Week. I tried in various lighting conditions, but no change. It did work on a BTWD poster at Google HQ, though. There are lots of comments about the problem in the Android Market reviews. Issue 413 has been merged into this issue. Similar issue reported on reddit (http://www.reddit.com/r/Android/comments/c8gl3/barcode_scanner_doesnt_work_on_cyanog enmod_v507/). My fix (which worked for others) was to go into Settings and not change anything. Scanning worked after exiting from Settings. Info: Phone: HTC Dream/G1 rooted Barcode Scanner: v51 Mod: CyanogenMod-5.0.7-DS Build number: EPE54B It's not actually related. It's a race condition in restarting the scanning activity. Anything which restarts it spins the roulette wheel again. Marking fixed since 3.3.1 beta is up and appears to fix this on all affected devices. Status: FixedOwner: srowen</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.HelpActivity.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="432" opendate="2010-06-03 14:06:19" fixdate="2010-06-03 14:06:51">
+    <buginformation>
+      <summary>UTC is not GMT + 1</summary>
+      <description>com.google.zxing.web.generator.client.TimeZoneList lines 44 and 45 currently read: new TimeZoneInfo("GMT", "Greenwich Mean Time", "GMT", 0 * ONE_HOUR + 0 * THIRTY_MIN), // 0 new TimeZoneInfo("UTC", "Universal Coordinated Time", "GMT", 1 * ONE_HOUR + 0 * THIRTY_MIN), The second line is incorrect as UTC is (as the "relative" field correctly indicates) equivalent to GMT at this level of precision. Cool, fixed. Status: FixedLabels: -Priority-Medium Priority-Low</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.web.generator.client.TimeZoneList.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="363" opendate="2010-03-26 07:03:54" fixdate="2010-06-21 06:06:11">
+    <buginformation>
+      <summary>App stops scanning barcodes if power button is pressed while barcode information is displayed</summary>
+      <description>1. Scan a QR address code 2. While the "Found contact info" dialog is visible, tap the power button to put the phone in standby mode (NOTE: apologies; I don't know the technical term for the mode but I'm referring to "the mode where you can put the phone in your pocket; it's still on but the UI won't respond until you press the top button again and enter your login pattern") 3. Tap the power button again to display the phone's login pattern screen 4. Enter login pattern. The barcode app reappears, but the "Found contact info dialog is not visible. 5. Attempt to scan a barcode; the barcode will not scan. It is as if the program thinks the dialog is still open, but the dialog is not visible. When the phone awakens from standby and I log in, I expect to be returned to the barcode dialog screen that was previously visible. What version of the product are you using? On what operating system? Barcode Scanner v3.21, Nexus One, Kernel 2.6.29-01117-g4bc62c2 Good bug, thanks! Status: AcceptedOwner: dswit...@google.com Most of what you describe is by design, though we could change it. In general the app always returns you to the scanning screen when it comes back, from sleep or another app or anything. This avoids some confusing situations where, for example, the user left while picking a contact to share. Coming to BS and seeing contacts is odd. I think we could remove this behavior in this one case though, for the case of the Intent that shows scan results. Daniel thoughts? I wasn't able to reproduce the rest of this though, I was able to scan and rescan the same code after waking, without trouble. I'm on a Hero. I did repro this on Nexus. What happens is you go back to the scanning screen but autofocus isn't running and image processing does not appear to be running. This is a genuine bug. The core issue here is part 5 from the OP. Daniel do you think your last change for Acer fixed this one? Yup this is exactly the case I fixed. Status: Fixed</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.CaptureActivity.java</file>
+      <file>com.google.zxing.client.android.HelpActivity.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="475" opendate="2010-07-17 01:07:12" fixdate="2010-07-17 03:07:47">
+    <buginformation>
+      <summary>Incorrect comment in Intent Class</summary>
+      <description>The source code for the Intents class in the Android app has the following comment in WifiConnect: public static final class WifiConnect { /** * Use Google Book Search to search the contents of the book provided. */ public static final String ACTION = "com.google.zxing.client.android.WIFI_CONNECT"; A comment that is about Wifi not book search What version of the product are you using? On what operating system? Latest SVN Sure, fixed. Status: FixedOwner: srowenLabels: -Priority-Medium Priority-Low</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.Intents.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="469" opendate="2010-07-07 00:07:42" fixdate="2010-07-31 08:07:54">
+    <buginformation>
+      <summary>J2SE Reader not recognize code</summary>
+      <description>I use zxing for J2SE to detect large QRCODE code does not always recognize, but rather rare, often "com.google.zxing.NotFoundException" Code LuminanceSource source = new BufferedImageLuminanceSource (image); BinaryBitmap bitmap = new BinaryBitmap (new HybridBinarizer (source)); Result result; try ( result = new MultiFormatReader (). decode (bitmap); ) Catch (ReaderException re) ( return re.toString (); ) return result.getText (); code.JPG 229 KB &amp;nbsp; View &amp;nbsp; Download Use the TRY_HARDER hint and it decodes fine. You can see this working by uploading to http://zxing.org/w/decode.jspx. It says: &lt;?xml version="1.0" encoding="UTF-8"?&gt; &lt;xfa:data xmlns:xfa="http://www.xfa.org/schema/xfa-data/1.0/" &gt;&lt;root &gt;&lt;metadata &gt;&lt;region &gt;1234&lt;/region &gt;&lt;id &gt;4&lt;/id &gt;&lt;email &gt;apanasovich@diasoft.ru&lt;/email &gt;&lt;mail_notice &gt;1&lt;/mail_notice &gt;&lt;telefon /&gt;&lt;sms_notice &gt;0&lt;/sms_notice &gt;&lt;password &gt;0000&lt;/password &gt;&lt;/metadata &gt;&lt;data &gt;&lt;question1 &gt;§ä§Ñ§Ü§å§ð§ä§à&lt;/question1 &gt;&lt;question2 &gt;§±§Ñ§ß§Ñ§ã§à§Ó§Ú§é §¡§Ý§Ö§Ü§ã§Ñ§ß§Õ§â&lt;/question2 &gt;&lt;question3 &gt;§á§à§ã§ä§Ñ§Ó§Ú§ä§î §ß§Ñ §å§é§Ö§ä&lt;/question3 &gt;&lt;question4 &gt;§á§â§Ú§Ý§à§Ø§Ö§ß§Ú§ñ&lt;/question4 &gt;&lt;question5 &gt;§±§Ñ§ß§Ñ§ã§à§Ó§Ú§é §¡§Ý§Ö§Ü§ã§Ñ§ß§Õ§â §£§Ñ§ã§Ú§Ý§î§Ö§Ó§Ú§é&lt;/question5 &gt;&lt;question6 &gt;2010-06-25&lt;/question6 &gt;&lt;question7 &gt;§á§Ñ§ã§á§à§â§ä&lt;/question7 &gt;&lt;question8 &gt;§²§à§ã§ã§Ú§ñ&lt;/question8 &gt;&lt;question9 &gt;§¢§Ö§Ý§Ñ§â§å§ã§î&lt;/question9 &gt;&lt;question10 &gt;2&lt;/question10 &gt;&lt;question11 &gt;111111111111&lt;/question11 &gt;&lt;question12 &gt;11111111&lt;/question12 &gt;&lt;question13 &gt;1111&lt;/question13 &gt;&lt;question14 &gt;§Þ§Ñ§ê§Ú§ß§Ñ&lt;/question14 &gt;&lt;question15 &gt;§®§à§ä§à§è§Ú§Ü§Ý&lt;/question15 &gt;&lt;question16 &gt;§Ù§Ñ§Ó§à§Õ&lt;/question16 &gt;&lt;question17 &gt;4&lt;/question17 &gt;&lt;question18 &gt;§Ú§ð§ß§ñ 2010&lt;/question18 &gt;&lt;question19 &gt;§Þ§Ñ§ê§Ú§ß§Ñ&lt;/question19 &gt;&lt;question20 &gt;111111111111.00000000&lt;/question20 &gt;&lt;question21 &gt;44444444.00000000&lt;/question21 &gt;&lt;question22 &gt;444444&lt;/question22 &gt;&lt;question23 &gt;33333333&lt;/question23 &gt;&lt;question24 &gt;333.00000000&lt;/question24 &gt;&lt;question25 &gt;33.00000000&lt;/question25 &gt;&lt;question26 &gt;33.00000000&lt;/question26 &gt;&lt;question27 &gt;333&lt;/question27 &gt;&lt;question28 &gt;??????????lt;/question28 &gt;&lt;question29 &gt;333.00000000&lt;/question29 &gt;&lt;question30 /&gt;&lt;question31 /&gt;&lt;question32 /&gt;&lt;question33 /&gt;&lt;question34 /&gt;&lt;question35 /&gt;&lt;/data &gt;&lt;/root &gt;&lt;/xfa:data &gt; Status: NotABugLabels: -Priority-Medium Priority-Low I'm trying to identify a site HTTP Status 500 - type Exception report message description The server encountered an internal error () that prevented it from fulfilling this request. exception java.lang.ArithmeticException: / by zero</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.common.HybridBinarizer.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="512" opendate="2010-08-10 22:08:21" fixdate="2010-08-11 06:08:53">
+    <buginformation>
+      <summary>ITFWriter throws ArrayIndexOutOfBoundsException</summary>
+      <description>MultiFormatWriter w = new MultiFormatWriter(); BitMatrix bm = w.encode("213432546576878", BarcodeFormat.ITF, 200, 25); Stack trace: java.lang.ArrayIndexOutOfBoundsException: 6 at com.google.zxing.oned.ITFWriter.encode(ITFWriter.java:57) at com.google.zxing.oned.UPCEANWriter.encode(UPCEANWriter.java:50) at com.google.zxing.oned.ITFWriter.encode(ITFWriter.java:40) at com.google.zxing.MultiFormatWriter.encode(MultiFormatWriter.java:62) at com.google.zxing.MultiFormatWriter.encode(MultiFormatWriter.java:40) What version of the product are you using? On what operating system? rev 1516 from svn tree The following code cannot be correct, since ITFReader.PATTERNS inner array is always 5 entries in the second dimension. for (int j = 0; j &lt; 10; j += 2) { encoding[j] = ITFReader.PATTERNS[one][j]; encoding[j + 1] = ITFReader.PATTERNS[two][j]; } was the following instead the intention? for (int j = 0; j &lt; 5; j ++) { encoding[j*2] = ITFReader.PATTERNS[one][j]; encoding[j*2 + 1] = ITFReader.PATTERNS[two][j]; } () Status: FixedOwner: srowenLabels: Type-Defect Priority-Low</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.oned.ITFWriter.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="511" opendate="2010-08-10 18:08:12" fixdate="2010-08-12 13:08:34">
+    <buginformation>
+      <summary>module size estimation is slightly inaccurate</summary>
+      <description>There are some subtle problems with the estimation of module size. Greatest impact is on low resolution (low pixel-per-module) images, particularly for larger codes. I actually came across this when looking at 510. blackbox/qrcode-2/11.gif was causing core dumps in C++ but no unexpected exceptions in Java. The issue in 510 was that the C++ code wasn't handling a difference between the estimated dimension of the image and what was encoded in the version. Easy enough to fix (adding the check and throwing an exception as the Java code does) but it did make me wonder why 11.gif wasn't getting decoded. It turns out that the existing module estimation code doesn't estimate the module size quite right. The module size in the 11.gif is 2 pixels but gets estimated at something less (1.8 if I recall). This causes the dimension to be 69 rather than the true 65. The only thing required to fix this was moving around the -1s. I looked at all the places where it was calculating incorrect values on 11.gif (in the black white black run measuring code) and fixed them. With these changes, all the length measurements are spot on, not just close enough to decode. The change doesn't do much for the test set; it picks up four (which I assume are 11.gif in it's various rotations). With this change, even single pixel-per-module codes can be decoded, so I added a down-sampled version of 16.gif to the test set. boundary.patch 5.5 KB &amp;nbsp; View &amp;nbsp; Download 32.gif 708 bytes &amp;nbsp; View &amp;nbsp; Download () Owner: srowen I can commit this, but it doesn't affect the number of images that pass when I run the tests. #11 does not decode. Any ideas? Status: Accepted To see more successes, you'd need 508. Without 508, it'll never find three finders in 11. I should put an "I think" around that. I don't know that I tested that exact case, but I am pretty sure ... OK yes I see that now. Status: FixedLabels: Type-Defect Priority-Low</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.qrcode.QRCodeBlackBox2TestCase.java</file>
+      <file>com.google.zxing.qrcode.detector.Detector.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="508" opendate="2010-08-10 12:08:54" fixdate="2010-08-12 13:08:55">
+    <buginformation>
+      <summary>Handle boundary conditions in HybridBinarizer a little better</summary>
+      <description>c.f. http://groups.google.com/group/zxing/browse_thread/thread/d410251c3daa73c8 There's actually a comment for this in HB.java, that the last 7 pixels are dropped. This is kind of a boundary case, but given that my (mythical?) users don't really know how to frame codes, I thought I'd look at it. It's actually an easy (and elegant?) fix: when there's a fractional block on the right or bottom, simply compute it using the final 8 pixels. This overlaps with the previous block, but that should be fine. I wouldn't expect any computational impact with this, unless I'm missing something ... hb.patch 8.0 KB &amp;nbsp; View &amp;nbsp; Download Issue 509 has been merged into this issue. Sounds good, committed with 511 Status: FixedOwner: srowenLabels: Type-Defect Priority-Low</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.common.HybridBinarizer.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="492" opendate="2010-08-04 10:08:27" fixdate="2010-08-14 12:08:56">
+    <buginformation>
+      <summary>AbstractBlackBoxTestCase does not rotate non-square images correctly</summary>
+      <description>The java test driver doesn't rotate images correctly if the image isn't square. Not a huge deal. Mostly the reason for looking into it was the desire to crosscheck the Java with the C++ which doesn't have this issue. Patch attached. It create nine new QR successes. It also creates four new false/partial positives. The new cases are ones where there's already a failure coming from the same image at a different angle (so it's not surprising that now that the images are not getting cropped, they are also getting incorrectly decoded?) rotate.patch 4.6 KB &amp;nbsp; View &amp;nbsp; Download The rotation is right but the resulting image boundary is wrong, is that the issue? OK will have a look when I'm back. Status: AcceptedOwner: srowenLabels: Type-Defect Priority-Low Yeah, sorry. Poor choice of words. It's just that the new image has to be of a different size and that also means that there has to be translation to move the old center to the new center. The patch will actually handle non-90 degree rotations and produce an image of the necessary size and placement. That generality is currently not used, but the general case is easier to code than the special cases. Looks great, will commit. Status: Fixed</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.common.AbstractBlackBoxTestCase.java</file>
+      <file>com.google.zxing.negative.FalsePositivesBlackBoxTestCase.java</file>
+      <file>com.google.zxing.negative.PartialBlackBoxTestCase.java</file>
+      <file>com.google.zxing.negative.UnsupportedBlackBoxTestCase.java</file>
+      <file>com.google.zxing.qrcode.QRCodeBlackBox2TestCase.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="507" opendate="2010-08-10 12:08:17" fixdate="2010-08-15 07:08:20">
+    <buginformation>
+      <summary>Company field in generator seems not to work</summary>
+      <description>1.go to http://zxing.appspot.com/generator/ 2.try to generate vcard (contact information) 3.the company field seems not to work a qr code with company information ;) no info seems to be taken, in the url http://chart.apis.google.com/chart?... is the company info also not shown What version of the product are you using? On what operating system? chrome 5.0.375.125 on MacOS10.6.4 Some of the tested readers on iphone os 4 has problems with german umlauts (eg ?, ? and so on) but I think that's another problem and not important to you... There is no vCard support and MECARD does not encode company info. Yeah the field really shouldn't be there. I'll delete it but no real plans to update this. Status: AcceptedOwner: srowen Thanks for the quick response ;) vcard was wrong but many readers seems to support ORG in a mecard, but... It's not valid, no. Status: FixedLabels: Type-Defect Priority-Low I was able to add mecard ORG: support. The attached files show the changes. Please keep in mind that I made these changes on version zxing 1.4 changes_to_iphone_code_to_support_org_in_mecard.zip 8.1 KB &amp;nbsp; Download Right, it's not that it would be hard to add that. It's that it's not valid.</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.web.generator.client.ContactInfoGenerator.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="519" opendate="2010-08-16 10:08:45" fixdate="2010-08-16 13:08:10">
+    <buginformation>
+      <summary>wrong alignment position for version 23</summary>
+      <description>http://code.google.com/p/zxing/source/browse/trunk/core/src/com/google/zxing/qrcode/decoder/Version.java#422 new Version(23, new int[]{6, 30, 54, 74, 102}, I don't have a spec to look at but this line is the only one that doesn't follow a regular pattern with constant delta between successive alignment positions. I think the 74 is a typo and should be new Version(23, new int[]{6, 30, 54, 78, 102}, Good eye. Indeed that is the correct value from Table E.1. I'll commit a fix now. Status: FixedOwner: srowenLabels: Type-Defect Priority-Low Module-core</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.qrcode.decoder.Version.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="524" opendate="2010-08-19 16:08:25" fixdate="2010-08-30 20:08:47">
+    <buginformation>
+      <summary>qrcode::Detector#findAlignmentInRegion needs a Y boundary condition</summary>
+      <description>findAlignmentInRegion checks for bad looking X values but it doesn't seem to be checking for bad looking Y values. I just had a core dump in C++ because the bottom and top values get inverted (due to the image bounds) leading to a negative (or very large, in C++ unsigneds) height. I think it should have a simlar check but wanted to do a sanity check. Probably so, do you have a patch in mind? Owner: smpar...@smparkes.netLabels: Type-Defect Priority-Low Very simple. I'll apply if there no objections. fair.patch 1.6 KB &amp;nbsp; View &amp;nbsp; Download () Status: Fixed</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.qrcode.detector.Detector.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="537" opendate="2010-09-01 00:09:16" fixdate="2010-09-01 03:09:44">
+    <buginformation>
+      <summary>Barcode is not scanned correclty</summary>
+      <description>1. Scan the attached barcode Type ean13 is correctly identified correctly. But the barcode number is incorrect. Correct number would be: 030000769023 Actual result: 30000769023 What version of the product are you using? On what operating system? Android, 3.4 (Market Version) ean13-test.jpg 102 KB &amp;nbsp; View &amp;nbsp; Download The barcode itself is actually *both* a UPC-A code and EAN-13. EAN-13 is actually a clever superset of UPC-A, designed that way to enable backward compatibility. The scanner simply picks UPC-A here. The only way to differentiate is that there are actually 13 digits printed below. It is EAN-13, so calling it UPC-A is technically off, but I don't think we're going to go to the trouble of disambiguating just for this. Status: WontFix I did try to force EAN-13 by passing it as SCAN_FORMATS but still 30000769023 is the result. Ah I think you have a point here. Internally, when scanning for UPC-A and EAN-13, only one decoder (for EAN-13) is deployed since EAN-13 is a superset. If it finds a barcode starting with 0 it construes it as UPC-A. That's a nice trick, but, is not correct when UPC-A is not allowed as a barcode format. In this case it should just return the 13-digit value. I can fix that I'm pretty sure. It will still come back as UPC-A if scanning for both, but, will come back as EAN-13 if UPC-A is not allowed. Status: AcceptedOwner: srowenLabels: Type-Defect Priority-Medium () Status: Fixed</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.oned.EAN13BlackBox1TestCase.java</file>
+      <file>com.google.zxing.oned.MultiFormatUPCEANReader.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="548" opendate="2010-09-09 16:09:50" fixdate="2010-09-11 08:09:05">
+    <buginformation>
+      <summary>RIM app Crashing!. JVM Exception: ConnectionClosed exception.</summary>
+      <description>1.run ZxingUiApplication inside zxlib 1.5 package. 2.goto snap. 3.take a picture of a QR-code (image obtained from "simulate camera image" in the simulator) the expected output is the app decoding correctly and showing the url. what happens is the JVM Exception 104: ConnectionClosed Exception. can't go anywhere from here.. What version of the product are you using? On what operating system? zxing 1.5. on Blackberry 9800 simulator. Windows XP (on top of Oracle Vbox... for what is worth, all the other apps i have simulated with this system did not presented any problems). maybe is this a problem with the sd-card not being present?. or is it the library decoding the picture having a bug?? thanks for any help. Sounds like a problem simply opening the web page: "connection closed". That's not related to the app. It's not supported anyway. Status: NotABug i'll check with other code images in that case. (i'm also trying now to run the app on the 8530 simulator.) what exactly is not supported?. Nobody hass worked on the BlackBerry client, and don't think there's a plan to, so I don't know what it's status is regarding newer phones / OS / emulator. The error is in com.google.zxing.client.rim =&gt; ZxingLMMainScreen.java : In the run() method : file.delete() is called after file.close() in the "finally" block. Thus an ConnectionClosed exception appears. So, call delete() before close(). Hope it helps :) This bug is fixed in another issue. Update : Have a look @ issue 126 :) I see, this works differently than the Java File/FileInputStream, where you'd have to close() the stream then delete() the file. I switched these around and you can try again now. Status: FixedOwner: srowenLabels: Type-Defect Priority-Low Fixed!. changed the 'file.delete()' call as you said. Thanks for the help!.</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.rim.ZXingLMMainScreen.java</file>
+    </fixedFiles>
+  </bug>
+  <bug id="376" opendate="2010-04-06 19:04:21" fixdate="2010-09-26 23:09:40">
+    <buginformation>
+      <summary>Zoom on Android 2.1 not working</summary>
+      <description>1. Install latest Market version 2. Start app 3. Not zoomed in Supposed to start at zoom 2. What version of the product are you using? On what operating system? Version 48 for android I've run tests with the camera, and it appears it does not let you set an initial zoom, it always starts at 0. In my tests, starting a side thread with a sleep of 100 millis that sets the zoom seems to correct the issue. Could also be solved by simply providing zoom controls on the main view. Gonna need to know what device you are using, and for you to use the ZXing Test app in the market to send us a dump of its camera parameters. This app is written to use Android 1.x, which has no direct APIs for zoom control. Instead it tries to set device specific camera parameters to set zoom. Right now it sets 2 or 3 such params. I can try to guess and set another one if your device has yet another way to do this. When the world is 99% on Android 2.x we can move as well. I'm sure that the real API for this, which i assume you're using, does in fact work on the device. Labels: -Type-Defect -Priority-Medium Type-Enhancement Priority-Low Don't think 2.1 has any new canera api. When I said Oom control I ment a screen widget so I could change zoom manualy. The params.set("zoom", 2) works, but only after camera has finished its first auto focus, so in my little test app, delaying it with a second thread helped. I'm using Motorola Droid, got the 2.1 update few days ago. Never tried on 2.0, first time using app. Will try your test app in a few hours when I'm actually awake. Hmm you could be right. There are new explicit params for focus, effects, flash, white balance in 2.x but I don't see zoom. I had assumed there was. In any event, yes the "zoom" param is already being set. I checked in a change to look for and respect 'mot-zoom-values', though I am not sure it's actually anything to do with it. This param shows up in reports from the Moto Blur. I went back and combed a device report from the Droid and see 'mot-zoom-step' of 0.5. I'm guessing the device won't accept zoom values that aren't a multiple of 0.5. Right now the default is 2.7x (which is conveniently the max zoom on the Hero, my personal device). I'll make a change in the next 15 minutes or so to respect that value. Once that second change is in maybe you are in a position to download/build from SVN and try it? Status: AcceptedOwner: srowenLabels: -Type-Enhancement Type-Defect Checked out from SVN and ran it, but didn't solve the zoom issue. There is still the issue that (at least on the droid) that it's preventing you from pre-setting the zoom. No matter what zoom level you set during the initialize phase is being reset to default (maybe even other values as well, but zoom is whats noticeable to me). I did a little experiment and found two possible solutions for this bug (be it a Droid bug or an Android 2.1 bug). ----- ----- 1) Wrap the call to setZoom in a Thread with a slight delay: new Thread() {</description>
+    </buginformation>
+    <fixedFiles>
+      <file>com.google.zxing.client.android.CaptureActivity.java</file>
+      <file>com.google.zxing.client.android.CaptureActivityHandler.java</file>
+      <file>com.google.zxing.client.android.DecodeThread.java</file>
+      <file>com.google.zxing.client.android.PlanarYUVLuminanceSource.java</file>
+      <file>com.google.zxing.client.android.PreferencesActivity.java</file>
+      <file>com.google.zxing.client.android.ViewfinderView.java</file>
+    </fixedFiles>
+  </bug>
+</bugrepository>

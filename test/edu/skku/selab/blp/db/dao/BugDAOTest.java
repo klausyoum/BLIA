@@ -25,6 +25,7 @@ import org.junit.Test;
 import edu.skku.selab.blp.common.Bug;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.BugCorpus;
+import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.common.SourceFile;
 import edu.skku.selab.blp.db.AnalysisValue;
 import edu.skku.selab.blp.db.SimilarBugInfo;
@@ -39,7 +40,6 @@ public class BugDAOTest {
 	private int bugID1 = 101;
 	private int bugID2 = 102;
 	private int bugID3 = 103;
-	private String productName = "BLIA";
 	private String fixedDateString1 = "2004-12-01 17:40:00";
 	private String fixedDateString2 = "2014-03-27 07:12:00";
 	private String fixedDateString3 = "2014-03-27 07:12:00";
@@ -101,13 +101,11 @@ public class BugDAOTest {
 		
 		Bug bug1 = new Bug();
 		bug1.setID(bugID1);
-		bug1.setProductName(productName);
 		
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date fixedDate1 = simpleDateFormat.parse(fixedDateString1);
 		bug1.setFixedDate(fixedDate1);
 		BugCorpus bugCorpus1 = new BugCorpus();
-		bugCorpus1.setContent(corpusContent1);
 		bugCorpus1.setSummaryPart(summaryContent1);
 		bugCorpus1.setDescriptionPart(descriptionContent1);
 		bug1.setCorpus(bugCorpus1);
@@ -119,10 +117,8 @@ public class BugDAOTest {
 		
 		Bug bug2 = new Bug();
 		bug2.setID(bugID2);
-		bug2.setProductName(productName);
 		bug2.setFixedDate(fixedDateString2);
 		BugCorpus bugCorpus2 = new BugCorpus();
-		bugCorpus2.setContent(corpusContent2);
 		bugCorpus2.setSummaryPart(summaryContent2);
 		bugCorpus2.setDescriptionPart(descriptionContent2);
 		bug2.setCorpus(bugCorpus2);
@@ -134,10 +130,8 @@ public class BugDAOTest {
 		
 		Bug bug3 = new Bug();
 		bug3.setID(bugID3);
-		bug3.setProductName(productName);
 		bug3.setFixedDate(fixedDateString3);
 		BugCorpus bugCorpus3 = new BugCorpus();
-		bugCorpus3.setContent(corpusContent3);
 		bugCorpus3.setSummaryPart(summaryContent3);
 		bugCorpus3.setDescriptionPart(descriptionContent3);
 		bug3.setCorpus(bugCorpus3);
@@ -166,7 +160,6 @@ public class BugDAOTest {
 		Bug foundBug1 = bugs.get(bugID1);
 		Bug foundBug2 = bugs.get(bugID2);
 		assertEquals("bugID1 is wrong.", bugID1, foundBug1.getID());
-		assertEquals("productName is wrong.", productName, foundBug1.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug1.getFixedDateString());
 		BugCorpus bugCorpus = foundBug1.getCorpus();
 		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
@@ -177,7 +170,6 @@ public class BugDAOTest {
 		assertEquals("version is wrong.", version, foundBug1.getVersion());
 
 		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
-		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
 		assertEquals("fixedDateString2 is wrong.", fixedDateString2, foundBug2.getFixedDateString());
 		bugCorpus = foundBug2.getCorpus();
 		assertEquals("corpusContent2 is wrong.", corpusContent2, bugCorpus.getContent());
@@ -187,9 +179,8 @@ public class BugDAOTest {
 		assertEquals("stackTrace4 is wrong.", stackTrace4, foundBug2.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug2.getVersion());
 		
-		Bug foundBug = bugDAO.getBug(bugID1, productName);
+		Bug foundBug = bugDAO.getBug(bugID1);
 		assertEquals("bugID1 is wrong.", bugID1, foundBug.getID());
-		assertEquals("productName is wrong.", productName, foundBug.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug.getFixedDateString());
 		bugCorpus = foundBug.getCorpus();
 		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
@@ -199,13 +190,12 @@ public class BugDAOTest {
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug.getVersion());
 		
-		assertTrue(2 == bugDAO.getBugCountWithFixedDate(productName, fixedDateString3));
-		ArrayList<Bug> bugList = bugDAO.getPreviousFixedBugs(productName, fixedDateString3, bugID3);
+		assertTrue(2 == bugDAO.getBugCountWithFixedDate(fixedDateString3));
+		ArrayList<Bug> bugList = bugDAO.getPreviousFixedBugs(fixedDateString3, bugID3);
 		assertTrue(2 == bugList.size());
 		
 		foundBug1 = bugList.get(0);
 		assertEquals("bugID1 is wrong.", bugID1, foundBug1.getID());
-		assertEquals("productName is wrong.", productName, foundBug1.getProductName());
 		assertEquals("fixedDateString1 is wrong.", fixedDateString1, foundBug1.getFixedDateString());
 		bugCorpus = foundBug1.getCorpus();
 		assertEquals("corpusContent1 is wrong.", corpusContent1, bugCorpus.getContent());
@@ -217,7 +207,6 @@ public class BugDAOTest {
 		
 		foundBug2 = bugList.get(1);
 		assertEquals("bugID2 is wrong.", bugID2, foundBug2.getID());
-		assertEquals("productName is wrong.", productName, foundBug2.getProductName());
 		assertEquals("fixedDateString2 is wrong.", fixedDateString2, foundBug2.getFixedDateString());
 		bugCorpus = foundBug2.getCorpus();
 		assertEquals("corpusContent2 is wrong.", corpusContent2, bugCorpus.getContent());
@@ -233,10 +222,10 @@ public class BugDAOTest {
 		BugDAO bugDAO = new BugDAO();
 
 		bugDAO.deleteAllTerms();
-		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1, productName));
-		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term2, productName));
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1));
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term2));
 		
-		HashMap<String, Integer> wordMap = bugDAO.getTermMap(productName);
+		HashMap<String, Integer> wordMap = bugDAO.getTermMap();
 		assertNotNull("Can't find corpus1.", wordMap.get(term1));
 		assertNotNull("Can't find corpus2.", wordMap.get(term2));
 		
@@ -244,15 +233,14 @@ public class BugDAOTest {
 		bugDAO.deleteAllBugSfTermWeights();
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
 		sourceFileDAO.deleteAllTerms();
-		sourceFileDAO.insertTerm(term1, productName);
-		sourceFileDAO.insertTerm(term2, productName);
+		sourceFileDAO.insertTerm(term1);
+		sourceFileDAO.insertTerm(term2);
 		
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, term1, termCount, idc, tf, idf);
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, term1, termCount, idc, tf, idf);
 		assertNotEquals("BugSfAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugSfTermWeight(analysisValue));
 		
-		AnalysisValue termWeight = bugDAO.getBugSfTermWeight(bugID1, productName, term1);
+		AnalysisValue termWeight = bugDAO.getBugSfTermWeight(bugID1, term1);
 		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, termWeight.getID());
-		assertEquals("productName of AnalysisValue is wrong.", productName, termWeight.getProductName());
 		assertEquals("term1 of AnalysisValue is wrong.", term1, termWeight.getTerm());
 		assertEquals("termCount of AnalysisValue is wrong.", termCount, termWeight.getTermCount());
 		assertEquals("idc of AnalysisValue is wrong.", idc, termWeight.getInvDocCount());
@@ -265,15 +253,14 @@ public class BugDAOTest {
 		BugDAO bugDAO = new BugDAO();
 		
 		bugDAO.deleteAllTerms();
-		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1, productName));
+		assertNotEquals("Term insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTerm(term1));
 		
 		bugDAO.deleteAllBugTermWeights();
-		AnalysisValue analysisValue = new AnalysisValue(bugID1, productName, term1, termWeight);
+		AnalysisValue analysisValue = new AnalysisValue(bugID1, term1, termWeight);
 		assertNotEquals("BugAnalysisValue insertion failed!", BaseDAO.INVALID, bugDAO.insertBugTermWeight(analysisValue));
 		
-		AnalysisValue returnValue = bugDAO.getBugTermWeight(bugID1, productName, term1);
+		AnalysisValue returnValue = bugDAO.getBugTermWeight(bugID1, term1);
 		assertEquals("Bug ID of AnalysisValue is wrong.", bugID1, returnValue.getID());
-		assertEquals("productName of AnalysisValue is wrong.", productName, returnValue.getProductName());
 		assertEquals("term1 of AnalysisValue is wrong.", term1, returnValue.getTerm());
 		assertEquals("termWeight of AnalysisValue is wrong.", termWeight, returnValue.getTermWeight(), delta);
 	}
@@ -285,8 +272,8 @@ public class BugDAOTest {
 		
 		// preparation phase
 		sourceFileDAO.deleteAllSourceFiles();
-		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1, productName));
-		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2, productName));
+		assertNotEquals("fileName1 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName1));
+		assertNotEquals("fileName2 insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertSourceFile(fileName2));
 
 		sourceFileDAO.deleteAllVersions();
 		String version1 = "v0.1";
@@ -304,13 +291,13 @@ public class BugDAOTest {
 		corpus1.setContent(corpusContent1);
 		SourceFileCorpus corpus2 = new SourceFileCorpus();
 		corpus2.setContent(corpusContent2);
-		int sourceFileID = sourceFileDAO.getSourceFileID(fileName1, productName);				
+		int sourceFileID = sourceFileDAO.getSourceFileID(fileName1);				
 		assertNotEquals("fileName1's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus1, totalCorpusCount1, lengthScore1));
-		sourceFileID = sourceFileDAO.getSourceFileID(fileName2, productName);
+		sourceFileID = sourceFileDAO.getSourceFileID(fileName2);
 		assertNotEquals("fileName2's corpus insertion failed!", BaseDAO.INVALID, sourceFileDAO.insertCorpusSet(sourceFileID, version1, corpus2, totalCorpusCount2, lengthScore2));
 		
-		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName1, version1, productName));
-		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName2, version1, productName));
+		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName1, version1));
+		assertNotEquals("BugFixedFileInfo insertion failed!", BaseDAO.INVALID, bugDAO.insertBugFixedFileInfo(bugID1, fileName2, version1));
 		
 		HashSet<SourceFile> fixedFiles = bugDAO.getFixedFiles(bugID1);
 		assertEquals("Fixedfiles count is wrong.", 2, fixedFiles.size());
@@ -332,6 +319,51 @@ public class BugDAOTest {
 			assertEquals("version1 is wrong.", version1, sourceFile.getVersion());
 		} else {
 			fail("SourceFile is wrong.");
+		}
+	}
+	
+	@Test
+	public void verifyGetFixedMethods() throws Exception {
+		BugDAO bugDAO = new BugDAO();
+		MethodDAO methodDAO = new MethodDAO();
+		
+		int bugID = 213;
+		long methodID[] = { -1, -1, -1 };
+		int sourceFileVersionID[] = { 1, 2, 3 };
+		String[] methodName = { "method1", "method2", "method3" };
+		String[] returnType = { "void", "String", "HashSet<String>" };
+		String[] argTypes = { "int", "boolean", "long" };
+		
+		
+		
+		for (int i = 0; i < methodID.length; ++i) {
+			Method method = new Method();
+			method.setSourceFileVersionID(sourceFileVersionID[i]);
+			method.setName(methodName[i]);
+			method.setReturnType(returnType[i]);
+			method.setParams(argTypes[i]);
+			methodID[i] = methodDAO.insertMethod(method);
+			
+			bugDAO.insertBugFixedMethodInfo(bugID, method);
+		}
+		
+		HashSet<Method> fixedMethods = bugDAO.getFixedMethods(bugID);
+		assertEquals("Fixed methods' count is wrong!", methodID.length, fixedMethods.size());
+		
+		Iterator<Method> iter = fixedMethods.iterator();
+		while(iter.hasNext()) {
+			Method currentMethod = iter.next();
+			
+			int index = -1;
+			for (int i = 0; i < methodID.length; ++i) {
+				if (methodID[i] == currentMethod.getID())
+					index = i;
+			}
+			assertEquals("Wrong method ID!", methodID[index], currentMethod.getID());
+			assertEquals("Wrong source file version ID!", sourceFileVersionID[index], currentMethod.getSourceFileVersionID());
+			assertEquals("Wrong method name!", methodName[index], currentMethod.getName());
+			assertEquals("Wrong return type!", returnType[index], currentMethod.getReturnType());
+			assertEquals("Wrong argument type!", argTypes[index], currentMethod.getParams());
 		}
 	}
 	

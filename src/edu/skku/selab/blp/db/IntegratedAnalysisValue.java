@@ -12,17 +12,17 @@ package edu.skku.selab.blp.db;
  *
  */
 public class IntegratedAnalysisValue {
-	private int bugID;
-	private String fileName;
-	private String version;
-	private int sourceFileVersionID;
-	private String productName;
-	private double vsmScore;
-	private double similarityScore;
-	private double bugLocatorScore;
-	private double stackTraceScore;
-	private double commitLogScore;
-	private double bliaScore;
+	protected int bugID;
+	protected String fileName;
+	protected String version;
+	protected int sourceFileVersionID;
+	protected double vsmScore;
+	protected double similarityScore;
+	protected double bugLocatorScore;
+	protected double stackTraceScore;
+	protected double commitLogScore;
+	private double middleSourceFileScore;
+	protected double bliaSourceFileScore;
 
 	/**
 	 * 
@@ -32,13 +32,13 @@ public class IntegratedAnalysisValue {
 		fileName = "";
 		version = "";
 		sourceFileVersionID = -1;
-		productName = "";
 		vsmScore = 0.0;
 		similarityScore = 0.0;
 		bugLocatorScore = 0.0;
 		stackTraceScore = 0.0;
 		commitLogScore = 0.0;
-		bliaScore = 0.0;
+		setMiddleSourceFileScore(0.0);
+		bliaSourceFileScore = 0.0;
 	}
 
 	/**
@@ -126,17 +126,17 @@ public class IntegratedAnalysisValue {
 	}
 
 	/**
-	 * @return the bliaScore
+	 * @return the bliaSourceFileScore
 	 */
-	public double getBLIAScore() {
-		return bliaScore;
+	public double getBliaSourceFileScore() {
+		return bliaSourceFileScore;
 	}
 
 	/**
-	 * @param bliaScore the bliaScore to set
+	 * @param bliaSourceFileScore the bliaSourceFileScore to set
 	 */
-	public void setBLIAScore(double bliaScore) {
-		this.bliaScore = bliaScore;
+	public void setBliaSourceFileScore(double bliaSourceFileScore) {
+		this.bliaSourceFileScore = bliaSourceFileScore;
 	}
 
 	/**
@@ -151,20 +151,6 @@ public class IntegratedAnalysisValue {
 	 */
 	public void setVersion(String version) {
 		this.version = version;
-	}
-
-	/**
-	 * @return the productName
-	 */
-	public String getProductName() {
-		return productName;
-	}
-
-	/**
-	 * @param productName the productName to set
-	 */
-	public void setProductName(String productName) {
-		this.productName = productName;
 	}
 
 	/**
@@ -193,5 +179,19 @@ public class IntegratedAnalysisValue {
 	 */
 	public void setCommitLogScore(double commitLogScore) {
 		this.commitLogScore = commitLogScore;
+	}
+
+	/**
+	 * @return the middleSourceFileScore
+	 */
+	public double getMiddleSourceFileScore() {
+		return middleSourceFileScore;
+	}
+
+	/**
+	 * @param middleSourceFileScore the middleSourceFileScore to set
+	 */
+	public void setMiddleSourceFileScore(double middleSourceFileScore) {
+		this.middleSourceFileScore = middleSourceFileScore;
 	}
 }

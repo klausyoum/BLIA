@@ -68,16 +68,14 @@ public class BugVectorCreator {
 		wordList.storePlain(new FileWriter(bugTermListFile));
 //		wordList.storePlain(new BufferedWriter(new OutputStreamWriter(System.out)));
 		
-		String productName = property.getProductName();
 		BugDAO bugDAO = new BugDAO();
-		
 		HashMap<Integer, Integer> bugWordIndexMap = new HashMap<Integer, Integer>(); 
 		BufferedReader reader = new BufferedReader(new FileReader(bugTermListFile));
 		String line = null;
 		int index = 0;
 		while ((line = reader.readLine()) != null) {
 			String term = line;
-			int bugTermID = bugDAO.insertBugTerm(term, productName);
+			int bugTermID = bugDAO.insertBugTerm(term);
 			bugWordIndexMap.put(index++, bugTermID);
 		}
 		reader.close();

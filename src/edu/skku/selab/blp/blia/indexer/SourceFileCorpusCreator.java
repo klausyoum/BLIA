@@ -25,10 +25,10 @@ import edu.skku.selab.blp.utils.Stopword;
  *
  */
 public class SourceFileCorpusCreator {
-	protected String stemContent(String content[]) {
+	public static String stemContent(String contents[]) {
 		StringBuffer contentBuf = new StringBuffer();
-		for (int i = 0; i < content.length; i++) {
-			String word = content[i].toLowerCase();
+		for (int i = 0; i < contents.length; i++) {
+			String word = contents[i].toLowerCase();
 			if (word.length() > 0) {
 				String stemWord = Stem.stem(word);
 				if (!Stopword.isJavaKeyword(stemWord) && !Stopword.isProjectKeyword(stemWord) && !Stopword.isEnglishStopword(stemWord)) {
@@ -39,6 +39,20 @@ public class SourceFileCorpusCreator {
 		}
 		return contentBuf.toString();
 	}
+	
+	public static String stemContent(String content) {
+		StringBuffer contentBuf = new StringBuffer();
+		String word = content.toLowerCase();
+		if (word.length() > 0) {
+			String stemWord = Stem.stem(word);
+			if (!Stopword.isJavaKeyword(stemWord) && !Stopword.isProjectKeyword(stemWord) && !Stopword.isEnglishStopword(stemWord)) {
+				contentBuf.append(stemWord);
+				contentBuf.append(" ");
+			}
+		}
+		return contentBuf.toString();
+	}
+
 	
 	public SourceFileCorpus create(File file) {
 		FileParser parser = new FileParser(file);
@@ -77,8 +91,6 @@ public class SourceFileCorpusCreator {
 		File files[] = detector.detect(property.getSourceCodeDirList());
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
-		String productName = property.getProductName();
-
 		int count = 0;
 		TreeSet<String> nameSet = new TreeSet<String>();
 		for (int i = 0; i < files.length; i++) {
@@ -90,7 +102,7 @@ public class SourceFileCorpusCreator {
 					fileName += ".java";
 				}
 
-				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, productName);
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName);
 				if (BaseDAO.INVALID == sourceFileID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", fileName);
 					throw new Exception(); 

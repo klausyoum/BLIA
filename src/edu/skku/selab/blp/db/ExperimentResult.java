@@ -28,6 +28,7 @@ public class ExperimentResult {
 	private String algorithmDescription;
 	private double alpha;
 	private double beta;
+	private double gamma;
 	private int pastDays;
 	private Date experimentDate;
 	private double candidateRate;
@@ -49,6 +50,7 @@ public class ExperimentResult {
 		algorithmDescription = "";
 		alpha = 0.0;
 		beta = 0.0;
+		gamma = 0.0;
 		pastDays = 0;
 		setExperimentDate(new Date(System.currentTimeMillis()));
 		candidateRate = 0;
@@ -298,6 +300,20 @@ public class ExperimentResult {
 	 */
 	public void setCandidateRate(double candidateRate) {
 		this.candidateRate = candidateRate;
+	}
+
+	/**
+	 * @return the gamma
+	 */
+	public double getGamma() {
+		return gamma;
+	}
+
+	/**
+	 * @param gamma the gamma to set
+	 */
+	public void setGamma(double gamma) {
+		this.gamma = gamma;
 	}
 
 }

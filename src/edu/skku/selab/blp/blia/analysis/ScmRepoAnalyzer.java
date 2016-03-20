@@ -8,6 +8,7 @@
 package edu.skku.selab.blp.blia.analysis;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,10 +18,16 @@ import java.util.concurrent.Executors;
 
 import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.Bug;
-import edu.skku.selab.blp.db.CommitInfo;
+import edu.skku.selab.blp.common.CommitInfo;
+import edu.skku.selab.blp.common.ExtendedCommitInfo;
+import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.IntegratedAnalysisValue;
+import edu.skku.selab.blp.db.ExtendedIntegratedAnalysisValue;
+import edu.skku.selab.blp.db.dao.BaseDAO;
 import edu.skku.selab.blp.db.dao.CommitDAO;
 import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
+import edu.skku.selab.blp.db.dao.MethodDAO;
+import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -29,7 +36,7 @@ import edu.skku.selab.blp.db.dao.IntegratedAnalysisDAO;
 public class ScmRepoAnalyzer {
 	private ArrayList<Bug> bugs;
 	private int pastDays;
-	private ArrayList<CommitInfo> filteredCommitInfos = null;
+	private ArrayList<ExtendedCommitInfo> filteredCommitInfos = null;
 	
 	public ScmRepoAnalyzer() {
 		bugs = null;
@@ -62,22 +69,25 @@ public class ScmRepoAnalyzer {
         
         private void insertDataToDb() throws Exception {
     		IntegratedAnalysisDAO integratedAnalysisDAO = new IntegratedAnalysisDAO();
+    		MethodDAO methodDAO = new MethodDAO();
+    		SourceFileDAO sourceFileDAO = new SourceFileDAO();
     		
 			// <fileName, analysisValue>
 			HashMap<String, IntegratedAnalysisValue> analysisValues = new HashMap<String, IntegratedAnalysisValue>();
-			ArrayList<CommitInfo> relatedCommitInfos = findCommitInfoWithinDays(filteredCommitInfos, bug.getOpenDate(), pastDays);
+			HashMap<Integer, ExtendedIntegratedAnalysisValue> methodAnalysisValues = new HashMap<Integer, ExtendedIntegratedAnalysisValue>();
+			ArrayList<ExtendedCommitInfo> relatedCommitInfos = findCommitInfoWithinDays(filteredCommitInfos, bug.getOpenDate(), pastDays);
 			if (null == relatedCommitInfos) {
 				return;
 			}
 			
 			for (int j = 0; j < relatedCommitInfos.size(); j++) {
-				CommitInfo relatedCommitInfo = relatedCommitInfos.get(j);
+				ExtendedCommitInfo relatedCommitInfo = relatedCommitInfos.get(j);
 				HashSet<String> commitFiles = relatedCommitInfo.getAllCommitFilesWithoutCommitType();
 				Iterator<String> commitFilesIter = commitFiles.iterator();
 				while (commitFilesIter.hasNext()) {
 					String commitFileName = commitFilesIter.next();
 
-					// Calculate CommitLogScore
+					// Calculate CommitLogScore for file level
 					IntegratedAnalysisValue analysisValue = analysisValues.get(commitFileName);
 					if (null == analysisValue) {
 						analysisValue = new IntegratedAnalysisValue();
@@ -94,6 +104,45 @@ public class ScmRepoAnalyzer {
 						analysisValues.put(commitFileName, analysisValue);		
 					}
 				}
+				
+				HashMap<String, ArrayList<Method>> allCommitMethods = relatedCommitInfo.getAllFixedMethods();
+				if (allCommitMethods == null) {
+//					System.err.printf("[NO fixed method!] BugID: %d, Commit ID: %s\n", bug.getID(), relatedCommitInfo.getCommitID());
+					continue;
+				}
+				
+				commitFilesIter = allCommitMethods.keySet().iterator();
+				while (commitFilesIter.hasNext()) {
+					String commitFileName = commitFilesIter.next();
+					ArrayList<Method> commitMethods = allCommitMethods.get(commitFileName);
+					
+					for (int i = 0; i < commitMethods.size(); ++i) {
+						Method method = commitMethods.get(i);
+						int methodID = methodDAO.getMethodID(method);
+
+						if (methodID == BaseDAO.INVALID) {
+							int sourceFileVersionID = sourceFileDAO.getSourceFileVersionID(commitFileName, SourceFileDAO.DEFAULT_VERSION_STRING);
+							method.setSourceFileVersionID(sourceFileVersionID);
+							methodID = methodDAO.insertMethod(method);
+						}
+
+						ExtendedIntegratedAnalysisValue methodAnalysisValue = methodAnalysisValues.get(methodID);
+						if (null == methodAnalysisValue) {
+							methodAnalysisValue = new ExtendedIntegratedAnalysisValue();
+							methodAnalysisValue.setBugID(bug.getID());
+							methodAnalysisValue.setMethodID(methodID);
+						}
+
+						// Calculate CommitLogScore for method level
+						double commitLogScore = methodAnalysisValue.getCommitLogScore();
+						commitLogScore += calculateCommitLogScore(relatedCommitInfo.getCommitDate(), bug.getOpenDate(), pastDays);
+						methodAnalysisValue.setCommitLogScore(commitLogScore);
+						
+						if (null == methodAnalysisValues.get(methodID)) {
+							methodAnalysisValues.put(methodID, methodAnalysisValue);		
+						}
+					}
+				}
 			}
 			
 			// Then save the score for the fixed files
@@ -108,16 +157,29 @@ public class ScmRepoAnalyzer {
 //							analysisValue.getBugID(), analysisValue.getSourceFileVersionID());
 //				}
 			}
+			
+			// Then save the score for the fixed methods
+			Iterator<ExtendedIntegratedAnalysisValue> methodAnalysisValueIter = methodAnalysisValues.values().iterator();
+			while (methodAnalysisValueIter.hasNext()) {
+				ExtendedIntegratedAnalysisValue methodAnalysisValue = methodAnalysisValueIter.next();
+				integratedAnalysisDAO.insertMethodAnalysisVaule(methodAnalysisValue);
+
+				// DEBUG code
+//				if (0 == insertedColumnCount) {
+//					System.err.printf("[ERROR] ScmRepoAnalyzer.analyze(): CommitLog score insertion failed! BugID: %s, methodID: %d\n",
+//							methodAnalysisValue.getBugID(), methodAnalysisValue.getMethodID());
+//				}
+			}
         }
     }
     
 	public void analyze(String version) throws Exception {
 		// Do loop from the oldest bug,
-		Property property = Property.getInstance();
-		String productName = property.getProductName();
-		
 		CommitDAO commitDAO = new CommitDAO();
-		filteredCommitInfos = commitDAO.getFilteredCommitInfos(productName);
+		
+		// Checked the "filtered". This variable is valid when it is true
+		boolean filtered = true;
+		filteredCommitInfos = commitDAO.getCommitInfos(filtered);
 
 		ExecutorService executor = Executors.newFixedThreadPool(Property.THREAD_COUNT);
 		for (int i = 0; i < bugs.size(); i++) {
@@ -143,10 +205,10 @@ public class ScmRepoAnalyzer {
 	    return diffDays;
 	}
 
-	private ArrayList<CommitInfo> findCommitInfoWithinDays(ArrayList<CommitInfo> allCommitInfo, Date openDate, Integer pastDays) {
-		ArrayList<CommitInfo> foundCommitInfos = null;
+	private ArrayList<ExtendedCommitInfo> findCommitInfoWithinDays(ArrayList<ExtendedCommitInfo> allCommitInfo, Date openDate, Integer pastDays) {
+		ArrayList<ExtendedCommitInfo> foundCommitInfos = null;
 		for (int i = 0; i < allCommitInfo.size(); i++) {
-			CommitInfo commitInfo = allCommitInfo.get(i);
+			ExtendedCommitInfo commitInfo = allCommitInfo.get(i);
 			
 			Date commitDate = commitInfo.getCommitDate();
 		    double diffDays = getDiffDays(commitDate, openDate);
@@ -157,7 +219,7 @@ public class ScmRepoAnalyzer {
 
 	        if ((diffDays > 0) && (diffDays <= pastDays)) {
 				if (null == foundCommitInfos) {
-					foundCommitInfos = new ArrayList<CommitInfo>();
+					foundCommitInfos = new ArrayList<ExtendedCommitInfo>();
 				}
 
 				foundCommitInfos.add(commitInfo);						

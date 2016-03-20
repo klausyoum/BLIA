@@ -73,29 +73,26 @@ public class GitCommitLogCollectorTest {
 		long startTime = System.currentTimeMillis();
 		
 //		String repoDir = Property.SWT_REPO_DIR;
-//		String productName = Property.getInstance().getProductName();
 //		Calendar since = new GregorianCalendar(2004, Calendar.OCTOBER, 1);
 //		Calendar until = new GregorianCalendar(2010, Calendar.MAY, 1);
-//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(repoDir);
 //		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
 		
 		// for AspectJ
 		String repoDir = Property.getInstance().getRepoDir();
-		String productName = Property.getInstance().getProductName();
 		Calendar since = new GregorianCalendar(2002, Calendar.JULY, 1);
 		Calendar until = new GregorianCalendar(2008, Calendar.DECEMBER, 15);
-		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(repoDir);
 		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
 		
 //		String repoDir = Property.getInstance().getRepoDir();
-//		String productName = Property.getInstance().getProductName();
 //		Calendar since = new GregorianCalendar(2004, Calendar.AUGUST, 1);
 //		Calendar until = new GregorianCalendar(2011, Calendar.MARCH, 31);
-//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(productName, repoDir);
+//		GitCommitLogCollector gitCommitLogCollector = new GitCommitLogCollector(repoDir);
 //		gitCommitLogCollector.collectCommitLog(since.getTime(), until.getTime(), true);
 		
 		long elapsedTime = System.currentTimeMillis() - startTime;
-		System.out.printf("Elapsed time of collectCommitLog() for %s: %d.%d sec\n", productName, elapsedTime / 1000, elapsedTime % 1000);		
+		System.out.printf("Elapsed time of collectCommitLog(): %d.%d sec\n", elapsedTime / 1000, elapsedTime % 1000);		
 
 	}
 }

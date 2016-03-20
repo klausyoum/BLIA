@@ -28,6 +28,9 @@ public class Property {
 	final static private String WORK_DIR = Property.readProperty("WORK_DIR");
 	final static private String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
 	
+	final static public String RUN_LEVEL_FILE = "FILE";
+	final static public String RUN_LEVEL_METHOD = "METHOD";
+	
 	private String targetProduct;
 	private String bugFilePath;
 	private String sourceCodeDir;
@@ -39,6 +42,7 @@ public class Property {
 	private int bugTermCount;
 	private double alpha;
 	private double beta;
+	private double gamma;
 	private String separator = System.getProperty("file.separator");
 	private String lineSeparator = System.getProperty("line.separator");
 	private static Property p = null;
@@ -48,6 +52,8 @@ public class Property {
 	private Calendar until = null;
 	private String repoDir;
 	private double candidateLimitRate = 1.0;
+	
+	private String runLevel;
 
 	public int getBugTermCount() {
 		return bugTermCount;
@@ -100,13 +106,13 @@ public class Property {
 	}
 	
 	public static void createInstance(String productName, String bugFilePath, String sourceCodeDir, String workDir,
-			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
+			double alpha, double beta, double gamma, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		if (null == p) {
 			p = new Property(productName, bugFilePath, sourceCodeDir, workDir,
-					alpha, beta, pastDays, repoDir, outputFile, candidateLimitRate);
+					alpha, beta, gamma, pastDays, repoDir, outputFile, candidateLimitRate);
 		} else {
 			p.setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-					beta, pastDays, repoDir, outputFile, candidateLimitRate);
+					beta, gamma, pastDays, repoDir, outputFile, candidateLimitRate);
 		}
 	}
 	
@@ -125,6 +131,7 @@ public class Property {
 		String sourceCodeDir = Property.readProperty(targetProduct + "_" + "SOURCE_DIR");
 		double alpha = Double.parseDouble(Property.readProperty(targetProduct + "_" + "ALPHA"));
 		double beta = Double.parseDouble(Property.readProperty(targetProduct + "_" + "BETA"));
+		double gamma = Double.parseDouble(Property.readProperty(targetProduct + "_" + "GAMMA"));
 		int pastDays = Integer.parseInt(Property.readProperty(targetProduct + "_" + "PAST_DAYS"));
 		String repoDir = Property.readProperty(targetProduct + "_" + "REPO_DIR");
 		String bugFilePath = Property.readProperty(targetProduct + "_" + "BUG_REPO_FILE");
@@ -137,8 +144,9 @@ public class Property {
 		until.setTime(untilDate);
 		double candidateLimitRate = Double.parseDouble(Property.readProperty(targetProduct + "_" + "CANDIDATE_LIMIT_RATE"));
 
-		p.setValues(productName, sourceCodeDir, alpha, beta, pastDays, repoDir,
+		p.setValues(productName, sourceCodeDir, alpha, beta, gamma, pastDays, repoDir,
 				bugFilePath, since, until, candidateLimitRate);
+		p.setRunLevel(Property.readProperty("RUN_LEVEL"));
 		
 		return p;
 	}
@@ -153,21 +161,21 @@ public class Property {
 	}
 	
 	private Property(String productName, String bugFilePath, String sourceCodeDir, String workDir,
-			double alpha, double beta, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
+			double alpha, double beta, double gamma, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-				beta, pastDays, repoDir, outputFile, candidateLimitRate);
+				beta, gamma, pastDays, repoDir, outputFile, candidateLimitRate);
 	}
 
 	private void setValues(String productName, String bugFilePath,
 			String sourceCodeDir, String workDir, double alpha, double beta,
-			int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
+			double gamma, int pastDays, String repoDir, String outputFile, double candidateLimitRate) {
 		setCandidateLimitRate(candidateLimitRate);
 		setValues(productName, bugFilePath, sourceCodeDir, workDir, alpha,
-				beta, pastDays, repoDir, outputFile);
+				beta, gamma, pastDays, repoDir, outputFile);
 	}
 	
 	private void setValues(String productName, String sourceCodeDir,
-			double alpha, double beta, int pastDays, String repoDir,
+			double alpha, double beta, double gamma, int pastDays, String repoDir,
 			String bugFilePath, Calendar since, Calendar until, double candidateLimitRate) {
 		
 		setProductName(productName);
@@ -176,6 +184,7 @@ public class Property {
 		sourceCodeDirList[0] = sourceCodeDir;
 		setAlpha(alpha);
 		setBeta(beta);
+		setGamma(gamma);
 		setPastDays(pastDays);
 		setRepoDir(repoDir);
 		setBugFilePath(bugFilePath);
@@ -193,6 +202,7 @@ public class Property {
 		System.out.printf("Source code dir: %s\n", getSourceCodeDir());
 		System.out.printf("Alpha: %f\n", getAlpha());
 		System.out.printf("Beta: %f\n", getBeta());
+		System.out.printf("Gamma: %f\n", getGamma());
 		System.out.printf("Past days: %s\n", getPastDays());
 		System.out.printf("Repo dir: %s\n", getRepoDir());
 		System.out.printf("Bug file path: %s\n", getBugFilePath());
@@ -203,7 +213,7 @@ public class Property {
 	}
 	
 	private void setValues(String productName, String bugFilePath,
-			String sourceCodeDir, String workDir, double alpha, double beta,
+			String sourceCodeDir, String workDir, double alpha, double beta, double gamma,
 			int pastDays, String repoDir, String outputFile) {
 		setProductName(productName);
 		setBugFilePath(bugFilePath);
@@ -211,6 +221,7 @@ public class Property {
 		sourceCodeDirList[0] = sourceCodeDir;
 		setAlpha(alpha);
 		setBeta(beta);
+		setGamma(gamma);
 		setPastDays(pastDays);
 		setRepoDir(repoDir);
 	}
@@ -370,5 +381,41 @@ public class Property {
 	 */
 	public void setBugFilePath(String bugFilePath) {
 		this.bugFilePath = bugFilePath;
+	}
+
+	/**
+	 * @return the runLevel
+	 */
+	public String getRunLevel() {
+		return runLevel;
+	}
+
+	/**
+	 * @param runLevel the runLevel to set
+	 */
+	public void setRunLevel(String runLevel) {
+		this.runLevel = runLevel;
+	}
+	
+	public boolean isMethodLevel() {
+		return runLevel.equals(RUN_LEVEL_METHOD);
+	}
+	
+	public boolean isFileLevel() {
+		return runLevel.equals(RUN_LEVEL_FILE);
+	}
+
+	/**
+	 * @return the gamma
+	 */
+	public double getGamma() {
+		return gamma;
+	}
+
+	/**
+	 * @param gamma the gamma to set
+	 */
+	public void setGamma(double gamma) {
+		this.gamma = gamma;
 	}
 }

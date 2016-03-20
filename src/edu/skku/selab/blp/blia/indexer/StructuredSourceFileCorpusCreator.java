@@ -15,7 +15,9 @@ import edu.skku.selab.blp.Property;
 import edu.skku.selab.blp.common.SourceFileCorpus;
 import edu.skku.selab.blp.common.FileDetector;
 import edu.skku.selab.blp.common.FileParser;
+import edu.skku.selab.blp.common.Method;
 import edu.skku.selab.blp.db.dao.BaseDAO;
+import edu.skku.selab.blp.db.dao.MethodDAO;
 import edu.skku.selab.blp.db.dao.SourceFileDAO;
 
 /**
@@ -57,6 +59,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		String commentPart = stemContent(commentContents);
 		
 		String sourceCodeContent = classPart + " " + methodPart + " " + variablePart + " " + commentPart;
+		ArrayList<Method> methodList =  parser.getAllMethodList();
 		
 		SourceFileCorpus corpus = new SourceFileCorpus();
 		corpus.setJavaFilePath(file.getAbsolutePath());
@@ -67,6 +70,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		corpus.setMethodPart(methodPart);
 		corpus.setVariablePart(variablePart);
 		corpus.setCommentPart(commentPart);
+		corpus.setMethodList(methodList);
 		return corpus;
     }
 	
@@ -80,6 +84,8 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 		File files[] = detector.detect(property.getSourceCodeDirList());
 		
 		SourceFileDAO sourceFileDAO = new SourceFileDAO();
+		MethodDAO methodDAO = new MethodDAO();
+		
 		String productName = property.getProductName();
 		int totalCoupusCount = SourceFileDAO.INIT_TOTAL_COUPUS_COUNT;
 		double lengthScore = SourceFileDAO.INIT_LENGTH_SCORE;
@@ -128,7 +134,7 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 					fileName = className;
 				}
 				
-				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, className, productName);
+				int sourceFileID = sourceFileDAO.insertSourceFile(fileName, className);
 				if (BaseDAO.INVALID == sourceFileID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertSourceFile() failed.\n", className);
 					throw new Exception(); 
@@ -138,6 +144,13 @@ public class StructuredSourceFileCorpusCreator extends SourceFileCorpusCreator {
 				if (BaseDAO.INVALID == sourceFileVersionID) {
 					System.err.printf("[StructuredSourceFileCorpusCreator.create()] %s insertCorpusSet() failed.\n", className);
 					throw new Exception(); 
+				}
+				
+				ArrayList<Method> methodList = corpus.getMethodList();
+				for (int j = 0; j < methodList.size(); ++j) {
+					Method method = methodList.get(j);
+					method.setSourceFileVersionID(sourceFileVersionID);
+					methodDAO.insertMethod(method);
 				}
 
 				sourceFileDAO.insertImportedClasses(sourceFileVersionID, corpus.getImportedClasses());
