@@ -10,6 +10,7 @@ package edu.skku.selab.blp;
 import edu.skku.selab.blp.blia.analysis.BLIA;
 import edu.skku.selab.blp.db.dao.DbUtil;
 import edu.skku.selab.blp.evaluation.Evaluator;
+import edu.skku.selab.blp.evaluation.EvaluatorForMethodLevel;
 
 /**
  * @author Klaus Changsun Youm(klausyoum@skku.edu)
@@ -61,17 +62,22 @@ public class BLP {
 		// Run BLIA algorithm
 		BLIA blia = new BLIA();
 		blia.run();
-
-		String algorithmDescription = "[BLIA+] alpha: " + prop.getAlpha()
-				+ ", beta: " + prop.getBeta() + ", pastDays: "
-				+ prop.getPastDays() + ", cadidateLimitRate: "
-				+ prop.getCandidateLimitRate();
+		
+		String algorithmDescription = "[BLIA] alpha: " + prop.getAlpha() +
+				", beta: " + prop.getBeta() + ", gamma: " + prop.getGamma() + ", pastDays: " + prop.getPastDays() +
+				", cadidateLimitRate: " + prop.getCandidateLimitRate();
 
 		// Evaluate the accuracy result of BLIA
-		Evaluator evaluator = new Evaluator(prop.getProductName(),
+		Evaluator evaluator1 = new Evaluator(prop.getProductName(),
 				Evaluator.ALG_BLIA_FILE, algorithmDescription, prop.getAlpha(),
 				prop.getBeta(), prop.getGamma(), prop.getPastDays(),
 				prop.getCandidateLimitRate());
-		evaluator.evaluate();
+		evaluator1.evaluate();
+		
+		Evaluator evaluator2 = new EvaluatorForMethodLevel(prop.getProductName(),
+				EvaluatorForMethodLevel.ALG_BLIA_METHOD, algorithmDescription, prop.getAlpha(),
+				prop.getBeta(), prop.getGamma(), prop.getPastDays(),
+				prop.getCandidateLimitRate());
+		evaluator2.evaluate();
 	}
 }
