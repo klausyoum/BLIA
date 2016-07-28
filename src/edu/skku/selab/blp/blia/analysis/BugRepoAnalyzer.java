@@ -175,18 +175,19 @@ public class BugRepoAnalyzer {
 	
 	public void computeSimilarity() throws Exception {
 		BugDAO bugDAO = new BugDAO();
+		HashMap<Integer, ArrayList<AnalysisValue>> bugVectorsExceptComments = getVectorsExceptComments();
 		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = getVectors();
 		
         for(int i = 0; i < bugs.size(); i++) {
         	Bug bug = bugs.get(i);
         	int firstBugID = bug.getID();
-        	ArrayList<AnalysisValue> firstBugVector = bugVectors.get(firstBugID);
+        	ArrayList<AnalysisValue> firstBugVector = bugVectorsExceptComments.get(firstBugID);
         	
-        	String fixedDateString = bug.getFixedDateString();
+        	String openDateString = bug.getOpenDateString();
         	ArrayList<Bug> targetBugs = null;
         	int targetIndex = 0;
-        	if (1 < bugDAO.getBugCountWithFixedDate(fixedDateString)) {
-        		targetBugs = bugDAO.getPreviousFixedBugs(fixedDateString, firstBugID);
+        	if (1 < bugDAO.getBugCountWithDate(openDateString)) {
+        		targetBugs = bugDAO.getPreviousFixedBugs(openDateString, firstBugID);
         		targetIndex = targetBugs.size();
         	} else {
         		targetBugs = bugs;
@@ -260,6 +261,44 @@ public class BugRepoAnalyzer {
 		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = new HashMap<Integer, ArrayList<AnalysisValue>>();
 		for (int i = 0; i < bugs.size(); i++) {
 			int bugID = bugs.get(i).getID();
+			bugVectors.put(bugID, bugDAO.getBugTermWeightList(bugID));			
+		}
+		
+		return bugVectors;
+	}
+	
+	/**
+	 * Get bug vector value except comments in bug report
+	 * 
+	 * @return <bug ID, <Corpus ID, AnalysisValue>> 
+	 * @throws IOException
+	 */
+	public HashMap<Integer, ArrayList<AnalysisValue>> getVectorsExceptComments() throws Exception {
+		BugDAO bugDAO = new BugDAO();
+		HashMap<Integer, ArrayList<AnalysisValue>> bugVectors = new HashMap<Integer, ArrayList<AnalysisValue>>();
+		for (int i = 0; i < bugs.size(); i++) {
+			Bug currentBug = bugs.get(i);
+			int bugID = currentBug.getID();
+			
+			String descriptionPart = currentBug.getCorpus().getDescriptionPart();
+			HashSet<String> descriptionCorpus = null;
+			if (descriptionPart.length() > 0) {
+				descriptionPart = descriptionPart.trim();
+				String[] commentCorpusList = descriptionPart.split(" ");
+				descriptionCorpus = new HashSet<String>();
+
+				for (int j = 0; j < commentCorpusList.length; j++) {
+					descriptionCorpus.add(commentCorpusList[j]);
+				}
+			}
+			
+			ArrayList<AnalysisValue> bugTermWeightList = bugDAO.getBugTermWeightList(bugID);
+			for (int j = 0; j < bugTermWeightList.size(); j++) {
+				if (descriptionCorpus != null && !descriptionCorpus.contains(bugTermWeightList.get(j).getTerm())) {
+					bugTermWeightList.remove(j--);
+				}
+			}
+			
 			bugVectors.put(bugID, bugDAO.getBugTermWeightList(bugID));			
 		}
 		

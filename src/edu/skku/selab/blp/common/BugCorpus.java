@@ -14,10 +14,11 @@ package edu.skku.selab.blp.common;
 public class BugCorpus {
 	private String summaryPart;
 	private String descriptionPart;
+	private String commentPart;
 	private double contentNorm;
 	private double summaryCorpusNorm;
 	private double decriptionCorpusNorm;
-	private String descriptionPartEx;
+	private String descriptionPartEx; // including comments
 
 	/**
 	 * 
@@ -25,6 +26,7 @@ public class BugCorpus {
 	public BugCorpus() {
 		summaryPart = "";
 		descriptionPart = "";
+		setCommentPart("");
 		contentNorm = 0;
 		summaryCorpusNorm = 0;
 		decriptionCorpusNorm = 0;
@@ -127,5 +129,19 @@ public class BugCorpus {
 	 */
 	public void setDescriptionPartEx(String descriptionPartEx) {
 		this.descriptionPartEx = descriptionPartEx;
+	}
+
+	/**
+	 * @return the commentPart
+	 */
+	public String getCommentPart() {
+		return commentPart;
+	}
+
+	/**
+	 * @param commentPart the commentPart to set
+	 */
+	public void setCommentPart(String commentPart) {
+		this.commentPart = commentPart;
 	}
 }

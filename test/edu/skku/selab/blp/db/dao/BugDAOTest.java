@@ -140,9 +140,9 @@ public class BugDAOTest {
 		BugDAO bugDAO = new BugDAO();
 		
 		bugDAO.deleteAllBugs();
-		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug1));
-		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug2));
-		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertBug(bug3));
+		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertStructuredBug(bug1));
+		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertStructuredBug(bug2));
+		assertNotEquals("Bug insertion failed!", BaseDAO.INVALID, bugDAO.insertStructuredBug(bug3));
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class BugDAOTest {
 		assertEquals("stackTraces2 is wrong.", stackTrace2, foundBug.getStackTraceClasses().get(1));
 		assertEquals("version is wrong.", version, foundBug.getVersion());
 		
-		assertTrue(2 == bugDAO.getBugCountWithFixedDate(fixedDateString3));
+		assertTrue(2 == bugDAO.getBugCountWithDate(fixedDateString3));
 		ArrayList<Bug> bugList = bugDAO.getPreviousFixedBugs(fixedDateString3, bugID3);
 		assertTrue(2 == bugList.size());
 		

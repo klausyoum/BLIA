@@ -36,53 +36,9 @@ public class BugDAO extends BaseDAO {
 		super();
 	}
 	
-	public int insertBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, VER) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		int returnValue = INVALID;
-		
-		// releaseDate format : "2004-10-18 17:40:00"
-		try {
-			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setInt(1, bug.getID());
-			ps.setString(2, bug.getOpenDateString());
-			ps.setString(3, bug.getFixedDateString());
-			BugCorpus bugCorpus = bug.getCorpus();
-			ps.setString(4, bugCorpus.getContent());
-			ps.setString(5, bugCorpus.getSummaryPart());
-			ps.setString(6, bugCorpus.getDescriptionPart());
-			ps.setInt(7, bug.getTotalCorpusCount());
-			ps.setString(8, bug.getVersion());
-			
-			returnValue = ps.executeUpdate();
-			
-			ArrayList<Comment> comments = bug.getComments();
-			if (null != comments) {
-				for (int i = 0; i < comments.size(); i++) {
-					insertComment(bug.getID(), comments.get(i));				
-				}
-			}
-			
-			ArrayList<String> stackTraceClasses = bug.getStackTraceClasses();
-			if (null != stackTraceClasses) {
-				for (int i = 0; i < stackTraceClasses.size(); i++) {
-					insertStackTraceClass(bug.getID(), stackTraceClasses.get(i));				
-				}
-			}
-		} catch (JdbcSQLException e) {
-			if (ErrorCode.DUPLICATE_KEY_1 != e.getErrorCode()) {
-				e.printStackTrace();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		
-		return returnValue;
-	}
-	
 	public int insertStructuredBug(Bug bug) {
-		String sql = "INSERT INTO BUG_INFO (BUG_ID, OPEN_DATE, FIXED_DATE, SMR_COR, DESC_COR, TOT_CNT, VER)" +
-					 " VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO BUG_INFO (BUG_ID, OPEN_DATE, FIXED_DATE, SMR_COR, DESC_COR, CMT_COR, TOT_CNT, VER)" +
+					 " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		int returnValue = INVALID;
 		
 		// releaseDate format : "2004-10-18 17:40:00"
@@ -94,8 +50,9 @@ public class BugDAO extends BaseDAO {
 			BugCorpus bugCorpus = bug.getCorpus();
 			ps.setString(4, bugCorpus.getSummaryPart());
 			ps.setString(5, bugCorpus.getDescriptionPart());
-			ps.setInt(6, bug.getTotalCorpusCount());
-			ps.setString(7, bug.getVersion());
+			ps.setString(6, bug.getAllCommentsCorpus());
+			ps.setInt(7, bug.getTotalCorpusCount());
+			ps.setString(8, bug.getVersion());
 			
 			returnValue = ps.executeUpdate();
 			
@@ -177,7 +134,7 @@ public class BugDAO extends BaseDAO {
 	public ArrayList<Bug> getAllBugs(boolean orderedByFixedDate) {
 		ArrayList<Bug> bugs = new ArrayList<Bug>();
 		
-		String sql = "SELECT BUG_ID, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO ";
+		String sql = "SELECT BUG_ID, OPEN_DATE, FIXED_DATE, COR, SMR_COR, DESC_COR, CMT_COR, TOT_CNT, COR_NORM, SMR_COR_NORM, DESC_COR_NORM, VER FROM BUG_INFO ";
 		
 		if (orderedByFixedDate) {
 			sql += "ORDER BY FIXED_DATE";
@@ -197,6 +154,7 @@ public class BugDAO extends BaseDAO {
 				BugCorpus bugCorpus = new BugCorpus();
 				bugCorpus.setSummaryPart(rs.getString("SMR_COR"));
 				bugCorpus.setDescriptionPart(rs.getString("DESC_COR"));
+				bugCorpus.setCommentPart(rs.getString("CMT_COR"));
 				bugCorpus.setContentNorm(rs.getDouble("COR_NORM"));
 				bugCorpus.setSummaryCorpusNorm(rs.getDouble("SMR_COR_NORM"));
 				bugCorpus.setDecriptionCorpusNorm(rs.getDouble("DESC_COR_NORM"));
@@ -237,14 +195,14 @@ public class BugDAO extends BaseDAO {
 		return bugNormMap;	
 	}
 
-	public int getBugCountWithFixedDate(String fixedDateString) {
+	public int getBugCountWithDate(String dateString) {
 		String sql = "SELECT COUNT(BUG_ID) FROM BUG_INFO " +
-				"WHERE FIXED_DATE = ?";
+				"WHERE FIXED_DATE <= ?";
 		
 		int count = 0;
 		try {
 			ps = analysisDbConnection.prepareStatement(sql);
-			ps.setString(1, fixedDateString);
+			ps.setString(1, dateString);
 			
 			rs = ps.executeQuery();
 			if (rs.next()) {
