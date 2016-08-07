@@ -233,7 +233,7 @@ public class Evaluator {
         }
         
         private void calulateMAP() throws Exception {
-        	double sumOfAP = 0;
+        	double AP = 0;
         	
 			HashSet<SourceFile> fixedFiles = realFixedFilesMap.get(bugID);
 			// Exception handling
@@ -255,7 +255,7 @@ public class Evaluator {
 				System.err.printf("[ERROR] Bug ID: %d\n", bugID);
 				return;
 			}
-			for (int j = 0; j < rankedValues.size(); j ++) {
+			for (int j = 0; j < rankedValues.size(); j++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {
 					numberOfPositiveInstances++;
@@ -263,17 +263,18 @@ public class Evaluator {
 			}
 
 			double precision = 0.0;
-			for (int j = 0; j < rankedValues.size(); j ++) {
+			for (int j = 0; j < rankedValues.size(); j++) {
 				int sourceFileVersionID = rankedValues.get(j).getSourceFileVersionID();
 				if (fixedFileVersionIDs.contains(sourceFileVersionID)) {
 					numberOfFixedFiles++;
 					precision = ((double) numberOfFixedFiles) / (j + 1);
-					sumOfAP += (precision / numberOfPositiveInstances);
+					AP += (precision / numberOfPositiveInstances);
 				}
 			}
 			
 			synchronized(MAP) {
-				MAP += sumOfAP;
+//				System.out.printf("[LOG]\t%d\t%f\n", bugID, AP);
+				MAP += AP;
 			}
         }
     }

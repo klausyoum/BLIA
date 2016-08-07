@@ -109,7 +109,7 @@ public class EvaluatorTest {
 		boolean prepareAnalysisData =true;
 		boolean preAnalyze = true;
 		boolean analyze = true;
-		boolean includeStackTrace = true;
+		boolean includeStackTrace = prop.isStraceScoreIncluded();
 
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
@@ -152,7 +152,7 @@ public class EvaluatorTest {
 		boolean prepareAnalysisData = false;
 		boolean preAnalyze = false;
 		boolean analyze = true;
-		boolean includeStackTrace = true;
+		boolean includeStackTrace = prop.isStraceScoreIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 
@@ -204,14 +204,14 @@ public class EvaluatorTest {
 		boolean prepareAnalysisData = true;
 		boolean preAnalyze = true; // DO NOT change preAnalyze for this experiment, because changing pastDays needs pre-analysis. 
 		boolean analyze = true;
-		boolean includeStackTrace = true;
+		boolean includeStackTrace = prop.isStraceScoreIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
 		long startTime = System.currentTimeMillis();
 		System.out.printf("[STARTED] BLIA Evaluation repeatedly.\n");
 		
-		int[] pastDays = {15, 30, 60, 90, 120, 150, 180};
+		int[] pastDays = {30, 60, 90, 120, 150, 180};
 		for (int i = 0; i < pastDays.length; i++) {
 			prop.setPastDays(pastDays[i]);
 			runBLIA(useStrucrutedInfo, prepareAnalysisData, preAnalyze, analyze, includeStackTrace, includeMethodAnalyze);
@@ -252,7 +252,7 @@ public class EvaluatorTest {
 		boolean prepareAnalysisData = true;
 		boolean preAnalyze = true;
 		boolean analyze = true;
-		boolean includeStackTrace = true;
+		boolean includeStackTrace = prop.isStraceScoreIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
@@ -301,7 +301,7 @@ public class EvaluatorTest {
 		boolean prepareAnalysisData = false;
 		boolean preAnalyze = false;
 		boolean analyze = true;
-		boolean includeStackTrace = true;
+		boolean includeStackTrace = prop.isStraceScoreIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 

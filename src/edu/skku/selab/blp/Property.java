@@ -27,6 +27,7 @@ public class Property {
 	final static public int THREAD_COUNT = Integer.parseInt(Property.readProperty("THREAD_COUNT"));
 	final static private String WORK_DIR = Property.readProperty("WORK_DIR");
 	final static private String OUTPUT_FILE = Property.readProperty("OUTPUT_FILE");
+	final static private boolean STRACE_SCORE_INCLUDED = Property.readProperty("STRACE_SCORE_INCLUDED").equalsIgnoreCase("TRUE");
 	
 	final static public String RUN_LEVEL_FILE = "FILE";
 	final static public String RUN_LEVEL_METHOD = "METHOD";
@@ -417,5 +418,12 @@ public class Property {
 	 */
 	public void setGamma(double gamma) {
 		this.gamma = gamma;
+	}
+
+	/**
+	 * @return the straceScoreIncluded
+	 */
+	public boolean isStraceScoreIncluded() {
+		return STRACE_SCORE_INCLUDED;
 	}
 }
