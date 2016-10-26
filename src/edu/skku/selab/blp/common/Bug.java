@@ -256,7 +256,7 @@ public class Bug {
 		StringBuilder allCorpus = new StringBuilder(String.valueOf(""));
 		
 		for (int i = 0; i < comments.size(); i++) {
-			allCorpus.append(comments.get(i).getCommentCorpus()).append(" ");
+			allCorpus.append(comments.get(i).getCommentCorpus());
 		}
 		return allCorpus.toString();
 	}

@@ -129,8 +129,13 @@ public class BugCorpusCreator {
 			
 			/////////////////////////////////////////////////
 			// comments extension included.
-			String descriptionPartEx = descriptionPart + " " + bug.getAllCommentsCorpus();
+			String descriptionPartEx = descriptionPart + bug.getAllCommentsCorpus();
 			bugCorpus.setDescriptionPartEx(descriptionPartEx);
+			
+			if (property.isNewBugCommentsIncluded()) {
+				bugCorpus.setDescriptionPart(descriptionPartEx);
+			}
+
 			// debug code
 //			System.out.println("descriptionPartEx: " + descriptionPartEx);
 

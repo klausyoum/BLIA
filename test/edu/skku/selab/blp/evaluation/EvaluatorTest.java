@@ -110,6 +110,7 @@ public class EvaluatorTest {
 		boolean preAnalyze = true;
 		boolean analyze = true;
 		boolean includeStackTrace = prop.isStraceScoreIncluded();
+		boolean includeNewBugComments = prop.isNewBugCommentsIncluded();
 
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
@@ -126,6 +127,9 @@ public class EvaluatorTest {
 			}
 			if (!includeStackTrace) {
 				algorithmDescription += " without Stack-Trace analysis";
+			}
+			if (includeNewBugComments) {
+				algorithmDescription += " with new bug's comments";
 			}
 			
 			Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
@@ -153,6 +157,7 @@ public class EvaluatorTest {
 		boolean preAnalyze = false;
 		boolean analyze = true;
 		boolean includeStackTrace = prop.isStraceScoreIncluded();
+		boolean includeNewBugComments = prop.isNewBugCommentsIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 
@@ -175,6 +180,9 @@ public class EvaluatorTest {
 					}
 					if (!includeStackTrace) {
 						algorithmDescription += " without Stack-Trace analysis";
+					}
+					if (includeNewBugComments) {
+						algorithmDescription += " with new bug's comments";
 					}
 					
 					Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
@@ -205,6 +213,7 @@ public class EvaluatorTest {
 		boolean preAnalyze = true; // DO NOT change preAnalyze for this experiment, because changing pastDays needs pre-analysis. 
 		boolean analyze = true;
 		boolean includeStackTrace = prop.isStraceScoreIncluded();
+		boolean includeNewBugComments = prop.isNewBugCommentsIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
@@ -224,6 +233,9 @@ public class EvaluatorTest {
 				}
 				if (!includeStackTrace) {
 					algorithmDescription += " without Stack-Trace analysis";
+				}
+				if (includeNewBugComments) {
+					algorithmDescription += " with new bug's comments";
 				}
 				
 				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
@@ -253,6 +265,7 @@ public class EvaluatorTest {
 		boolean preAnalyze = true;
 		boolean analyze = true;
 		boolean includeStackTrace = prop.isStraceScoreIncluded();
+		boolean includeNewBugComments = prop.isNewBugCommentsIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 		
@@ -274,6 +287,9 @@ public class EvaluatorTest {
 				}
 				if (!includeStackTrace) {
 					algorithmDescription += " without Stack-Trace analysis";
+				}
+				if (includeNewBugComments) {
+					algorithmDescription += " with new bug's comments";
 				}
 				
 				Evaluator evaluator = new Evaluator(prop.getProductName(), Evaluator.ALG_BLIA_FILE, algorithmDescription,
@@ -302,6 +318,7 @@ public class EvaluatorTest {
 		boolean preAnalyze = false;
 		boolean analyze = true;
 		boolean includeStackTrace = prop.isStraceScoreIncluded();
+		boolean includeNewBugComments = prop.isNewBugCommentsIncluded();
 		
 		boolean includeMethodAnalyze = prop.isMethodLevel();
 
@@ -320,6 +337,9 @@ public class EvaluatorTest {
 				}
 				if (!includeStackTrace) {
 					algorithmDescription += " without Stack-Trace analysis";
+				}
+				if (includeNewBugComments) {
+					algorithmDescription += " with new bug's comments";
 				}
 				
 				if (includeMethodAnalyze) {
